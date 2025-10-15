@@ -1,0 +1,454 @@
+"use client"
+
+import { useState } from "react"
+import { ManualEntryMode } from "./ManualEntryMode"
+import { CSVUploadMode } from "./CSVUploadMode"
+import { BulkPasteMode } from "./BulkPasteMode"
+import FileUpload, { UploadedFile } from "@/components/FileUpload"
+import type { ExpenseLineItem } from "./LobbyistExpenseReportForm"
+
+type InputMode = "manual" | "csv" | "paste"
+
+interface LobbyistPayment {
+  id: string
+  lobbyistName: string
+  amountPaid: number
+}
+
+interface EmployerExpenseReportFormProps {
+  userId: string
+}
+
+export function EmployerExpenseReportForm({
+  userId,
+}: EmployerExpenseReportFormProps) {
+  const [mode, setMode] = useState<InputMode>("manual")
+  const [expenses, setExpenses] = useState<ExpenseLineItem[]>([])
+  const [lobbyistPayments, setLobbyistPayments] = useState<LobbyistPayment[]>([])
+  const [quarter, setQuarter] = useState("Q1")
+  const [year, setYear] = useState(new Date().getFullYear())
+  const [uploadedDocuments, setUploadedDocuments] = useState<UploadedFile[]>([])
+
+  // New lobbyist payment form state
+  const [newPayment, setNewPayment] = useState({
+    lobbyistName: "",
+    amountPaid: "",
+  })
+
+  const totalExpenses = expenses.reduce((sum, exp) => sum + exp.amount, 0)
+  const totalPayments = lobbyistPayments.reduce((sum, pay) => sum + pay.amountPaid, 0)
+  const grandTotal = totalExpenses + totalPayments
+
+  const handleAddExpenses = (newExpenses: ExpenseLineItem[]) => {
+    setExpenses([...expenses, ...newExpenses])
+  }
+
+  const handleRemoveExpense = (id: string) => {
+    setExpenses(expenses.filter((exp) => exp.id !== id))
+  }
+
+  const handleAddPayment = (e: React.FormEvent) => {
+    e.preventDefault()
+
+    const payment: LobbyistPayment = {
+      id: crypto.randomUUID(),
+      lobbyistName: newPayment.lobbyistName,
+      amountPaid: parseFloat(newPayment.amountPaid),
+    }
+
+    setLobbyistPayments([...lobbyistPayments, payment])
+
+    // Reset form
+    setNewPayment({
+      lobbyistName: "",
+      amountPaid: "",
+    })
+  }
+
+  const handleRemovePayment = (id: string) => {
+    setLobbyistPayments(lobbyistPayments.filter((pay) => pay.id !== id))
+  }
+
+  const handleSubmit = async () => {
+    // TODO: Submit to API
+    console.log("Submitting employer expense report:", {
+      quarter,
+      year,
+      totalExpenses,
+      totalPayments,
+      grandTotal,
+      expenses,
+      lobbyistPayments,
+    })
+    alert(
+      `Employer expense report submitted!\nQuarter: ${quarter} ${year}\nTotal Lobbying Expenses: $${totalExpenses.toFixed(2)}\nTotal Lobbyist Payments: $${totalPayments.toFixed(2)}\nGrand Total: $${grandTotal.toFixed(2)}`
+    )
+  }
+
+  return (
+    <div className="space-y-6">
+      {/* Quarter and Year Selection */}
+      <div className="rounded-lg border bg-white p-6 shadow-sm">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">
+          Reporting Period
+        </h3>
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label
+              htmlFor="quarter"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
+              Quarter
+            </label>
+            <select
+              id="quarter"
+              value={quarter}
+              onChange={(e) => setQuarter(e.target.value)}
+              className="block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-blue-500"
+            >
+              <option value="Q1">Q1 (Jan-Mar) - Due April 15</option>
+              <option value="Q2">Q2 (Apr-Jun) - Due July 15</option>
+              <option value="Q3">Q3 (Jul-Sep) - Due October 15</option>
+              <option value="Q4">Q4 (Oct-Dec) - Due January 15</option>
+            </select>
+          </div>
+          <div>
+            <label
+              htmlFor="year"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
+              Year
+            </label>
+            <input
+              type="number"
+              id="year"
+              value={year}
+              onChange={(e) => setYear(parseInt(e.target.value))}
+              className="block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-blue-500"
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Lobbyist Payments Section */}
+      <div className="rounded-lg border bg-white p-6 shadow-sm">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">
+          Payments to Registered Lobbyists
+        </h3>
+        <p className="text-sm text-gray-600 mb-4">
+          Report all payments made to registered lobbyists for lobbying services
+          during this quarter.
+        </p>
+
+        {/* Add Payment Form */}
+        <form onSubmit={handleAddPayment} className="space-y-4 mb-6">
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label
+                htmlFor="lobbyistName"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Lobbyist Name <span className="text-red-600">*</span>
+              </label>
+              <input
+                type="text"
+                id="lobbyistName"
+                required
+                value={newPayment.lobbyistName}
+                onChange={(e) =>
+                  setNewPayment({ ...newPayment, lobbyistName: e.target.value })
+                }
+                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-blue-500"
+                placeholder="Jane Smith"
+              />
+            </div>
+            <div>
+              <label
+                htmlFor="amountPaid"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Amount Paid <span className="text-red-600">*</span>
+              </label>
+              <div className="relative mt-1">
+                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                  <span className="text-gray-500 sm:text-sm">$</span>
+                </div>
+                <input
+                  type="number"
+                  id="amountPaid"
+                  required
+                  min="0"
+                  step="0.01"
+                  value={newPayment.amountPaid}
+                  onChange={(e) =>
+                    setNewPayment({ ...newPayment, amountPaid: e.target.value })
+                  }
+                  className="block w-full rounded-md border border-gray-300 py-2 pl-7 pr-3 focus:border-blue-500 focus:outline-none focus:ring-blue-500"
+                  placeholder="5000.00"
+                />
+              </div>
+            </div>
+          </div>
+          <div className="flex justify-end">
+            <button
+              type="submit"
+              className="rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
+            >
+              Add Lobbyist Payment
+            </button>
+          </div>
+        </form>
+
+        {/* Payments List */}
+        {lobbyistPayments.length > 0 && (
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-3 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                    Lobbyist Name
+                  </th>
+                  <th className="px-3 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                    Amount Paid
+                  </th>
+                  <th className="px-3 py-3"></th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-200 bg-white">
+                {lobbyistPayments.map((payment) => (
+                  <tr key={payment.id} className="hover:bg-gray-50">
+                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-900">
+                      {payment.lobbyistName}
+                    </td>
+                    <td className="whitespace-nowrap px-3 py-4 text-sm font-medium text-gray-900">
+                      ${payment.amountPaid.toFixed(2)}
+                    </td>
+                    <td className="whitespace-nowrap px-3 py-4 text-right text-sm">
+                      <button
+                        onClick={() => handleRemovePayment(payment.id)}
+                        className="text-red-600 hover:text-red-900"
+                      >
+                        Remove
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <div className="mt-4 rounded-md bg-blue-50 p-4 flex justify-between items-center">
+              <span className="text-sm font-medium text-blue-900">
+                Total Lobbyist Payments:
+              </span>
+              <span className="text-lg font-bold text-blue-900">
+                ${totalPayments.toFixed(2)}
+              </span>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Lobbying Expenses Section */}
+      <div className="rounded-lg border bg-white p-6 shadow-sm">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">
+          Lobbying Expenses (Food, Refreshments, Entertainment)
+        </h3>
+        <p className="text-sm text-gray-600 mb-4">
+          Itemize expenses over $50 paid to or for any public official.
+        </p>
+
+        <div className="mb-6">
+          <label className="block text-sm font-semibold text-gray-700 mb-3">
+            Choose Input Method:
+          </label>
+          <div className="flex space-x-2">
+            <button
+              type="button"
+              onClick={() => setMode("manual")}
+              className={`px-4 py-2 rounded-md font-medium text-sm transition-colors ${
+                mode === "manual"
+                  ? "bg-blue-600 text-white"
+                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+              }`}
+            >
+              Manual Entry
+            </button>
+            <button
+              type="button"
+              onClick={() => setMode("csv")}
+              className={`px-4 py-2 rounded-md font-medium text-sm transition-colors ${
+                mode === "csv"
+                  ? "bg-blue-600 text-white"
+                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+              }`}
+            >
+              CSV Upload
+            </button>
+            <button
+              type="button"
+              onClick={() => setMode("paste")}
+              className={`px-4 py-2 rounded-md font-medium text-sm transition-colors ${
+                mode === "paste"
+                  ? "bg-blue-600 text-white"
+                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+              }`}
+            >
+              Bulk Paste
+            </button>
+          </div>
+        </div>
+
+        {/* Mode-specific content */}
+        {mode === "manual" && <ManualEntryMode onAdd={handleAddExpenses} />}
+        {mode === "csv" && <CSVUploadMode onAdd={handleAddExpenses} />}
+        {mode === "paste" && <BulkPasteMode onAdd={handleAddExpenses} />}
+      </div>
+
+      {/* Expenses List */}
+      {expenses.length > 0 && (
+        <div className="rounded-lg border bg-white p-6 shadow-sm">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">
+            Expense Items ({expenses.length})
+          </h3>
+
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-3 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                    Official Name
+                  </th>
+                  <th className="px-3 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                    Date
+                  </th>
+                  <th className="px-3 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                    Payee
+                  </th>
+                  <th className="px-3 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                    Purpose
+                  </th>
+                  <th className="px-3 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                    Amount
+                  </th>
+                  <th className="px-3 py-3"></th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-200 bg-white">
+                {expenses.map((expense) => (
+                  <tr key={expense.id} className="hover:bg-gray-50">
+                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-900">
+                      {expense.officialName}
+                      {expense.isEstimate && (
+                        <span className="ml-2 text-xs text-yellow-600">
+                          (Est.)
+                        </span>
+                      )}
+                    </td>
+                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                      {expense.date}
+                    </td>
+                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                      {expense.payee}
+                    </td>
+                    <td className="px-3 py-4 text-sm text-gray-500">
+                      {expense.purpose}
+                    </td>
+                    <td className="whitespace-nowrap px-3 py-4 text-sm font-medium text-gray-900">
+                      ${expense.amount.toFixed(2)}
+                    </td>
+                    <td className="whitespace-nowrap px-3 py-4 text-right text-sm">
+                      <button
+                        onClick={() => handleRemoveExpense(expense.id)}
+                        className="text-red-600 hover:text-red-900"
+                      >
+                        Remove
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          <div className="mt-4 rounded-md bg-purple-50 p-4 flex justify-between items-center">
+            <span className="text-sm font-medium text-purple-900">
+              Total Expenses:
+            </span>
+            <span className="text-lg font-bold text-purple-900">
+              ${totalExpenses.toFixed(2)}
+            </span>
+          </div>
+        </div>
+      )}
+
+      {/* Grand Total Summary */}
+      {(lobbyistPayments.length > 0 || expenses.length > 0) && (
+        <div className="rounded-lg border-2 border-gray-900 bg-gray-50 p-6 shadow-md">
+          <div className="space-y-3">
+            <div className="flex justify-between items-center text-sm">
+              <span className="text-gray-700">Total Lobbyist Payments:</span>
+              <span className="font-medium text-gray-900">
+                ${totalPayments.toFixed(2)}
+              </span>
+            </div>
+            <div className="flex justify-between items-center text-sm">
+              <span className="text-gray-700">Total Lobbying Expenses:</span>
+              <span className="font-medium text-gray-900">
+                ${totalExpenses.toFixed(2)}
+              </span>
+            </div>
+            <div className="border-t pt-3 flex justify-between items-center">
+              <span className="text-lg font-semibold text-gray-900">
+                Grand Total:
+              </span>
+              <span className="text-2xl font-bold text-gray-900">
+                ${grandTotal.toFixed(2)}
+              </span>
+            </div>
+          </div>
+
+          <div className="mt-6 rounded-md bg-blue-50 p-4">
+            <p className="text-sm text-blue-700">
+              <strong>Note:</strong> Total includes all payments to registered
+              lobbyists and itemized expenses over $50 paid to or for any public
+              official for food, refreshments, and entertainment.
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* Supporting Documents */}
+      <div className="rounded-lg border bg-white p-6 shadow-sm">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">
+          Supporting Documents (Optional)
+        </h3>
+        <FileUpload
+          label="Upload Receipts or ORS 244.100 Notices"
+          description="Upload receipts, invoices, or copies of any ORS 244.100 notices filed. These documents help support your expense report."
+          accept=".pdf,.jpg,.jpeg,.png"
+          maxSizeMB={10}
+          maxFiles={10}
+          value={uploadedDocuments}
+          onChange={setUploadedDocuments}
+        />
+      </div>
+
+      {/* Submit Button */}
+      <div className="flex justify-end space-x-4">
+        <button
+          type="button"
+          className="rounded-md border border-gray-300 bg-white px-6 py-2 text-gray-700 hover:bg-gray-50"
+        >
+          Save as Draft
+        </button>
+        <button
+          type="button"
+          onClick={handleSubmit}
+          disabled={lobbyistPayments.length === 0 && expenses.length === 0}
+          className="rounded-md bg-green-600 px-6 py-2 text-white hover:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed"
+        >
+          Submit Report
+        </button>
+      </div>
+    </div>
+  )
+}

@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wireframe: Public Search Interface</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-blue-900 text-white p-4 shadow-lg">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <div class="flex items-center space-x-2">
+                <span class="text-2xl">⚖️</span>
+                <span class="font-bold text-xl">Multnomah County Lobbyist Registry</span>
+            </div>
+            <div class="space-x-6">
+                <a href="#" class="hover:underline font-medium">Home</a>
+                <a href="#" class="hover:underline font-medium">Search</a>
+                <a href="#" class="hover:underline">About</a>
+                <a href="#" class="hover:underline">FAQ</a>
+                <a href="#" class="px-4 py-2 bg-blue-700 rounded-md hover:bg-blue-600">Lobbyist Login</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-7xl mx-auto p-8">
+        <!-- Header -->
+        <div class="mb-8">
+            <h1 class="text-4xl font-bold text-gray-900 mb-3">Search Registered Lobbyists</h1>
+            <p class="text-lg text-gray-600">Access public information about lobbying activities in Multnomah County</p>
+        </div>
+
+        <!-- Info Banner -->
+        <div class="bg-blue-50 border-l-4 border-blue-400 p-4 mb-6 rounded">
+            <div class="flex">
+                <svg class="h-5 w-5 text-blue-400 mt-0.5 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+                </svg>
+                <div class="text-sm text-blue-700">
+                    <p><strong>About this registry:</strong> This database contains information about registered lobbyists, their employers, and lobbying expenses as required by Multnomah County Ordinance. Data is updated quarterly.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Search Section -->
+        <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+            <!-- Quick Search Bar -->
+            <div class="mb-6">
+                <label class="block text-sm font-semibold text-gray-700 mb-2">Quick Search</label>
+                <div class="flex space-x-2">
+                    <div class="flex-1 relative">
+                        <svg class="absolute left-3 top-3 h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                        </svg>
+                        <input type="text" placeholder="Search by lobbyist name, employer, or subject..." class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-lg">
+                    </div>
+                    <button class="px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-semibold flex items-center">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                        </svg>
+                        Search
+                    </button>
+                </div>
+            </div>
+
+            <!-- Advanced Filters Toggle -->
+            <div class="border-t pt-4">
+                <button class="flex items-center text-blue-600 hover:text-blue-800 font-medium text-sm">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/>
+                    </svg>
+                    Advanced Filters
+                    <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                    </svg>
+                </button>
+
+                <!-- Advanced Filters Panel (Collapsed by default) -->
+                <div class="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Employer Type</label>
+                        <select class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            <option value="">All Types</option>
+                            <option>Business/Corporation</option>
+                            <option>Non-Profit Organization</option>
+                            <option>Trade Association</option>
+                            <option>Labor Union</option>
+                            <option>Individual/Self-Employed</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Subject Area</label>
+                        <select class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            <option value="">All Subjects</option>
+                            <option>Housing & Development</option>
+                            <option>Transportation</option>
+                            <option>Environment & Sustainability</option>
+                            <option>Public Safety</option>
+                            <option>Health & Human Services</option>
+                            <option>Budget & Finance</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Registration Year</label>
+                        <select class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            <option value="">All Years</option>
+                            <option selected>2026</option>
+                            <option>2025</option>
+                            <option>2024</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Spending Range</label>
+                        <select class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            <option value="">Any Amount</option>
+                            <option>$0 - $500</option>
+                            <option>$500 - $1,000</option>
+                            <option>$1,000 - $5,000</option>
+                            <option>$5,000+</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Quarter</label>
+                        <select class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            <option value="">All Quarters</option>
+                            <option>Q1 2026</option>
+                            <option>Q2 2026</option>
+                            <option>Q3 2026</option>
+                            <option>Q4 2026</option>
+                        </select>
+                    </div>
+
+                    <div class="flex items-end">
+                        <button class="w-full px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 font-medium">
+                            Clear All Filters
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Section -->
+        <div class="bg-white rounded-lg shadow">
+            <!-- Results Header -->
+            <div class="p-6 border-b border-gray-200">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h2 class="text-xl font-bold text-gray-900">Search Results</h2>
+                        <p class="text-sm text-gray-600 mt-1">Showing 147 registered lobbyists</p>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <div class="flex items-center space-x-2">
+                            <label class="text-sm font-medium text-gray-700">Sort by:</label>
+                            <select class="px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm">
+                                <option>Name (A-Z)</option>
+                                <option>Name (Z-A)</option>
+                                <option>Registration Date (Newest)</option>
+                                <option>Registration Date (Oldest)</option>
+                                <option>Total Spending (Highest)</option>
+                                <option>Total Spending (Lowest)</option>
+                            </select>
+                        </div>
+
+                        <div class="flex items-center border border-gray-300 rounded-md">
+                            <button class="p-2 hover:bg-gray-100 border-r border-gray-300">
+                                <svg class="w-5 h-5 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"/>
+                                </svg>
+                            </button>
+                            <button class="p-2 hover:bg-gray-100 bg-blue-50">
+                                <svg class="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"/>
+                                </svg>
+                            </button>
+                        </div>
+
+                        <button class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 font-medium text-sm flex items-center">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                            </svg>
+                            Export CSV
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Results List -->
+            <div class="divide-y divide-gray-200">
+                <!-- Result Item 1 -->
+                <div class="p-6 hover:bg-gray-50 transition">
+                    <div class="flex items-start justify-between">
+                        <div class="flex-1">
+                            <div class="flex items-center space-x-3 mb-2">
+                                <h3 class="text-xl font-semibold text-gray-900">Michael Chen</h3>
+                                <span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs font-medium">Active</span>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-3">
+                                <div>
+                                    <div class="text-sm text-gray-600 mb-2">
+                                        <span class="font-medium">Employer:</span> Portland Housing Alliance
+                                    </div>
+                                    <div class="text-sm text-gray-600 mb-2">
+                                        <span class="font-medium">Registration Date:</span> January 15, 2026
+                                    </div>
+                                    <div class="text-sm text-gray-600">
+                                        <span class="font-medium">Contact:</span> michael.chen@housingalliance.org
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="text-sm text-gray-600 mb-2">
+                                        <span class="font-medium">Subjects:</span> Housing policy, affordable housing development, zoning regulations
+                                    </div>
+                                    <div class="text-sm text-gray-600">
+                                        <span class="font-medium">Q1 2026 Spending:</span> <span class="font-bold text-gray-900">$1,245.00</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center space-x-4">
+                                <a href="#" class="text-blue-600 hover:text-blue-800 font-medium text-sm flex items-center">
+                                    View Full Profile
+                                    <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                                    </svg>
+                                </a>
+                                <a href="#" class="text-blue-600 hover:text-blue-800 font-medium text-sm flex items-center">
+                                    View Expense Reports
+                                    <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                                    </svg>
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="ml-6 text-right">
+                            <div class="text-sm text-gray-500 mb-1">Total Spending (2026)</div>
+                            <div class="text-2xl font-bold text-gray-900">$2,890</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Result Item 2 -->
+                <div class="p-6 hover:bg-gray-50 transition">
+                    <div class="flex items-start justify-between">
+                        <div class="flex-1">
+                            <div class="flex items-center space-x-3 mb-2">
+                                <h3 class="text-xl font-semibold text-gray-900">Sarah Johnson</h3>
+                                <span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs font-medium">Active</span>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-3">
+                                <div>
+                                    <div class="text-sm text-gray-600 mb-2">
+                                        <span class="font-medium">Employers:</span> Multiple (3)
+                                        <button class="ml-2 text-blue-600 hover:text-blue-800 text-xs">View All</button>
+                                    </div>
+                                    <div class="text-sm text-gray-600 mb-2">
+                                        <span class="font-medium">Registration Date:</span> February 3, 2026
+                                    </div>
+                                    <div class="text-sm text-gray-600">
+                                        <span class="font-medium">Contact:</span> sjohnson@consultingfirm.com
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="text-sm text-gray-600 mb-2">
+                                        <span class="font-medium">Subjects:</span> Transportation funding, infrastructure, public transit
+                                    </div>
+                                    <div class="text-sm text-gray-600">
+                                        <span class="font-medium">Q1 2026 Spending:</span> <span class="font-bold text-gray-900">$3,567.00</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center space-x-4">
+                                <a href="#" class="text-blue-600 hover:text-blue-800 font-medium text-sm flex items-center">
+                                    View Full Profile
+                                    <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                                    </svg>
+                                </a>
+                                <a href="#" class="text-blue-600 hover:text-blue-800 font-medium text-sm flex items-center">
+                                    View Expense Reports
+                                    <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                                    </svg>
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="ml-6 text-right">
+                            <div class="text-sm text-gray-500 mb-1">Total Spending (2026)</div>
+                            <div class="text-2xl font-bold text-gray-900">$7,234</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Result Item 3 -->
+                <div class="p-6 hover:bg-gray-50 transition">
+                    <div class="flex items-start justify-between">
+                        <div class="flex-1">
+                            <div class="flex items-center space-x-3 mb-2">
+                                <h3 class="text-xl font-semibold text-gray-900">Jennifer Martinez</h3>
+                                <span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs font-medium">Active</span>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-3">
+                                <div>
+                                    <div class="text-sm text-gray-600 mb-2">
+                                        <span class="font-medium">Employer:</span> Green Energy Coalition
+                                    </div>
+                                    <div class="text-sm text-gray-600 mb-2">
+                                        <span class="font-medium">Registration Date:</span> January 8, 2026
+                                    </div>
+                                    <div class="text-sm text-gray-600">
+                                        <span class="font-medium">Contact:</span> jmartinez@greenenergy.org
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="text-sm text-gray-600 mb-2">
+                                        <span class="font-medium">Subjects:</span> Renewable energy, climate action, sustainability policies
+                                    </div>
+                                    <div class="text-sm text-gray-600">
+                                        <span class="font-medium">Q1 2026 Spending:</span> <span class="font-bold text-gray-900">$892.00</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center space-x-4">
+                                <a href="#" class="text-blue-600 hover:text-blue-800 font-medium text-sm flex items-center">
+                                    View Full Profile
+                                    <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                                    </svg>
+                                </a>
+                                <a href="#" class="text-blue-600 hover:text-blue-800 font-medium text-sm flex items-center">
+                                    View Expense Reports
+                                    <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                                    </svg>
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="ml-6 text-right">
+                            <div class="text-sm text-gray-500 mb-1">Total Spending (2026)</div>
+                            <div class="text-2xl font-bold text-gray-900">$1,756</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pagination -->
+            <div class="p-6 border-t border-gray-200 bg-gray-50">
+                <div class="flex items-center justify-between">
+                    <div class="text-sm text-gray-600">
+                        Showing <span class="font-medium">1-25</span> of <span class="font-medium">147</span> results
+                    </div>
+
+                    <div class="flex items-center space-x-2">
+                        <button class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 bg-white hover:bg-gray-50 font-medium text-sm disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                            Previous
+                        </button>
+                        <button class="px-4 py-2 bg-blue-600 text-white rounded-md font-medium text-sm">1</button>
+                        <button class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 bg-white hover:bg-gray-50 font-medium text-sm">2</button>
+                        <button class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 bg-white hover:bg-gray-50 font-medium text-sm">3</button>
+                        <span class="px-2 text-gray-500">...</span>
+                        <button class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 bg-white hover:bg-gray-50 font-medium text-sm">6</button>
+                        <button class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 bg-white hover:bg-gray-50 font-medium text-sm">
+                            Next
+                        </button>
+                    </div>
+
+                    <div class="flex items-center space-x-2">
+                        <label class="text-sm text-gray-600">Per page:</label>
+                        <select class="px-3 py-1 border border-gray-300 rounded-md text-sm">
+                            <option selected>25</option>
+                            <option>50</option>
+                            <option>100</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Design Notes -->
+        <div class="mt-8 bg-yellow-50 border-l-4 border-yellow-400 p-6 rounded">
+            <h3 class="font-bold text-lg mb-3">🎨 Design Notes & Decisions</h3>
+
+            <div class="space-y-4 text-sm">
+                <div>
+                    <h4 class="font-semibold mb-1">Search-First Interface</h4>
+                    <p class="text-gray-700"><strong>Why:</strong> Primary user goal is finding specific lobbyists/employers/subjects</p>
+                    <p class="text-gray-700"><strong>Pattern:</strong> Large search bar + collapsible advanced filters</p>
+                </div>
+
+                <div>
+                    <h4 class="font-semibold mb-1">List View vs. Card View</h4>
+                    <p class="text-gray-700"><strong>Chosen:</strong> List view (more information density, easier scanning)</p>
+                    <p class="text-gray-700"><strong>Alternative:</strong> Card view (better for mobile, more visual)</p>
+                    <p class="text-gray-700"><strong>Solution:</strong> Provide toggle button (currently showing list, can switch to cards)</p>
+                </div>
+
+                <div>
+                    <h4 class="font-semibold mb-1">Result Item Information Hierarchy</h4>
+                    <p class="text-gray-700"><strong>Priority:</strong> Name (largest) → Employer → Subjects → Spending → Actions</p>
+                    <p class="text-gray-700"><strong>Right-aligned spending:</strong> Draws eye, enables quick spending comparison</p>
+                </div>
+
+                <div>
+                    <h4 class="font-semibold mb-1">Advanced Filters</h4>
+                    <p class="text-gray-700"><strong>Why collapsible:</strong> Keeps interface clean, power users can expand</p>
+                    <p class="text-gray-700"><strong>Filters chosen:</strong> Based on common search patterns (employer type, subject, year, spending, quarter)</p>
+                    <p class="text-gray-700"><strong>Future:</strong> Save filter presets, filter by Board member (who received expenditures)</p>
+                </div>
+
+                <div>
+                    <h4 class="font-semibold mb-1">Sort Options</h4>
+                    <p class="text-gray-700"><strong>Default:</strong> Alphabetical by name</p>
+                    <p class="text-gray-700"><strong>Other options:</strong> Registration date, spending amount (enables "top spenders" view)</p>
+                </div>
+
+                <div>
+                    <h4 class="font-semibold mb-1">Export Functionality</h4>
+                    <p class="text-gray-700"><strong>Why important:</strong> Media/researchers want to analyze data in spreadsheets</p>
+                    <p class="text-gray-700"><strong>Implementation:</strong> CSV export of current search results with applied filters</p>
+                </div>
+
+                <div>
+                    <h4 class="font-semibold mb-1">Mobile Responsiveness</h4>
+                    <ul class="list-disc list-inside text-gray-700 space-y-1">
+                        <li>Search bar full-width on mobile</li>
+                        <li>Advanced filters stack vertically</li>
+                        <li>Results switch to card layout on mobile</li>
+                        <li>Spending moved below name on mobile</li>
+                        <li>Pagination simplified (prev/next only)</li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="font-semibold mb-1">Accessibility Considerations</h4>
+                    <ul class="list-disc list-inside text-gray-700 space-y-1">
+                        <li>Search landmark role</li>
+                        <li>Form labels properly associated</li>
+                        <li>Keyboard navigation through results</li>
+                        <li>Screen reader announces result count</li>
+                        <li>Focus management for filter toggle</li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="font-semibold mb-1">Performance Considerations</h4>
+                    <p class="text-gray-700"><strong>Search:</strong> Debounce quick search (300ms), instant advanced filters</p>
+                    <p class="text-gray-700"><strong>Pagination:</strong> 25 results default (balance between scrolling and page loads)</p>
+                    <p class="text-gray-700"><strong>Future:</strong> Infinite scroll option for power users</p>
+                </div>
+
+                <div>
+                    <h4 class="font-semibold mb-1">Missing Features (Future Phase)</h4>
+                    <ul class="list-disc list-inside text-gray-700 space-y-1">
+                        <li>Save searches (user accounts)</li>
+                        <li>Email alerts for new registrations matching criteria</li>
+                        <li>Spending trend charts on search results</li>
+                        <li>Compare multiple lobbyists side-by-side</li>
+                        <li>Map view (geocode addresses, show on map)</li>
+                        <li>API access for developers</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,1078 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lobbyist Registration System - Project Proposal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #2c3e50;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 60px 40px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        .header .subtitle {
+            font-size: 1.2em;
+            opacity: 0.95;
+            font-weight: 300;
+        }
+
+        .meta-info {
+            background: #f8f9fa;
+            padding: 30px 40px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            border-bottom: 3px solid #667eea;
+        }
+
+        .meta-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .meta-label {
+            font-size: 0.85em;
+            color: #6c757d;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        .meta-value {
+            font-size: 1.1em;
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .section {
+            margin-bottom: 50px;
+        }
+
+        .section h2 {
+            color: #667eea;
+            font-size: 2em;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #667eea;
+        }
+
+        .section h3 {
+            color: #764ba2;
+            font-size: 1.5em;
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+
+        .section h4 {
+            color: #495057;
+            font-size: 1.2em;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+
+        .executive-summary {
+            background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+            padding: 30px;
+            border-radius: 10px;
+            border-left: 5px solid #667eea;
+            font-size: 1.1em;
+            line-height: 1.8;
+        }
+
+        .comparison-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin: 30px 0;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 2px solid #e9ecef;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .card.recommended {
+            border: 3px solid #28a745;
+            position: relative;
+        }
+
+        .card.recommended::before {
+            content: "RECOMMENDED";
+            position: absolute;
+            top: -15px;
+            right: 20px;
+            background: #28a745;
+            color: white;
+            padding: 5px 20px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .card-title {
+            font-size: 1.6em;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        .card-metric {
+            margin: 15px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .metric-label {
+            font-size: 0.9em;
+            color: #6c757d;
+            margin-bottom: 5px;
+        }
+
+        .metric-value {
+            font-size: 1.8em;
+            color: #667eea;
+            font-weight: 700;
+        }
+
+        .metric-value.cost {
+            color: #dc3545;
+        }
+
+        .metric-value.savings {
+            color: #28a745;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        thead {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.9em;
+            letter-spacing: 0.5px;
+        }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        tbody tr:hover {
+            background: #f8f9fa;
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .total-row {
+            font-weight: 700;
+            background: #f8f9fa !important;
+            font-size: 1.1em;
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, #28a74515 0%, #20c99715 100%);
+            border-left: 5px solid #28a745;
+            padding: 25px;
+            border-radius: 10px;
+            margin: 25px 0;
+        }
+
+        .highlight-box h3 {
+            color: #28a745;
+            margin-top: 0;
+        }
+
+        .warning-box {
+            background: linear-gradient(135deg, #ffc10715 0%, #ff990015 100%);
+            border-left: 5px solid #ffc107;
+            padding: 25px;
+            border-radius: 10px;
+            margin: 25px 0;
+        }
+
+        .rate-callout {
+            background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+            border: 2px solid #667eea;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            font-weight: 600;
+        }
+
+        .rate-callout .rate {
+            color: #667eea;
+            font-size: 1.3em;
+            font-weight: 700;
+        }
+
+        ul {
+            margin: 15px 0;
+            padding-left: 25px;
+        }
+
+        li {
+            margin: 10px 0;
+            line-height: 1.6;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .feature-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .feature-item::before {
+            content: "✓";
+            color: #28a745;
+            font-weight: 700;
+            margin-right: 10px;
+            font-size: 1.2em;
+        }
+
+        .cost-summary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            border-radius: 15px;
+            margin: 40px 0;
+        }
+
+        .cost-summary h2 {
+            color: white;
+            border-bottom: 3px solid white;
+            padding-bottom: 15px;
+            margin-bottom: 30px;
+        }
+
+        .cost-comparison-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+        }
+
+        .cost-card {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 25px;
+            border-radius: 10px;
+            color: #2c3e50;
+        }
+
+        .cost-card h3 {
+            color: #667eea;
+            margin-top: 0;
+            margin-bottom: 20px;
+        }
+
+        .cost-line {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .cost-line:last-child {
+            border-bottom: none;
+            font-weight: 700;
+            font-size: 1.2em;
+            padding-top: 15px;
+            margin-top: 10px;
+            border-top: 2px solid #667eea;
+        }
+
+        .savings-badge {
+            display: inline-block;
+            background: #28a745;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: 700;
+            margin: 10px 0;
+            font-size: 1.1em;
+        }
+
+        .timeline-viz {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin: 30px 0;
+            padding: 25px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .timeline-bar {
+            flex: 1;
+            height: 40px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 1.1em;
+        }
+
+        .timeline-bar.traditional {
+            background: linear-gradient(90deg, #dc3545 0%, #c82333 100%);
+        }
+
+        .timeline-bar.ai-assisted {
+            background: linear-gradient(90deg, #28a745 0%, #20c997 100%);
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+
+            .container {
+                box-shadow: none;
+            }
+
+            .card:hover {
+                transform: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Lobbyist Registration System</h1>
+            <div class="subtitle">Government Accountability Ordinance Web Application - Project Proposal</div>
+        </div>
+
+        <div class="meta-info">
+            <div class="meta-item">
+                <div class="meta-label">Prepared For</div>
+                <div class="meta-value">Multnomah County</div>
+            </div>
+            <div class="meta-item">
+                <div class="meta-label">Project</div>
+                <div class="meta-value">Ordinance §3.800-3.811</div>
+            </div>
+            <div class="meta-item">
+                <div class="meta-label">Date</div>
+                <div class="meta-value">October 15, 2025</div>
+            </div>
+            <div class="meta-item">
+                <div class="meta-label">Launch Deadline</div>
+                <div class="meta-value">June 2026</div>
+            </div>
+        </div>
+
+        <div class="content">
+            <!-- Executive Summary -->
+            <div class="section">
+                <h2>Executive Summary</h2>
+                <div class="executive-summary">
+                    This proposal outlines the development of a web-based lobbyist registration and reporting system to satisfy the requirements of Multnomah County's Government Accountability Ordinance. The system will enable lobbyists, employers, and board members to register and report lobbying activities, while providing public transparency through a searchable database and giving county administrators compliance monitoring tools.
+                    <br><br>
+                    We present two implementation approaches with detailed cost estimates for initial development and ongoing maintenance, demonstrating potential savings of up to <strong>77% in Year 1</strong> with modern AI-assisted development practices.
+                </div>
+            </div>
+
+            <!-- Project Scope -->
+            <div class="section">
+                <h2>Project Scope</h2>
+
+                <h3>Core Requirements</h3>
+                <div class="features-grid">
+                    <div class="feature-item">Lobbyist Registration System</div>
+                    <div class="feature-item">Quarterly Expense Reporting</div>
+                    <div class="feature-item">Employer Expense Reporting</div>
+                    <div class="feature-item">Board Member Transparency</div>
+                    <div class="feature-item">Public Search Interface</div>
+                    <div class="feature-item">Admin Compliance Dashboard</div>
+                    <div class="feature-item">Automated Notifications</div>
+                    <div class="feature-item">WCAG 2.1 AA Compliance</div>
+                </div>
+            </div>
+
+            <!-- Implementation Approaches -->
+            <div class="section">
+                <h2>Implementation Approaches</h2>
+
+                <div class="comparison-cards">
+                    <!-- Option 1: Traditional .NET -->
+                    <div class="card">
+                        <div class="card-title">Option 1: Traditional .NET Team</div>
+
+                        <div class="card-metric">
+                            <div class="metric-label">Team Composition</div>
+                            <div style="margin-top: 10px;">
+                                <div>• 2× Full-Stack .NET Developers</div>
+                                <div>• 1× Business Systems Analyst</div>
+                                <div>• 1× Project Manager</div>
+                            </div>
+                        </div>
+
+                        <div class="card-metric">
+                            <div class="metric-label">Timeline</div>
+                            <div class="metric-value">20 Weeks</div>
+                        </div>
+
+                        <div class="card-metric">
+                            <div class="metric-label">Total Hours</div>
+                            <div class="metric-value">1,900 hrs</div>
+                        </div>
+
+                        <div class="rate-callout">
+                            <div class="metric-label">Blended Hourly Rate</div>
+                            <div class="rate">$85/hour</div>
+                            <div style="font-size: 0.85em; margin-top: 5px; color: #6c757d;">⚠️ Verify this rate with current county billing standards</div>
+                        </div>
+
+                        <div class="card-metric">
+                            <div class="metric-label">Development Cost</div>
+                            <div class="metric-value cost">$161,500</div>
+                        </div>
+
+                        <div class="card-metric">
+                            <div class="metric-label">Annual Maintenance</div>
+                            <div class="metric-value cost">$28,050</div>
+                        </div>
+                    </div>
+
+                    <!-- Option 2: AI-Assisted -->
+                    <div class="card recommended">
+                        <div class="card-title">Option 2: AI-Assisted Development</div>
+
+                        <div class="card-metric">
+                            <div class="metric-label">Team Composition</div>
+                            <div style="margin-top: 10px;">
+                                <div>• 1× Senior Developer (Human)</div>
+                                <div>• Claude Code (AI Pair Programmer)</div>
+                            </div>
+                        </div>
+
+                        <div class="card-metric">
+                            <div class="metric-label">Timeline</div>
+                            <div class="metric-value">8 Weeks</div>
+                            <div class="savings-badge">12 weeks faster</div>
+                        </div>
+
+                        <div class="card-metric">
+                            <div class="metric-label">Total Hours</div>
+                            <div class="metric-value">230 hrs (human)<br>270 hrs (AI)</div>
+                        </div>
+
+                        <div class="rate-callout">
+                            <div class="metric-label">Hourly Rates</div>
+                            <div class="rate">Senior Dev: $120/hr</div>
+                            <div class="rate">Claude Code: $15/hr</div>
+                            <div style="font-size: 0.85em; margin-top: 5px; color: #6c757d;">⚠️ Verify senior developer rate with current county standards</div>
+                        </div>
+
+                        <div class="card-metric">
+                            <div class="metric-label">Development Cost</div>
+                            <div class="metric-value savings">$31,650</div>
+                            <div class="savings-badge">$129,850 savings (80%)</div>
+                        </div>
+
+                        <div class="card-metric">
+                            <div class="metric-label">Annual Maintenance</div>
+                            <div class="metric-value savings">$11,550</div>
+                            <div class="savings-badge">$16,500 savings (59%)</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Timeline Visualization -->
+                <h3>Timeline Comparison</h3>
+                <div class="timeline-viz">
+                    <div style="width: 120px; font-weight: 600;">Traditional:</div>
+                    <div class="timeline-bar traditional" style="width: 500px;">20 Weeks</div>
+                </div>
+                <div class="timeline-viz">
+                    <div style="width: 120px; font-weight: 600;">AI-Assisted:</div>
+                    <div class="timeline-bar ai-assisted" style="width: 200px;">8 Weeks</div>
+                </div>
+            </div>
+
+            <!-- Detailed Cost Breakdown - Option 1 -->
+            <div class="section">
+                <h2>Option 1: Traditional .NET Development Breakdown</h2>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Phase</th>
+                            <th>Activity</th>
+                            <th>Hours</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Planning</td>
+                            <td>Requirements gathering, technical design, database schema design</td>
+                            <td>120 hrs</td>
+                        </tr>
+                        <tr>
+                            <td>Sprint 1</td>
+                            <td>Project setup, authentication, database infrastructure</td>
+                            <td>160 hrs</td>
+                        </tr>
+                        <tr>
+                            <td>Sprint 2</td>
+                            <td>Lobbyist registration, exemption checker</td>
+                            <td>200 hrs</td>
+                        </tr>
+                        <tr>
+                            <td>Sprint 3</td>
+                            <td>Quarterly expense reporting (all input methods)</td>
+                            <td>240 hrs</td>
+                        </tr>
+                        <tr>
+                            <td>Sprint 4</td>
+                            <td>Employer reporting, board member features</td>
+                            <td>200 hrs</td>
+                        </tr>
+                        <tr>
+                            <td>Sprint 5</td>
+                            <td>Public search interface, CSV export</td>
+                            <td>160 hrs</td>
+                        </tr>
+                        <tr>
+                            <td>Sprint 6</td>
+                            <td>Admin dashboard, compliance monitoring</td>
+                            <td>200 hrs</td>
+                        </tr>
+                        <tr>
+                            <td>Sprint 7</td>
+                            <td>Email notifications, automated workflows</td>
+                            <td>120 hrs</td>
+                        </tr>
+                        <tr>
+                            <td>Testing & QA</td>
+                            <td>Integration testing, accessibility testing, bug fixes</td>
+                            <td>200 hrs</td>
+                        </tr>
+                        <tr>
+                            <td>Deployment</td>
+                            <td>Production deployment, user training, documentation</td>
+                            <td>80 hrs</td>
+                        </tr>
+                        <tr>
+                            <td>PM Activities</td>
+                            <td>Sprint planning, stakeholder meetings, reporting</td>
+                            <td>120 hrs</td>
+                        </tr>
+                        <tr>
+                            <td>BSA Activities</td>
+                            <td>Requirements refinement, UAT, documentation</td>
+                            <td>100 hrs</td>
+                        </tr>
+                        <tr class="total-row">
+                            <td colspan="2">Total Development Hours</td>
+                            <td>1,900 hrs</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="rate-callout">
+                    <strong>Cost Calculation:</strong> 1,900 hours × <span class="rate">$85/hour</span> = <span class="rate">$161,500</span>
+                </div>
+            </div>
+
+            <!-- Detailed Cost Breakdown - Option 2 -->
+            <div class="section">
+                <h2>Option 2: AI-Assisted Development Breakdown</h2>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Phase</th>
+                            <th>Activity</th>
+                            <th>Human Hours</th>
+                            <th>Claude Code Hours</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Planning</td>
+                            <td>Requirements review, wireframe stakeholder approval</td>
+                            <td>40 hrs</td>
+                            <td>20 hrs</td>
+                        </tr>
+                        <tr>
+                            <td>Setup</td>
+                            <td>Next.js project, Prisma, authentication, UI library</td>
+                            <td>8 hrs</td>
+                            <td>4 hrs</td>
+                        </tr>
+                        <tr>
+                            <td>Core Dev</td>
+                            <td>All registration, reporting, and search features</td>
+                            <td>60 hrs</td>
+                            <td>120 hrs</td>
+                        </tr>
+                        <tr>
+                            <td>CSV Features</td>
+                            <td>Template creation, validation, bulk operations</td>
+                            <td>10 hrs</td>
+                            <td>15 hrs</td>
+                        </tr>
+                        <tr>
+                            <td>Admin Dashboard</td>
+                            <td>Compliance monitoring, alert system, review workflow</td>
+                            <td>16 hrs</td>
+                            <td>30 hrs</td>
+                        </tr>
+                        <tr>
+                            <td>Notifications</td>
+                            <td>Automated deadline reminders, configuration</td>
+                            <td>8 hrs</td>
+                            <td>10 hrs</td>
+                        </tr>
+                        <tr>
+                            <td>Accessibility</td>
+                            <td>WCAG compliance, responsive design refinement</td>
+                            <td>20 hrs</td>
+                            <td>25 hrs</td>
+                        </tr>
+                        <tr>
+                            <td>Testing</td>
+                            <td>Manual QA, stakeholder demos, bug fixes</td>
+                            <td>40 hrs</td>
+                            <td>30 hrs</td>
+                        </tr>
+                        <tr>
+                            <td>Deployment</td>
+                            <td>Production setup, database migration, go-live</td>
+                            <td>12 hrs</td>
+                            <td>6 hrs</td>
+                        </tr>
+                        <tr>
+                            <td>Documentation</td>
+                            <td>User guides, admin documentation, technical docs</td>
+                            <td>16 hrs</td>
+                            <td>10 hrs</td>
+                        </tr>
+                        <tr class="total-row">
+                            <td colspan="2">Total Hours</td>
+                            <td>230 hrs</td>
+                            <td>270 hrs</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="rate-callout">
+                    <strong>Cost Calculation:</strong><br>
+                    Human: 230 hours × <span class="rate">$120/hour</span> = <span class="rate">$27,600</span><br>
+                    Claude Code: 270 hours × <span class="rate">$15/hour</span> = <span class="rate">$4,050</span><br>
+                    <strong>Total: <span class="rate">$31,650</span></strong>
+                </div>
+
+                <div class="highlight-box">
+                    <h3>Why AI-Assisted Development is Faster</h3>
+                    <ul>
+                        <li><strong>Instant Scaffolding:</strong> Claude Code generates components in minutes vs hours</li>
+                        <li><strong>Rapid Iteration:</strong> Stakeholder feedback incorporated same-day</li>
+                        <li><strong>Parallel Development:</strong> AI handles repetitive tasks while human focuses on architecture</li>
+                        <li><strong>Migration-Based Schema:</strong> Prevents database rework and schema drift</li>
+                        <li><strong>Automated Testing:</strong> Test generation and execution built into workflow</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Annual Maintenance -->
+            <div class="section">
+                <h2>Annual Maintenance & Support</h2>
+
+                <h3>Maintenance Scope</h3>
+                <ul>
+                    <li>Security updates and dependency upgrades</li>
+                    <li>Bug fixes and minor enhancements</li>
+                    <li>Performance monitoring and optimization</li>
+                    <li>Database backups and maintenance</li>
+                    <li>One (1) new feature per year (medium complexity)</li>
+                    <li>Quarterly security reviews</li>
+                    <li>Accessibility audits</li>
+                </ul>
+
+                <div class="comparison-cards">
+                    <!-- Traditional Maintenance -->
+                    <div class="card">
+                        <div class="card-title">Traditional .NET Maintenance</div>
+
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Activity</th>
+                                    <th>Hours/Year</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Security updates & upgrades</td>
+                                    <td>40 hrs</td>
+                                </tr>
+                                <tr>
+                                    <td>Bug fixes (2-3 per quarter)</td>
+                                    <td>60 hrs</td>
+                                </tr>
+                                <tr>
+                                    <td>Performance monitoring</td>
+                                    <td>20 hrs</td>
+                                </tr>
+                                <tr>
+                                    <td>Database maintenance</td>
+                                    <td>15 hrs</td>
+                                </tr>
+                                <tr>
+                                    <td>New feature (1 per year)</td>
+                                    <td>120 hrs</td>
+                                </tr>
+                                <tr>
+                                    <td>Security reviews (quarterly)</td>
+                                    <td>40 hrs</td>
+                                </tr>
+                                <tr>
+                                    <td>Accessibility audit</td>
+                                    <td>20 hrs</td>
+                                </tr>
+                                <tr>
+                                    <td>Documentation updates</td>
+                                    <td>15 hrs</td>
+                                </tr>
+                                <tr class="total-row">
+                                    <td>Total Annual Hours</td>
+                                    <td>330 hrs</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <div class="card-metric">
+                            <div class="metric-label">Annual Cost @ $85/hr</div>
+                            <div class="metric-value cost">$28,050</div>
+                        </div>
+                    </div>
+
+                    <!-- AI-Assisted Maintenance -->
+                    <div class="card recommended">
+                        <div class="card-title">AI-Assisted Maintenance</div>
+
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Activity</th>
+                                    <th>Human</th>
+                                    <th>AI</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Security updates</td>
+                                    <td>8 hrs</td>
+                                    <td>12 hrs</td>
+                                </tr>
+                                <tr>
+                                    <td>Bug fixes</td>
+                                    <td>12 hrs</td>
+                                    <td>18 hrs</td>
+                                </tr>
+                                <tr>
+                                    <td>Performance</td>
+                                    <td>6 hrs</td>
+                                    <td>8 hrs</td>
+                                </tr>
+                                <tr>
+                                    <td>Database maint.</td>
+                                    <td>4 hrs</td>
+                                    <td>6 hrs</td>
+                                </tr>
+                                <tr>
+                                    <td>New feature</td>
+                                    <td>24 hrs</td>
+                                    <td>60 hrs</td>
+                                </tr>
+                                <tr>
+                                    <td>Security reviews</td>
+                                    <td>16 hrs</td>
+                                    <td>12 hrs</td>
+                                </tr>
+                                <tr>
+                                    <td>Accessibility</td>
+                                    <td>6 hrs</td>
+                                    <td>8 hrs</td>
+                                </tr>
+                                <tr>
+                                    <td>Documentation</td>
+                                    <td>4 hrs</td>
+                                    <td>6 hrs</td>
+                                </tr>
+                                <tr class="total-row">
+                                    <td>Total</td>
+                                    <td>80 hrs</td>
+                                    <td>130 hrs</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <div class="card-metric">
+                            <div class="metric-label">Annual Cost</div>
+                            <div class="metric-value savings">$11,550</div>
+                            <div style="font-size: 0.9em; margin-top: 5px;">(80 hrs × $120) + (130 hrs × $15)</div>
+                            <div class="savings-badge">$16,500 savings (59%)</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cost Summary -->
+            <div class="cost-summary">
+                <h2>Cost Comparison Summary</h2>
+
+                <div class="cost-comparison-grid">
+                    <div class="cost-card">
+                        <h3>Year 1 Total Cost</h3>
+                        <div class="cost-line">
+                            <span>Traditional .NET:</span>
+                            <strong>$189,550</strong>
+                        </div>
+                        <div class="cost-line">
+                            <span>AI-Assisted:</span>
+                            <strong style="color: #28a745;">$43,200</strong>
+                        </div>
+                        <div class="cost-line">
+                            <span>Year 1 Savings:</span>
+                            <strong style="color: #28a745;">$146,350 (77%)</strong>
+                        </div>
+                    </div>
+
+                    <div class="cost-card">
+                        <h3>5-Year Total Cost</h3>
+                        <div class="cost-line">
+                            <span>Traditional .NET:</span>
+                            <strong>$301,750</strong>
+                        </div>
+                        <div class="cost-line">
+                            <span>AI-Assisted:</span>
+                            <strong style="color: #28a745;">$89,400</strong>
+                        </div>
+                        <div class="cost-line">
+                            <span>5-Year Savings:</span>
+                            <strong style="color: #28a745;">$212,350 (70%)</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recommendations -->
+            <div class="section">
+                <h2>Recommendations</h2>
+
+                <div class="highlight-box">
+                    <h3>We Recommend: Option 2 (AI-Assisted Development)</h3>
+                    <ul>
+                        <li><strong>Cost Effective:</strong> 77% savings in Year 1, 70% savings over 5 years</li>
+                        <li><strong>Faster Time to Market:</strong> 8 weeks vs 20 weeks ensures comfortable deadline margin before July 1, 2026</li>
+                        <li><strong>Quality Assurance:</strong> Human oversight ensures code quality and compliance standards</li>
+                        <li><strong>Maintainability:</strong> Modern tech stack (Next.js/TypeScript) is industry-standard and well-supported</li>
+                        <li><strong>Flexibility:</strong> Faster iteration allows for stakeholder feedback incorporation during development</li>
+                        <li><strong>Future-Proof:</strong> County gains experience with AI-assisted development for future projects</li>
+                    </ul>
+                </div>
+
+                <h3>Success Factors</h3>
+                <ul>
+                    <li>Experienced senior developer to guide the AI and manage stakeholders</li>
+                    <li>Regular stakeholder demos (weekly) to validate features</li>
+                    <li>Clear acceptance criteria based on ordinance requirements</li>
+                    <li>Comprehensive testing before launch</li>
+                    <li>User training and documentation for all stakeholder groups</li>
+                </ul>
+            </div>
+
+            <!-- Risk Assessment -->
+            <div class="section">
+                <h2>Risk Assessment & Mitigation</h2>
+
+                <h3>Traditional .NET Approach</h3>
+                <div class="warning-box">
+                    <strong>Risks:</strong>
+                    <ul>
+                        <li>Longer timeline increases risk of missing July 1, 2026 deadline</li>
+                        <li>Higher cost may impact budget approval</li>
+                        <li>Developer availability (county staffing constraints)</li>
+                        <li>Scope creep in waterfall process</li>
+                    </ul>
+                    <strong>Mitigation:</strong>
+                    <ul>
+                        <li>Start immediately to ensure timeline buffer</li>
+                        <li>Fixed-scope contract with change request process</li>
+                        <li>Dedicated team commitment</li>
+                        <li>Regular stakeholder checkpoints</li>
+                    </ul>
+                </div>
+
+                <h3>AI-Assisted Approach</h3>
+                <div class="warning-box">
+                    <strong>Risks:</strong>
+                    <ul>
+                        <li>Novel approach may face internal skepticism</li>
+                        <li>Requires skilled developer to guide Claude Code</li>
+                        <li>Stakeholder comfort with AI-generated code</li>
+                    </ul>
+                    <strong>Mitigation:</strong>
+                    <ul>
+                        <li>All code reviewed by senior developer</li>
+                        <li>Same quality and security standards as traditional development</li>
+                        <li>Continuous stakeholder demos to build confidence</li>
+                        <li>Comprehensive testing and QA process</li>
+                        <li>Well-documented codebase for future maintainability</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Next Steps -->
+            <div class="section">
+                <h2>Next Steps</h2>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Step</th>
+                            <th>Activity</th>
+                            <th>Timeline</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>Approve approach and budget</td>
+                            <td>Week 1</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>Assign senior developer resource</td>
+                            <td>Week 1</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>Kickoff meeting with stakeholders</td>
+                            <td>Week 2</td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>Begin development</td>
+                            <td>Week 2</td>
+                        </tr>
+                        <tr>
+                            <td>5</td>
+                            <td>Weekly progress demos</td>
+                            <td>Weeks 2-8</td>
+                        </tr>
+                        <tr>
+                            <td>6</td>
+                            <td>User acceptance testing</td>
+                            <td>Week 8</td>
+                        </tr>
+                        <tr>
+                            <td>7</td>
+                            <td>Training and documentation</td>
+                            <td>Week 9</td>
+                        </tr>
+                        <tr>
+                            <td>8</td>
+                            <td>Production launch</td>
+                            <td>Week 10</td>
+                        </tr>
+                        <tr>
+                            <td>9</td>
+                            <td>Post-launch monitoring</td>
+                            <td>Weeks 10-12</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Rate Adjustment Notice -->
+            <div class="section">
+                <div class="warning-box">
+                    <h3>⚠️ Important: Hourly Rate Verification Required</h3>
+                    <p><strong>The following hourly rates are used in this proposal and should be verified against current Multnomah County billing standards:</strong></p>
+                    <ul>
+                        <li><strong>Traditional .NET Team (blended rate):</strong> $85/hour</li>
+                        <li><strong>Senior Developer (AI-assisted approach):</strong> $120/hour</li>
+                        <li><strong>Claude Code (AI service):</strong> $15/hour</li>
+                    </ul>
+                    <p>All cost estimates in this proposal can be recalculated with updated rates. The <strong>percentage savings remain consistent</strong> regardless of rate adjustments, as both approaches would scale proportionally.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

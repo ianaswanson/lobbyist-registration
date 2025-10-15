@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wireframe: Admin Compliance Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100">
+    <!-- Navigation -->
+    <nav class="bg-blue-900 text-white p-4 shadow-lg">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <div class="flex items-center space-x-2">
+                <span class="text-2xl">⚖️</span>
+                <span class="font-bold text-xl">Multnomah County Lobbyist Registry - Admin</span>
+            </div>
+            <div class="flex items-center space-x-6">
+                <span class="text-sm">Admin: Sarah Martinez</span>
+                <a href="#" class="hover:underline">Dashboard</a>
+                <a href="#" class="hover:underline">Registrations</a>
+                <a href="#" class="hover:underline">Reports</a>
+                <a href="#" class="hover:underline">Settings</a>
+                <a href="#" class="hover:underline">Sign Out</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-7xl mx-auto p-8">
+        <!-- Page Header -->
+        <div class="mb-6">
+            <h1 class="text-3xl font-bold text-gray-900 mb-2">Compliance Dashboard</h1>
+            <p class="text-gray-600">Monitor registrations, deadlines, and enforcement actions</p>
+        </div>
+
+        <!-- Alert Section - Urgent Items -->
+        <div class="mb-6 space-y-3">
+            <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                        <svg class="h-5 w-5 text-red-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"/>
+                        </svg>
+                        <div>
+                            <p class="font-semibold text-red-800">5 Overdue Reports</p>
+                            <p class="text-sm text-red-700">Q1 2026 deadline (April 15) has passed</p>
+                        </div>
+                    </div>
+                    <button class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 font-medium text-sm">
+                        Review Now
+                    </button>
+                </div>
+            </div>
+
+            <div class="bg-orange-50 border-l-4 border-orange-500 p-4 rounded">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                        <svg class="h-5 w-5 text-orange-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"/>
+                        </svg>
+                        <div>
+                            <p class="font-semibold text-orange-800">3 Pending Registrations</p>
+                            <p class="text-sm text-orange-700">Awaiting review and approval</p>
+                        </div>
+                    </div>
+                    <button class="px-4 py-2 bg-orange-600 text-white rounded-md hover:bg-orange-700 font-medium text-sm">
+                        Review Applications
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div class="bg-white rounded-lg shadow p-6">
+                <div class="flex items-center justify-between mb-2">
+                    <h3 class="text-sm font-semibold text-gray-600 uppercase">Active Lobbyists</h3>
+                    <span class="text-2xl">👤</span>
+                </div>
+                <div class="text-3xl font-bold text-gray-900">147</div>
+                <div class="text-sm text-green-600 mt-1">↑ 12 this quarter</div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow p-6">
+                <div class="flex items-center justify-between mb-2">
+                    <h3 class="text-sm font-semibold text-gray-600 uppercase">Active Employers</h3>
+                    <span class="text-2xl">🏢</span>
+                </div>
+                <div class="text-3xl font-bold text-gray-900">68</div>
+                <div class="text-sm text-green-600 mt-1">↑ 5 this quarter</div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow p-6">
+                <div class="flex items-center justify-between mb-2">
+                    <h3 class="text-sm font-semibold text-gray-600 uppercase">Q1 Reports Due</h3>
+                    <span class="text-2xl">📊</span>
+                </div>
+                <div class="text-3xl font-bold text-gray-900">215</div>
+                <div class="text-sm text-orange-600 mt-1">⚠️ 5 overdue</div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow p-6">
+                <div class="flex items-center justify-between mb-2">
+                    <h3 class="text-sm font-semibold text-gray-600 uppercase">Active Violations</h3>
+                    <span class="text-2xl">⚠️</span>
+                </div>
+                <div class="text-3xl font-bold text-gray-900">2</div>
+                <div class="text-sm text-gray-600 mt-1">1 pending appeal</div>
+            </div>
+        </div>
+
+        <!-- Main Content Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Left Column - 2/3 width -->
+            <div class="lg:col-span-2 space-y-6">
+                <!-- Upcoming Deadlines -->
+                <div class="bg-white rounded-lg shadow">
+                    <div class="p-6 border-b border-gray-200">
+                        <h2 class="text-xl font-bold text-gray-900">Upcoming Quarterly Deadlines</h2>
+                    </div>
+                    <div class="p-6">
+                        <div class="space-y-4">
+                            <!-- Q2 Deadline -->
+                            <div class="flex items-center justify-between p-4 bg-blue-50 rounded-lg border border-blue-200">
+                                <div class="flex-1">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="text-center">
+                                            <div class="text-2xl font-bold text-blue-900">JUL</div>
+                                            <div class="text-3xl font-bold text-blue-900">15</div>
+                                        </div>
+                                        <div>
+                                            <h3 class="font-semibold text-gray-900">Q2 2026 Reports Due</h3>
+                                            <p class="text-sm text-gray-600">April 1 - June 30, 2026</p>
+                                            <p class="text-sm text-blue-700 font-medium mt-1">92 days away</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <div class="text-2xl font-bold text-gray-900">215</div>
+                                    <div class="text-sm text-gray-600">reports expected</div>
+                                </div>
+                            </div>
+
+                            <!-- Q3 Deadline -->
+                            <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200">
+                                <div class="flex-1">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="text-center">
+                                            <div class="text-2xl font-bold text-gray-700">OCT</div>
+                                            <div class="text-3xl font-bold text-gray-700">15</div>
+                                        </div>
+                                        <div>
+                                            <h3 class="font-semibold text-gray-900">Q3 2026 Reports Due</h3>
+                                            <p class="text-sm text-gray-600">July 1 - September 30, 2026</p>
+                                            <p class="text-sm text-gray-500 mt-1">184 days away</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <div class="text-2xl font-bold text-gray-900">~220</div>
+                                    <div class="text-sm text-gray-600">reports expected</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-4 pt-4 border-t border-gray-200">
+                            <button class="text-blue-600 hover:text-blue-800 font-medium text-sm">
+                                Send Reminder Emails for Q2 →
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Registrations -->
+                <div class="bg-white rounded-lg shadow">
+                    <div class="p-6 border-b border-gray-200">
+                        <div class="flex items-center justify-between">
+                            <h2 class="text-xl font-bold text-gray-900">Pending Registrations</h2>
+                            <span class="px-3 py-1 bg-orange-100 text-orange-800 rounded-full text-sm font-semibold">3 Pending</span>
+                        </div>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead class="bg-gray-50 border-b border-gray-200">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Lobbyist</th>
+                                    <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Employer</th>
+                                    <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Submitted</th>
+                                    <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Days Pending</th>
+                                    <th class="px-6 py-3 text-center text-xs font-semibold text-gray-600 uppercase">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-200">
+                                <tr class="hover:bg-gray-50">
+                                    <td class="px-6 py-4">
+                                        <div class="font-medium text-gray-900">Michael Chen</div>
+                                        <div class="text-sm text-gray-500">michael.chen@example.com</div>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <div class="text-sm text-gray-900">Portland Housing Alliance</div>
+                                    </td>
+                                    <td class="px-6 py-4 text-sm text-gray-600">Apr 12, 2026</td>
+                                    <td class="px-6 py-4">
+                                        <span class="px-2 py-1 bg-yellow-100 text-yellow-800 rounded-full text-xs font-medium">2 days</span>
+                                    </td>
+                                    <td class="px-6 py-4 text-center">
+                                        <div class="flex items-center justify-center space-x-2">
+                                            <button class="px-3 py-1 bg-green-600 text-white rounded text-xs hover:bg-green-700">Approve</button>
+                                            <button class="px-3 py-1 bg-red-600 text-white rounded text-xs hover:bg-red-700">Reject</button>
+                                            <button class="px-3 py-1 bg-gray-600 text-white rounded text-xs hover:bg-gray-700">Review</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr class="hover:bg-gray-50">
+                                    <td class="px-6 py-4">
+                                        <div class="font-medium text-gray-900">Sarah Johnson</div>
+                                        <div class="text-sm text-gray-500">sjohnson@consultants.com</div>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <div class="text-sm text-gray-900">Multiple (3 employers)</div>
+                                    </td>
+                                    <td class="px-6 py-4 text-sm text-gray-600">Apr 10, 2026</td>
+                                    <td class="px-6 py-4">
+                                        <span class="px-2 py-1 bg-orange-100 text-orange-800 rounded-full text-xs font-medium">4 days</span>
+                                    </td>
+                                    <td class="px-6 py-4 text-center">
+                                        <div class="flex items-center justify-center space-x-2">
+                                            <button class="px-3 py-1 bg-green-600 text-white rounded text-xs hover:bg-green-700">Approve</button>
+                                            <button class="px-3 py-1 bg-red-600 text-white rounded text-xs hover:bg-red-700">Reject</button>
+                                            <button class="px-3 py-1 bg-gray-600 text-white rounded text-xs hover:bg-gray-700">Review</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr class="hover:bg-gray-50">
+                                    <td class="px-6 py-4">
+                                        <div class="font-medium text-gray-900">David Martinez</div>
+                                        <div class="text-sm text-gray-500">dmartinez@firm.com</div>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <div class="text-sm text-gray-900">Green Energy Coalition</div>
+                                    </td>
+                                    <td class="px-6 py-4 text-sm text-gray-600">Apr 9, 2026</td>
+                                    <td class="px-6 py-4">
+                                        <span class="px-2 py-1 bg-red-100 text-red-800 rounded-full text-xs font-medium">5 days</span>
+                                    </td>
+                                    <td class="px-6 py-4 text-center">
+                                        <div class="flex items-center justify-center space-x-2">
+                                            <button class="px-3 py-1 bg-green-600 text-white rounded text-xs hover:bg-green-700">Approve</button>
+                                            <button class="px-3 py-1 bg-red-600 text-white rounded text-xs hover:bg-red-700">Reject</button>
+                                            <button class="px-3 py-1 bg-gray-600 text-white rounded text-xs hover:bg-gray-700">Review</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Overdue Reports -->
+                <div class="bg-white rounded-lg shadow">
+                    <div class="p-6 border-b border-gray-200">
+                        <div class="flex items-center justify-between">
+                            <h2 class="text-xl font-bold text-gray-900">Overdue Reports (Q1 2026)</h2>
+                            <span class="px-3 py-1 bg-red-100 text-red-800 rounded-full text-sm font-semibold">5 Overdue</span>
+                        </div>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead class="bg-gray-50 border-b border-gray-200">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Name</th>
+                                    <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Type</th>
+                                    <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Due Date</th>
+                                    <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Days Late</th>
+                                    <th class="px-6 py-3 text-center text-xs font-semibold text-gray-600 uppercase">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-200">
+                                <tr class="hover:bg-gray-50 bg-red-50">
+                                    <td class="px-6 py-4">
+                                        <div class="font-medium text-gray-900">Robert Williams</div>
+                                        <div class="text-sm text-gray-500">Lobbyist</div>
+                                    </td>
+                                    <td class="px-6 py-4 text-sm text-gray-600">Expense Report</td>
+                                    <td class="px-6 py-4 text-sm text-gray-600">Apr 15, 2026</td>
+                                    <td class="px-6 py-4">
+                                        <span class="px-2 py-1 bg-red-200 text-red-900 rounded-full text-xs font-bold">8 days</span>
+                                    </td>
+                                    <td class="px-6 py-4 text-center">
+                                        <div class="flex items-center justify-center space-x-2">
+                                            <button class="px-3 py-1 bg-blue-600 text-white rounded text-xs hover:bg-blue-700">Send Reminder</button>
+                                            <button class="px-3 py-1 bg-red-600 text-white rounded text-xs hover:bg-red-700">Issue Fine</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr class="hover:bg-gray-50 bg-red-50">
+                                    <td class="px-6 py-4">
+                                        <div class="font-medium text-gray-900">Tech Industry Associates</div>
+                                        <div class="text-sm text-gray-500">Employer</div>
+                                    </td>
+                                    <td class="px-6 py-4 text-sm text-gray-600">Employer Report</td>
+                                    <td class="px-6 py-4 text-sm text-gray-600">Apr 15, 2026</td>
+                                    <td class="px-6 py-4">
+                                        <span class="px-2 py-1 bg-red-200 text-red-900 rounded-full text-xs font-bold">8 days</span>
+                                    </td>
+                                    <td class="px-6 py-4 text-center">
+                                        <div class="flex items-center justify-center space-x-2">
+                                            <button class="px-3 py-1 bg-blue-600 text-white rounded text-xs hover:bg-blue-700">Send Reminder</button>
+                                            <button class="px-3 py-1 bg-red-600 text-white rounded text-xs hover:bg-red-700">Issue Fine</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="p-4 border-t border-gray-200 bg-gray-50">
+                        <button class="text-blue-600 hover:text-blue-800 font-medium text-sm">
+                            View All Overdue Reports (5) →
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column - 1/3 width -->
+            <div class="space-y-6">
+                <!-- Quick Actions -->
+                <div class="bg-white rounded-lg shadow p-6">
+                    <h2 class="text-lg font-bold text-gray-900 mb-4">Quick Actions</h2>
+                    <div class="space-y-3">
+                        <button class="w-full px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 font-medium text-sm text-left flex items-center">
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                            </svg>
+                            Send Bulk Reminders
+                        </button>
+                        <button class="w-full px-4 py-2 bg-gray-700 text-white rounded-md hover:bg-gray-800 font-medium text-sm text-left flex items-center">
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                            </svg>
+                            Generate Compliance Report
+                        </button>
+                        <button class="w-full px-4 py-2 bg-gray-700 text-white rounded-md hover:bg-gray-800 font-medium text-sm text-left flex items-center">
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
+                            </svg>
+                            Manage User Accounts
+                        </button>
+                        <button class="w-full px-4 py-2 bg-gray-700 text-white rounded-md hover:bg-gray-800 font-medium text-sm text-left flex items-center">
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/>
+                            </svg>
+                            System Settings
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Violations & Enforcement -->
+                <div class="bg-white rounded-lg shadow p-6">
+                    <h2 class="text-lg font-bold text-gray-900 mb-4">Active Violations</h2>
+                    <div class="space-y-4">
+                        <div class="border-l-4 border-red-500 pl-4 py-2">
+                            <div class="font-medium text-gray-900">Robert Williams</div>
+                            <div class="text-sm text-gray-600">Late Q1 Report</div>
+                            <div class="text-xs text-gray-500 mt-1">Fine: $250 • Issued Apr 20</div>
+                            <div class="mt-2">
+                                <span class="px-2 py-1 bg-orange-100 text-orange-800 rounded-full text-xs font-medium">Appeal Pending</span>
+                            </div>
+                        </div>
+
+                        <div class="border-l-4 border-red-500 pl-4 py-2">
+                            <div class="font-medium text-gray-900">Tech Industry Associates</div>
+                            <div class="text-sm text-gray-600">Late Q1 Report</div>
+                            <div class="text-xs text-gray-500 mt-1">Fine: $500 • Issued Apr 20</div>
+                            <div class="mt-2">
+                                <span class="px-2 py-1 bg-red-100 text-red-800 rounded-full text-xs font-medium">Unpaid</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 pt-4 border-t border-gray-200">
+                        <button class="text-blue-600 hover:text-blue-800 font-medium text-sm">
+                            View All Violations →
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Recent Activity -->
+                <div class="bg-white rounded-lg shadow p-6">
+                    <h2 class="text-lg font-bold text-gray-900 mb-4">Recent Activity</h2>
+                    <div class="space-y-3 text-sm">
+                        <div class="flex items-start space-x-3">
+                            <div class="w-2 h-2 bg-green-500 rounded-full mt-1.5"></div>
+                            <div class="flex-1">
+                                <div class="text-gray-900">Registration approved</div>
+                                <div class="text-gray-500 text-xs">Michael Chen • 2 hours ago</div>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start space-x-3">
+                            <div class="w-2 h-2 bg-blue-500 rounded-full mt-1.5"></div>
+                            <div class="flex-1">
+                                <div class="text-gray-900">Q1 Report submitted</div>
+                                <div class="text-gray-500 text-xs">Emily Rodriguez • 4 hours ago</div>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start space-x-3">
+                            <div class="w-2 h-2 bg-orange-500 rounded-full mt-1.5"></div>
+                            <div class="flex-1">
+                                <div class="text-gray-900">Reminder sent</div>
+                                <div class="text-gray-500 text-xs">5 overdue lobbyists • 6 hours ago</div>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start space-x-3">
+                            <div class="w-2 h-2 bg-red-500 rounded-full mt-1.5"></div>
+                            <div class="flex-1">
+                                <div class="text-gray-900">Fine issued</div>
+                                <div class="text-gray-500 text-xs">Robert Williams • 1 day ago</div>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start space-x-3">
+                            <div class="w-2 h-2 bg-green-500 rounded-full mt-1.5"></div>
+                            <div class="flex-1">
+                                <div class="text-gray-900">Registration approved</div>
+                                <div class="text-gray-500 text-xs">Jennifer Lee • 1 day ago</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 pt-4 border-t border-gray-200">
+                        <button class="text-blue-600 hover:text-blue-800 font-medium text-sm">
+                            View Audit Log →
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Design Notes -->
+        <div class="mt-8 bg-yellow-50 border-l-4 border-yellow-400 p-6 rounded">
+            <h3 class="font-bold text-lg mb-3">🎨 Design Notes & Decisions</h3>
+
+            <div class="space-y-4 text-sm">
+                <div>
+                    <h4 class="font-semibold mb-1">Dashboard Layout: 2/3 + 1/3 Column</h4>
+                    <p class="text-gray-700"><strong>Why:</strong> Main content (deadlines, registrations, reports) on left, contextual actions/info on right</p>
+                    <p class="text-gray-700"><strong>Benefit:</strong> Scan left for work items, right for quick actions and monitoring</p>
+                </div>
+
+                <div>
+                    <h4 class="font-semibold mb-1">Alert-Driven Interface</h4>
+                    <p class="text-gray-700"><strong>Why:</strong> Admin needs to prioritize urgent items (overdue reports, pending registrations)</p>
+                    <p class="text-gray-700"><strong>Color Coding:</strong> Red = urgent/overdue, Orange = needs attention, Blue = informational, Green = positive action</p>
+                </div>
+
+                <div>
+                    <h4 class="font-semibold mb-1">In-Line Actions vs. Drill-Down</h4>
+                    <p class="text-gray-700"><strong>Chosen:</strong> Quick actions (Approve/Reject/Review) directly in tables for high-frequency tasks</p>
+                    <p class="text-gray-700"><strong>Alternative:</strong> Click to detail page for every action (slower workflow)</p>
+                </div>
+
+                <div>
+                    <h4 class="font-semibold mb-1">Stats Cards at Top</h4>
+                    <p class="text-gray-700"><strong>Why:</strong> At-a-glance system health, trend indicators (up/down arrows)</p>
+                    <p class="text-gray-700"><strong>Future:</strong> Click stat card to filter view (e.g., click "Active Lobbyists" to see list)</p>
+                </div>
+
+                <div>
+                    <h4 class="font-semibold mb-1">Days Pending/Late Badges</h4>
+                    <p class="text-gray-700"><strong>Why:</strong> Visual urgency indicator, helps prioritize review queue</p>
+                    <p class="text-gray-700"><strong>Thresholds:</strong> 0-3 days (yellow), 4-7 days (orange), 8+ days (red)</p>
+                </div>
+
+                <div>
+                    <h4 class="font-semibold mb-1">Bulk Actions</h4>
+                    <p class="text-gray-700"><strong>Implementation:</strong> "Send Bulk Reminders" button → modal with filters (overdue only, specific quarter, etc.)</p>
+                    <p class="text-gray-700"><strong>Why:</strong> Admin efficiency for common tasks (reminder emails before deadline)</p>
+                </div>
+
+                <div>
+                    <h4 class="font-semibold mb-1">Recent Activity Feed</h4>
+                    <p class="text-gray-700"><strong>Why:</strong> Awareness of system activity, especially useful for multi-admin teams</p>
+                    <p class="text-gray-700"><strong>Links to:</strong> Full audit log with filtering/search</p>
+                </div>
+
+                <div>
+                    <h4 class="font-semibold mb-1">Accessibility Considerations</h4>
+                    <ul class="list-disc list-inside text-gray-700 space-y-1">
+                        <li>Color not sole indicator (also text/icons)</li>
+                        <li>Keyboard navigation for table actions</li>
+                        <li>Screen reader labels for icon buttons</li>
+                        <li>Focus management for modal workflows</li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="font-semibold mb-1">Missing Features (Future)</h4>
+                    <ul class="list-disc list-inside text-gray-700 space-y-1">
+                        <li>Search/filter functionality on tables</li>
+                        <li>Export to CSV for reporting</li>
+                        <li>Batch approval workflow</li>
+                        <li>Dashboard customization (admin preferences)</li>
+                        <li>Real-time notifications (WebSocket)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

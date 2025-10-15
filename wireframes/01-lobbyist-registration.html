@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wireframe: Lobbyist Registration</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100">
+    <!-- Navigation -->
+    <nav class="bg-blue-900 text-white p-4 shadow-lg">
+        <div class="max-w-6xl mx-auto flex items-center justify-between">
+            <div class="flex items-center space-x-2">
+                <span class="text-2xl">⚖️</span>
+                <span class="font-bold text-xl">Multnomah County Lobbyist Registry</span>
+            </div>
+            <div class="space-x-4">
+                <a href="#" class="hover:underline">Home</a>
+                <a href="#" class="hover:underline">Search Lobbyists</a>
+                <a href="#" class="hover:underline">FAQ</a>
+                <a href="#" class="hover:underline">Sign In</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-4xl mx-auto p-8">
+        <!-- Progress Indicator -->
+        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+            <h2 class="text-sm font-semibold text-gray-600 mb-4">Registration Progress</h2>
+            <div class="flex items-center justify-between">
+                <div class="flex flex-col items-center flex-1">
+                    <div class="w-10 h-10 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold mb-2">1</div>
+                    <span class="text-xs text-center font-semibold text-blue-600">Account Info</span>
+                </div>
+                <div class="flex-1 h-1 bg-gray-300 mx-2"></div>
+                <div class="flex flex-col items-center flex-1">
+                    <div class="w-10 h-10 bg-gray-300 text-gray-600 rounded-full flex items-center justify-center font-bold mb-2">2</div>
+                    <span class="text-xs text-center text-gray-500">Employer</span>
+                </div>
+                <div class="flex-1 h-1 bg-gray-300 mx-2"></div>
+                <div class="flex flex-col items-center flex-1">
+                    <div class="w-10 h-10 bg-gray-300 text-gray-600 rounded-full flex items-center justify-center font-bold mb-2">3</div>
+                    <span class="text-xs text-center text-gray-500">Authorization</span>
+                </div>
+                <div class="flex-1 h-1 bg-gray-300 mx-2"></div>
+                <div class="flex flex-col items-center flex-1">
+                    <div class="w-10 h-10 bg-gray-300 text-gray-600 rounded-full flex items-center justify-center font-bold mb-2">4</div>
+                    <span class="text-xs text-center text-gray-500">Review</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Form -->
+        <div class="bg-white rounded-lg shadow-md p-8">
+            <!-- Alert Box -->
+            <div class="bg-blue-50 border-l-4 border-blue-400 p-4 mb-6">
+                <div class="flex">
+                    <div class="flex-shrink-0">
+                        <svg class="h-5 w-5 text-blue-400" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+                        </svg>
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-sm text-blue-700">
+                            <strong>Important:</strong> You must register within 3 working days after exceeding 10 hours of lobbying in a calendar quarter.
+                            <a href="#" class="underline font-semibold">Learn more about exemptions</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <h1 class="text-3xl font-bold text-gray-900 mb-2">Register as a Lobbyist</h1>
+            <p class="text-gray-600 mb-8">Step 1 of 4: Your Contact Information</p>
+
+            <form class="space-y-6">
+                <!-- Personal Information Section -->
+                <div>
+                    <h2 class="text-xl font-semibold text-gray-900 mb-4 pb-2 border-b">Personal Information</h2>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                First Name <span class="text-red-500">*</span>
+                            </label>
+                            <input type="text" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="John" required>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Last Name <span class="text-red-500">*</span>
+                            </label>
+                            <input type="text" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Doe" required>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Email Address <span class="text-red-500">*</span>
+                            </label>
+                            <input type="email" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="john.doe@example.com" required>
+                            <p class="mt-1 text-xs text-gray-500">We'll send confirmation and reminders to this email</p>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Phone Number <span class="text-red-500">*</span>
+                            </label>
+                            <input type="tel" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="(503) 555-1234" required>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Address Section -->
+                <div>
+                    <h2 class="text-xl font-semibold text-gray-900 mb-4 pb-2 border-b">Mailing Address</h2>
+
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Street Address <span class="text-red-500">*</span>
+                            </label>
+                            <input type="text" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="123 Main Street" required>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Address Line 2
+                            </label>
+                            <input type="text" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Suite 200 (optional)">
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">
+                                    City <span class="text-red-500">*</span>
+                                </label>
+                                <input type="text" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Portland" required>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">
+                                    State <span class="text-red-500">*</span>
+                                </label>
+                                <select class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
+                                    <option value="">Select...</option>
+                                    <option value="OR" selected>Oregon</option>
+                                    <option value="WA">Washington</option>
+                                    <option value="CA">California</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">
+                                    ZIP Code <span class="text-red-500">*</span>
+                                </label>
+                                <input type="text" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="97201" required>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Lobbying Activity -->
+                <div>
+                    <h2 class="text-xl font-semibold text-gray-900 mb-4 pb-2 border-b">Lobbying Activity</h2>
+
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Hours Spent Lobbying This Quarter <span class="text-red-500">*</span>
+                            </label>
+                            <input type="number" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="15" min="10" required>
+                            <p class="mt-1 text-xs text-gray-500">Must be more than 10 hours to require registration</p>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                General Subjects of Legislative Interest <span class="text-red-500">*</span>
+                            </label>
+                            <textarea rows="4" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Example: Housing policy, transportation funding, environmental regulations..." required></textarea>
+                            <p class="mt-1 text-xs text-gray-500">Briefly describe the topics or issues you will be lobbying on behalf of your employer(s)</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex items-center justify-between pt-6 border-t">
+                    <a href="#" class="text-gray-600 hover:text-gray-900 font-medium">
+                        ← Back to Home
+                    </a>
+                    <div class="space-x-4">
+                        <button type="button" class="px-6 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 font-medium">
+                            Save Draft
+                        </button>
+                        <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 font-medium">
+                            Continue to Step 2 →
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- Design Notes -->
+        <div class="mt-8 bg-yellow-50 border-l-4 border-yellow-400 p-6 rounded">
+            <h3 class="font-bold text-lg mb-3">🎨 Design Notes & Decisions</h3>
+
+            <div class="space-y-4 text-sm">
+                <div>
+                    <h4 class="font-semibold mb-1">Multi-Step Form Approach</h4>
+                    <p class="text-gray-700"><strong>Why:</strong> Reduces cognitive load, clear progress indicator, allows save/resume, easier validation per section</p>
+                    <p class="text-gray-700"><strong>Alternative:</strong> Single-page accordion form (all sections visible, collapse/expand)</p>
+                </div>
+
+                <div>
+                    <h4 class="font-semibold mb-1">Prominent Alert Box</h4>
+                    <p class="text-gray-700"><strong>Why:</strong> 3-day deadline is critical, links to exemption checker, sets expectations</p>
+                </div>
+
+                <div>
+                    <h4 class="font-semibold mb-1">Hours Spent Field</h4>
+                    <p class="text-gray-700"><strong>Why:</strong> Validates 10+ hour requirement, helps users self-check eligibility</p>
+                    <p class="text-gray-700"><strong>Alternative:</strong> Could link to separate hour-tracking tool</p>
+                </div>
+
+                <div>
+                    <h4 class="font-semibold mb-1">Subject Text Area</h4>
+                    <p class="text-gray-700"><strong>Why:</strong> Free-form allows flexibility, examples guide users</p>
+                    <p class="text-gray-700"><strong>Alternative:</strong> Predefined categories with checkboxes + "other" field</p>
+                </div>
+
+                <div>
+                    <h4 class="font-semibold mb-1">Save Draft Button</h4>
+                    <p class="text-gray-700"><strong>Why:</strong> Long form, users may need to gather information, prevents data loss</p>
+                </div>
+
+                <div>
+                    <h4 class="font-semibold mb-1">Accessibility Considerations</h4>
+                    <ul class="list-disc list-inside text-gray-700 space-y-1">
+                        <li>Required fields marked with asterisk and aria-required</li>
+                        <li>Help text associated with inputs (aria-describedby)</li>
+                        <li>Clear focus indicators (ring-2 on focus)</li>
+                        <li>Logical tab order</li>
+                        <li>High contrast colors</li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="font-semibold mb-1">Next Steps in Flow</h4>
+                    <p class="text-gray-700"><strong>Step 2:</strong> Select/add employer(s) - search existing or create new</p>
+                    <p class="text-gray-700"><strong>Step 3:</strong> Upload authorization document(s) from employer(s)</p>
+                    <p class="text-gray-700"><strong>Step 4:</strong> Review all information, attest to accuracy, submit</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

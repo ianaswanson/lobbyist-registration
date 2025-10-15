@@ -1,0 +1,107 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Multnomah County//Board Member Calendar//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+
+BEGIN:VEVENT
+UID:2025-q1-meeting-001@multnomah.gov
+DTSTAMP:20250115T120000Z
+DTSTART:20250115T140000
+DTEND:20250115T160000
+SUMMARY:Budget Planning Workshop
+DESCRIPTION:Quarterly budget review and planning session with department heads
+LOCATION:Room 301, County Administration Building
+ATTENDEE;CN=Finance Director:mailto:finance@multnomah.gov
+ATTENDEE;CN=County Chair:mailto:chair@multnomah.gov
+ATTENDEE;CN=Budget Committee Members:mailto:budget@multnomah.gov
+END:VEVENT
+
+BEGIN:VEVENT
+UID:2025-q1-meeting-002@multnomah.gov
+DTSTAMP:20250122T120000Z
+DTSTART:20250122T100000
+DTEND:20250122T113000
+SUMMARY:Community Engagement Forum
+DESCRIPTION:Public forum on housing policy and affordable housing initiatives
+LOCATION:Central Library, Community Room
+ATTENDEE;CN=Community Members:mailto:community@multnomah.gov
+ATTENDEE;CN=Housing Staff:mailto:housing@multnomah.gov
+END:VEVENT
+
+BEGIN:VEVENT
+UID:2025-q1-meeting-003@multnomah.gov
+DTSTAMP:20250205T120000Z
+DTSTART:20250205T130000
+DTEND:20250205T150000
+SUMMARY:Transportation Infrastructure Meeting
+DESCRIPTION:Discussion on transportation projects and infrastructure improvements
+LOCATION:Public Works Conference Room
+ATTENDEE;CN=Transportation Director:mailto:transport@multnomah.gov
+ATTENDEE;CN=Engineering Team:mailto:engineering@multnomah.gov
+ATTENDEE;CN=Metro Representatives:mailto:metro@oregonmetro.gov
+END:VEVENT
+
+BEGIN:VEVENT
+UID:2025-q1-meeting-004@multnomah.gov
+DTSTAMP:20250212T120000Z
+DTSTART:20250212T090000
+DTEND:20250212T110000
+SUMMARY:Environmental Sustainability Roundtable
+DESCRIPTION:Quarterly review of environmental goals and climate action plan
+LOCATION:Virtual Meeting (Zoom)
+ATTENDEE;CN=Sustainability Office:mailto:sustainability@multnomah.gov
+ATTENDEE;CN=Environmental Advocates:mailto:advocates@environment.org
+END:VEVENT
+
+BEGIN:VEVENT
+UID:2025-q1-meeting-005@multnomah.gov
+DTSTAMP:20250220T120000Z
+DTSTART:20250220T140000
+DTEND:20250220T163000
+SUMMARY:Health Services Committee Meeting
+DESCRIPTION:Review of public health programs and mental health services funding
+LOCATION:Health Department Headquarters
+ATTENDEE;CN=Health Director:mailto:health@multnomah.gov
+ATTENDEE;CN=Mental Health Services:mailto:mental-health@multnomah.gov
+ATTENDEE;CN=Healthcare Advocates:mailto:advocates@healthcareoregon.org
+END:VEVENT
+
+BEGIN:VEVENT
+UID:2025-q1-meeting-006@multnomah.gov
+DTSTAMP:20250228T120000Z
+DTSTART:20250228T100000
+DTEND:20250228T120000
+SUMMARY:Economic Development Briefing
+DESCRIPTION:Updates on economic development projects and workforce initiatives
+LOCATION:Room 201, County Administration Building
+ATTENDEE;CN=Economic Development Team:mailto:econ-dev@multnomah.gov
+ATTENDEE;CN=Business Leaders:mailto:business@portlandchamber.org
+END:VEVENT
+
+BEGIN:VEVENT
+UID:2025-q1-meeting-007@multnomah.gov
+DTSTAMP:20250310T120000Z
+DTSTART:20250310T150000
+DTEND:20250310T170000
+SUMMARY:Public Safety and Justice Reform Session
+DESCRIPTION:Discussion on criminal justice reform and public safety strategies
+LOCATION:Justice Center, Conference Room A
+ATTENDEE;CN=District Attorney:mailto:da@multnomah.gov
+ATTENDEE;CN=Sheriff:mailto:sheriff@multnomah.gov
+ATTENDEE;CN=Community Justice Partners:mailto:justice@communityjustice.org
+END:VEVENT
+
+BEGIN:VEVENT
+UID:2025-q1-meeting-008@multnomah.gov
+DTSTAMP:20250318T120000Z
+DTSTART:20250318T130000
+DTEND:20250318T143000
+SUMMARY:Library Services Expansion Planning
+DESCRIPTION:Planning for library services expansion and digital resources
+LOCATION:Central Library, Administrative Offices
+ATTENDEE;CN=Library Director:mailto:library@multcolib.org
+ATTENDEE;CN=Community Partners:mailto:partners@library.org
+END:VEVENT
+
+END:VCALENDAR
