@@ -2,11 +2,13 @@ import { signIn } from "@/lib/auth"
 import { AuthError } from "next-auth"
 import { redirect } from "next/navigation"
 
-export default function SignInPage({
+export default async function SignInPage({
   searchParams,
 }: {
-  searchParams: { callbackUrl?: string; error?: string }
+  searchParams: Promise<{ callbackUrl?: string; error?: string }>
 }) {
+  const params = await searchParams
+
   async function handleSignIn(formData: FormData) {
     "use server"
 
@@ -17,11 +19,14 @@ export default function SignInPage({
       await signIn("credentials", {
         email,
         password,
-        redirectTo: searchParams.callbackUrl || "/dashboard",
+        redirect: false,
       })
+      // If successful, redirect manually
+      redirect(params.callbackUrl || "/dashboard")
     } catch (error) {
       if (error instanceof AuthError) {
-        return redirect(`/auth/signin?error=CredentialsSignin`)
+        // Redirect back to signin with error
+        redirect(`/auth/signin?error=CredentialsSignin`)
       }
       throw error
     }
@@ -39,7 +44,7 @@ export default function SignInPage({
           </p>
         </div>
 
-        {searchParams.error && (
+        {params.error && (
           <div className="rounded-md bg-red-50 p-4">
             <p className="text-sm text-red-800">
               Invalid email or password. Please try again.
@@ -92,13 +97,11 @@ export default function SignInPage({
           </button>
         </form>
 
-        <div className="text-center text-sm">
-          <a
-            href="/auth/signup"
-            className="text-blue-600 hover:text-blue-500"
-          >
-            Don&apos;t have an account? Sign up
-          </a>
+        <div className="text-center text-sm text-gray-600">
+          <p className="mb-2">Don&apos;t have an account?</p>
+          <p className="text-xs">
+            Contact Multnomah County staff to request access.
+          </p>
         </div>
       </div>
     </div>

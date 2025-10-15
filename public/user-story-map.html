@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lobbyist Registration System - User Story Map</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'default',
+            flowchart: {
+                useMaxWidth: true,
+                htmlLabels: true,
+                curve: 'basis'
+            }
+        });
+    </script>
+    <style>
+        .mermaid {
+            background: white;
+        }
+        .priority-legend {
+            display: flex;
+            gap: 2rem;
+            padding: 1rem;
+            background: #f3f4f6;
+            border-radius: 0.5rem;
+            margin: 1rem 0;
+        }
+        .priority-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .priority-dot {
+            width: 1rem;
+            height: 1rem;
+            border-radius: 50%;
+        }
+        .mvp { background: #ef4444; }
+        .phase2 { background: #f59e0b; }
+        .phase3 { background: #10b981; }
+    </style>
+</head>
+<body class="bg-gray-50 p-8">
+    <div class="max-w-7xl mx-auto">
+        <header class="mb-8">
+            <h1 class="text-4xl font-bold text-gray-900 mb-2">Lobbyist Registration System</h1>
+            <h2 class="text-2xl text-gray-600 mb-4">User Story Map</h2>
+
+            <div class="priority-legend">
+                <div class="priority-item">
+                    <div class="priority-dot mvp"></div>
+                    <span class="font-semibold">🔴 MVP - Launch Critical (Phase 1)</span>
+                </div>
+                <div class="priority-item">
+                    <div class="priority-dot phase2"></div>
+                    <span class="font-semibold">🟡 Phase 2 - Important (Post-Launch)</span>
+                </div>
+                <div class="priority-item">
+                    <div class="priority-dot phase3"></div>
+                    <span class="font-semibold">🟢 Phase 3 - Enhancement (Future)</span>
+                </div>
+            </div>
+
+            <div class="bg-blue-50 border-l-4 border-blue-400 p-4 mb-4">
+                <p class="text-sm text-blue-800">
+                    <strong>How to Read:</strong> Each swim lane represents a user role. Activities flow left-to-right showing the user journey.
+                    Tasks are listed under each activity. Click and scroll to explore the full map.
+                </p>
+            </div>
+        </header>
+
+        <!-- LOBBYIST Journey -->
+        <section class="mb-12 bg-white p-6 rounded-lg shadow">
+            <h3 class="text-2xl font-bold mb-4 text-indigo-700">👤 LOBBYIST Journey</h3>
+            <div class="mermaid">
+graph LR
+    subgraph "1️⃣ Determine Registration<br/>🔴 MVP"
+        A1[Check Hours<br/>Spent Lobbying]
+        A2[Understand<br/>Exemptions]
+        A3[Read<br/>Requirements]
+    end
+
+    subgraph "2️⃣ Register<br/>🔴 MVP"
+        B1[Create<br/>Account]
+        B2[Complete<br/>Registration Form]
+        B3[Select/Add<br/>Employer]
+        B4[Upload Auth<br/>Document]
+        B5[Submit<br/>Application]
+    end
+
+    subgraph "3️⃣ Track Activity<br/>🟡 Phase 2"
+        C1[Log Lobbying<br/>Hours]
+        C2[Get Warning<br/>at 8hrs]
+        C3[Track by<br/>Employer]
+    end
+
+    subgraph "4️⃣ Report Quarterly<br/>🔴 MVP"
+        D1[Receive Reminder<br/>Email]
+        D2[Enter Expense<br/>Totals]
+        D3[Itemize >$50<br/>Expenditures]
+        D4[Add Estimates<br/>if needed]
+        D5[Submit<br/>Report]
+    end
+
+    subgraph "5️⃣ Manage Profile<br/>🟡 Phase 2"
+        E1[Update Contact<br/>Info]
+        E2[Add/Remove<br/>Employers]
+        E3[View Past<br/>Reports]
+        E4[Download<br/>PDFs]
+    end
+
+    A1 --> A2 --> A3 --> B1
+    B1 --> B2 --> B3 --> B4 --> B5
+    B5 --> C1
+    C1 --> C2 --> C3
+    C3 --> D1
+    D1 --> D2 --> D3 --> D4 --> D5
+    D5 --> E1
+    E1 --> E2 --> E3 --> E4
+
+    style A1 fill:#fee2e2
+    style A2 fill:#fee2e2
+    style A3 fill:#fee2e2
+    style B1 fill:#fee2e2
+    style B2 fill:#fee2e2
+    style B3 fill:#fee2e2
+    style B4 fill:#fee2e2
+    style B5 fill:#fee2e2
+    style D1 fill:#fee2e2
+    style D2 fill:#fee2e2
+    style D3 fill:#fee2e2
+    style D4 fill:#fee2e2
+    style D5 fill:#fee2e2
+    style C1 fill:#fef3c7
+    style C2 fill:#fef3c7
+    style C3 fill:#fef3c7
+    style E1 fill:#fef3c7
+    style E2 fill:#fef3c7
+    style E3 fill:#fef3c7
+    style E4 fill:#fef3c7
+            </div>
+        </section>
+
+        <!-- EMPLOYER Journey -->
+        <section class="mb-12 bg-white p-6 rounded-lg shadow">
+            <h3 class="text-2xl font-bold mb-4 text-purple-700">🏢 EMPLOYER Journey</h3>
+            <div class="mermaid">
+graph LR
+    subgraph "1️⃣ Authorize Lobbyists<br/>🔴 MVP"
+        F1[Receive<br/>Request]
+        F2[Review<br/>Request]
+        F3[Sign<br/>Authorization]
+        F4[Upload<br/>Document]
+    end
+
+    subgraph "2️⃣ Manage Lobbyists<br/>🟡 Phase 2"
+        G1[View Active<br/>Lobbyists]
+        G2[Add New<br/>Lobbyist]
+        G3[Terminate<br/>Authorization]
+    end
+
+    subgraph "3️⃣ Report Quarterly<br/>🔴 MVP"
+        H1[Receive Reminder<br/>Email]
+        H2[Enter Total<br/>Lobbying Spend]
+        H3[Report Spending<br/>per Lobbyist]
+        H4[Itemize >$50<br/>to Officials]
+        H5[Submit<br/>Report]
+    end
+
+    subgraph "4️⃣ Review Compliance<br/>🟡 Phase 2"
+        I1[View<br/>Deadlines]
+        I2[Download<br/>Past Reports]
+        I3[View Lobbyist<br/>Reports]
+    end
+
+    F1 --> F2 --> F3 --> F4
+    F4 --> G1
+    G1 --> G2 --> G3
+    G3 --> H1
+    H1 --> H2 --> H3 --> H4 --> H5
+    H5 --> I1
+    I1 --> I2 --> I3
+
+    style F1 fill:#fee2e2
+    style F2 fill:#fee2e2
+    style F3 fill:#fee2e2
+    style F4 fill:#fee2e2
+    style H1 fill:#fee2e2
+    style H2 fill:#fee2e2
+    style H3 fill:#fee2e2
+    style H4 fill:#fee2e2
+    style H5 fill:#fee2e2
+    style G1 fill:#fef3c7
+    style G2 fill:#fef3c7
+    style G3 fill:#fef3c7
+    style I1 fill:#fef3c7
+    style I2 fill:#fef3c7
+    style I3 fill:#fef3c7
+            </div>
+        </section>
+
+        <!-- BOARD MEMBER Journey -->
+        <section class="mb-12 bg-white p-6 rounded-lg shadow">
+            <h3 class="text-2xl font-bold mb-4 text-blue-700">⚖️ BOARD MEMBER Journey</h3>
+            <div class="mermaid">
+graph LR
+    subgraph "1️⃣ Post Calendar<br/>🔴 MVP"
+        J1[Enter Meeting<br/>Events]
+        J2[Add Attendee<br/>Info]
+        J3[Bulk Import<br/>CSV]
+        J4[Submit<br/>Quarterly]
+    end
+
+    subgraph "2️⃣ Track Receipts<br/>🔴 MVP"
+        K1[Log Receipt<br/>from Lobbyist]
+        K2[Track Running<br/>Total]
+        K3[Categorize<br/>Expenditure]
+    end
+
+    subgraph "3️⃣ Report Receipts<br/>🔴 MVP"
+        L1[Receive<br/>Reminder]
+        L2[Review Logged<br/>Receipts]
+        L3[Itemize >$50<br/>Expenditures]
+        L4[Submit<br/>Quarterly Report]
+    end
+
+    subgraph "4️⃣ Research Lobbyists<br/>🟡 Phase 2"
+        M1[Search<br/>Lobbyists]
+        M2[View Lobbyist<br/>Activity]
+        M3[View Employer<br/>Info]
+    end
+
+    J1 --> J2 --> J3 --> J4
+    J4 --> K1
+    K1 --> K2 --> K3
+    K3 --> L1
+    L1 --> L2 --> L3 --> L4
+    L4 --> M1
+    M1 --> M2 --> M3
+
+    style J1 fill:#fee2e2
+    style J2 fill:#fee2e2
+    style J3 fill:#fee2e2
+    style J4 fill:#fee2e2
+    style K1 fill:#fee2e2
+    style K2 fill:#fee2e2
+    style K3 fill:#fee2e2
+    style L1 fill:#fee2e2
+    style L2 fill:#fee2e2
+    style L3 fill:#fee2e2
+    style L4 fill:#fee2e2
+    style M1 fill:#fef3c7
+    style M2 fill:#fef3c7
+    style M3 fill:#fef3c7
+            </div>
+        </section>
+
+        <!-- PUBLIC Journey -->
+        <section class="mb-12 bg-white p-6 rounded-lg shadow">
+            <h3 class="text-2xl font-bold mb-4 text-green-700">🌐 PUBLIC Journey</h3>
+            <div class="mermaid">
+graph LR
+    subgraph "1️⃣ Search Lobbyists<br/>🔴 MVP"
+        N1[Basic<br/>Search]
+        N2[Filter by<br/>Name]
+        N3[Filter by<br/>Employer]
+        N4[Filter by<br/>Subject]
+        N5[Filter by<br/>Date Range]
+    end
+
+    subgraph "2️⃣ View Details<br/>🔴 MVP"
+        O1[View Lobbyist<br/>Profile]
+        O2[View Expense<br/>Reports]
+        O3[View Employer<br/>Info]
+        O4[View Board<br/>Calendars]
+    end
+
+    subgraph "3️⃣ Analyze Data<br/>🟡 Phase 2"
+        P1[View Top<br/>Spenders]
+        P2[View Most Active<br/>Subjects]
+        P3[Spending<br/>Trends]
+        P4[Visual<br/>Charts]
+    end
+
+    subgraph "4️⃣ Export Data<br/>🟢 Phase 3"
+        Q1[Download<br/>CSV]
+        Q2[Download<br/>PDF Reports]
+        Q3[API<br/>Access]
+    end
+
+    N1 --> N2 --> N3 --> N4 --> N5
+    N5 --> O1
+    O1 --> O2 --> O3 --> O4
+    O4 --> P1
+    P1 --> P2 --> P3 --> P4
+    P4 --> Q1
+    Q1 --> Q2 --> Q3
+
+    style N1 fill:#fee2e2
+    style N2 fill:#fee2e2
+    style N3 fill:#fee2e2
+    style N4 fill:#fee2e2
+    style N5 fill:#fee2e2
+    style O1 fill:#fee2e2
+    style O2 fill:#fee2e2
+    style O3 fill:#fee2e2
+    style O4 fill:#fee2e2
+    style P1 fill:#fef3c7
+    style P2 fill:#fef3c7
+    style P3 fill:#fef3c7
+    style P4 fill:#fef3c7
+    style Q1 fill:#d1fae5
+    style Q2 fill:#d1fae5
+    style Q3 fill:#d1fae5
+            </div>
+        </section>
+
+        <!-- ADMIN Journey -->
+        <section class="mb-12 bg-white p-6 rounded-lg shadow">
+            <h3 class="text-2xl font-bold mb-4 text-red-700">🛡️ ADMIN Journey</h3>
+            <div class="mermaid">
+graph LR
+    subgraph "1️⃣ Review Registrations<br/>🔴 MVP"
+        R1[View Pending<br/>Applications]
+        R2[Review<br/>Documents]
+        R3[Request<br/>Corrections]
+        R4[Approve/<br/>Reject]
+        R5[Send<br/>Notifications]
+    end
+
+    subgraph "2️⃣ Monitor Compliance<br/>🔴 MVP"
+        S1[Dashboard of<br/>Deadlines]
+        S2[View Overdue<br/>Reports]
+        S3[Send Reminder<br/>Emails]
+        S4[Flag Late<br/>Submissions]
+    end
+
+    subgraph "3️⃣ Enforce Violations<br/>🟡 Phase 2"
+        T1[Issue<br/>Fines]
+        T2[Track Fine<br/>Payments]
+        T3[Process<br/>Appeals]
+        T4[Schedule<br/>Hearings]
+        T5[Grant Contract<br/>Exceptions]
+    end
+
+    subgraph "4️⃣ Manage System<br/>🟡 Phase 2"
+        U1[User Account<br/>Management]
+        U2[System<br/>Settings]
+        U3[Generate<br/>Reports]
+        U4[View Audit<br/>Logs]
+    end
+
+    R1 --> R2 --> R3 --> R4 --> R5
+    R5 --> S1
+    S1 --> S2 --> S3 --> S4
+    S4 --> T1
+    T1 --> T2 --> T3 --> T4 --> T5
+    T5 --> U1
+    U1 --> U2 --> U3 --> U4
+
+    style R1 fill:#fee2e2
+    style R2 fill:#fee2e2
+    style R3 fill:#fee2e2
+    style R4 fill:#fee2e2
+    style R5 fill:#fee2e2
+    style S1 fill:#fee2e2
+    style S2 fill:#fee2e2
+    style S3 fill:#fee2e2
+    style S4 fill:#fee2e2
+    style T1 fill:#fef3c7
+    style T2 fill:#fef3c7
+    style T3 fill:#fef3c7
+    style T4 fill:#fef3c7
+    style T5 fill:#fef3c7
+    style U1 fill:#fef3c7
+    style U2 fill:#fef3c7
+    style U3 fill:#fef3c7
+    style U4 fill:#fef3c7
+            </div>
+        </section>
+
+        <!-- Summary Section -->
+        <section class="bg-white p-6 rounded-lg shadow">
+            <h3 class="text-2xl font-bold mb-4">📊 Development Priority Summary</h3>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="border-l-4 border-red-500 pl-4">
+                    <h4 class="text-xl font-bold text-red-700 mb-2">🔴 MVP - Phase 1</h4>
+                    <p class="text-sm text-gray-600 mb-2">Launch Critical (Weeks 1-8)</p>
+                    <ul class="text-sm space-y-1">
+                        <li>✅ Lobbyist registration & exemption checker</li>
+                        <li>✅ Employer authorization workflow</li>
+                        <li>✅ Quarterly expense reporting (both roles)</li>
+                        <li>✅ Board member calendar & receipt posting</li>
+                        <li>✅ Public search & view functionality</li>
+                        <li>✅ Admin review & compliance dashboard</li>
+                        <li>✅ Email notifications for deadlines</li>
+                    </ul>
+                </div>
+
+                <div class="border-l-4 border-orange-500 pl-4">
+                    <h4 class="text-xl font-bold text-orange-700 mb-2">🟡 Phase 2</h4>
+                    <p class="text-sm text-gray-600 mb-2">Post-Launch (Weeks 9-14)</p>
+                    <ul class="text-sm space-y-1">
+                        <li>⏱️ Hour tracking for lobbyists</li>
+                        <li>⏱️ Profile management & history</li>
+                        <li>⏱️ Employer lobbyist management</li>
+                        <li>⏱️ Board member research tools</li>
+                        <li>⏱️ Public data analysis & trends</li>
+                        <li>⏱️ Violation enforcement workflow</li>
+                        <li>⏱️ System admin tools</li>
+                    </ul>
+                </div>
+
+                <div class="border-l-4 border-green-500 pl-4">
+                    <h4 class="text-xl font-bold text-green-700 mb-2">🟢 Phase 3</h4>
+                    <p class="text-sm text-gray-600 mb-2">Future Enhancements</p>
+                    <ul class="text-sm space-y-1">
+                        <li>💡 Public data export (CSV)</li>
+                        <li>💡 PDF report generation</li>
+                        <li>💡 Public API access</li>
+                        <li>💡 Mobile app</li>
+                        <li>💡 Advanced analytics</li>
+                        <li>💡 Integration with other systems</li>
+                        <li>💡 Automated compliance checks</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Wireframe Recommendations -->
+        <section class="mt-8 bg-yellow-50 border-l-4 border-yellow-400 p-6 rounded-lg">
+            <h3 class="text-xl font-bold mb-4">🎨 Recommended Wireframes</h3>
+            <p class="mb-4 text-gray-700">Based on this user story map, these screens have the highest complexity/uncertainty and should be wireframed:</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="bg-white p-4 rounded border">
+                    <h4 class="font-bold mb-2">1. Lobbyist Registration Flow</h4>
+                    <ul class="text-sm text-gray-600 space-y-1">
+                        <li>• Multi-step vs single page?</li>
+                        <li>• Employer selection/creation</li>
+                        <li>• Document upload UX</li>
+                        <li>• Exemption checker integration</li>
+                    </ul>
+                </div>
+
+                <div class="bg-white p-4 rounded border">
+                    <h4 class="font-bold mb-2">2. Quarterly Expense Report</h4>
+                    <ul class="text-sm text-gray-600 space-y-1">
+                        <li>• Total + itemized expense entry</li>
+                        <li>• Table/form hybrid for >$50 items</li>
+                        <li>• Estimate flag workflow</li>
+                        <li>• Official name autocomplete</li>
+                    </ul>
+                </div>
+
+                <div class="bg-white p-4 rounded border">
+                    <h4 class="font-bold mb-2">3. Admin Compliance Dashboard</h4>
+                    <ul class="text-sm text-gray-600 space-y-1">
+                        <li>• Information density</li>
+                        <li>• Deadline visualization</li>
+                        <li>• Action priorities</li>
+                        <li>• Quick approval/rejection</li>
+                    </ul>
+                </div>
+
+                <div class="bg-white p-4 rounded border">
+                    <h4 class="font-bold mb-2">4. Public Search Interface</h4>
+                    <ul class="text-sm text-gray-600 space-y-1">
+                        <li>• Multiple filter combinations</li>
+                        <li>• Results display (table vs cards)</li>
+                        <li>• Mobile responsive layout</li>
+                        <li>• Sort and pagination</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Next Steps -->
+        <section class="mt-8 bg-blue-50 border-l-4 border-blue-400 p-6 rounded-lg">
+            <h3 class="text-xl font-bold mb-4">🚀 Next Steps</h3>
+            <ol class="space-y-2">
+                <li class="flex items-start">
+                    <span class="font-bold mr-2">1.</span>
+                    <span><strong>Review & Validate:</strong> Confirm this user story map captures all requirements from ordinance</span>
+                </li>
+                <li class="flex items-start">
+                    <span class="font-bold mr-2">2.</span>
+                    <span><strong>Create Wireframes:</strong> Build 2-3 options for the 4 complex screens identified above</span>
+                </li>
+                <li class="flex items-start">
+                    <span class="font-bold mr-2">3.</span>
+                    <span><strong>Set Up Project:</strong> Initialize Next.js + Prisma + TypeScript with database schema</span>
+                </li>
+                <li class="flex items-start">
+                    <span class="font-bold mr-2">4.</span>
+                    <span><strong>Build MVP Slice:</strong> Complete one vertical feature end-to-end (registration → admin → public view)</span>
+                </li>
+                <li class="flex items-start">
+                    <span class="font-bold mr-2">5.</span>
+                    <span><strong>Iterate:</strong> Expand horizontally, adding more MVP features following the map</span>
+                </li>
+            </ol>
+        </section>
+    </div>
+</body>
+</html>

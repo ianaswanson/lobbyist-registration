@@ -11,7 +11,8 @@ export default async function DashboardPage() {
 
   async function handleSignOut() {
     "use server"
-    await signOut({ redirectTo: "/" })
+    await signOut({ redirect: false })
+    redirect("/")
   }
 
   return (
@@ -46,38 +47,45 @@ export default async function DashboardPage() {
       </nav>
 
       <main id="main-content" className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-        <div className="rounded-lg border bg-white p-6 shadow-sm">
-          <h2 className="mb-4 text-2xl font-bold">
-            Welcome to your Dashboard
+        {/* Welcome Section */}
+        <div className="mb-8">
+          <h2 className="text-3xl font-bold text-gray-900">
+            Welcome back, {session.user?.name || session.user?.email?.split("@")[0]}
           </h2>
-          <p className="text-gray-600">
-            Authentication is working! You are signed in as {session.user?.role}.
+          <p className="mt-2 text-gray-600">
+            {session.user?.role === "LOBBYIST" && "Manage your lobbyist registration and quarterly expense reports."}
+            {session.user?.role === "EMPLOYER" && "Track and report your organization's lobbying expenditures."}
+            {session.user?.role === "BOARD_MEMBER" && "Post your calendar and lobbying receipts for public transparency."}
+            {session.user?.role === "ADMIN" && "Monitor compliance, review registrations, and manage the system."}
+            {session.user?.role === "PUBLIC" && "Search and view public lobbying records."}
           </p>
+        </div>
 
-          <div className="mt-6 rounded-md bg-green-50 p-4">
-            <h3 className="text-sm font-medium text-green-800">
-              ✅ NextAuth.js Setup Complete
-            </h3>
-            <ul className="mt-2 text-sm text-green-700 space-y-1">
-              <li>• Credentials provider configured</li>
-              <li>• JWT session strategy enabled</li>
-              <li>• Role-based access control ready</li>
-              <li>• Protected routes middleware active</li>
-            </ul>
+        {/* Important Reminders */}
+        {(session.user?.role === "LOBBYIST" || session.user?.role === "EMPLOYER") && (
+          <div className="mb-8 rounded-lg border-l-4 border-blue-500 bg-blue-50 p-4">
+            <div className="flex">
+              <div className="flex-shrink-0">
+                <svg className="h-5 w-5 text-blue-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                  <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a.75.75 0 000 1.5h.253a.25.25 0 01.244.304l-.459 2.066A1.75 1.75 0 0010.747 15H11a.75.75 0 000-1.5h-.253a.25.25 0 01-.244-.304l.459-2.066A1.75 1.75 0 009.253 9H9z" clipRule="evenodd" />
+                </svg>
+              </div>
+              <div className="ml-3">
+                <h3 className="text-sm font-medium text-blue-800">Upcoming Deadlines</h3>
+                <div className="mt-2 text-sm text-blue-700">
+                  <p>Quarterly expense reports are due: <strong>January 15, April 15, July 15, and October 15</strong></p>
+                </div>
+              </div>
+            </div>
           </div>
+        )}
 
-          <div className="mt-4 text-sm text-gray-500">
-            <p><strong>User ID:</strong> {session.user?.id}</p>
-            <p><strong>Email:</strong> {session.user?.email}</p>
-            <p><strong>Role:</strong> {session.user?.role}</p>
-          </div>
-
-          {/* Quick Actions */}
-          <div className="mt-8 border-t pt-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">
-              Quick Actions
-            </h3>
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {/* Quick Actions */}
+        <div className="mb-8">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">
+            Quick Actions
+          </h3>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {/* Exemption Checker - Available to all roles */}
               <a
                 href="/exemption-checker"
@@ -291,6 +299,26 @@ export default async function DashboardPage() {
                   </a>
                 </>
               )}
+          </div>
+        </div>
+
+        {/* Help & Resources */}
+        <div className="rounded-lg border bg-white p-6 shadow-sm">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">
+            Help & Resources
+          </h3>
+          <div className="space-y-3 text-sm text-gray-600">
+            <div>
+              <strong className="text-gray-900">Need help?</strong>
+              <p>Contact the Multnomah County Lobbying Registration Office for assistance.</p>
+            </div>
+            <div>
+              <strong className="text-gray-900">Ordinance Reference:</strong>
+              <p>View the complete <a href="/ordinance" className="text-blue-600 hover:underline">Government Accountability Ordinance</a> (effective July 1, 2026)</p>
+            </div>
+            <div>
+              <strong className="text-gray-900">Public Records:</strong>
+              <p>All lobbyist registrations and expense reports are <a href="/search" className="text-blue-600 hover:underline">publicly searchable</a> for transparency.</p>
             </div>
           </div>
         </div>

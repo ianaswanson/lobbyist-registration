@@ -119,6 +119,17 @@ export function BoardMemberCalendarForm({
     setReceipts([...receipts, ...newReceipts])
   }
 
+  const handleSaveDraft = () => {
+    console.log("Saving draft board member data:", {
+      quarter,
+      year,
+      calendarEntries,
+      receipts,
+      totalReceiptAmount,
+    })
+    alert(`Draft saved! (API integration pending)\nQuarter: ${quarter} ${year}\nCalendar Entries: ${calendarEntries.length}\nLobbying Receipts: ${receipts.length}\nTotal Receipt Amount: $${totalReceiptAmount.toFixed(2)}`)
+  }
+
   const handleSubmit = async () => {
     // TODO: Submit to API
     console.log("Submitting board member data:", {
@@ -129,7 +140,7 @@ export function BoardMemberCalendarForm({
       totalReceiptAmount,
     })
     alert(
-      `Board member data submitted!\nQuarter: ${quarter} ${year}\nCalendar Entries: ${calendarEntries.length}\nLobbying Receipts: ${receipts.length}\nTotal Receipt Amount: $${totalReceiptAmount.toFixed(2)}`
+      `Board member data submitted! (API integration pending)\nQuarter: ${quarter} ${year}\nCalendar Entries: ${calendarEntries.length}\nLobbying Receipts: ${receipts.length}\nTotal Receipt Amount: $${totalReceiptAmount.toFixed(2)}`
     )
   }
 
@@ -700,6 +711,7 @@ export function BoardMemberCalendarForm({
         <div className="flex justify-end space-x-4">
           <button
             type="button"
+            onClick={handleSaveDraft}
             className="rounded-md border border-gray-300 bg-white px-6 py-2 text-gray-700 hover:bg-gray-50"
           >
             Save as Draft

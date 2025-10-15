@@ -314,10 +314,10 @@ export function ExemptionChecker() {
               {result.mustRegister && (
                 <div className="mt-4">
                   <a
-                    href="/register/lobbyist"
+                    href="/auth/signin?callbackUrl=/register/lobbyist"
                     className="inline-flex items-center rounded-md bg-orange-600 px-4 py-2 text-sm font-medium text-white hover:bg-orange-700"
                   >
-                    Proceed to Registration
+                    Sign In to Register
                     <svg
                       className="ml-2 h-4 w-4"
                       fill="none"
@@ -332,6 +332,9 @@ export function ExemptionChecker() {
                       />
                     </svg>
                   </a>
+                  <p className="mt-2 text-xs text-orange-700">
+                    You'll need to sign in or create an account to complete your registration
+                  </p>
                 </div>
               )}
             </div>

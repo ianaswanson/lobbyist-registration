@@ -41,6 +41,16 @@ export function LobbyistExpenseReportForm({
     setExpenses(expenses.filter((exp) => exp.id !== id))
   }
 
+  const handleSaveDraft = () => {
+    console.log("Saving draft expense report:", {
+      quarter,
+      year,
+      totalAmount,
+      expenses,
+    })
+    alert(`Draft saved! (API integration pending)\nQuarter: ${quarter} ${year}\nTotal: $${totalAmount.toFixed(2)}\nExpenses: ${expenses.length}`)
+  }
+
   const handleSubmit = async () => {
     // TODO: Submit to API
     console.log("Submitting expense report:", {
@@ -49,7 +59,7 @@ export function LobbyistExpenseReportForm({
       totalAmount,
       expenses,
     })
-    alert(`Expense report submitted!\nQuarter: ${quarter} ${year}\nTotal: $${totalAmount.toFixed(2)}\nExpenses: ${expenses.length}`)
+    alert(`Expense report submitted! (API integration pending)\nQuarter: ${quarter} ${year}\nTotal: $${totalAmount.toFixed(2)}\nExpenses: ${expenses.length}`)
   }
 
   return (
@@ -254,6 +264,7 @@ export function LobbyistExpenseReportForm({
       <div className="flex justify-end space-x-4">
         <button
           type="button"
+          onClick={handleSaveDraft}
           className="rounded-md border border-gray-300 bg-white px-6 py-2 text-gray-700 hover:bg-gray-50"
         >
           Save as Draft

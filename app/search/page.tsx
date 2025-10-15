@@ -109,21 +109,52 @@ export default function PublicSearchPage() {
     }
   }
 
-  // Filter results based on search term (mock implementation)
-  const filteredLobbyists = mockLobbyists.filter((lobbyist) =>
-    filters.searchTerm
+  // Filter results based on search term and advanced filters
+  const filteredLobbyists = mockLobbyists.filter((lobbyist) => {
+    // Search term filter
+    const matchesSearch = filters.searchTerm
       ? lobbyist.name.toLowerCase().includes(filters.searchTerm.toLowerCase()) ||
         lobbyist.employer.toLowerCase().includes(filters.searchTerm.toLowerCase()) ||
         lobbyist.subjects.toLowerCase().includes(filters.searchTerm.toLowerCase())
       : true
-  )
 
-  const filteredEmployers = mockEmployers.filter((employer) =>
-    filters.searchTerm
+    // Date range filter
+    const lobbyistDate = new Date(lobbyist.registrationDate)
+    const matchesDateFrom = filters.dateFrom
+      ? lobbyistDate >= new Date(filters.dateFrom)
+      : true
+    const matchesDateTo = filters.dateTo
+      ? lobbyistDate <= new Date(filters.dateTo)
+      : true
+
+    // Expense amount filter
+    const matchesMinAmount = filters.minAmount
+      ? lobbyist.totalExpenses >= parseFloat(filters.minAmount)
+      : true
+    const matchesMaxAmount = filters.maxAmount
+      ? lobbyist.totalExpenses <= parseFloat(filters.maxAmount)
+      : true
+
+    return matchesSearch && matchesDateFrom && matchesDateTo && matchesMinAmount && matchesMaxAmount
+  })
+
+  const filteredEmployers = mockEmployers.filter((employer) => {
+    // Search term filter
+    const matchesSearch = filters.searchTerm
       ? employer.name.toLowerCase().includes(filters.searchTerm.toLowerCase()) ||
         employer.businessDescription.toLowerCase().includes(filters.searchTerm.toLowerCase())
       : true
-  )
+
+    // Expense amount filter (no date for employers in mock data)
+    const matchesMinAmount = filters.minAmount
+      ? employer.totalExpenses >= parseFloat(filters.minAmount)
+      : true
+    const matchesMaxAmount = filters.maxAmount
+      ? employer.totalExpenses <= parseFloat(filters.maxAmount)
+      : true
+
+    return matchesSearch && matchesMinAmount && matchesMaxAmount
+  })
 
   const showLobbyists = filters.entityType === "all" || filters.entityType === "lobbyists"
   const showEmployers = filters.entityType === "all" || filters.entityType === "employers"
