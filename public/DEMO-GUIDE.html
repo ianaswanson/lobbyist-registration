@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lobbyist Registration System - Interactive Demo Guide</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .persona-card {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .persona-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        .copy-btn {
+            transition: all 0.2s ease;
+        }
+        .copy-btn:hover {
+            transform: scale(1.05);
+        }
+        .copy-btn.copied {
+            background-color: #10b981;
+        }
+        .step-number {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        @media print {
+            .no-print {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Header -->
+    <header class="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-8 shadow-lg">
+        <div class="max-w-7xl mx-auto px-6">
+            <h1 class="text-4xl font-bold mb-2">Lobbyist Registration System</h1>
+            <p class="text-xl text-blue-100">Interactive Demo Guide - Ready to Present</p>
+            <div class="mt-4 flex gap-4 text-sm">
+                <span class="px-3 py-1 bg-white/20 rounded-full">✅ MVP Complete (Phase 1)</span>
+                <span class="px-3 py-1 bg-white/20 rounded-full">✅ Enhanced Import (Phase 3)</span>
+                <span class="px-3 py-1 bg-white/20 rounded-full">♿ WCAG 2.1 AA Compliant</span>
+            </div>
+        </div>
+    </header>
+
+    <div class="max-w-7xl mx-auto px-6 py-8">
+
+        <!-- Quick Start -->
+        <section class="bg-gradient-to-r from-green-50 to-blue-50 border-l-4 border-green-500 p-6 rounded-lg mb-8 shadow">
+            <h2 class="text-2xl font-bold text-gray-900 mb-3">🚀 Quick Start</h2>
+            <ol class="space-y-2 text-gray-700">
+                <li><strong>1.</strong> Open <code class="bg-gray-200 px-2 py-1 rounded">http://localhost:3000</code> in your browser</li>
+                <li><strong>2.</strong> Follow the demo flow below - each section has clickable credentials and links</li>
+                <li><strong>3.</strong> Estimated total demo time: <strong>15-20 minutes</strong> (or 8-10 for highlights)</li>
+                <li><strong>4.</strong> All test data is pre-loaded - users have existing data to explore</li>
+            </ol>
+        </section>
+
+        <!-- Demo Flow Overview -->
+        <section class="bg-white rounded-lg shadow-lg p-6 mb-8">
+            <h2 class="text-2xl font-bold text-gray-900 mb-4">📋 Demo Flow Overview</h2>
+            <p class="text-gray-600 mb-6">This demo showcases all major features across 5 user personas. Follow in order for best impact.</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+                <div class="text-center">
+                    <div class="w-16 h-16 mx-auto mb-2 rounded-full bg-green-100 flex items-center justify-center text-2xl">🌐</div>
+                    <div class="font-semibold">1. Public</div>
+                    <div class="text-xs text-gray-500">Search & Transparency</div>
+                </div>
+                <div class="text-center">
+                    <div class="w-16 h-16 mx-auto mb-2 rounded-full bg-blue-100 flex items-center justify-center text-2xl">🎯</div>
+                    <div class="font-semibold">2. Lobbyist</div>
+                    <div class="text-xs text-gray-500">Registration & Reporting</div>
+                </div>
+                <div class="text-center">
+                    <div class="w-16 h-16 mx-auto mb-2 rounded-full bg-purple-100 flex items-center justify-center text-2xl">🏢</div>
+                    <div class="font-semibold">3. Employer</div>
+                    <div class="text-xs text-gray-500">Expense Reporting</div>
+                </div>
+                <div class="text-center">
+                    <div class="w-16 h-16 mx-auto mb-2 rounded-full bg-indigo-100 flex items-center justify-center text-2xl">⚖️</div>
+                    <div class="font-semibold">4. Board Member</div>
+                    <div class="text-xs text-gray-500">Calendar & Receipts</div>
+                </div>
+                <div class="text-center">
+                    <div class="w-16 h-16 mx-auto mb-2 rounded-full bg-red-100 flex items-center justify-center text-2xl">🛡️</div>
+                    <div class="font-semibold">5. Admin</div>
+                    <div class="text-xs text-gray-500">Review & Compliance</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Persona 1: Public User -->
+        <section class="bg-white rounded-lg shadow-lg p-6 mb-8 border-l-4 border-green-500">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-2xl font-bold text-gray-900">🌐 Part 1: Public Transparency</h2>
+                <span class="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-semibold">5 minutes</span>
+            </div>
+
+            <div class="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
+                <div class="font-semibold text-green-900 mb-2">💡 What You're Showcasing:</div>
+                <ul class="text-green-800 text-sm space-y-1">
+                    <li>✓ Public can search and view all lobbying activity without logging in</li>
+                    <li>✓ Advanced filtering by lobbyist, employer, subject, date range</li>
+                    <li>✓ Data export to CSV for analysis</li>
+                    <li>✓ Full transparency and accessibility</li>
+                </ul>
+            </div>
+
+            <div class="space-y-4">
+                <div class="bg-gray-50 rounded-lg p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="step-number text-white px-3 py-1 rounded-full font-semibold">Step 1</span>
+                        <span class="text-sm text-gray-600">Start here (no login needed)</span>
+                    </div>
+                    <p class="text-gray-700 mb-3">Navigate to the home page and explore public features:</p>
+                    <a href="http://localhost:3000" target="_blank" class="inline-block bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition">
+                        Open Home Page →
+                    </a>
+                </div>
+
+                <div class="bg-gray-50 rounded-lg p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="step-number text-white px-3 py-1 rounded-full font-semibold">Step 2</span>
+                        <span class="text-sm text-gray-600">Search lobbyists</span>
+                    </div>
+                    <p class="text-gray-700 mb-3">Use the search interface to find John Doe (existing lobbyist with data):</p>
+                    <div class="flex gap-2">
+                        <a href="http://localhost:3000/search" target="_blank" class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition">
+                            Open Search Page →
+                        </a>
+                        <button onclick="copyText('John Doe')" class="copy-btn bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700">
+                            Copy "John Doe"
+                        </button>
+                    </div>
+                    <div class="mt-2 text-sm text-gray-600">
+                        💡 Tip: Also try filtering by employer "TechCorp Industries" or subject "Technology policy"
+                    </div>
+                </div>
+
+                <div class="bg-gray-50 rounded-lg p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="step-number text-white px-3 py-1 rounded-full font-semibold">Step 3</span>
+                        <span class="text-sm text-gray-600">View details & export data</span>
+                    </div>
+                    <p class="text-gray-700 mb-2">Click on a lobbyist to see:</p>
+                    <ul class="text-gray-600 text-sm space-y-1 mb-3">
+                        <li>• Employer relationships and authorization dates</li>
+                        <li>• Subjects of interest (what they're lobbying for)</li>
+                        <li>• Quarterly expense reports</li>
+                        <li>• Download all data as CSV</li>
+                    </ul>
+                </div>
+
+                <div class="bg-gray-50 rounded-lg p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="step-number text-white px-3 py-1 rounded-full font-semibold">Step 4</span>
+                        <span class="text-sm text-gray-600">Check exemption checker (bonus)</span>
+                    </div>
+                    <p class="text-gray-700 mb-3">Show the self-service exemption calculator:</p>
+                    <a href="http://localhost:3000/exemption-checker" target="_blank" class="inline-block bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition">
+                        Open Exemption Checker →
+                    </a>
+                    <div class="mt-2 text-sm text-gray-600">
+                        💡 Tip: Enter 7 hours to see "must register" message
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Persona 2: Lobbyist -->
+        <section class="bg-white rounded-lg shadow-lg p-6 mb-8 border-l-4 border-blue-500">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-2xl font-bold text-gray-900">🎯 Part 2: Lobbyist Experience</h2>
+                <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-semibold">5 minutes</span>
+            </div>
+
+            <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+                <div class="font-semibold text-blue-900 mb-2">💡 What You're Showcasing:</div>
+                <ul class="text-blue-800 text-sm space-y-1">
+                    <li>✓ Multi-step registration wizard with validation</li>
+                    <li>✓ Quarterly expense reporting with multiple input methods</li>
+                    <li>✓ CSV upload and bulk paste for fast data entry</li>
+                    <li>✓ Dashboard showing status and deadlines</li>
+                </ul>
+            </div>
+
+            <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-4">
+                <div class="flex">
+                    <div class="flex-shrink-0">
+                        <span class="text-2xl">🔑</span>
+                    </div>
+                    <div class="ml-3">
+                        <h3 class="text-sm font-medium text-yellow-800">Login Credentials</h3>
+                        <div class="mt-2 text-sm text-yellow-700 space-y-1">
+                            <div class="flex items-center gap-2">
+                                <strong>Email:</strong> <code class="bg-yellow-100 px-2 py-1 rounded">john.doe@lobbying.com</code>
+                                <button onclick="copyText('john.doe@lobbying.com')" class="copy-btn bg-yellow-600 text-white px-3 py-1 rounded text-xs hover:bg-yellow-700">Copy</button>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <strong>Password:</strong> <code class="bg-yellow-100 px-2 py-1 rounded">lobbyist123</code>
+                                <button onclick="copyText('lobbyist123')" class="copy-btn bg-yellow-600 text-white px-3 py-1 rounded text-xs hover:bg-yellow-700">Copy</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="space-y-4">
+                <div class="bg-gray-50 rounded-lg p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="step-number text-white px-3 py-1 rounded-full font-semibold">Step 1</span>
+                        <span class="text-sm text-gray-600">Login & view dashboard</span>
+                    </div>
+                    <p class="text-gray-700 mb-3">Sign in and show the lobbyist dashboard with existing data:</p>
+                    <a href="http://localhost:3000/auth/signin" target="_blank" class="inline-block bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition">
+                        Open Sign In Page →
+                    </a>
+                    <div class="mt-2 text-sm text-gray-600">
+                        💡 Tip: Dashboard shows Q1 2025 report already submitted ($350.00)
+                    </div>
+                </div>
+
+                <div class="bg-gray-50 rounded-lg p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="step-number text-white px-3 py-1 rounded-full font-semibold">Step 2</span>
+                        <span class="text-sm text-gray-600">Create new expense report</span>
+                    </div>
+                    <p class="text-gray-700 mb-3">Start a Q2 2025 expense report to show the form:</p>
+                    <a href="http://localhost:3000/reports/lobbyist" target="_blank" class="inline-block bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition">
+                        Open Expense Report Form →
+                    </a>
+                </div>
+
+                <div class="bg-gray-50 rounded-lg p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="step-number text-white px-3 py-1 rounded-full font-semibold">Step 3</span>
+                        <span class="text-sm text-gray-600">🌟 Demo bulk import (WOW FACTOR)</span>
+                    </div>
+                    <p class="text-gray-700 mb-3">This is where you impress! Show 3 ways to import expense data:</p>
+                    <ul class="text-gray-600 text-sm space-y-2 mb-3">
+                        <li><strong>Option A: Manual Entry</strong> - Add one expense item manually</li>
+                        <li><strong>Option B: Bulk Paste</strong> - Copy sample data and paste (5-10 items)</li>
+                        <li><strong>Option C: CSV Upload</strong> - Upload pre-made CSV file (10+ items)</li>
+                    </ul>
+                    <div class="flex gap-2">
+                        <a href="/csv-templates/lobbyist-expense-template.csv" download class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition text-sm">
+                            ⬇️ Download Sample CSV
+                        </a>
+                        <button onclick="copySampleExpense()" class="copy-btn bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 text-sm">
+                            📋 Copy Sample Data for Bulk Paste
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Persona 3: Employer -->
+        <section class="bg-white rounded-lg shadow-lg p-6 mb-8 border-l-4 border-purple-500">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-2xl font-bold text-gray-900">🏢 Part 3: Employer Reporting</h2>
+                <span class="px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-sm font-semibold">3 minutes</span>
+            </div>
+
+            <div class="bg-purple-50 border border-purple-200 rounded-lg p-4 mb-6">
+                <div class="font-semibold text-purple-900 mb-2">💡 What You're Showcasing:</div>
+                <ul class="text-purple-800 text-sm space-y-1">
+                    <li>✓ Employer quarterly spending reports</li>
+                    <li>✓ Itemized expenses for officials (>$50 threshold)</li>
+                    <li>✓ Bulk import capabilities (same as lobbyist)</li>
+                </ul>
+            </div>
+
+            <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-4">
+                <div class="flex">
+                    <div class="flex-shrink-0">
+                        <span class="text-2xl">🔑</span>
+                    </div>
+                    <div class="ml-3">
+                        <h3 class="text-sm font-medium text-yellow-800">Login Credentials</h3>
+                        <div class="mt-2 text-sm text-yellow-700 space-y-1">
+                            <div class="flex items-center gap-2">
+                                <strong>Email:</strong> <code class="bg-yellow-100 px-2 py-1 rounded">contact@techcorp.com</code>
+                                <button onclick="copyText('contact@techcorp.com')" class="copy-btn bg-yellow-600 text-white px-3 py-1 rounded text-xs hover:bg-yellow-700">Copy</button>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <strong>Password:</strong> <code class="bg-yellow-100 px-2 py-1 rounded">employer123</code>
+                                <button onclick="copyText('employer123')" class="copy-btn bg-yellow-600 text-white px-3 py-1 rounded text-xs hover:bg-yellow-700">Copy</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="space-y-4">
+                <div class="bg-gray-50 rounded-lg p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="step-number text-white px-3 py-1 rounded-full font-semibold">Step 1</span>
+                        <span class="text-sm text-gray-600">Login & view existing report</span>
+                    </div>
+                    <p class="text-gray-700 mb-3">Sign out from lobbyist account, sign in as employer, view Q1 report:</p>
+                    <a href="http://localhost:3000/auth/signin" target="_blank" class="inline-block bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700 transition">
+                        Open Sign In Page →
+                    </a>
+                    <div class="mt-2 text-sm text-gray-600">
+                        💡 Tip: Dashboard shows Q1 2025 report with $15,000 total lobbying spend
+                    </div>
+                </div>
+
+                <div class="bg-gray-50 rounded-lg p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="step-number text-white px-3 py-1 rounded-full font-semibold">Step 2</span>
+                        <span class="text-sm text-gray-600">Show expense itemization</span>
+                    </div>
+                    <p class="text-gray-700 mb-3">Navigate to expense report form and show itemization for officials:</p>
+                    <a href="http://localhost:3000/reports/employer" target="_blank" class="inline-block bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700 transition">
+                        Open Employer Report Form →
+                    </a>
+                    <div class="mt-2 text-sm text-gray-600">
+                        💡 Tip: Show CSV upload or bulk paste option (same as lobbyist workflow)
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Persona 4: Board Member -->
+        <section class="bg-white rounded-lg shadow-lg p-6 mb-8 border-l-4 border-indigo-500">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-2xl font-bold text-gray-900">⚖️ Part 4: Board Member Transparency</h2>
+                <span class="px-3 py-1 bg-indigo-100 text-indigo-800 rounded-full text-sm font-semibold">5 minutes</span>
+            </div>
+
+            <div class="bg-indigo-50 border border-indigo-200 rounded-lg p-4 mb-6">
+                <div class="font-semibold text-indigo-900 mb-2">💡 What You're Showcasing:</div>
+                <ul class="text-indigo-800 text-sm space-y-1">
+                    <li>✓ Quarterly calendar posting (15-day deadline after quarter)</li>
+                    <li>✓ Lobbying receipt tracking (itemize >$50 from single lobbyist)</li>
+                    <li>✓ <strong>ICS/iCal import from Outlook/Google Calendar</strong> (unique feature!)</li>
+                    <li>✓ CSV upload and bulk paste for both calendars and receipts</li>
+                </ul>
+            </div>
+
+            <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-4">
+                <div class="flex">
+                    <div class="flex-shrink-0">
+                        <span class="text-2xl">🔑</span>
+                    </div>
+                    <div class="ml-3">
+                        <h3 class="text-sm font-medium text-yellow-800">Login Credentials</h3>
+                        <div class="mt-2 text-sm text-yellow-700 space-y-1">
+                            <div class="flex items-center gap-2">
+                                <strong>Email:</strong> <code class="bg-yellow-100 px-2 py-1 rounded">commissioner@multnomah.gov</code>
+                                <button onclick="copyText('commissioner@multnomah.gov')" class="copy-btn bg-yellow-600 text-white px-3 py-1 rounded text-xs hover:bg-yellow-700">Copy</button>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <strong>Password:</strong> <code class="bg-yellow-100 px-2 py-1 rounded">board123</code>
+                                <button onclick="copyText('board123')" class="copy-btn bg-yellow-600 text-white px-3 py-1 rounded text-xs hover:bg-yellow-700">Copy</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="space-y-4">
+                <div class="bg-gray-50 rounded-lg p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="step-number text-white px-3 py-1 rounded-full font-semibold">Step 1</span>
+                        <span class="text-sm text-gray-600">Login & view existing data</span>
+                    </div>
+                    <p class="text-gray-700 mb-3">Sign in and navigate to calendar/receipt form:</p>
+                    <div class="flex gap-2">
+                        <a href="http://localhost:3000/auth/signin" target="_blank" class="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700 transition">
+                            Open Sign In Page →
+                        </a>
+                        <a href="http://localhost:3000/board-member/calendar" target="_blank" class="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700 transition">
+                            Open Calendar Form →
+                        </a>
+                    </div>
+                    <div class="mt-2 text-sm text-gray-600">
+                        💡 Tip: Existing Q1 data includes 2 calendar entries and 1 lobbying receipt ($125)
+                    </div>
+                </div>
+
+                <div class="bg-gray-50 rounded-lg p-4 border-2 border-yellow-400">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="step-number text-white px-3 py-1 rounded-full font-semibold">Step 2</span>
+                        <span class="text-sm text-yellow-600 font-semibold">⭐ BIG WOW MOMENT</span>
+                    </div>
+                    <p class="text-gray-700 mb-3 font-semibold">Show the 3-way calendar import (Manual / CSV / ICS):</p>
+                    <div class="bg-yellow-50 p-3 rounded mb-3">
+                        <p class="text-sm text-yellow-900 font-semibold mb-2">This is unique! Most systems only do CSV.</p>
+                        <p class="text-sm text-gray-700">Board members can export their Outlook/Google Calendar as .ics and upload directly!</p>
+                    </div>
+                    <div class="flex gap-2 flex-wrap">
+                        <a href="/csv-templates/board-member-calendar-template.csv" download class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition text-sm">
+                            ⬇️ Calendar CSV Sample
+                        </a>
+                        <a href="/ics-templates/board-member-sample.ics" download class="bg-yellow-600 text-white px-4 py-2 rounded-lg hover:bg-yellow-700 transition text-sm">
+                            ⬇️ ICS/iCal Sample
+                        </a>
+                    </div>
+                </div>
+
+                <div class="bg-gray-50 rounded-lg p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="step-number text-white px-3 py-1 rounded-full font-semibold">Step 3</span>
+                        <span class="text-sm text-gray-600">Show receipt import options</span>
+                    </div>
+                    <p class="text-gray-700 mb-3">Switch to "Lobbying Receipts" tab and show 3 input methods:</p>
+                    <div class="flex gap-2 flex-wrap">
+                        <a href="/csv-templates/board-member-receipts-template.csv" download class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition text-sm">
+                            ⬇️ Receipts CSV Sample
+                        </a>
+                        <button onclick="copySampleReceipt()" class="copy-btn bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 text-sm">
+                            📋 Copy Bulk Paste Sample
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Persona 5: Admin -->
+        <section class="bg-white rounded-lg shadow-lg p-6 mb-8 border-l-4 border-red-500">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-2xl font-bold text-gray-900">🛡️ Part 5: Admin & Compliance</h2>
+                <span class="px-3 py-1 bg-red-100 text-red-800 rounded-full text-sm font-semibold">5 minutes</span>
+            </div>
+
+            <div class="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+                <div class="font-semibold text-red-900 mb-2">💡 What You're Showcasing:</div>
+                <ul class="text-red-800 text-sm space-y-1">
+                    <li>✓ Review and approve lobbyist registrations</li>
+                    <li>✓ Compliance dashboard with deadline tracking</li>
+                    <li>✓ Automated email notifications (console logs in prototype)</li>
+                    <li>✓ Audit trail for all actions</li>
+                </ul>
+            </div>
+
+            <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-4">
+                <div class="flex">
+                    <div class="flex-shrink-0">
+                        <span class="text-2xl">🔑</span>
+                    </div>
+                    <div class="ml-3">
+                        <h3 class="text-sm font-medium text-yellow-800">Login Credentials</h3>
+                        <div class="mt-2 text-sm text-yellow-700 space-y-1">
+                            <div class="flex items-center gap-2">
+                                <strong>Email:</strong> <code class="bg-yellow-100 px-2 py-1 rounded">admin@multnomah.gov</code>
+                                <button onclick="copyText('admin@multnomah.gov')" class="copy-btn bg-yellow-600 text-white px-3 py-1 rounded text-xs hover:bg-yellow-700">Copy</button>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <strong>Password:</strong> <code class="bg-yellow-100 px-2 py-1 rounded">admin123</code>
+                                <button onclick="copyText('admin123')" class="copy-btn bg-yellow-600 text-white px-3 py-1 rounded text-xs hover:bg-yellow-700">Copy</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="space-y-4">
+                <div class="bg-gray-50 rounded-lg p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="step-number text-white px-3 py-1 rounded-full font-semibold">Step 1</span>
+                        <span class="text-sm text-gray-600">View compliance dashboard</span>
+                    </div>
+                    <p class="text-gray-700 mb-3">Sign in and show the comprehensive compliance overview:</p>
+                    <div class="flex gap-2">
+                        <a href="http://localhost:3000/auth/signin" target="_blank" class="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 transition">
+                            Open Sign In Page →
+                        </a>
+                        <a href="http://localhost:3000/admin/compliance" target="_blank" class="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 transition">
+                            Open Compliance Dashboard →
+                        </a>
+                    </div>
+                    <div class="mt-2 text-sm text-gray-600">
+                        💡 Tip: Dashboard shows upcoming deadlines, overdue reports, and quick stats
+                    </div>
+                </div>
+
+                <div class="bg-gray-50 rounded-lg p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="step-number text-white px-3 py-1 rounded-full font-semibold">Step 2</span>
+                        <span class="text-sm text-gray-600">Review submitted reports</span>
+                    </div>
+                    <p class="text-gray-700 mb-3">Show the review workflow for submitted reports:</p>
+                    <a href="http://localhost:3000/admin/review/reports" target="_blank" class="inline-block bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 transition">
+                        Open Report Review →
+                    </a>
+                    <div class="mt-2 text-sm text-gray-600">
+                        💡 Tip: Can approve, reject, or request corrections on reports
+                    </div>
+                </div>
+
+                <div class="bg-gray-50 rounded-lg p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="step-number text-white px-3 py-1 rounded-full font-semibold">Step 3</span>
+                        <span class="text-sm text-gray-600">Show email notifications</span>
+                    </div>
+                    <p class="text-gray-700 mb-3">Navigate to notifications page (emails log to console in prototype):</p>
+                    <a href="http://localhost:3000/admin/notifications" target="_blank" class="inline-block bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 transition">
+                        Open Notifications →
+                    </a>
+                    <div class="mt-2 text-sm text-gray-600">
+                        💡 Tip: Click "Send Reminder" and check browser console (F12) to see email preview
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Closing Section -->
+        <section class="bg-gradient-to-r from-purple-50 to-blue-50 border-l-4 border-purple-500 p-6 rounded-lg shadow">
+            <h2 class="text-2xl font-bold text-gray-900 mb-4">🎯 Closing Talking Points</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <h3 class="font-semibold text-gray-900 mb-2">✅ What We Delivered</h3>
+                    <ul class="text-gray-700 text-sm space-y-1">
+                        <li>• Full MVP (Phase 1) - All core features</li>
+                        <li>• Enhanced import (Phase 3) - CSV, bulk paste, ICS/iCal</li>
+                        <li>• WCAG 2.1 AA accessibility compliance</li>
+                        <li>• Public transparency & data export</li>
+                        <li>• Automated email notifications</li>
+                        <li>• Admin compliance dashboard</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="font-semibold text-gray-900 mb-2">🚀 Ready for Phase 2</h3>
+                    <ul class="text-gray-700 text-sm space-y-1">
+                        <li>• Hour tracking for lobbyists</li>
+                        <li>• Profile management & history</li>
+                        <li>• Public data analytics & trends</li>
+                        <li>• Violation enforcement workflow</li>
+                        <li>• System admin tools</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="mt-6 bg-white p-4 rounded-lg">
+                <h3 class="font-semibold text-gray-900 mb-2">📊 Technical Highlights</h3>
+                <div class="flex flex-wrap gap-2">
+                    <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">Next.js 15</span>
+                    <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">TypeScript</span>
+                    <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">Prisma ORM</span>
+                    <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">NextAuth</span>
+                    <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">shadcn/ui</span>
+                    <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">Tailwind CSS</span>
+                    <span class="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm">♿ WCAG 2.1 AA</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Resources -->
+        <section class="bg-white rounded-lg shadow-lg p-6 mt-8">
+            <h2 class="text-2xl font-bold text-gray-900 mb-4">📦 Demo Resources</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                    <h3 class="font-semibold text-gray-700 mb-2">CSV Templates</h3>
+                    <ul class="space-y-1 text-sm">
+                        <li><a href="/csv-templates/lobbyist-expense-template.csv" download class="text-blue-600 hover:underline">Lobbyist Expenses</a></li>
+                        <li><a href="/csv-templates/board-member-calendar-template.csv" download class="text-blue-600 hover:underline">Board Calendar</a></li>
+                        <li><a href="/csv-templates/board-member-receipts-template.csv" download class="text-blue-600 hover:underline">Board Receipts</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="font-semibold text-gray-700 mb-2">ICS Files</h3>
+                    <ul class="space-y-1 text-sm">
+                        <li><a href="/ics-templates/board-member-sample.ics" download class="text-blue-600 hover:underline">Board Member Calendar (ICS)</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="font-semibold text-gray-700 mb-2">Documentation</h3>
+                    <ul class="space-y-1 text-sm">
+                        <li><a href="/user-story-map.html" target="_blank" class="text-blue-600 hover:underline">User Story Map</a></li>
+                        <li><a href="/ACCESSIBILITY.md" target="_blank" class="text-blue-600 hover:underline">Accessibility Guide</a></li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <footer class="bg-gray-900 text-gray-400 py-8 mt-12">
+        <div class="max-w-7xl mx-auto px-6 text-center">
+            <p>Lobbyist Registration System - MVP Demo Guide</p>
+            <p class="text-sm mt-2">Built with Next.js 15, TypeScript, Prisma, and shadcn/ui</p>
+        </div>
+    </footer>
+
+    <script>
+        // Copy text helper
+        function copyText(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                const btn = event.target;
+                const originalText = btn.textContent;
+                btn.textContent = '✓ Copied!';
+                btn.classList.add('copied');
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.classList.remove('copied');
+                }, 2000);
+            });
+        }
+
+        // Copy sample expense for bulk paste
+        function copySampleExpense() {
+            const sampleData = `Commissioner Williams\t2025-04-15\tPortland City Grill\tLunch meeting to discuss housing policy\t125.00\tFALSE
+Commissioner Smith\t2025-05-20\tStarbucks\tCoffee meeting regarding transportation\t18.50\tFALSE
+Chair Johnson\t2025-06-10\tJake's Famous Crawfish\tDinner about environmental regulations\t185.75\tFALSE`;
+
+            navigator.clipboard.writeText(sampleData).then(() => {
+                const btn = event.target;
+                const originalText = btn.textContent;
+                btn.textContent = '✓ Copied! Ready to Paste';
+                btn.classList.add('copied');
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.classList.remove('copied');
+                }, 3000);
+            });
+        }
+
+        // Copy sample receipt for bulk paste
+        function copySampleReceipt() {
+            const sampleData = `Jane Smith\t2025-04-15\tPortland City Grill\tLunch meeting to discuss housing policy\t125.00
+John Doe\t2025-05-20\tStarbucks\tCoffee meeting regarding transportation\t18.50
+Sarah Johnson\t2025-06-10\tJake's Famous Crawfish\tDinner about environmental regulations\t185.75`;
+
+            navigator.clipboard.writeText(sampleData).then(() => {
+                const btn = event.target;
+                const originalText = btn.textContent;
+                btn.textContent = '✓ Copied! Ready to Paste';
+                btn.classList.add('copied');
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.classList.remove('copied');
+                }, 3000);
+            });
+        }
+    </script>
+</body>
+</html>

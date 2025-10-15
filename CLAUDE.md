@@ -5,15 +5,30 @@ Web application to satisfy Multnomah County's Government Accountability Ordinanc
 
 ## Current Project Status
 - ✅ **Planning Complete:** User story map, wireframes, and technical architecture defined
-- ✅ **Wireframes:** 4 key screens designed (registration, expense reporting, admin dashboard, public search)
-- 🔄 **Next:** Initialize Next.js project and build MVP features
+- ✅ **MVP Development Complete:** All Phase 1 features implemented (Issues #1-25)
+- ✅ **Production Deployment:** Live on Google Cloud Run
+- 🔄 **Next:** Gather stakeholder feedback, plan Phase 2 enhancements
 - 📅 **Target Launch:** June 2026 (before July 1, 2026 ordinance effective date)
+
+## Production Deployment
+- **Live URL:** https://lobbyist-registration-679888289147.us-west1.run.app
+- **Demo Guide:** https://lobbyist-registration-679888289147.us-west1.run.app/DEMO-GUIDE.html
+- **Compliance Matrix:** https://lobbyist-registration-679888289147.us-west1.run.app/ORDINANCE-COMPLIANCE.html
+- **Platform:** Google Cloud Run (serverless containers)
+- **Database:** SQLite with seed data
+- **Cost:** Free tier (~$0-5/month)
+- **Status:** Fully functional prototype ready for stakeholder demos
 
 ## Project Artifacts
 - `user-story-map.html` - Visual user story map with all user journeys and priorities
 - `wireframes/` - Interactive HTML wireframes for 4 core screens
+- `DEMO-GUIDE.html` - Interactive demo walkthrough (also available online)
+- `ORDINANCE-COMPLIANCE.html` - Compliance matrix showing requirements met
 - `PROJECT.md` - Comprehensive project documentation and requirements
 - `Government_Accountably_Ordinance_4.2.25_-_CA_Approved.pdf` - Source ordinance
+- `DEPLOYMENT-PLAN.md` - Complete Google Cloud deployment guide
+- `QUICKSTART-DEPLOY.md` - Fast-track deployment instructions
+- `DEPLOYMENT-CHECKLIST.md` - Step-by-step deployment checklist
 
 ## Project Context
 This is a **civic technology project** focused on government transparency and accountability. The application will be used by:

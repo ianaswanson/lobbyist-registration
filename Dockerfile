@@ -39,7 +39,7 @@ ENV PORT=8080
 # Create database directory
 RUN mkdir -p /app/prisma
 
-# Run migrations and seed on startup, then start server
-CMD ["sh", "-c", "npx prisma migrate deploy && npx prisma db seed && node server.js"]
+# Run migrations and seed in background, start server immediately
+CMD ["sh", "-c", "(npx prisma migrate deploy && npx prisma db seed &) && node server.js"]
 
 EXPOSE 8080
