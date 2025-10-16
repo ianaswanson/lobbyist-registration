@@ -2,10 +2,13 @@ import { handlers } from "@/lib/auth"
 import { rateLimit, getClientIdentifier } from "@/lib/rate-limit"
 import { NextRequest, NextResponse } from "next/server"
 
+// Export GET handler directly from handlers
+export const GET = handlers.GET
+
 // Wrap POST handler with rate limiting for login attempts
 const originalPOST = handlers.POST
 
-async function POST(req: NextRequest, context: any) {
+export async function POST(req: NextRequest, context: any) {
   // Only rate limit sign-in attempts (not other auth operations)
   const url = new URL(req.url)
   if (url.pathname.includes("callback/credentials")) {
@@ -39,6 +42,3 @@ async function POST(req: NextRequest, context: any) {
 
   return originalPOST(req, context)
 }
-
-export { GET } from "@/lib/auth"
-export { POST }
