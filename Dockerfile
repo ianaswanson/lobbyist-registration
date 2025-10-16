@@ -40,7 +40,7 @@ ENV DATABASE_URL="file:./prisma/dev.db"
 # Create database directory
 RUN mkdir -p /app/prisma
 
-# Run migrations and seed in background, start server immediately
-CMD ["sh", "-c", "npx prisma migrate deploy && npx prisma db seed && node server.js"]
+# Start server immediately, run migrations and seed in background
+CMD ["sh", "-c", "node server.js & SERVER_PID=$! && npx prisma migrate deploy && npx prisma db seed && wait $SERVER_PID"]
 
 EXPOSE 8080
