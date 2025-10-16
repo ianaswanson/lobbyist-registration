@@ -1,5 +1,5 @@
-Date,Description,Category,Amount,Recipients
-2025-01-15,Lunch meeting at Portland City Grill,Food & Entertainment,125.00,"Commissioner Williams, County Administrator"
-2025-02-10,Conference materials and refreshments,Materials & Supplies,85.50,"Board members, County staff"
-2025-03-05,Dinner meeting at Jake's Famous Crawfish,Food & Entertainment,175.00,"Commissioner Williams"
-2025-03-20,Research report printing,Materials & Supplies,45.00,"Board members"
+Official,Date,Payee,Purpose,Amount
+Commissioner Williams,2025-01-15,Portland City Grill,Lunch meeting to discuss technology infrastructure,125.00
+Board Members,2025-02-10,Office Supply Co,Conference materials and refreshments,85.50
+Commissioner Williams,2025-03-05,Jake's Famous Crawfish,Dinner discussion about budget priorities,175.00
+Board Members,2025-03-20,PrintShop Pro,Research report printing and distribution,45.00
