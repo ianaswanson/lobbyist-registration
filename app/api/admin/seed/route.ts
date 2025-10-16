@@ -7,9 +7,17 @@ const prisma = new PrismaClient();
 /**
  * POST /api/admin/seed
  * Seed the database with test users
- * This is a temporary endpoint for demo purposes
+ * SECURITY: Only available in development mode
  */
 export async function POST() {
+  // SECURITY: Prevent seed endpoint from running in production
+  if (process.env.NODE_ENV === "production") {
+    return NextResponse.json(
+      { error: "Seed endpoint is disabled in production" },
+      { status: 403 }
+    );
+  }
+
   try {
     // Check if users already exist
     const existingUsers = await prisma.user.count();
@@ -83,8 +91,17 @@ export async function POST() {
 /**
  * GET /api/admin/seed
  * Check seed status
+ * SECURITY: Only available in development mode
  */
 export async function GET() {
+  // SECURITY: Prevent seed endpoint from running in production
+  if (process.env.NODE_ENV === "production") {
+    return NextResponse.json(
+      { error: "Seed endpoint is disabled in production" },
+      { status: 403 }
+    );
+  }
+
   try {
     const userCount = await prisma.user.count();
     const users = await prisma.user.findMany({

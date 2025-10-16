@@ -1,0 +1,1978 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Security Assessment Report - Lobbyist Registration System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header .subtitle {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .metadata {
+            background-color: #f8fafc;
+            padding: 20px 40px;
+            border-bottom: 2px solid #e2e8f0;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .metadata-item {
+            padding: 10px;
+        }
+
+        .metadata-item strong {
+            display: block;
+            color: #64748b;
+            font-size: 0.85em;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .section {
+            margin-bottom: 50px;
+        }
+
+        .section h2 {
+            color: #1e3a8a;
+            font-size: 2em;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #3b82f6;
+        }
+
+        .section h3 {
+            color: #1e40af;
+            font-size: 1.4em;
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+
+        .section h4 {
+            color: #334155;
+            font-size: 1.1em;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+
+        .executive-summary {
+            background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+            border-left: 5px solid #10b981;
+            padding: 30px;
+            margin-bottom: 40px;
+            border-radius: 8px;
+        }
+
+        .rating-box {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 25px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .rating-score {
+            font-size: 4em;
+            font-weight: bold;
+            color: #fbbf24;
+            margin: 10px 0;
+        }
+
+        .rating-label {
+            font-size: 1.5em;
+            color: #64748b;
+            margin-bottom: 15px;
+        }
+
+        .severity-critical {
+            background-color: #fee2e2;
+            border-left: 5px solid #dc2626;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .severity-high {
+            background-color: #fef3c7;
+            border-left: 5px solid #f59e0b;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .severity-medium {
+            background-color: #dbeafe;
+            border-left: 5px solid #3b82f6;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .severity-low {
+            background-color: #f0fdf4;
+            border-left: 5px solid #10b981;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .finding-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .severity-badge {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.85em;
+            margin-right: 15px;
+            text-transform: uppercase;
+        }
+
+        .badge-critical {
+            background-color: #dc2626;
+            color: white;
+        }
+
+        .badge-high {
+            background-color: #f59e0b;
+            color: white;
+        }
+
+        .badge-medium {
+            background-color: #3b82f6;
+            color: white;
+        }
+
+        .badge-low {
+            background-color: #10b981;
+            color: white;
+        }
+
+        .finding-title {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #1e293b;
+        }
+
+        .code-ref {
+            background-color: #f1f5f9;
+            border: 1px solid #cbd5e1;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            overflow-x: auto;
+        }
+
+        .code-path {
+            color: #0891b2;
+            font-weight: bold;
+        }
+
+        .recommendation {
+            background-color: #f0f9ff;
+            border: 1px solid #bae6fd;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+
+        .recommendation h5 {
+            color: #0369a1;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .priority-high {
+            color: #dc2626;
+            font-weight: bold;
+        }
+
+        .priority-medium {
+            color: #f59e0b;
+            font-weight: bold;
+        }
+
+        .priority-low {
+            color: #10b981;
+            font-weight: bold;
+        }
+
+        .compliance-matrix {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        .compliance-matrix th,
+        .compliance-matrix td {
+            border: 1px solid #e2e8f0;
+            padding: 12px;
+            text-align: left;
+        }
+
+        .compliance-matrix th {
+            background-color: #1e3a8a;
+            color: white;
+            font-weight: bold;
+        }
+
+        .compliance-matrix tr:nth-child(even) {
+            background-color: #f8fafc;
+        }
+
+        .status-yes {
+            color: #10b981;
+            font-weight: bold;
+        }
+
+        .status-partial {
+            color: #f59e0b;
+            font-weight: bold;
+        }
+
+        .status-no {
+            color: #dc2626;
+            font-weight: bold;
+        }
+
+        .key-metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .metric-card {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .metric-value {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .metric-label {
+            color: #64748b;
+            font-size: 0.9em;
+            text-transform: uppercase;
+        }
+
+        ul, ol {
+            margin: 15px 0 15px 30px;
+        }
+
+        li {
+            margin: 8px 0;
+        }
+
+        .positive {
+            color: #10b981;
+        }
+
+        .negative {
+            color: #dc2626;
+        }
+
+        .footer {
+            background-color: #f8fafc;
+            padding: 30px 40px;
+            margin-top: 50px;
+            border-top: 2px solid #e2e8f0;
+            text-align: center;
+            color: #64748b;
+        }
+
+        .toc {
+            background-color: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 25px;
+            margin: 30px 0;
+        }
+
+        .toc h3 {
+            margin-bottom: 15px;
+        }
+
+        .toc ul {
+            list-style: none;
+            margin-left: 0;
+        }
+
+        .toc li {
+            margin: 10px 0;
+        }
+
+        .toc a {
+            color: #1e40af;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .toc a:hover {
+            text-decoration: underline;
+        }
+
+        @media print {
+            body {
+                background-color: white;
+                padding: 0;
+            }
+            .container {
+                box-shadow: none;
+            }
+            .section {
+                page-break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>Security Assessment Report</h1>
+            <div class="subtitle">Multnomah County Lobbyist Registration System</div>
+            <div class="subtitle" style="margin-top: 10px; font-size: 1em;">Version 1.0 - MVP Prototype</div>
+        </div>
+
+        <!-- Metadata -->
+        <div class="metadata">
+            <div class="metadata-item">
+                <strong>Assessment Date</strong>
+                <div>October 16, 2025</div>
+            </div>
+            <div class="metadata-item">
+                <strong>Reviewed By</strong>
+                <div>US Government Cybersecurity Analyst</div>
+            </div>
+            <div class="metadata-item">
+                <strong>Application Type</strong>
+                <div>Local Government Web Application</div>
+            </div>
+            <div class="metadata-item">
+                <strong>Deployment Status</strong>
+                <div>Prototype (Google Cloud Run)</div>
+            </div>
+            <div class="metadata-item">
+                <strong>Tech Stack</strong>
+                <div>Next.js 15, React 19, NextAuth.js, Prisma, SQLite</div>
+            </div>
+            <div class="metadata-item">
+                <strong>Classification</strong>
+                <div>Public Transparency System (PII Handling)</div>
+            </div>
+        </div>
+
+        <!-- Content -->
+        <div class="content">
+            <!-- Table of Contents -->
+            <div class="toc">
+                <h3>Table of Contents</h3>
+                <ul>
+                    <li><a href="#executive-summary">1. Executive Summary</a></li>
+                    <li><a href="#overall-rating">2. Overall Security Posture Rating</a></li>
+                    <li><a href="#compliance">3. Compliance Assessment</a></li>
+                    <li><a href="#findings">4. Security Findings</a>
+                        <ul style="margin-left: 20px;">
+                            <li><a href="#critical">4.1 Critical Severity</a></li>
+                            <li><a href="#high">4.2 High Severity</a></li>
+                            <li><a href="#medium">4.3 Medium Severity</a></li>
+                            <li><a href="#low">4.4 Low Severity</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="#positive">5. Security Strengths</a></li>
+                    <li><a href="#recommendations">6. Prioritized Recommendations</a></li>
+                    <li><a href="#conclusion">7. Conclusion</a></li>
+                </ul>
+            </div>
+
+            <!-- Executive Summary -->
+            <section id="executive-summary" class="section">
+                <h2>1. Executive Summary</h2>
+
+                <div class="executive-summary">
+                    <h3 style="margin-top: 0;">Assessment Overview</h3>
+                    <p>This security assessment evaluates the Multnomah County Lobbyist Registration System, a web application developed to comply with the Government Accountability Ordinance (effective July 1, 2026). The application is currently deployed as a <strong>prototype/MVP</strong> on Google Cloud Run and requires security hardening before production deployment with real data.</p>
+
+                    <p style="margin-top: 15px;"><strong>Key Finding:</strong> The application demonstrates <strong class="positive">solid foundational security practices</strong> for a prototype but has <strong class="negative">critical gaps</strong> that must be addressed before handling real personally identifiable information (PII) and sensitive lobbying data.</p>
+                </div>
+
+                <div class="key-metrics">
+                    <div class="metric-card">
+                        <div class="metric-label">Critical Findings</div>
+                        <div class="metric-value" style="color: #dc2626;">4</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">High Findings</div>
+                        <div class="metric-value" style="color: #f59e0b;">8</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Medium Findings</div>
+                        <div class="metric-value" style="color: #3b82f6;">6</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Low Findings</div>
+                        <div class="metric-value" style="color: #10b981;">5</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">NPM Vulnerabilities</div>
+                        <div class="metric-value" style="color: #10b981;">0</div>
+                    </div>
+                </div>
+
+                <h3>Critical Areas Requiring Immediate Attention</h3>
+                <ol>
+                    <li><strong>API Authorization:</strong> Multiple API endpoints lack proper authorization checks beyond authentication</li>
+                    <li><strong>Security Headers:</strong> No HTTP security headers implemented (CSP, HSTS, X-Frame-Options, etc.)</li>
+                    <li><strong>File Upload Security:</strong> File uploads are client-side only with no server-side validation or storage</li>
+                    <li><strong>Rate Limiting:</strong> No rate limiting or brute force protection implemented</li>
+                </ol>
+
+                <h3>Positive Security Observations</h3>
+                <ul>
+                    <li class="positive"><strong>Password Security:</strong> Using bcryptjs with proper hashing (10 rounds)</li>
+                    <li class="positive"><strong>SQL Injection Protection:</strong> Prisma ORM prevents SQL injection attacks</li>
+                    <li class="positive"><strong>Dependency Security:</strong> Zero known vulnerabilities in npm dependencies</li>
+                    <li class="positive"><strong>Session Management:</strong> JWT-based sessions with NextAuth.js</li>
+                    <li class="positive"><strong>Secret Management:</strong> Good documentation for secret rotation process</li>
+                </ul>
+            </section>
+
+            <!-- Overall Rating -->
+            <section id="overall-rating" class="section">
+                <h2>2. Overall Security Posture Rating</h2>
+
+                <div class="rating-box">
+                    <div class="rating-label">Security Maturity Score</div>
+                    <div class="rating-score">C+</div>
+                    <div style="color: #64748b; margin-top: 10px; font-size: 1.1em;">
+                        <strong>Acceptable for Prototype/Demo</strong><br>
+                        <strong style="color: #dc2626;">NOT READY for Production Deployment</strong>
+                    </div>
+                </div>
+
+                <h3>Rating Justification</h3>
+                <p>The application receives a <strong>C+</strong> rating, reflecting:</p>
+                <ul>
+                    <li><strong>Strong Foundation:</strong> Core authentication and data access patterns are sound</li>
+                    <li><strong>Development Stage:</strong> Appropriate security for a prototype/demo environment</li>
+                    <li><strong>Critical Gaps:</strong> Multiple high-impact vulnerabilities that prevent production readiness</li>
+                    <li><strong>Clear Path Forward:</strong> Well-documented with actionable remediation steps available</li>
+                </ul>
+
+                <p><strong>Production Readiness Assessment:</strong> Estimated <strong class="negative">4-6 weeks of security hardening</strong> required before Authority to Operate (ATO) can be granted for handling real PII and lobbying data.</p>
+            </section>
+
+            <!-- Compliance Assessment -->
+            <section id="compliance" class="section">
+                <h2>3. Compliance Assessment</h2>
+
+                <h3>NIST Cybersecurity Framework Alignment</h3>
+                <table class="compliance-matrix">
+                    <thead>
+                        <tr>
+                            <th>NIST Function</th>
+                            <th>Control</th>
+                            <th>Status</th>
+                            <th>Notes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td rowspan="3"><strong>IDENTIFY</strong></td>
+                            <td>Asset Management</td>
+                            <td class="status-yes">✓ Yes</td>
+                            <td>Clear documentation of system components</td>
+                        </tr>
+                        <tr>
+                            <td>Risk Assessment</td>
+                            <td class="status-partial">⚠ Partial</td>
+                            <td>No formal risk assessment documented</td>
+                        </tr>
+                        <tr>
+                            <td>Governance</td>
+                            <td class="status-yes">✓ Yes</td>
+                            <td>Secret rotation process documented</td>
+                        </tr>
+                        <tr>
+                            <td rowspan="4"><strong>PROTECT</strong></td>
+                            <td>Access Control (AC)</td>
+                            <td class="status-partial">⚠ Partial</td>
+                            <td>Auth present, but authorization gaps exist</td>
+                        </tr>
+                        <tr>
+                            <td>Data Security (DS)</td>
+                            <td class="status-partial">⚠ Partial</td>
+                            <td>Passwords hashed, but no encryption at rest</td>
+                        </tr>
+                        <tr>
+                            <td>Protective Technology (PT)</td>
+                            <td class="status-no">✗ No</td>
+                            <td>Missing security headers, rate limiting</td>
+                        </tr>
+                        <tr>
+                            <td>Awareness & Training</td>
+                            <td class="status-yes">✓ Yes</td>
+                            <td>Good developer documentation</td>
+                        </tr>
+                        <tr>
+                            <td rowspan="2"><strong>DETECT</strong></td>
+                            <td>Anomalies & Events</td>
+                            <td class="status-partial">⚠ Partial</td>
+                            <td>Audit logging present but incomplete</td>
+                        </tr>
+                        <tr>
+                            <td>Security Monitoring</td>
+                            <td class="status-no">✗ No</td>
+                            <td>No monitoring or alerting configured</td>
+                        </tr>
+                        <tr>
+                            <td rowspan="2"><strong>RESPOND</strong></td>
+                            <td>Response Planning</td>
+                            <td class="status-no">✗ No</td>
+                            <td>No incident response plan</td>
+                        </tr>
+                        <tr>
+                            <td>Mitigation</td>
+                            <td class="status-partial">⚠ Partial</td>
+                            <td>Rollback procedures documented</td>
+                        </tr>
+                        <tr>
+                            <td rowspan="1"><strong>RECOVER</strong></td>
+                            <td>Recovery Planning</td>
+                            <td class="status-no">✗ No</td>
+                            <td>No backup/recovery procedures</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>OWASP Top 10 (2021) Assessment</h3>
+                <table class="compliance-matrix">
+                    <thead>
+                        <tr>
+                            <th>OWASP Risk</th>
+                            <th>Vulnerability</th>
+                            <th>Status</th>
+                            <th>Evidence</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>A01:2021</td>
+                            <td>Broken Access Control</td>
+                            <td class="status-partial">⚠ Partial Risk</td>
+                            <td>API authorization gaps detected</td>
+                        </tr>
+                        <tr>
+                            <td>A02:2021</td>
+                            <td>Cryptographic Failures</td>
+                            <td class="status-yes">✓ Protected</td>
+                            <td>Bcryptjs password hashing implemented</td>
+                        </tr>
+                        <tr>
+                            <td>A03:2021</td>
+                            <td>Injection</td>
+                            <td class="status-yes">✓ Protected</td>
+                            <td>Prisma ORM prevents SQL injection</td>
+                        </tr>
+                        <tr>
+                            <td>A04:2021</td>
+                            <td>Insecure Design</td>
+                            <td class="status-partial">⚠ Partial Risk</td>
+                            <td>Missing security controls by design</td>
+                        </tr>
+                        <tr>
+                            <td>A05:2021</td>
+                            <td>Security Misconfiguration</td>
+                            <td class="status-no">✗ Vulnerable</td>
+                            <td>Build errors ignored, no security headers</td>
+                        </tr>
+                        <tr>
+                            <td>A06:2021</td>
+                            <td>Vulnerable Components</td>
+                            <td class="status-yes">✓ Protected</td>
+                            <td>Zero npm vulnerabilities detected</td>
+                        </tr>
+                        <tr>
+                            <td>A07:2021</td>
+                            <td>Auth & Session Failures</td>
+                            <td class="status-partial">⚠ Partial Risk</td>
+                            <td>No rate limiting or brute force protection</td>
+                        </tr>
+                        <tr>
+                            <td>A08:2021</td>
+                            <td>Software & Data Integrity</td>
+                            <td class="status-partial">⚠ Partial Risk</td>
+                            <td>File uploads lack integrity validation</td>
+                        </tr>
+                        <tr>
+                            <td>A09:2021</td>
+                            <td>Logging & Monitoring</td>
+                            <td class="status-partial">⚠ Partial Risk</td>
+                            <td>Audit log schema exists, incomplete use</td>
+                        </tr>
+                        <tr>
+                            <td>A10:2021</td>
+                            <td>Server-Side Request Forgery</td>
+                            <td class="status-yes">✓ Protected</td>
+                            <td>No SSRF attack vectors identified</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Government Security Standards</h3>
+                <p>For a local government application handling PII, the following standards apply:</p>
+                <ul>
+                    <li><strong>NIST SP 800-53 (Rev. 5):</strong> Federal security controls - <span class="status-partial">Partially implemented</span></li>
+                    <li><strong>NIST SP 800-63B:</strong> Digital identity guidelines - <span class="status-yes">Password requirements met</span></li>
+                    <li><strong>FedRAMP Moderate:</strong> Cloud security baseline - <span class="status-no">Not currently met</span></li>
+                    <li><strong>WCAG 2.1 AA:</strong> Accessibility standards - <span class="status-yes">Good accessibility patterns observed</span></li>
+                </ul>
+            </section>
+
+            <!-- Security Findings -->
+            <section id="findings" class="section">
+                <h2>4. Security Findings</h2>
+
+                <!-- Critical Severity -->
+                <h3 id="critical">4.1 Critical Severity Findings</h3>
+
+                <div class="severity-critical">
+                    <div class="finding-header">
+                        <span class="severity-badge badge-critical">Critical</span>
+                        <span class="finding-title">CRIT-01: Missing HTTP Security Headers</span>
+                    </div>
+
+                    <h4>Description</h4>
+                    <p>The application does not implement any HTTP security headers, leaving it vulnerable to clickjacking, MIME-type attacks, and lacking transport security enforcement.</p>
+
+                    <div class="code-ref">
+                        <div class="code-path">File: /middleware.ts</div>
+                        <div class="code-path">File: /next.config.ts</div>
+                        No security headers configuration found in middleware or Next.js config.
+                    </div>
+
+                    <h4>Impact</h4>
+                    <ul>
+                        <li><strong>Clickjacking attacks:</strong> Malicious sites can frame the application</li>
+                        <li><strong>XSS exploitation:</strong> No Content Security Policy to restrict script sources</li>
+                        <li><strong>Transport downgrade:</strong> No HSTS to enforce HTTPS</li>
+                        <li><strong>MIME-sniffing attacks:</strong> Browser could misinterpret file types</li>
+                    </ul>
+
+                    <div class="recommendation">
+                        <h5>Remediation (Priority: <span class="priority-high">HIGH</span>)</h5>
+                        <p>Add security headers middleware:</p>
+                        <div class="code-ref">
+// middleware.ts - Add before return NextResponse.next()
+const headers = new Headers(response.headers)
+headers.set('X-Frame-Options', 'DENY')
+headers.set('X-Content-Type-Options', 'nosniff')
+headers.set('Referrer-Policy', 'strict-origin-when-cross-origin')
+headers.set('Permissions-Policy', 'geolocation=(), microphone=(), camera=()')
+headers.set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains')
+headers.set('Content-Security-Policy', "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline';")
+
+return NextResponse.next({ headers })
+                        </div>
+                    </div>
+                </div>
+
+                <div class="severity-critical">
+                    <div class="finding-header">
+                        <span class="severity-badge badge-critical">Critical</span>
+                        <span class="finding-title">CRIT-02: No Rate Limiting or Brute Force Protection</span>
+                    </div>
+
+                    <h4>Description</h4>
+                    <p>Authentication endpoints and API routes have no rate limiting, allowing unlimited login attempts and potential denial-of-service attacks.</p>
+
+                    <div class="code-ref">
+                        <div class="code-path">File: /lib/auth.ts (lines 25-55)</div>
+                        <div class="code-path">File: /app/api/violations/route.ts</div>
+                        <div class="code-path">File: /app/api/admin/seed/route.ts</div>
+                        No rate limiting detected on any endpoints.
+                    </div>
+
+                    <h4>Impact</h4>
+                    <ul>
+                        <li><strong>Brute force attacks:</strong> Attackers can attempt unlimited password guesses</li>
+                        <li><strong>Credential stuffing:</strong> Automated attacks with stolen credentials</li>
+                        <li><strong>DoS vulnerability:</strong> API endpoints can be overwhelmed</li>
+                        <li><strong>Resource exhaustion:</strong> Database queries can be spammed</li>
+                    </ul>
+
+                    <div class="recommendation">
+                        <h5>Remediation (Priority: <span class="priority-high">HIGH</span>)</h5>
+                        <p>Implement rate limiting using upstash/ratelimit or similar:</p>
+                        <div class="code-ref">
+npm install @upstash/ratelimit @upstash/redis
+
+// lib/rate-limit.ts
+import { Ratelimit } from "@upstash/ratelimit"
+import { Redis } from "@upstash/redis"
+
+export const loginRateLimit = new Ratelimit({
+  redis: Redis.fromEnv(),
+  limiter: Ratelimit.slidingWindow(5, "15 m"), // 5 attempts per 15 minutes
+})
+
+export const apiRateLimit = new Ratelimit({
+  redis: Redis.fromEnv(),
+  limiter: Ratelimit.slidingWindow(100, "1 m"), // 100 requests per minute
+})
+
+// Use in API routes and auth callbacks
+                        </div>
+                        <p><strong>Alternative for SQLite:</strong> Implement IP-based rate limiting in middleware using in-memory cache or database table.</p>
+                    </div>
+                </div>
+
+                <div class="severity-critical">
+                    <div class="finding-header">
+                        <span class="severity-badge badge-critical">Critical</span>
+                        <span class="finding-title">CRIT-03: File Upload Security Not Implemented</span>
+                    </div>
+
+                    <h4>Description</h4>
+                    <p>The FileUpload component performs client-side validation only. No server-side file handling, validation, or storage is implemented. Uploaded files are not actually stored or processed.</p>
+
+                    <div class="code-ref">
+                        <div class="code-path">File: /components/FileUpload.tsx (lines 38-78)</div>
+                        Client-side validation only:
+                        - File type check based on extension only
+                        - File size check in browser
+                        - No server-side upload endpoint
+                        - No malware scanning
+                        - No file content validation
+                    </div>
+
+                    <h4>Impact</h4>
+                    <ul>
+                        <li><strong>Malicious file uploads:</strong> When implemented, could accept executable files</li>
+                        <li><strong>Extension spoofing:</strong> File extensions can be easily faked</li>
+                        <li><strong>No virus scanning:</strong> Malware could be uploaded</li>
+                        <li><strong>Storage vulnerabilities:</strong> No secure storage mechanism planned</li>
+                        <li><strong>Path traversal risk:</strong> File names not sanitized</li>
+                    </ul>
+
+                    <div class="recommendation">
+                        <h5>Remediation (Priority: <span class="priority-high">HIGH</span>)</h5>
+                        <p>Implement secure file upload API with:</p>
+                        <ol>
+                            <li><strong>Server-side validation:</strong> Magic byte checking (not just extensions)</li>
+                            <li><strong>File size limits:</strong> Enforce server-side (current 10MB client-side only)</li>
+                            <li><strong>Filename sanitization:</strong> Remove special characters, prevent path traversal</li>
+                            <li><strong>Cloud storage:</strong> Google Cloud Storage with signed URLs</li>
+                            <li><strong>Virus scanning:</strong> Integrate ClamAV or cloud-based scanning</li>
+                            <li><strong>Access control:</strong> Files only accessible by authorized users</li>
+                            <li><strong>Content-Type validation:</strong> Verify MIME type matches content</li>
+                        </ol>
+                        <div class="code-ref">
+// app/api/upload/route.ts (NEW FILE REQUIRED)
+import { auth } from "@/lib/auth"
+import { Storage } from "@google-cloud/storage"
+import { randomUUID } from "crypto"
+import fileType from "file-type"
+
+export async function POST(req: Request) {
+  const session = await auth()
+  if (!session) return Response.json({ error: "Unauthorized" }, { status: 401 })
+
+  const formData = await req.formData()
+  const file = formData.get("file") as File
+
+  // Validate file size server-side
+  if (file.size > 10 * 1024 * 1024) {
+    return Response.json({ error: "File too large" }, { status: 400 })
+  }
+
+  // Validate file type using magic bytes
+  const buffer = await file.arrayBuffer()
+  const type = await fileType.fromBuffer(Buffer.from(buffer))
+
+  const allowedTypes = ["application/pdf", "image/jpeg", "image/png"]
+  if (!type || !allowedTypes.includes(type.mime)) {
+    return Response.json({ error: "Invalid file type" }, { status: 400 })
+  }
+
+  // Upload to GCS with sanitized filename
+  const storage = new Storage()
+  const bucket = storage.bucket(process.env.GCS_BUCKET_NAME!)
+  const filename = `${session.user.id}/${randomUUID()}.${type.ext}`
+  const blob = bucket.file(filename)
+
+  await blob.save(Buffer.from(buffer), {
+    metadata: { contentType: type.mime }
+  })
+
+  // TODO: Integrate virus scanning here
+
+  return Response.json({ url: blob.publicUrl() })
+}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="severity-critical">
+                    <div class="finding-header">
+                        <span class="severity-badge badge-critical">Critical</span>
+                        <span class="finding-title">CRIT-04: Seed Endpoint Exposed in Production</span>
+                    </div>
+
+                    <h4>Description</h4>
+                    <p>The database seed endpoint at <code>/api/admin/seed</code> is accessible without proper authorization and could be triggered in production, creating test users with known passwords.</p>
+
+                    <div class="code-ref">
+                        <div class="code-path">File: /app/api/admin/seed/route.ts (lines 12-81)</div>
+                        POST /api/admin/seed - No authentication check
+                        GET /api/admin/seed - No authentication check
+
+                        Creates users with hardcoded password: "password123"
+                    </div>
+
+                    <h4>Impact</h4>
+                    <ul>
+                        <li><strong>Unauthorized access:</strong> Known password "password123" for test accounts</li>
+                        <li><strong>Data corruption:</strong> Can create duplicate users</li>
+                        <li><strong>Privilege escalation:</strong> Creates ADMIN users without authorization</li>
+                        <li><strong>Production vulnerability:</strong> Endpoint exists in production build</li>
+                    </ul>
+
+                    <div class="recommendation">
+                        <h5>Remediation (Priority: <span class="priority-high">HIGH</span>)</h5>
+                        <p>Remove or protect the seed endpoint:</p>
+                        <div class="code-ref">
+// Option 1: Remove from production (RECOMMENDED)
+// Delete /app/api/admin/seed/route.ts
+// Move seeding to prisma/seed.ts (already exists)
+// Run: npm run db:seed (local only)
+
+// Option 2: Add strong authentication check
+export async function POST(req: Request) {
+  // Only allow in development
+  if (process.env.NODE_ENV === 'production') {
+    return Response.json({ error: "Forbidden" }, { status: 403 })
+  }
+
+  const session = await auth()
+  if (!session || session.user.role !== 'ADMIN') {
+    return Response.json({ error: "Forbidden" }, { status: 403 })
+  }
+
+  // Check for special seed token
+  const seedToken = req.headers.get('X-Seed-Token')
+  if (seedToken !== process.env.SEED_SECRET_TOKEN) {
+    return Response.json({ error: "Invalid token" }, { status: 403 })
+  }
+
+  // ... rest of seed logic
+}
+                        </div>
+                        <p><strong>Immediate Action:</strong> Delete this endpoint before production deployment with real data.</p>
+                    </div>
+                </div>
+
+                <!-- High Severity -->
+                <h3 id="high">4.2 High Severity Findings</h3>
+
+                <div class="severity-high">
+                    <div class="finding-header">
+                        <span class="severity-badge badge-high">High</span>
+                        <span class="finding-title">HIGH-01: Insufficient API Authorization Checks</span>
+                    </div>
+
+                    <h4>Description</h4>
+                    <p>Multiple API endpoints check for authentication but not proper authorization. Users can potentially access data they shouldn't have permission to view or modify.</p>
+
+                    <div class="code-ref">
+                        <div class="code-path">File: /app/api/violations/route.ts (lines 15-26)</div>
+                        Only checks for ADMIN role, but doesn't verify:
+                        - Entity ownership (can view all violations)
+                        - Proper RBAC for different entity types
+
+                        <div class="code-path">File: /app/api/violations/[id]/route.ts (lines 63-90)</div>
+                        PATCH endpoint allows updating any violation if user is ADMIN
+                        - No verification of which violations admin should access
+                        - No audit logging of changes
+                    </div>
+
+                    <h4>Impact</h4>
+                    <ul>
+                        <li><strong>Horizontal privilege escalation:</strong> Users might access peer data</li>
+                        <li><strong>Data exposure:</strong> Insufficient segregation of duties</li>
+                        <li><strong>Audit trail gaps:</strong> No logging of who accessed what</li>
+                    </ul>
+
+                    <div class="recommendation">
+                        <h5>Remediation (Priority: <span class="priority-high">HIGH</span>)</h5>
+                        <p>Implement fine-grained authorization:</p>
+                        <ol>
+                            <li>Create authorization utility: <code>lib/authorization.ts</code></li>
+                            <li>Check entity ownership for non-admin users</li>
+                            <li>Implement audit logging for sensitive operations</li>
+                            <li>Add resource-level access control</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <div class="severity-high">
+                    <div class="finding-header">
+                        <span class="severity-badge badge-high">High</span>
+                        <span class="finding-title">HIGH-02: Audit Logging Incomplete</span>
+                    </div>
+
+                    <h4>Description</h4>
+                    <p>Database schema includes AuditLog model (schema.prisma lines 399-414), but audit logging is not implemented in any API routes.</p>
+
+                    <div class="code-ref">
+                        <div class="code-path">File: /prisma/schema.prisma (lines 399-414)</div>
+                        AuditLog model defined with fields:
+                        - userId, action, entityType, entityId
+                        - changesJson, ipAddress, timestamp
+
+                        BUT: No usage found in:
+                        - /app/api/violations/route.ts (create violation - no audit)
+                        - /app/api/violations/[id]/route.ts (update violation - no audit)
+                        - Any other API routes
+                    </div>
+
+                    <h4>Impact</h4>
+                    <ul>
+                        <li><strong>No forensic evidence:</strong> Cannot investigate security incidents</li>
+                        <li><strong>Compliance violation:</strong> Government systems require audit trails</li>
+                        <li><strong>Accountability gap:</strong> Cannot prove who made changes</li>
+                        <li><strong>No tamper detection:</strong> Unauthorized changes invisible</li>
+                    </ul>
+
+                    <div class="recommendation">
+                        <h5>Remediation (Priority: <span class="priority-high">HIGH</span>)</h5>
+                        <p>Implement audit logging utility and use throughout application:</p>
+                        <div class="code-ref">
+// lib/audit.ts
+import { prisma } from "./db"
+import { headers } from "next/headers"
+
+export async function auditLog(
+  userId: string,
+  action: string,
+  entityType: string,
+  entityId?: string,
+  changes?: any
+) {
+  const headersList = await headers()
+  const ipAddress = headersList.get("x-forwarded-for") ||
+                    headersList.get("x-real-ip") ||
+                    "unknown"
+
+  await prisma.auditLog.create({
+    data: {
+      userId,
+      action,
+      entityType,
+      entityId,
+      changesJson: changes ? JSON.stringify(changes) : null,
+      ipAddress,
+    }
+  })
+}
+
+// Use in API routes:
+await auditLog(session.user.id, "CREATE", "Violation", violation.id, body)
+                        </div>
+                        <p><strong>Critical actions requiring audit logging:</strong></p>
+                        <ul>
+                            <li>Authentication (login, logout, failed attempts)</li>
+                            <li>Violation creation, updates, deletions</li>
+                            <li>User account changes (role changes, password resets)</li>
+                            <li>Report submissions and approvals</li>
+                            <li>File uploads and downloads</li>
+                            <li>Admin actions (seeding, bulk operations)</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="severity-high">
+                    <div class="finding-header">
+                        <span class="severity-badge badge-high">High</span>
+                        <span class="finding-title">HIGH-03: No Input Validation Library</span>
+                    </div>
+
+                    <h4>Description</h4>
+                    <p>API routes perform minimal input validation. No validation library (like Zod) is used despite TypeScript being present.</p>
+
+                    <div class="code-ref">
+                        <div class="code-path">File: /app/api/violations/route.ts (lines 91-107)</div>
+                        Basic validation only:
+                        - Checks if fields exist
+                        - Validates fine amount ≤ 500
+                        - No format validation, type coercion, or sanitization
+
+                        Missing validation:
+                        - Email format, phone format
+                        - Date range validation
+                        - String length limits
+                        - Enum value validation
+                        - XSS prevention in text fields
+                    </div>
+
+                    <h4>Impact</h4>
+                    <ul>
+                        <li><strong>Data integrity issues:</strong> Invalid data can be stored</li>
+                        <li><strong>Type confusion attacks:</strong> Unexpected data types</li>
+                        <li><strong>XSS vulnerability:</strong> Unvalidated text could contain scripts</li>
+                        <li><strong>Business logic bypass:</strong> Invalid states achievable</li>
+                    </ul>
+
+                    <div class="recommendation">
+                        <h5>Remediation (Priority: <span class="priority-high">HIGH</span>)</h5>
+                        <p>Implement Zod validation schemas:</p>
+                        <div class="code-ref">
+npm install zod
+
+// lib/validations.ts
+import { z } from "zod"
+
+export const violationSchema = z.object({
+  entityType: z.enum(["LOBBYIST", "EMPLOYER", "LOBBYIST_REPORT", "EMPLOYER_REPORT", "BOARD_MEMBER"]),
+  entityId: z.string().uuid(),
+  violationType: z.enum([
+    "LATE_REGISTRATION", "LATE_REPORT", "MISSING_REPORT",
+    "FALSE_STATEMENT", "PROHIBITED_CONDUCT", "MISSING_AUTHORIZATION", "OTHER"
+  ]),
+  description: z.string().min(10).max(1000),
+  fineAmount: z.number().min(0).max(500).optional(),
+  sendEducationalLetter: z.boolean().optional(),
+})
+
+// Use in API:
+const body = await request.json()
+const validated = violationSchema.parse(body) // Throws if invalid
+                        </div>
+                    </div>
+                </div>
+
+                <div class="severity-high">
+                    <div class="finding-header">
+                        <span class="severity-badge badge-high">High</span>
+                        <span class="finding-title">HIGH-04: Error Messages Leak Information</span>
+                    </div>
+
+                    <h4>Description</h4>
+                    <p>Console.error statements and error responses may leak sensitive information about database structure, internal paths, or system architecture.</p>
+
+                    <div class="code-ref">
+                        <div class="code-path">File: /app/api/violations/route.ts (line 59)</div>
+                        console.error("Error fetching violations:", error)
+
+                        <div class="code-path">File: /app/api/admin/seed/route.ts (line 75)</div>
+                        return NextResponse.json(
+                          { error: "Failed to seed database", details: error.message },
+                          { status: 500 }
+                        )
+
+                        Exposes: error.message which may contain SQL errors, file paths, etc.
+                    </div>
+
+                    <h4>Impact</h4>
+                    <ul>
+                        <li><strong>Information disclosure:</strong> Database structure revealed</li>
+                        <li><strong>Attack surface mapping:</strong> Attackers learn system internals</li>
+                        <li><strong>Path disclosure:</strong> Server file paths leaked</li>
+                    </ul>
+
+                    <div class="recommendation">
+                        <h5>Remediation (Priority: <span class="priority-medium">MEDIUM</span>)</h5>
+                        <p>Implement generic error responses:</p>
+                        <div class="code-ref">
+// lib/errors.ts
+export function handleApiError(error: unknown, operation: string) {
+  // Log full error server-side
+  console.error(`[${operation}]`, error)
+
+  // Return generic message to client
+  return {
+    error: "An error occurred processing your request",
+    code: "INTERNAL_ERROR",
+    // In development only:
+    ...(process.env.NODE_ENV === 'development' && {
+      details: error instanceof Error ? error.message : String(error)
+    })
+  }
+}
+
+// Use in API routes:
+catch (error) {
+  return NextResponse.json(
+    handleApiError(error, "create violation"),
+    { status: 500 }
+  )
+}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="severity-high">
+                    <div class="finding-header">
+                        <span class="severity-badge badge-high">High</span>
+                        <span class="finding-title">HIGH-05: TypeScript and ESLint Errors Ignored</span>
+                    </div>
+
+                    <h4>Description</h4>
+                    <p>Production build configuration disables TypeScript type checking and ESLint, potentially masking security-relevant code issues.</p>
+
+                    <div class="code-ref">
+                        <div class="code-path">File: /next.config.ts (lines 6-12)</div>
+                        eslint: {
+                          ignoreDuringBuilds: true,  // ⚠️ Disables ESLint
+                        },
+                        typescript: {
+                          ignoreBuildErrors: true,    // ⚠️ Disables type checking
+                        },
+                    </div>
+
+                    <h4>Impact</h4>
+                    <ul>
+                        <li><strong>Type safety lost:</strong> Runtime type errors possible</li>
+                        <li><strong>Security issues masked:</strong> ESLint security rules not enforced</li>
+                        <li><strong>Code quality degradation:</strong> Errors accumulate over time</li>
+                        <li><strong>Null pointer exceptions:</strong> Uncaught null/undefined access</li>
+                    </ul>
+
+                    <div class="recommendation">
+                        <h5>Remediation (Priority: <span class="priority-high">HIGH</span>)</h5>
+                        <p>Enable type checking and linting:</p>
+                        <ol>
+                            <li>Fix all TypeScript errors: <code>npm run type-check</code></li>
+                            <li>Fix all ESLint warnings: <code>npm run lint</code></li>
+                            <li>Re-enable checks in next.config.ts</li>
+                            <li>Add pre-commit hooks to prevent future errors</li>
+                        </ol>
+                        <div class="code-ref">
+// next.config.ts (FIXED)
+const nextConfig: NextConfig = {
+  output: 'standalone',
+  // REMOVE ignoreDuringBuilds and ignoreBuildErrors
+  eslint: {
+    dirs: ['app', 'components', 'lib'], // Specify directories
+  },
+}
+
+// package.json - Add pre-commit hook
+{
+  "scripts": {
+    "precommit": "npm run lint && npm run type-check"
+  }
+}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="severity-high">
+                    <div class="finding-header">
+                        <span class="severity-badge badge-high">High</span>
+                        <span class="finding-title">HIGH-06: No Session Timeout Configured</span>
+                    </div>
+
+                    <h4>Description</h4>
+                    <p>NextAuth session configuration doesn't specify maxAge, potentially allowing indefinite sessions.</p>
+
+                    <div class="code-ref">
+                        <div class="code-path">File: /lib/auth.ts (lines 10-12)</div>
+                        session: {
+                          strategy: "jwt",
+                          // Missing: maxAge configuration
+                        },
+                    </div>
+
+                    <h4>Impact</h4>
+                    <ul>
+                        <li><strong>Session hijacking risk:</strong> Stolen tokens valid indefinitely</li>
+                        <li><strong>Stale sessions:</strong> Users never logged out automatically</li>
+                        <li><strong>Compliance issue:</strong> Government systems require session timeouts</li>
+                    </ul>
+
+                    <div class="recommendation">
+                        <h5>Remediation (Priority: <span class="priority-medium">MEDIUM</span>)</h5>
+                        <p>Configure session timeouts:</p>
+                        <div class="code-ref">
+session: {
+  strategy: "jwt",
+  maxAge: 8 * 60 * 60, // 8 hours (government standard)
+  updateAge: 24 * 60 * 60, // Refresh token every 24 hours
+},
+cookies: {
+  sessionToken: {
+    name: `__Secure-next-auth.session-token`,
+    options: {
+      httpOnly: true,
+      sameSite: 'lax',
+      path: '/',
+      secure: process.env.NODE_ENV === 'production'
+    }
+  }
+}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="severity-high">
+                    <div class="finding-header">
+                        <span class="severity-badge badge-high">High</span>
+                        <span class="finding-title">HIGH-07: No HTTPS Enforcement</span>
+                    </div>
+
+                    <h4>Description</h4>
+                    <p>While Google Cloud Run provides HTTPS, there's no middleware to enforce HTTPS connections or redirect HTTP to HTTPS.</p>
+
+                    <h4>Impact</h4>
+                    <ul>
+                        <li><strong>Man-in-the-middle attacks:</strong> If HTTP allowed</li>
+                        <li><strong>Session token exposure:</strong> Cookies sent over HTTP</li>
+                        <li><strong>Credential interception:</strong> Login forms over HTTP</li>
+                    </ul>
+
+                    <div class="recommendation">
+                        <h5>Remediation (Priority: <span class="priority-medium">MEDIUM</span>)</h5>
+                        <p>Add HTTPS enforcement middleware:</p>
+                        <div class="code-ref">
+// middleware.ts - Add before auth check
+export default auth((req) => {
+  // Enforce HTTPS in production
+  if (process.env.NODE_ENV === 'production') {
+    const proto = req.headers.get('x-forwarded-proto')
+    if (proto !== 'https') {
+      const httpsUrl = new URL(req.url)
+      httpsUrl.protocol = 'https:'
+      return NextResponse.redirect(httpsUrl)
+    }
+  }
+
+  // ... existing auth logic
+})
+                        </div>
+                        <p><strong>Note:</strong> Google Cloud Run handles this at the load balancer level, but defense-in-depth requires application-level enforcement.</p>
+                    </div>
+                </div>
+
+                <div class="severity-high">
+                    <div class="finding-header">
+                        <span class="severity-badge badge-high">High</span>
+                        <span class="finding-title">HIGH-08: Prisma Client Instantiation Anti-Pattern</span>
+                    </div>
+
+                    <h4>Description</h4>
+                    <p>Some API routes create new PrismaClient instances instead of using the singleton, potentially exhausting database connections.</p>
+
+                    <div class="code-ref">
+                        <div class="code-path">File: /app/api/violations/route.ts (line 5)</div>
+                        <div class="code-path">File: /app/api/violations/[id]/route.ts (line 5)</div>
+                        <div class="code-path">File: /app/api/violations/summary/route.ts (line 5)</div>
+                        const prisma = new PrismaClient() // ⚠️ Creates new instance per request
+
+                        Should use: import { prisma } from "@/lib/db"
+                    </div>
+
+                    <h4>Impact</h4>
+                    <ul>
+                        <li><strong>Connection exhaustion:</strong> SQLite connection limits hit</li>
+                        <li><strong>Performance degradation:</strong> Slow connection initialization</li>
+                        <li><strong>Resource leak:</strong> Connections not properly pooled</li>
+                        <li><strong>Denial of service:</strong> Under high load, DB becomes unavailable</li>
+                    </ul>
+
+                    <div class="recommendation">
+                        <h5>Remediation (Priority: <span class="priority-high">HIGH</span>)</h5>
+                        <p>Use singleton Prisma instance:</p>
+                        <div class="code-ref">
+// BEFORE (WRONG):
+import { PrismaClient } from "@prisma/client"
+const prisma = new PrismaClient()
+
+// AFTER (CORRECT):
+import { prisma } from "@/lib/db"
+
+// Apply to all API routes:
+- /app/api/violations/route.ts
+- /app/api/violations/[id]/route.ts
+- /app/api/violations/summary/route.ts
+- /app/api/admin/seed/route.ts
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Medium Severity -->
+                <h3 id="medium">4.3 Medium Severity Findings</h3>
+
+                <div class="severity-medium">
+                    <div class="finding-header">
+                        <span class="severity-badge badge-medium">Medium</span>
+                        <span class="finding-title">MED-01: No Environment Variable Validation</span>
+                    </div>
+
+                    <h4>Description</h4>
+                    <p>Required environment variables are not validated at startup, potentially causing runtime failures.</p>
+
+                    <h4>Impact</h4>
+                    <ul>
+                        <li><strong>Runtime failures:</strong> App crashes when env vars missing</li>
+                        <li><strong>Silent failures:</strong> Features fail without clear errors</li>
+                        <li><strong>Deployment issues:</strong> Production deploys with missing config</li>
+                    </ul>
+
+                    <div class="recommendation">
+                        <h5>Remediation (Priority: <span class="priority-medium">MEDIUM</span>)</h5>
+                        <p>Create env validation at startup:</p>
+                        <div class="code-ref">
+// lib/env.ts
+import { z } from "zod"
+
+const envSchema = z.object({
+  DATABASE_URL: z.string().min(1),
+  AUTH_SECRET: z.string().min(32),
+  NEXTAUTH_URL: z.string().url(),
+  NODE_ENV: z.enum(['development', 'production', 'test']),
+})
+
+export const env = envSchema.parse(process.env)
+
+// Import in app/layout.tsx to validate at startup
+                        </div>
+                    </div>
+                </div>
+
+                <div class="severity-medium">
+                    <div class="finding-header">
+                        <span class="severity-badge badge-medium">Medium</span>
+                        <span class="finding-title">MED-02: Database Backup Strategy Not Documented</span>
+                    </div>
+
+                    <h4>Description</h4>
+                    <p>No documented backup or disaster recovery process for the SQLite database.</p>
+
+                    <h4>Impact</h4>
+                    <ul>
+                        <li><strong>Data loss risk:</strong> No recovery if database corrupted</li>
+                        <li><strong>Compliance gap:</strong> Government systems require backups</li>
+                        <li><strong>Business continuity:</strong> No disaster recovery plan</li>
+                    </ul>
+
+                    <div class="recommendation">
+                        <h5>Remediation (Priority: <span class="priority-medium">MEDIUM</span>)</h5>
+                        <p>For production, migrate to PostgreSQL with automated backups:</p>
+                        <ol>
+                            <li>Google Cloud SQL for PostgreSQL</li>
+                            <li>Enable automated daily backups</li>
+                            <li>Enable point-in-time recovery</li>
+                            <li>Test restore procedures quarterly</li>
+                            <li>Document recovery time objective (RTO) and recovery point objective (RPO)</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <div class="severity-medium">
+                    <div class="finding-header">
+                        <span class="severity-badge badge-medium">Medium</span>
+                        <span class="finding-title">MED-03: No Monitoring or Alerting</span>
+                    </div>
+
+                    <h4>Description</h4>
+                    <p>No application monitoring, error tracking, or security alerting configured.</p>
+
+                    <h4>Impact</h4>
+                    <ul>
+                        <li><strong>Blind to attacks:</strong> Won't detect ongoing security incidents</li>
+                        <li><strong>No performance visibility:</strong> Can't detect degradation</li>
+                        <li><strong>Delayed incident response:</strong> Issues discovered too late</li>
+                    </ul>
+
+                    <div class="recommendation">
+                        <h5>Remediation (Priority: <span class="priority-medium">MEDIUM</span>)</h5>
+                        <p>Implement monitoring:</p>
+                        <ul>
+                            <li>Google Cloud Monitoring for infrastructure metrics</li>
+                            <li>Google Cloud Logging for application logs</li>
+                            <li>Sentry or similar for error tracking</li>
+                            <li>Alert on: authentication failures, 500 errors, high latency</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="severity-medium">
+                    <div class="finding-header">
+                        <span class="severity-badge badge-medium">Medium</span>
+                        <span class="finding-title">MED-04: Client-Side Form Validation Only</span>
+                    </div>
+
+                    <h4>Description</h4>
+                    <p>Form components validate input client-side but corresponding API endpoints don't re-validate.</p>
+
+                    <div class="code-ref">
+                        <div class="code-path">File: /components/FileUpload.tsx (lines 44-67)</div>
+                        Client-side validation that can be bypassed
+                    </div>
+
+                    <h4>Impact</h4>
+                    <ul>
+                        <li><strong>Validation bypass:</strong> Attackers can submit invalid data via API</li>
+                        <li><strong>Data integrity:</strong> Invalid data stored in database</li>
+                    </ul>
+
+                    <div class="recommendation">
+                        <h5>Remediation (Priority: <span class="priority-medium">MEDIUM</span>)</h5>
+                        <p>Duplicate validation on server-side (see HIGH-03 for Zod implementation)</p>
+                    </div>
+                </div>
+
+                <div class="severity-medium">
+                    <div class="finding-header">
+                        <span class="severity-badge badge-medium">Medium</span>
+                        <span class="finding-title">MED-05: No Password Complexity Requirements</span>
+                    </div>
+
+                    <h4>Description</h4>
+                    <p>Password hashing is implemented but no password complexity requirements enforced.</p>
+
+                    <h4>Impact</h4>
+                    <ul>
+                        <li><strong>Weak passwords:</strong> Users can set "password123"</li>
+                        <li><strong>Brute force success:</strong> Simple passwords easily cracked</li>
+                        <li><strong>Compliance gap:</strong> NIST recommends minimum 8 characters</li>
+                    </ul>
+
+                    <div class="recommendation">
+                        <h5>Remediation (Priority: <span class="priority-medium">MEDIUM</span>)</h5>
+                        <p>Implement password requirements:</p>
+                        <div class="code-ref">
+const passwordSchema = z.string()
+  .min(12, "Password must be at least 12 characters")
+  .regex(/[A-Z]/, "Password must contain uppercase letter")
+  .regex(/[a-z]/, "Password must contain lowercase letter")
+  .regex(/[0-9]/, "Password must contain number")
+  .regex(/[^A-Za-z0-9]/, "Password must contain special character")
+                        </div>
+                        <p><strong>Also implement:</strong></p>
+                        <ul>
+                            <li>Password history (prevent reuse of last 5 passwords)</li>
+                            <li>Common password blacklist</li>
+                            <li>Password expiration (90-180 days for government)</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="severity-medium">
+                    <div class="finding-header">
+                        <span class="severity-badge badge-medium">Medium</span>
+                        <span class="finding-title">MED-06: No Multi-Factor Authentication</span>
+                    </div>
+
+                    <h4>Description</h4>
+                    <p>Authentication relies solely on username/password without MFA option.</p>
+
+                    <h4>Impact</h4>
+                    <ul>
+                        <li><strong>Account takeover:</strong> Single factor compromised = full access</li>
+                        <li><strong>Credential theft:</strong> Phishing attacks succeed</li>
+                        <li><strong>Compliance gap:</strong> Many government standards require MFA</li>
+                    </ul>
+
+                    <div class="recommendation">
+                        <h5>Remediation (Priority: <span class="priority-medium">MEDIUM</span>)</h5>
+                        <p>Implement MFA for admin and board member accounts:</p>
+                        <ul>
+                            <li>Use NextAuth.js with TOTP provider</li>
+                            <li>Require MFA for ADMIN and BOARD_MEMBER roles</li>
+                            <li>Optional for LOBBYIST and EMPLOYER</li>
+                            <li>Consider: WebAuthn/FIDO2 for hardware tokens</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Low Severity -->
+                <h3 id="low">4.4 Low Severity Findings</h3>
+
+                <div class="severity-low">
+                    <div class="finding-header">
+                        <span class="severity-badge badge-low">Low</span>
+                        <span class="finding-title">LOW-01: Console.log Statements in Production Code</span>
+                    </div>
+
+                    <h4>Description</h4>
+                    <p>Multiple console.log statements present that will output to production logs.</p>
+
+                    <div class="code-ref">
+                        <div class="code-path">File: /components/forms/expense-report/LobbyistExpenseReportForm.tsx</div>
+                        Lines 45, 56: console.log with form data
+                    </div>
+
+                    <h4>Impact</h4>
+                    <ul>
+                        <li><strong>Information disclosure:</strong> Sensitive data in logs</li>
+                        <li><strong>Log bloat:</strong> Unnecessary log volume</li>
+                        <li><strong>Performance:</strong> Minor overhead</li>
+                    </ul>
+
+                    <div class="recommendation">
+                        <h5>Remediation (Priority: <span class="priority-low">LOW</span>)</h5>
+                        <p>Remove or gate behind development flag:</p>
+                        <div class="code-ref">
+// Replace console.log with:
+if (process.env.NODE_ENV === 'development') {
+  console.log('Debug info:', data)
+}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="severity-low">
+                    <div class="finding-header">
+                        <span class="severity-badge badge-low">Low</span>
+                        <span class="finding-title">LOW-02: No Dependency Scanning in CI/CD</span>
+                    </div>
+
+                    <h4>Description</h4>
+                    <p>While current dependencies have zero vulnerabilities, no automated scanning is configured.</p>
+
+                    <h4>Impact</h4>
+                    <ul>
+                        <li><strong>Future vulnerabilities:</strong> Won't detect new CVEs</li>
+                        <li><strong>Supply chain risk:</strong> Malicious package updates</li>
+                    </ul>
+
+                    <div class="recommendation">
+                        <h5>Remediation (Priority: <span class="priority-low">LOW</span>)</h5>
+                        <p>Add GitHub Actions workflow:</p>
+                        <div class="code-ref">
+# .github/workflows/security.yml
+name: Security Scan
+on: [push, pull_request]
+jobs:
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - run: npm audit
+      - run: npm audit --production
+                        </div>
+                    </div>
+                </div>
+
+                <div class="severity-low">
+                    <div class="finding-header">
+                        <span class="severity-badge badge-low">Low</span>
+                        <span class="finding-title">LOW-03: Database Logging Too Verbose in Development</span>
+                    </div>
+
+                    <h4>Description</h4>
+                    <p>Prisma logs all queries in development, potentially leaking sensitive data.</p>
+
+                    <div class="code-ref">
+                        <div class="code-path">File: /lib/db.ts (line 10)</div>
+                        log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error']
+                    </div>
+
+                    <h4>Impact</h4>
+                    <ul>
+                        <li><strong>Minor information leak:</strong> Query parameters logged</li>
+                        <li><strong>PII in logs:</strong> User data visible in development</li>
+                    </ul>
+
+                    <div class="recommendation">
+                        <h5>Remediation (Priority: <span class="priority-low">LOW</span>)</h5>
+                        <p>Reduce log verbosity:</p>
+                        <div class="code-ref">
+log: process.env.NODE_ENV === 'development' ? ['error', 'warn'] : ['error']
+// Remove 'query' from development logging
+                        </div>
+                    </div>
+                </div>
+
+                <div class="severity-low">
+                    <div class="finding-header">
+                        <span class="severity-badge badge-low">Low</span>
+                        <span class="finding-title">LOW-04: No Subresource Integrity (SRI)</span>
+                    </div>
+
+                    <h4>Description</h4>
+                    <p>If external CDN resources are added in the future, no SRI hashes will verify integrity.</p>
+
+                    <h4>Impact</h4>
+                    <ul>
+                        <li><strong>CDN compromise:</strong> Malicious scripts could be injected</li>
+                        <li><strong>Future risk:</strong> Currently not using external CDNs</li>
+                    </ul>
+
+                    <div class="recommendation">
+                        <h5>Remediation (Priority: <span class="priority-low">LOW</span>)</h5>
+                        <p>If adding external resources, include SRI hashes:</p>
+                        <div class="code-ref">
+&lt;script src="https://cdn.example.com/lib.js"
+        integrity="sha384-oqVuAfXRKap7fdgcCY5uykM6+R9GqQ8K/ux..."
+        crossorigin="anonymous"&gt;&lt;/script&gt;
+                        </div>
+                    </div>
+                </div>
+
+                <div class="severity-low">
+                    <div class="finding-header">
+                        <span class="severity-badge badge-low">Low</span>
+                        <span class="finding-title">LOW-05: Docker Image Uses Alpine But Could Use Distroless</span>
+                    </div>
+
+                    <h4>Description</h4>
+                    <p>Dockerfile uses node:20-alpine which includes shell and package manager. Distroless images are more secure.</p>
+
+                    <h4>Impact</h4>
+                    <ul>
+                        <li><strong>Larger attack surface:</strong> Unnecessary tools in production</li>
+                        <li><strong>Container escape risk:</strong> Shell available if compromised</li>
+                    </ul>
+
+                    <div class="recommendation">
+                        <h5>Remediation (Priority: <span class="priority-low">LOW</span>)</h5>
+                        <p>Consider distroless image for production:</p>
+                        <div class="code-ref">
+FROM gcr.io/distroless/nodejs20-debian11
+# No shell, no package manager, only Node.js runtime
+                        </div>
+                        <p><strong>Note:</strong> Alpine is acceptable for MVP, consider for hardened production.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Security Strengths -->
+            <section id="positive" class="section">
+                <h2>5. Security Strengths</h2>
+
+                <p>Despite the identified vulnerabilities, the application demonstrates several security best practices:</p>
+
+                <h3>Authentication & Cryptography</h3>
+                <ul class="positive">
+                    <li><strong>Strong Password Hashing:</strong> Uses bcryptjs with 10 rounds of salting (lib/auth.ts line 40-43)</li>
+                    <li><strong>Industry-Standard Auth:</strong> NextAuth.js v5 implementation following best practices</li>
+                    <li><strong>JWT Session Strategy:</strong> Stateless authentication with proper token handling</li>
+                    <li><strong>Secure Credentials Provider:</strong> Proper password comparison without timing attacks</li>
+                </ul>
+
+                <h3>Database Security</h3>
+                <ul class="positive">
+                    <li><strong>ORM Usage:</strong> Prisma ORM prevents SQL injection through parameterized queries</li>
+                    <li><strong>Type Safety:</strong> Prisma client provides compile-time SQL safety</li>
+                    <li><strong>Schema Versioning:</strong> Migration-based schema changes prevent manual SQL errors</li>
+                    <li><strong>Cascading Deletes:</strong> Proper foreign key constraints maintain referential integrity</li>
+                </ul>
+
+                <h3>Access Control Foundation</h3>
+                <ul class="positive">
+                    <li><strong>Role-Based Access:</strong> Five distinct user roles defined (PUBLIC, LOBBYIST, EMPLOYER, BOARD_MEMBER, ADMIN)</li>
+                    <li><strong>Middleware Protection:</strong> All authenticated routes protected by middleware</li>
+                    <li><strong>Public Routes Defined:</strong> Clear separation of public vs. authenticated areas</li>
+                    <li><strong>Session Checks:</strong> Consistent session validation across pages</li>
+                </ul>
+
+                <h3>Code Quality</h3>
+                <ul class="positive">
+                    <li><strong>TypeScript:</strong> Type-safe codebase reduces runtime errors</li>
+                    <li><strong>Zero NPM Vulnerabilities:</strong> All dependencies up-to-date and secure</li>
+                    <li><strong>Modern Framework:</strong> Next.js 15 with latest security patches</li>
+                    <li><strong>Code Organization:</strong> Clean separation of concerns (lib/, components/, app/)</li>
+                </ul>
+
+                <h3>Documentation & Operations</h3>
+                <ul class="positive">
+                    <li><strong>Secret Rotation Guide:</strong> Comprehensive process documented (docs/SECRET-ROTATION-PROCESS.md)</li>
+                    <li><strong>Developer Setup:</strong> Clear onboarding documentation</li>
+                    <li><strong>Environment Templates:</strong> .env.example prevents secret exposure</li>
+                    <li><strong>Git Hygiene:</strong> .gitignore properly configured to exclude secrets and databases</li>
+                </ul>
+
+                <h3>Audit & Compliance Readiness</h3>
+                <ul class="positive">
+                    <li><strong>Audit Log Schema:</strong> Comprehensive audit table designed (prisma/schema.prisma lines 399-414)</li>
+                    <li><strong>Soft Deletes:</strong> Violation "deletion" uses status change, preserving audit trail</li>
+                    <li><strong>Timestamp Tracking:</strong> createdAt/updatedAt on all entities</li>
+                    <li><strong>IP Address Capture:</strong> Audit log includes IP address field</li>
+                </ul>
+
+                <h3>Accessibility</h3>
+                <ul class="positive">
+                    <li><strong>ARIA Labels:</strong> Proper accessibility attributes on form inputs</li>
+                    <li><strong>Semantic HTML:</strong> Correct use of form elements and labels</li>
+                    <li><strong>Error Announcements:</strong> role="alert" and aria-live on errors</li>
+                    <li><strong>Keyboard Navigation:</strong> Focus management in file upload component</li>
+                </ul>
+            </section>
+
+            <!-- Recommendations -->
+            <section id="recommendations" class="section">
+                <h2>6. Prioritized Remediation Roadmap</h2>
+
+                <h3>Phase 1: Critical Security Hardening (Week 1-2)</h3>
+                <p><strong>Goal:</strong> Address all CRITICAL findings before any production deployment</p>
+                <ol>
+                    <li><strong>Delete seed endpoint</strong> or add strong protection (CRIT-04) - <em>2 hours</em></li>
+                    <li><strong>Implement HTTP security headers</strong> (CRIT-01) - <em>4 hours</em></li>
+                    <li><strong>Add rate limiting</strong> to auth and API endpoints (CRIT-02) - <em>1-2 days</em></li>
+                    <li><strong>Design and implement file upload API</strong> with validation (CRIT-03) - <em>3-5 days</em></li>
+                    <li><strong>Fix Prisma client instantiation</strong> in all API routes (HIGH-08) - <em>2 hours</em></li>
+                    <li><strong>Enable TypeScript/ESLint checks</strong> and fix all errors (HIGH-05) - <em>1-2 days</em></li>
+                </ol>
+
+                <h3>Phase 2: High-Priority Security Controls (Week 3-4)</h3>
+                <p><strong>Goal:</strong> Implement essential security controls and monitoring</p>
+                <ol>
+                    <li><strong>Implement audit logging</strong> throughout application (HIGH-02) - <em>2-3 days</em></li>
+                    <li><strong>Add input validation</strong> with Zod schemas (HIGH-03) - <em>2-3 days</em></li>
+                    <li><strong>Fix API authorization</strong> with fine-grained checks (HIGH-01) - <em>3-4 days</em></li>
+                    <li><strong>Implement error handling</strong> utility (HIGH-04) - <em>1 day</em></li>
+                    <li><strong>Configure session timeouts</strong> (HIGH-06) - <em>2 hours</em></li>
+                    <li><strong>Add HTTPS enforcement</strong> (HIGH-07) - <em>1 hour</em></li>
+                </ol>
+
+                <h3>Phase 3: Production Readiness (Week 5-6)</h3>
+                <p><strong>Goal:</strong> Complete production hardening and compliance</p>
+                <ol>
+                    <li><strong>Migrate to PostgreSQL</strong> with Cloud SQL (MED-02) - <em>2-3 days</em></li>
+                    <li><strong>Set up monitoring and alerting</strong> (MED-03) - <em>2 days</em></li>
+                    <li><strong>Implement environment validation</strong> (MED-01) - <em>4 hours</em></li>
+                    <li><strong>Add password complexity requirements</strong> (MED-05) - <em>1 day</em></li>
+                    <li><strong>Clean up console.log statements</strong> (LOW-01) - <em>2 hours</em></li>
+                    <li><strong>Add dependency scanning CI/CD</strong> (LOW-02) - <em>2 hours</em></li>
+                </ol>
+
+                <h3>Phase 4: Advanced Security (Future Enhancements)</h3>
+                <p><strong>Goal:</strong> Meet federal security standards</p>
+                <ol>
+                    <li><strong>Implement MFA</strong> for admin accounts (MED-06) - <em>1 week</em></li>
+                    <li><strong>Add security testing</strong> (SAST, DAST, penetration testing) - <em>2 weeks</em></li>
+                    <li><strong>Implement data encryption at rest</strong> - <em>1 week</em></li>
+                    <li><strong>Add incident response plan</strong> and runbooks - <em>1 week</em></li>
+                    <li><strong>Complete NIST 800-53 control assessment</strong> - <em>2-4 weeks</em></li>
+                    <li><strong>Security audit and ATO process</strong> - <em>4-8 weeks</em></li>
+                </ol>
+
+                <h3>Estimated Timeline & Resources</h3>
+                <table class="compliance-matrix">
+                    <thead>
+                        <tr>
+                            <th>Phase</th>
+                            <th>Duration</th>
+                            <th>Effort (Developer Days)</th>
+                            <th>Status Achieved</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Phase 1 (Critical)</td>
+                            <td>2 weeks</td>
+                            <td>8-10 days</td>
+                            <td>Minimum for demo with test data</td>
+                        </tr>
+                        <tr>
+                            <td>Phase 2 (High)</td>
+                            <td>2 weeks</td>
+                            <td>8-10 days</td>
+                            <td>Ready for limited pilot</td>
+                        </tr>
+                        <tr>
+                            <td>Phase 3 (Production)</td>
+                            <td>2 weeks</td>
+                            <td>6-8 days</td>
+                            <td>Production-ready for real data</td>
+                        </tr>
+                        <tr>
+                            <td>Phase 4 (Advanced)</td>
+                            <td>8-12 weeks</td>
+                            <td>40-60 days</td>
+                            <td>Federal compliance ready</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Quick Wins (Can Complete Today)</h3>
+                <ul>
+                    <li>Delete or protect /api/admin/seed endpoint - <em>15 minutes</em></li>
+                    <li>Fix Prisma client imports in API routes - <em>15 minutes</em></li>
+                    <li>Add HTTP security headers to middleware - <em>30 minutes</em></li>
+                    <li>Configure session timeout in NextAuth - <em>10 minutes</em></li>
+                    <li>Add HTTPS enforcement - <em>10 minutes</em></li>
+                </ul>
+                <p><strong>Total Quick Wins: ~90 minutes for measurable security improvement</strong></p>
+            </section>
+
+            <!-- Conclusion -->
+            <section id="conclusion" class="section">
+                <h2>7. Conclusion</h2>
+
+                <h3>Overall Assessment</h3>
+                <p>The Multnomah County Lobbyist Registration System demonstrates a <strong>solid foundation</strong> for a government transparency application. The development team has implemented several critical security controls correctly, including password hashing, SQL injection prevention through Prisma ORM, and basic authentication with NextAuth.js.</p>
+
+                <p>However, the application is currently in a <strong class="negative">prototype/MVP stage</strong> and requires significant security hardening before it can be authorized to handle real personally identifiable information (PII) and sensitive lobbying data.</p>
+
+                <h3>Key Takeaways</h3>
+
+                <div class="rating-box" style="text-align: left;">
+                    <h4 style="color: #10b981;">✓ Strengths</h4>
+                    <ul>
+                        <li>Zero known vulnerabilities in dependencies</li>
+                        <li>Strong authentication foundation with industry-standard libraries</li>
+                        <li>SQL injection protection through ORM</li>
+                        <li>Well-documented development processes</li>
+                        <li>Good accessibility practices</li>
+                        <li>Clear roadmap for production migration (SQLite → PostgreSQL)</li>
+                    </ul>
+
+                    <h4 style="color: #dc2626; margin-top: 20px;">✗ Critical Gaps</h4>
+                    <ul>
+                        <li>Missing HTTP security headers (clickjacking, XSS, MIME-sniffing risks)</li>
+                        <li>No rate limiting (brute force vulnerability)</li>
+                        <li>File upload security not implemented</li>
+                        <li>Exposed seed endpoint with known passwords</li>
+                        <li>Incomplete authorization checks on API endpoints</li>
+                        <li>Audit logging designed but not implemented</li>
+                    </ul>
+                </div>
+
+                <h3>Production Readiness Assessment</h3>
+                <table class="compliance-matrix">
+                    <thead>
+                        <tr>
+                            <th>Deployment Scenario</th>
+                            <th>Current Status</th>
+                            <th>Recommendation</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Internal Demo/Prototype</strong></td>
+                            <td class="status-yes">✓ Ready</td>
+                            <td>Acceptable for stakeholder demonstrations with test data only</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Limited Pilot (Test Users)</strong></td>
+                            <td class="status-partial">⚠ Needs Work</td>
+                            <td>Complete Phase 1 (Critical) + Phase 2 (High) before pilot</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Production (Real PII)</strong></td>
+                            <td class="status-no">✗ Not Ready</td>
+                            <td>Complete Phases 1-3 minimum (6 weeks estimated)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Federal Compliance (ATO)</strong></td>
+                            <td class="status-no">✗ Not Ready</td>
+                            <td>Complete all phases + external security audit (12+ weeks)</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Risk Statement</h3>
+                <p style="background-color: #fef3c7; border-left: 5px solid #f59e0b; padding: 20px; margin: 20px 0; border-radius: 5px;">
+                    <strong>⚠ WARNING:</strong> Deploying this application to handle real lobbyist data, board member calendars, or personally identifiable information <strong>without completing Phase 1 and Phase 2 security remediation</strong> would expose Multnomah County to:
+                </p>
+                <ul style="margin-left: 40px;">
+                    <li>Data breach risk (lack of security headers, file upload vulnerabilities)</li>
+                    <li>Account compromise (no rate limiting, weak session controls)</li>
+                    <li>Compliance violations (incomplete audit logging, missing security controls)</li>
+                    <li>Reputational damage (publicly accessible transparency data could be manipulated)</li>
+                    <li>Legal liability (failure to protect PII under state/federal privacy laws)</li>
+                </ul>
+
+                <h3>Recommended Next Steps</h3>
+                <ol>
+                    <li><strong>Complete Quick Wins (Today):</strong> 90 minutes of work for immediate security improvement</li>
+                    <li><strong>Prioritize Phase 1 (Weeks 1-2):</strong> Address all CRITICAL findings</li>
+                    <li><strong>Security Review Checkpoint:</strong> Re-assess security posture after Phase 1</li>
+                    <li><strong>Complete Phase 2 (Weeks 3-4):</strong> Implement HIGH-priority controls</li>
+                    <li><strong>Pilot Deployment:</strong> Limited test with known users and monitoring</li>
+                    <li><strong>Complete Phase 3 (Weeks 5-6):</strong> Production hardening</li>
+                    <li><strong>Production Deployment:</strong> Go-live with real data</li>
+                    <li><strong>Phase 4 (Ongoing):</strong> Advanced security and federal compliance</li>
+                </ol>
+
+                <h3>Final Recommendation</h3>
+                <p style="font-size: 1.1em; background-color: #f0f9ff; border: 2px solid #3b82f6; padding: 25px; margin: 30px 0; border-radius: 10px;">
+                    <strong>The application is well-architected and demonstrates good security awareness.</strong> With focused effort over the next 4-6 weeks to address the identified vulnerabilities, this system can achieve production-ready security posture appropriate for a local government transparency application.
+                </p>
+
+                <p style="font-size: 1.1em; background-color: #f0f9ff; border: 2px solid #3b82f6; padding: 25px; margin: 30px 0; border-radius: 10px;">
+                    <strong>Current Rating: C+ (Acceptable for Prototype)</strong><br>
+                    <strong>Projected Rating After Remediation: B+ to A- (Production Ready)</strong>
+                </p>
+
+                <h3>Support & Resources</h3>
+                <p>For questions about this security assessment or remediation guidance:</p>
+                <ul>
+                    <li><strong>NIST Cybersecurity Framework:</strong> <a href="https://www.nist.gov/cyberframework">https://www.nist.gov/cyberframework</a></li>
+                    <li><strong>OWASP Top 10:</strong> <a href="https://owasp.org/Top10/">https://owasp.org/Top10/</a></li>
+                    <li><strong>NextAuth.js Security:</strong> <a href="https://next-auth.js.org/configuration/options">https://next-auth.js.org/configuration/options</a></li>
+                    <li><strong>Google Cloud Security:</strong> <a href="https://cloud.google.com/security/best-practices">https://cloud.google.com/security/best-practices</a></li>
+                </ul>
+            </section>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p><strong>SECURITY ASSESSMENT REPORT</strong></p>
+            <p>Multnomah County Lobbyist Registration System</p>
+            <p>Generated: October 16, 2025 | Version 1.0 | Classification: INTERNAL USE</p>
+            <p style="margin-top: 15px; font-size: 0.9em;">
+                This report is intended for internal use by Multnomah County IT security and development teams.<br>
+                Contains sensitive security information - handle according to county security policies.
+            </p>
+        </div>
+    </div>
+</body>
+</html>
