@@ -304,7 +304,7 @@ Email:        Nodemailer (local SMTP)
 - Hot reload for rapid iteration
 - Easy to show stakeholders
 
-### Phase 2: Production (Future)
+### Phase 4: Government Production Hardening (Future)
 
 **Technology Stack:**
 ```
@@ -333,6 +333,8 @@ Infrastructure: Docker containers
 - Auth: Swap NextAuth provider
 - Storage: Abstract file operations, swap adapter
 - Deploy: Dockerize and push to cloud
+- Security: Penetration testing, ATO process
+- Training: User guides, admin documentation
 
 ### Database Schema (Core Entities)
 
@@ -704,9 +706,65 @@ audit_log
 4. Implement email notification system
 5. Demo to initial stakeholders
 
-## Future Enhancements
+## Phase 2: Ordinance Compliance (Current)
 
-### Phase 3: Advanced Bulk Import Features
+### Overview
+Phase 2 focuses on completing all ordinance-mandated features that were marked as "Future" in the compliance matrix. These are critical enforcement and tracking features required for full legal compliance.
+
+### Phase 2 Issues (Beads #26-30)
+1. **#26 - Violation Tracking & Fine Issuance (§3.808, §3.809)** - IN PROGRESS
+   - Admin UI to record violations
+   - Fine issuance workflow (up to $500)
+   - Fine payment tracking
+   - Violation history per lobbyist/employer
+   - Educational letters vs. fines toggle
+
+2. **#27 - Appeals Process Workflow (§3.809)**
+   - Appeal submission form for violators
+   - 30-day deadline tracking (postmarked)
+   - Hearing scheduling interface
+   - Appeal decision recording
+   - Appeal status tracking
+
+3. **#28 - Contract Exception Management (§9.230)**
+   - Former official registry (1-year cooling off)
+   - Contract conflict checker
+   - Exception request workflow
+   - Written findings by Chair/designee
+   - Public posting of granted exceptions
+
+4. **#29 - Lobbyist Hour Tracking (§3.803(F))**
+   - Lobbyist hour logging interface
+   - Quarterly hour totals (excludes travel time)
+   - Automatic registration trigger when >10 hours
+   - Hour history tracking
+
+5. **#30 - Payment Processor Integration**
+   - Stripe or government payment system
+   - Annual registration fee tracking
+   - Receipt generation
+   - Payment history
+
+### Phase 2 Timeline
+- **Duration:** 3-4 weeks
+- **Completion Target:** Mid-November 2025
+- **Deployment:** Incremental updates to production
+
+---
+
+## Phase 3: Advanced Features (Future)
+
+### Overview
+Phase 3 includes enhancements beyond ordinance requirements, focusing on user experience improvements and advanced analytics.
+
+### Phase 3 Issues (Beads #31+)
+1. **#31 - Public Analytics Dashboard**
+   - Top spenders visualization
+   - Trending subjects analysis
+   - Spending trends over time
+   - Interactive charts and graphs
+
+### Phase 3 Features: Advanced Bulk Import (COMPLETED ✅)
 
 #### Board Member Calendar Bulk Import
 **Problem:** Board members may have dozens of calendar entries per quarter. Manual entry is time-consuming and error-prone.
@@ -797,10 +855,10 @@ audit_log
 
 ---
 
-**Document Version:** 2.0
-**Last Updated:** October 15, 2025
-**Project Status:** MVP Complete → Production Deployed → Ready for Stakeholder Demos
-**Current Phase:** Phase 1 (MVP) Complete, Phase 3 (Bulk Import) Complete
+**Document Version:** 3.0
+**Last Updated:** October 16, 2025
+**Project Status:** Phase 1 Complete → Phase 2 In Progress (Ordinance Compliance)
+**Current Phase:** Phase 2 - Ordinance Compliance (Issues #26-30)
 **Production URL:** https://lobbyist-registration-679888289147.us-west1.run.app
 **Target Launch:** June 2026 (before July 1, 2026 ordinance effective date)
 

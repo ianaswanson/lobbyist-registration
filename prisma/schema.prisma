@@ -320,16 +320,19 @@ enum ViolationStatus {
 }
 
 model Violation {
-  id              String          @id @default(uuid())
-  entityType      EntityType
-  entityId        String // ID of lobbyist, employer, or report
-  violationType   ViolationType
-  description     String
-  fineAmount      Float           @default(0) // Up to $500
-  status          ViolationStatus @default(PENDING)
-  issuedDate      DateTime?
-  createdAt       DateTime        @default(now())
-  updatedAt       DateTime        @updatedAt
+  id                   String          @id @default(uuid())
+  entityType           EntityType
+  entityId             String // ID of lobbyist, employer, or report
+  violationType        ViolationType
+  description          String
+  fineAmount           Float           @default(0) // Up to $500
+  status               ViolationStatus @default(PENDING)
+  issuedDate           DateTime?
+  isFirstTimeViolation Boolean         @default(false) // True if educational letter sent instead of fine
+  resolutionNotes      String? // Notes about how violation was resolved
+  resolutionDate       DateTime? // When violation was resolved (paid, waived, etc.)
+  createdAt            DateTime        @default(now())
+  updatedAt            DateTime        @updatedAt
 
   // Relations (one will be populated based on entityType)
   lobbyist        Lobbyist?              @relation(fields: [entityId], references: [id], onDelete: Cascade)

@@ -1,0 +1,142 @@
+import { NextRequest, NextResponse } from "next/server";
+import { auth } from "@/lib/auth";
+import { PrismaClient } from "@prisma/client";
+
+const prisma = new PrismaClient();
+
+/**
+ * GET /api/violations
+ * List violations with optional filtering
+ * Query params:
+ *   - status: ViolationStatus (optional)
+ *   - entityType: EntityType (optional)
+ *   - entityId: string (optional)
+ */
+export async function GET(request: NextRequest) {
+  try {
+    const session = await auth();
+
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    // Only ADMIN can view violations
+    if (session.user?.role !== "ADMIN") {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+
+    const searchParams = request.nextUrl.searchParams;
+    const status = searchParams.get("status");
+    const entityType = searchParams.get("entityType");
+    const entityId = searchParams.get("entityId");
+
+    const where: any = {};
+
+    if (status) {
+      where.status = status;
+    }
+
+    if (entityType) {
+      where.entityType = entityType;
+    }
+
+    if (entityId) {
+      where.entityId = entityId;
+    }
+
+    const violations = await prisma.violation.findMany({
+      where,
+      include: {
+        appeal: true,
+      },
+      orderBy: {
+        issueDate: "desc",
+      },
+    });
+
+    return NextResponse.json(violations);
+  } catch (error) {
+    console.error("Error fetching violations:", error);
+    return NextResponse.json(
+      { error: "Failed to fetch violations" },
+      { status: 500 }
+    );
+  }
+}
+
+/**
+ * POST /api/violations
+ * Create a new violation
+ * Body:
+ *   - entityType: EntityType
+ *   - entityId: string
+ *   - violationType: ViolationType
+ *   - description: string
+ *   - fineAmount: number (optional, max 500)
+ *   - sendEducationalLetter: boolean
+ */
+export async function POST(request: NextRequest) {
+  try {
+    const session = await auth();
+
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    // Only ADMIN can create violations
+    if (session.user?.role !== "ADMIN") {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+
+    const body = await request.json();
+    const {
+      entityType,
+      entityId,
+      violationType,
+      description,
+      fineAmount,
+      sendEducationalLetter,
+    } = body;
+
+    // Validate required fields
+    if (!entityType || !entityId || !violationType || !description) {
+      return NextResponse.json(
+        { error: "Missing required fields" },
+        { status: 400 }
+      );
+    }
+
+    // Validate fine amount (max $500 per ordinance §3.808)
+    if (fineAmount && fineAmount > 500) {
+      return NextResponse.json(
+        { error: "Fine amount cannot exceed $500" },
+        { status: 400 }
+      );
+    }
+
+    // Create violation
+    const violation = await prisma.violation.create({
+      data: {
+        entityType,
+        entityId,
+        violationType,
+        description,
+        fineAmount: fineAmount || 0,
+        status: "ACTIVE",
+        issueDate: new Date(),
+        isFirstTimeViolation: sendEducationalLetter,
+      },
+    });
+
+    // TODO: Send notification email to entity
+    // TODO: If sendEducationalLetter is true, send educational letter instead of fine
+
+    return NextResponse.json(violation, { status: 201 });
+  } catch (error) {
+    console.error("Error creating violation:", error);
+    return NextResponse.json(
+      { error: "Failed to create violation" },
+      { status: 500 }
+    );
+  }
+}

@@ -270,6 +270,34 @@ export default async function DashboardPage() {
                     </svg>
                   </a>
                   <a
+                    href="/admin/violations"
+                    className="flex items-center justify-between rounded-lg border border-gray-200 p-4 hover:border-orange-500 hover:bg-orange-50 transition-colors focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
+                    aria-label="Track violations and issue fines"
+                  >
+                    <div>
+                      <h4 className="font-semibold text-gray-900">
+                        Violations & Fines
+                      </h4>
+                      <p className="text-sm text-gray-600">
+                        Issue violations and track appeals
+                      </p>
+                    </div>
+                    <svg
+                      className="h-6 w-6 text-orange-600"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      aria-hidden="true"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M9 5l7 7-7 7"
+                      />
+                    </svg>
+                  </a>
+                  <a
                     href="/admin/notifications"
                     className="flex items-center justify-between rounded-lg border border-gray-200 p-4 hover:border-yellow-500 hover:bg-yellow-50 transition-colors focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2"
                     aria-label="Manage email notifications"
