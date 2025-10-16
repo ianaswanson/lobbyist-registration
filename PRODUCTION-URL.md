@@ -79,10 +79,11 @@ Use these credentials to demonstrate the system:
 
 | Role | Email | Password |
 |------|-------|----------|
-| Admin | admin@example.com | password123 |
-| Board Member | board@example.com | password123 |
-| Lobbyist | lobbyist@example.com | password123 |
-| Employer | employer@example.com | password123 |
+| Admin | admin@multnomah.gov | admin123 |
+| Board Member | commissioner@multnomah.gov | board123 |
+| Lobbyist | john.doe@lobbying.com | lobbyist123 |
+| Employer | contact@techcorp.com | employer123 |
+| Public | public@example.com | public123 |
 
 ## Support
 

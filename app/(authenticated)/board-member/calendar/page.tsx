@@ -1,6 +1,7 @@
 import { auth } from "@/lib/auth"
 import { redirect } from "next/navigation"
 import { BoardMemberCalendarForm } from "@/components/forms/board-member/BoardMemberCalendarForm"
+import { DemoFilesPanel } from "@/components/DemoFilesPanel"
 
 export default async function BoardMemberCalendarPage() {
   const session = await auth()
@@ -11,6 +12,8 @@ export default async function BoardMemberCalendarPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Demo Files Panel - bottom center */}
+      <DemoFilesPanel page="board-calendar" />
       <nav className="border-b bg-white">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex h-16 justify-between">

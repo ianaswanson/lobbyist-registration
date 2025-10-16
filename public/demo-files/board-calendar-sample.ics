@@ -1,0 +1,42 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Multnomah County//Lobbyist Registration//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:Board Member Calendar Q1 2025
+X-WR-TIMEZONE:America/Los_Angeles
+
+BEGIN:VEVENT
+DTSTART:20250115T100000
+DTEND:20250115T120000
+DTSTAMP:20250101T000000Z
+UID:event1@lobbyist-registration.example.com
+SUMMARY:Board Meeting - Regular Session
+DESCRIPTION:Participants: County staff, TechCorp representatives, Public attendees
+LOCATION:Multnomah County Building
+STATUS:CONFIRMED
+END:VEVENT
+
+BEGIN:VEVENT
+DTSTART:20250220T140000
+DTEND:20250220T160000
+DTSTAMP:20250101T000000Z
+UID:event2@lobbyist-registration.example.com
+SUMMARY:Technology Committee Meeting
+DESCRIPTION:Participants: IT Department heads, TechCorp lobbyist, Cybersecurity consultants
+LOCATION:Conference Room A
+STATUS:CONFIRMED
+END:VEVENT
+
+BEGIN:VEVENT
+DTSTART:20250310T090000
+DTEND:20250310T110000
+DTSTAMP:20250101T000000Z
+UID:event3@lobbyist-registration.example.com
+SUMMARY:Budget Planning Workshop
+DESCRIPTION:Participants: Finance team, Healthcare Advocates, Community members
+LOCATION:Community Center
+STATUS:CONFIRMED
+END:VEVENT
+
+END:VCALENDAR

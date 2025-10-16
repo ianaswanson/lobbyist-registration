@@ -17,9 +17,9 @@ async function testLobbyistLogin() {
     // Fill in credentials
     console.log('2. Entering credentials...');
     console.log('   Email: john.doe@lobbying.com');
-    console.log('   Password: password123');
+    console.log('   Password: lobbyist123');
     await page.fill('input[name="email"]', 'john.doe@lobbying.com');
-    await page.fill('input[name="password"]', 'password123');
+    await page.fill('input[name="password"]', 'lobbyist123');
     console.log('   ✓ Credentials entered\n');
 
     // Submit form

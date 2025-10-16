@@ -1,6 +1,7 @@
 import { signIn } from "@/lib/auth"
 import { AuthError } from "next-auth"
 import { redirect } from "next/navigation"
+import { DemoCredentialsPanel } from "@/components/DemoCredentialsPanel"
 
 export default async function SignInPage({
   searchParams,
@@ -34,6 +35,9 @@ export default async function SignInPage({
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-50">
+      {/* Demo Credentials Panel - bottom center */}
+      <DemoCredentialsPanel />
+
       <div className="w-full max-w-md space-y-8 rounded-lg border bg-white p-8 shadow-lg">
         <div className="text-center">
           <h2 className="text-3xl font-bold tracking-tight">

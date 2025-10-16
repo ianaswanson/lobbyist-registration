@@ -1,6 +1,7 @@
 import { auth } from "@/lib/auth"
 import { redirect } from "next/navigation"
 import { EmployerExpenseReportForm } from "@/components/forms/expense-report/EmployerExpenseReportForm"
+import { DemoFilesPanel } from "@/components/DemoFilesPanel"
 
 export default async function EmployerExpenseReportPage() {
   const session = await auth()
@@ -11,6 +12,8 @@ export default async function EmployerExpenseReportPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Demo Files Panel - bottom center */}
+      <DemoFilesPanel page="employer-expenses" />
       <nav className="border-b bg-white">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex h-16 justify-between">
