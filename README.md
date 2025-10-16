@@ -72,10 +72,11 @@ This civic technology project provides a transparent, accessible platform for:
 
 ### Prerequisites
 
-- Node.js 18+ and npm
+- Node.js 20+ and npm
 - Git
+- OpenSSL (for generating secrets)
 
-### Installation
+### Quick Start
 
 ```bash
 # Clone the repository
@@ -85,15 +86,22 @@ cd lobbyist-registration
 # Install dependencies
 npm install
 
+# Set up environment variables
+cp .env.example .env
+# Generate secure secret: openssl rand -base64 32
+# Edit .env and paste the secret into AUTH_SECRET
+
 # Set up database
-npm run prisma:migrate dev
-npm run prisma:seed
+npx prisma migrate dev
+npm run db:seed
 
 # Start development server
 npm run dev
 ```
 
 Visit [http://localhost:3000](http://localhost:3000)
+
+**For detailed setup instructions, see [docs/DEVELOPER-SETUP.md](docs/DEVELOPER-SETUP.md)**
 
 ### Development Commands
 
@@ -125,12 +133,20 @@ npm run prisma:seed      # Load test data
 
 ## Documentation
 
+### Getting Started
+- **[docs/DEVELOPER-SETUP.md](docs/DEVELOPER-SETUP.md)** - Complete developer setup guide
+- **[.env.example](.env.example)** - Environment variable template
+
+### Project Documentation
 - **[PROJECT.md](PROJECT.md)** - Complete project requirements and roadmap
 - **[CLAUDE.md](CLAUDE.md)** - Developer guide and working instructions
-- **[DEPLOYMENT-PLAN.md](DEPLOYMENT-PLAN.md)** - Google Cloud deployment guide
-- **[QUICKSTART-DEPLOY.md](QUICKSTART-DEPLOY.md)** - Fast-track deployment
 - **[Wireframes](wireframes/)** - Interactive design specifications
 - **[User Story Map](user-story-map.html)** - Visual feature mapping
+
+### Deployment & Operations
+- **[DEPLOYMENT-PLAN.md](DEPLOYMENT-PLAN.md)** - Google Cloud deployment guide
+- **[QUICKSTART-DEPLOY.md](QUICKSTART-DEPLOY.md)** - Fast-track deployment
+- **[docs/SECRET-ROTATION-PROCESS.md](docs/SECRET-ROTATION-PROCESS.md)** - Secret management and rotation procedures
 
 ## Compliance
 
