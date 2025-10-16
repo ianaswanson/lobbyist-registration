@@ -11,9 +11,9 @@ Web application to satisfy Multnomah County's Government Accountability Ordinanc
 - 📅 **Target Launch:** June 2026 (before July 1, 2026 ordinance effective date)
 
 ## Production Deployment
-- **Live URL:** https://lobbyist-registration-679888289147.us-west1.run.app
-- **Demo Guide:** https://lobbyist-registration-679888289147.us-west1.run.app/DEMO-GUIDE.html
-- **Compliance Matrix:** https://lobbyist-registration-679888289147.us-west1.run.app/ORDINANCE-COMPLIANCE.html
+- **Live URL:** https://lobbyist-registration-zzp44w3snq-uw.a.run.app
+- **Demo Guide:** https://lobbyist-registration-zzp44w3snq-uw.a.run.app/DEMO-GUIDE.html
+- **Compliance Matrix:** https://lobbyist-registration-zzp44w3snq-uw.a.run.app/ORDINANCE-COMPLIANCE.html
 - **Platform:** Google Cloud Run (serverless containers)
 - **Database:** SQLite with seed data
 - **Cost:** Free tier (~$0-5/month)

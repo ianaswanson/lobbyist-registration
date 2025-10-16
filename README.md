@@ -17,10 +17,12 @@ This civic technology project provides a transparent, accessible platform for:
 
 ## Live Demo
 
-**Production Instance:** [https://lobbyist-registration-679888289147.us-west1.run.app](https://lobbyist-registration-679888289147.us-west1.run.app)
+**Production Instance:** [https://lobbyist-registration-zzp44w3snq-uw.a.run.app](https://lobbyist-registration-zzp44w3snq-uw.a.run.app)
 
-- [Interactive Demo Guide](https://lobbyist-registration-679888289147.us-west1.run.app/DEMO-GUIDE.html)
-- [Ordinance Compliance Matrix](https://lobbyist-registration-679888289147.us-west1.run.app/ORDINANCE-COMPLIANCE.html)
+- [Interactive Demo Guide](https://lobbyist-registration-zzp44w3snq-uw.a.run.app/DEMO-GUIDE.html)
+- [Ordinance Compliance Matrix](https://lobbyist-registration-zzp44w3snq-uw.a.run.app/ORDINANCE-COMPLIANCE.html)
+
+> **Note**: For production use, consider setting up a [custom domain](docs/CUSTOM-DOMAIN-SETUP.md) (e.g., `lobbyist.multco.us`) for better branding and URL stability.
 
 ## Features
 

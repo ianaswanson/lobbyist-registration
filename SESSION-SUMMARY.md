@@ -72,7 +72,7 @@
 
 ### Live Application
 ```
-https://lobbyist-registration-679888289147.us-west1.run.app
+https://lobbyist-registration-zzp44w3snq-uw.a.run.app
 ```
 
 ### Demo Resources (Online)
@@ -83,8 +83,8 @@ Compliance Matrix: /ORDINANCE-COMPLIANCE.html
 
 ### Full URLs
 ```
-https://lobbyist-registration-679888289147.us-west1.run.app/DEMO-GUIDE.html
-https://lobbyist-registration-679888289147.us-west1.run.app/ORDINANCE-COMPLIANCE.html
+https://lobbyist-registration-zzp44w3snq-uw.a.run.app/DEMO-GUIDE.html
+https://lobbyist-registration-zzp44w3snq-uw.a.run.app/ORDINANCE-COMPLIANCE.html
 ```
 
 ---
@@ -317,7 +317,7 @@ gcloud run services logs tail lobbyist-registration --region us-west1
 **Project:** Multnomah County Lobbyist Registration System
 **Phase:** MVP Complete + Production Deployed
 **Status:** ✅ SUCCESS - Live in Production
-**URL:** https://lobbyist-registration-679888289147.us-west1.run.app
+**URL:** https://lobbyist-registration-zzp44w3snq-uw.a.run.app
 **Cost:** $0/month (Free Tier)
 **Ready for:** Stakeholder Demos, User Testing, Feedback Collection
 

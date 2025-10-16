@@ -663,9 +663,9 @@ audit_log
 - **Deployment Date:** October 15, 2025
 
 ### Live URLs
-- **Application:** https://lobbyist-registration-679888289147.us-west1.run.app
-- **Demo Guide:** https://lobbyist-registration-679888289147.us-west1.run.app/DEMO-GUIDE.html
-- **Compliance Matrix:** https://lobbyist-registration-679888289147.us-west1.run.app/ORDINANCE-COMPLIANCE.html
+- **Application:** https://lobbyist-registration-zzp44w3snq-uw.a.run.app
+- **Demo Guide:** https://lobbyist-registration-zzp44w3snq-uw.a.run.app/DEMO-GUIDE.html
+- **Compliance Matrix:** https://lobbyist-registration-zzp44w3snq-uw.a.run.app/ORDINANCE-COMPLIANCE.html
 
 ### Deployment Documentation
 - `DEPLOYMENT-PLAN.md` - Complete deployment guide with all steps
@@ -859,7 +859,7 @@ Phase 3 includes enhancements beyond ordinance requirements, focusing on user ex
 **Last Updated:** October 16, 2025
 **Project Status:** Phase 1 Complete → Phase 2 In Progress (Ordinance Compliance)
 **Current Phase:** Phase 2 - Ordinance Compliance (Issues #26-30)
-**Production URL:** https://lobbyist-registration-679888289147.us-west1.run.app
+**Production URL:** https://lobbyist-registration-zzp44w3snq-uw.a.run.app
 **Target Launch:** June 2026 (before July 1, 2026 ordinance effective date)
 
 ---

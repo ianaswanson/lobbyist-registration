@@ -60,7 +60,7 @@ gcloud run services update lobbyist-registration \
 #### 5. Test Production Application
 ```bash
 # Verify the application works with the new secret
-curl -I https://lobbyist-registration-679888289147.us-west1.run.app
+curl -I https://lobbyist-registration-zzp44w3snq-uw.a.run.app
 
 # Should return: HTTP/2 200 or 302 (redirect to sign-in)
 ```

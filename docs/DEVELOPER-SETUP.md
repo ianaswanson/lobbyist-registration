@@ -348,7 +348,7 @@ gcloud run deploy lobbyist-registration \
   --allow-unauthenticated
 ```
 
-**Production URL:** https://lobbyist-registration-679888289147.us-west1.run.app
+**Production URL:** https://lobbyist-registration-zzp44w3snq-uw.a.run.app
 
 ## Next Steps
 
