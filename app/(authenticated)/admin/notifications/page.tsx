@@ -61,24 +61,6 @@ export default function AdminNotificationsPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <nav className="border-b bg-white">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="flex h-16 justify-between">
-            <div className="flex items-center">
-              <a href="/dashboard" className="text-xl font-bold">
-                Lobbyist Registration System
-              </a>
-            </div>
-            <div className="flex items-center space-x-4">
-              <span className="text-sm text-gray-600">Admin</span>
-              <span className="rounded-full bg-red-100 px-3 py-1 text-xs font-medium text-red-800">
-                ADMIN
-              </span>
-            </div>
-          </div>
-        </div>
-      </nav>
-
       <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         <div className="mb-6">
           <div className="flex items-center justify-between">

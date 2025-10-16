@@ -1,27 +1,13 @@
 import { ExemptionChecker } from "@/components/ExemptionChecker"
+import { PublicNavigation } from "@/components/PublicNavigation"
+import { auth } from "@/lib/auth"
 
-export default function ExemptionCheckerPage() {
+export default async function ExemptionCheckerPage() {
+  const session = await auth()
+
   return (
     <div className="min-h-screen bg-gray-50">
-      <nav className="border-b bg-white">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="flex h-16 justify-between">
-            <div className="flex items-center">
-              <a href="/" className="text-xl font-bold hover:text-blue-600">
-                Lobbyist Registration System
-              </a>
-            </div>
-            <div className="flex items-center space-x-4">
-              <a
-                href="/auth/signin"
-                className="text-sm text-gray-600 hover:text-gray-900"
-              >
-                Sign In
-              </a>
-            </div>
-          </div>
-        </div>
-      </nav>
+      <PublicNavigation user={session?.user} />
 
       <main className="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
         <div className="mb-8">

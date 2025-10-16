@@ -46,3 +46,25 @@ next-env.d.ts
 # prisma
 /prisma/dev.db
 /prisma/dev.db-journal
+*.db-wal
+
+# playwright test artifacts
+test-results/
+playwright-report/
+playwright/.cache/
+*.spec.ts.snap
+auth.json
+
+# test files (one-off scripts)
+test-*.ts
+test-*.png
+test-*.json
+
+# IDE specific
+.vscode/
+.idea/
+
+# temporary files
+*.tmp
+*.temp
+*.log

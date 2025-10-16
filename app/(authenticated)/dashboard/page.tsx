@@ -1,4 +1,4 @@
-import { auth, signOut } from "@/lib/auth"
+import { auth } from "@/lib/auth"
 import { redirect } from "next/navigation"
 import { SkipLink } from "@/components/SkipLink"
 
@@ -9,43 +9,9 @@ export default async function DashboardPage() {
     redirect("/auth/signin")
   }
 
-  async function handleSignOut() {
-    "use server"
-    await signOut({ redirect: false })
-    redirect("/")
-  }
-
   return (
     <div className="min-h-screen bg-gray-50">
       <SkipLink />
-      <nav className="border-b bg-white" aria-label="Main navigation">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="flex h-16 justify-between">
-            <div className="flex items-center">
-              <h1 className="text-xl font-bold">
-                Lobbyist Registration System
-              </h1>
-            </div>
-            <div className="flex items-center space-x-4">
-              <span className="text-sm text-gray-600">
-                {session.user?.name || session.user?.email}
-              </span>
-              <span className="rounded-full bg-blue-100 px-3 py-1 text-xs font-medium text-blue-800">
-                {session.user?.role}
-              </span>
-              <form action={handleSignOut}>
-                <button
-                  type="submit"
-                  className="rounded-md bg-gray-200 px-4 py-2 text-sm hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2"
-                >
-                  Sign out
-                </button>
-              </form>
-            </div>
-          </div>
-        </div>
-      </nav>
-
       <main id="main-content" className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         {/* Welcome Section */}
         <div className="mb-8">
