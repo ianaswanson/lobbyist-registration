@@ -35,11 +35,12 @@ COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 # Set environment
 ENV NODE_ENV=production
 ENV PORT=8080
+ENV DATABASE_URL="file:./prisma/dev.db"
 
 # Create database directory
 RUN mkdir -p /app/prisma
 
 # Run migrations and seed in background, start server immediately
-CMD ["sh", "-c", "(npx prisma migrate deploy && npx prisma db seed &) && node server.js"]
+CMD ["sh", "-c", "npx prisma migrate deploy && npx prisma db seed && node server.js"]
 
 EXPOSE 8080
