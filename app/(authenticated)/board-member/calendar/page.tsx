@@ -5,7 +5,7 @@ import { BoardMemberCalendarForm } from "@/components/forms/board-member/BoardMe
 export default async function BoardMemberCalendarPage() {
   const session = await auth()
 
-  if (!session) {
+  if (!session || !session.user?.id) {
     redirect("/auth/signin")
   }
 
