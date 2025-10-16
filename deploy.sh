@@ -33,7 +33,8 @@ echo "✅ Prerequisites OK"
 echo ""
 
 echo "🏗️  Step 2: Building container..."
-gcloud builds submit --tag gcr.io/$PROJECT_ID/$SERVICE_NAME
+# Use Artifact Registry (not legacy gcr.io)
+gcloud builds submit --tag us-west1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/$SERVICE_NAME
 echo "✅ Build complete"
 echo ""
 
@@ -56,15 +57,15 @@ echo ""
 
 echo "🚀 Step 4: Deploying to Cloud Run..."
 gcloud run deploy $SERVICE_NAME \
-  --image gcr.io/$PROJECT_ID/$SERVICE_NAME \
+  --image us-west1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/$SERVICE_NAME \
   --platform managed \
   --region $REGION \
   --allow-unauthenticated \
-  --set-env-vars NODE_ENV=production,DATABASE_URL="file:./prisma/prod.db" \
+  --set-env-vars NODE_ENV=production,DATABASE_URL="file:/app/prisma/dev.db" \
   --set-secrets NEXTAUTH_SECRET=nextauth-secret:latest \
   --min-instances 0 \
   --max-instances 3 \
-  --memory 512Mi \
+  --memory 1Gi \
   --cpu 1 \
   --timeout 300
 

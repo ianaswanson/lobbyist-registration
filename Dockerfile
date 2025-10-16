@@ -17,8 +17,13 @@ COPY . .
 RUN npx prisma generate
 
 # Create and seed database (during build)
+# Set DATABASE_URL for build-time operations (absolute path to avoid nesting)
+ENV DATABASE_URL="file:/app/prisma/dev.db"
 RUN npx prisma migrate deploy
 RUN npm run db:seed
+
+# Verify database was created
+RUN ls -lh /app/prisma/dev.db
 
 # Build Next.js
 RUN npm run build
@@ -33,19 +38,19 @@ COPY --from=builder /app/next.config.ts ./
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
-COPY --from=builder /app/prisma ./prisma
+
+# Copy Prisma schema and migrations (WITHOUT the database files from .dockerignore)
+COPY --from=builder /app/prisma/schema.prisma ./prisma/
+COPY --from=builder /app/prisma/migrations ./prisma/migrations
 COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 
-# Copy the seeded database from builder
+# Now explicitly copy the seeded database from the builder stage
 COPY --from=builder /app/prisma/dev.db ./prisma/dev.db
 
 # Set environment
 ENV NODE_ENV=production
 ENV PORT=8080
-ENV DATABASE_URL="file:./prisma/dev.db"
-
-# Create database directory
-RUN mkdir -p /app/prisma
+ENV DATABASE_URL="file:/app/prisma/dev.db"
 
 # Start server (database already seeded during build)
 CMD ["node", "server.js"]
