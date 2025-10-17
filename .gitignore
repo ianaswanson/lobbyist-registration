@@ -68,3 +68,12 @@ test-*.json
 *.tmp
 *.temp
 *.log
+
+# Terraform
+**/.terraform/*
+*.tfstate
+*.tfstate.*
+*.tfvars
+*.tfvars.json
+.terraformrc
+terraform.rc
