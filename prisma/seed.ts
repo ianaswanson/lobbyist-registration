@@ -3,6 +3,28 @@ import { hashPassword } from '../lib/password'
 
 const prisma = new PrismaClient()
 
+/**
+ * ⚠️ SECURITY NOTE: TEST CREDENTIALS FOR DEVELOPMENT/DEMO ONLY
+ *
+ * This file contains test account credentials that are:
+ * - Intentionally documented for development and demo purposes
+ * - NOT connected to real email accounts or users
+ * - Never used in production environments
+ * - Required for automated testing, demos, and development
+ *
+ * These credentials are publicly documented in DEMO-GUIDE.html
+ * and are the equivalent of "test@example.com" / "password123"
+ * commonly found in open-source projects.
+ *
+ * Production environments:
+ * - Use government SSO (Azure AD or Google Identity)
+ * - Never seed test data
+ * - Store real secrets in Google Secret Manager
+ *
+ * GitGuardian/Security Scanners: This is intentional test data,
+ * not a credential leak. See GITGUARDIAN-ALERT-ANALYSIS.md for details.
+ */
+
 async function main() {
   console.log('🌱 Starting database seed...')
 
