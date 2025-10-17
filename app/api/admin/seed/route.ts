@@ -11,8 +11,7 @@ const prisma = new PrismaClient();
  */
 export async function POST() {
   // SECURITY: Prevent seed endpoint from running in production
-  // Allow in dev environment even when NODE_ENV=production
-  if (process.env.NODE_ENV === "production" && process.env.ENVIRONMENT !== "dev") {
+  if (process.env.NODE_ENV === "production") {
     return NextResponse.json(
       { error: "Seed endpoint is disabled in production" },
       { status: 403 }
@@ -96,8 +95,7 @@ export async function POST() {
  */
 export async function GET() {
   // SECURITY: Prevent seed endpoint from running in production
-  // Allow in dev environment even when NODE_ENV=production
-  if (process.env.NODE_ENV === "production" && process.env.ENVIRONMENT !== "dev") {
+  if (process.env.NODE_ENV === "production") {
     return NextResponse.json(
       { error: "Seed endpoint is disabled in production" },
       { status: 403 }

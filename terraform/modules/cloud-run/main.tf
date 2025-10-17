@@ -108,17 +108,6 @@ resource "google_cloud_run_service" "app" {
         }
       }
 
-      # Cloud SQL connection
-      dynamic "volumes" {
-        for_each = var.cloudsql_connections
-        content {
-          name = "cloudsql"
-          cloud_sql_instance {
-            instances = [volumes.value]
-          }
-        }
-      }
-
       # Container concurrency
       container_concurrency = var.container_concurrency
 

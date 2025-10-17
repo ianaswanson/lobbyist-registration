@@ -1,0 +1,9 @@
+# Terraform Variables - dev environment
+# Copy this file to terraform.tfvars and customize
+
+project_id     = "lobbyist-475218"
+project_number = "679888289147"
+region         = "us-west1"
+
+# Container image (update after building)
+container_image = "gcr.io/lobbyist-475218/lobbyist-registration-dev:latest"

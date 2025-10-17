@@ -1,0 +1,53 @@
+# Dockerfile for Cloud Run deployment with Cloud SQL PostgreSQL
+# This version does NOT bake a database into the image
+# Instead, it connects to Cloud SQL at runtime using DATABASE_URL from Secret Manager
+
+# Build stage
+FROM node:20-alpine AS builder
+
+WORKDIR /app
+
+# Copy package files
+COPY package*.json ./
+COPY prisma ./prisma/
+
+# Install dependencies
+RUN npm ci
+
+# Copy application files
+COPY . .
+
+# Generate Prisma Client (but don't run migrations - those happen later)
+RUN npx prisma generate
+
+# Build Next.js application
+RUN npm run build
+
+# Production stage
+FROM node:20-alpine AS runner
+
+WORKDIR /app
+
+# Copy necessary files from builder
+COPY --from=builder /app/next.config.ts ./
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/.next/static ./.next/static
+
+# Copy Prisma schema and migrations for runtime use
+COPY --from=builder /app/prisma/schema.prisma ./prisma/
+COPY --from=builder /app/prisma/migrations ./prisma/migrations
+COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
+COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
+
+# Set environment
+ENV NODE_ENV=production
+ENV PORT=8080
+
+# DATABASE_URL will be provided by Cloud Run from Secret Manager
+# Migrations will be run separately after deployment
+
+# Start server
+CMD ["node", "server.js"]
+
+EXPOSE 8080
