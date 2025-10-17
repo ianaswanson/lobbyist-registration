@@ -64,7 +64,7 @@ export default auth((req) => {
   // Content Security Policy - strict policy for government app
   const cspDirectives = [
     "default-src 'self'",
-    "script-src 'self' 'unsafe-inline' 'unsafe-eval'", // unsafe-* needed for Next.js dev/hydration
+    "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com", // Allow Tailwind CDN for demo pages
     "style-src 'self' 'unsafe-inline'", // unsafe-inline needed for Tailwind
     "img-src 'self' data: blob:",
     "font-src 'self' data:",
