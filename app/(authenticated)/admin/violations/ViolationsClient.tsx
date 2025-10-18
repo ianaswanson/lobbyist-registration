@@ -545,7 +545,27 @@ export function ViolationsClient() {
                   <Gavel className="h-4 w-4" />
                   <AlertTitle>Appeal Active</AlertTitle>
                   <AlertDescription>
-                    This violation has {selectedViolation.appeals.length} appeal(s).
+                    <div className="space-y-2">
+                      <p>This violation has {selectedViolation.appeals.length} appeal(s).</p>
+                      {selectedViolation.appeals.map((appeal: any) => (
+                        <div key={appeal.id} className="text-sm border-t pt-2 mt-2">
+                          <div><strong>Status:</strong> {appeal.status}</div>
+                          <div><strong>Submitted:</strong> {new Date(appeal.submittedDate).toLocaleDateString()}</div>
+                          <div><strong>Deadline:</strong> {new Date(appeal.appealDeadline).toLocaleDateString()}</div>
+                          {appeal.decision && (
+                            <div className="mt-2">
+                              <strong>Decision:</strong> {appeal.decision}
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                      <a
+                        href="/admin/appeals"
+                        className="text-blue-600 hover:underline text-sm font-medium inline-block mt-2"
+                      >
+                        View in Appeals Dashboard →
+                      </a>
+                    </div>
                   </AlertDescription>
                 </Alert>
               )}

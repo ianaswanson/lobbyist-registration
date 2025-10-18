@@ -46,12 +46,24 @@ const NAV_ITEMS: NavItem[] = [
     roles: ["LOBBYIST"],
     icon: "💰",
   },
+  {
+    label: "My Violations",
+    href: "/my-violations",
+    roles: ["LOBBYIST"],
+    icon: "⚖️",
+  },
   // Employer items
   {
     label: "Expense Reports",
     href: "/reports/employer",
     roles: ["EMPLOYER"],
     icon: "💼",
+  },
+  {
+    label: "My Violations",
+    href: "/my-violations",
+    roles: ["EMPLOYER"],
+    icon: "⚖️",
   },
   // Board Member items
   {
@@ -78,6 +90,12 @@ const NAV_ITEMS: NavItem[] = [
     href: "/admin/violations",
     roles: ["ADMIN"],
     icon: "⚠️",
+  },
+  {
+    label: "Appeals",
+    href: "/admin/appeals",
+    roles: ["ADMIN"],
+    icon: "⚖️",
   },
   // Public items
   {
