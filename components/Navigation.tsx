@@ -117,6 +117,12 @@ const NAV_ITEMS: NavItem[] = [
     icon: "📄",
   },
   {
+    label: "Analytics",
+    href: "/analytics",
+    roles: ["ADMIN", "LOBBYIST", "EMPLOYER", "BOARD_MEMBER", "PUBLIC"],
+    icon: "📊",
+  },
+  {
     label: "Exemption Checker",
     href: "/exemption-checker",
     roles: ["LOBBYIST", "EMPLOYER", "BOARD_MEMBER", "PUBLIC"],
