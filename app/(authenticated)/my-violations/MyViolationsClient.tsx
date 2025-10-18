@@ -199,93 +199,98 @@ export function MyViolationsClient({ userId, userRole }: MyViolationsClientProps
               <p className="text-sm mt-2">You're in full compliance!</p>
             </div>
           ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Violation Type</TableHead>
-                  <TableHead>Description</TableHead>
-                  <TableHead>Fine Amount</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Issued Date</TableHead>
-                  <TableHead>Appeal Deadline</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {violations.map((violation) => {
-                  const deadline = getAppealDeadline(violation.issuedDate)
-                  const daysLeft = daysUntilDeadline(violation.issuedDate)
-                  const deadlinePassed = isAppealDeadlinePassed(violation.issuedDate)
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="w-[140px]">Violation Type</TableHead>
+                    <TableHead className="min-w-[300px]">Description</TableHead>
+                    <TableHead className="w-[120px]">Fine Amount</TableHead>
+                    <TableHead className="w-[100px]">Status</TableHead>
+                    <TableHead className="w-[120px]">Issued Date</TableHead>
+                    <TableHead className="w-[140px]">Appeal Deadline</TableHead>
+                    <TableHead className="w-[140px] text-right">Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {violations.map((violation) => {
+                    const deadline = getAppealDeadline(violation.issuedDate)
+                    const daysLeft = daysUntilDeadline(violation.issuedDate)
+                    const deadlinePassed = isAppealDeadlinePassed(violation.issuedDate)
 
-                  return (
-                    <TableRow key={violation.id}>
-                      <TableCell>
-                        <Badge variant="outline">
-                          {violationTypeLabels[violation.violationType]}
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="max-w-xs">
-                        {violation.description}
-                      </TableCell>
-                      <TableCell>
-                        {violation.fineAmount > 0 ? (
-                          <span className="font-semibold">${violation.fineAmount}</span>
-                        ) : (
-                          <span className="text-muted-foreground">$0 (Warning)</span>
-                        )}
-                      </TableCell>
-                      <TableCell>
-                        <Badge className={statusColors[violation.status]}>
-                          {violation.status}
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="text-sm">
-                        {violation.issuedDate ? new Date(violation.issuedDate).toLocaleDateString() : "N/A"}
-                      </TableCell>
-                      <TableCell className="text-sm">
-                        {violation.issuedDate ? (
-                          <div>
-                            <div>{deadline.toLocaleDateString()}</div>
-                            {canAppeal(violation) && !deadlinePassed && (
-                              <div className={`text-xs ${daysLeft <= 7 ? "text-red-600 font-semibold" : "text-muted-foreground"}`}>
-                                {daysLeft} days left
-                              </div>
-                            )}
-                            {deadlinePassed && canAppeal(violation) && (
-                              <div className="text-xs text-red-600">Expired</div>
-                            )}
+                    return (
+                      <TableRow key={violation.id}>
+                        <TableCell className="whitespace-nowrap">
+                          <Badge variant="outline">
+                            {violationTypeLabels[violation.violationType]}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <div className="max-w-[300px]">
+                            {violation.description}
                           </div>
-                        ) : (
-                          "N/A"
-                        )}
-                      </TableCell>
-                      <TableCell className="text-right">
-                        {canAppeal(violation) && !deadlinePassed ? (
-                          <Button
-                            variant="default"
-                            size="sm"
-                            onClick={() => openAppealDialog(violation)}
-                          >
-                            <Gavel className="h-4 w-4 mr-1" />
-                            Appeal
-                          </Button>
-                        ) : violation.status === "APPEALED" ? (
-                          <Badge variant="outline">Appeal Pending</Badge>
-                        ) : violation.status === "UPHELD" ? (
-                          <Badge variant="outline" className="bg-red-50">Upheld</Badge>
-                        ) : violation.status === "OVERTURNED" ? (
-                          <Badge variant="outline" className="bg-green-50">Overturned</Badge>
-                        ) : deadlinePassed && violation.status === "ISSUED" ? (
-                          <span className="text-xs text-muted-foreground">Deadline passed</span>
-                        ) : (
-                          <span className="text-xs text-muted-foreground">-</span>
-                        )}
-                      </TableCell>
-                    </TableRow>
-                  )
-                })}
-              </TableBody>
-            </Table>
+                        </TableCell>
+                        <TableCell className="whitespace-nowrap">
+                          {violation.fineAmount > 0 ? (
+                            <span className="font-semibold">${violation.fineAmount}</span>
+                          ) : (
+                            <span className="text-muted-foreground text-sm">$0 (Warning)</span>
+                          )}
+                        </TableCell>
+                        <TableCell className="whitespace-nowrap">
+                          <Badge className={statusColors[violation.status]}>
+                            {violation.status}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="whitespace-nowrap text-sm">
+                          {violation.issuedDate ? new Date(violation.issuedDate).toLocaleDateString() : "N/A"}
+                        </TableCell>
+                        <TableCell className="text-sm">
+                          {violation.issuedDate ? (
+                            <div className="space-y-0.5">
+                              <div className="whitespace-nowrap">{deadline.toLocaleDateString()}</div>
+                              {canAppeal(violation) && !deadlinePassed && (
+                                <div className={`text-xs whitespace-nowrap ${daysLeft <= 7 ? "text-red-600 font-semibold" : "text-muted-foreground"}`}>
+                                  {daysLeft} days left
+                                </div>
+                              )}
+                              {deadlinePassed && canAppeal(violation) && (
+                                <div className="text-xs text-red-600 whitespace-nowrap">Expired</div>
+                              )}
+                            </div>
+                          ) : (
+                            "N/A"
+                          )}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          {canAppeal(violation) && !deadlinePassed ? (
+                            <Button
+                              variant="default"
+                              size="sm"
+                              onClick={() => openAppealDialog(violation)}
+                              className="whitespace-nowrap"
+                            >
+                              <Gavel className="h-4 w-4 mr-1" />
+                              Appeal
+                            </Button>
+                          ) : violation.status === "APPEALED" ? (
+                            <Badge variant="outline" className="whitespace-nowrap">Appeal Pending</Badge>
+                          ) : violation.status === "UPHELD" ? (
+                            <Badge variant="outline" className="bg-red-50 whitespace-nowrap">Upheld</Badge>
+                          ) : violation.status === "OVERTURNED" ? (
+                            <Badge variant="outline" className="bg-green-50 whitespace-nowrap">Overturned</Badge>
+                          ) : deadlinePassed && violation.status === "ISSUED" ? (
+                            <span className="text-xs text-muted-foreground whitespace-nowrap">Deadline passed</span>
+                          ) : (
+                            <span className="text-xs text-muted-foreground">-</span>
+                          )}
+                        </TableCell>
+                      </TableRow>
+                    )
+                  })}
+                </TableBody>
+              </Table>
+            </div>
           )}
         </CardContent>
       </Card>
