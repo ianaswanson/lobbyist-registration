@@ -53,24 +53,26 @@ enum RegistrationStatus {
 }
 
 model Lobbyist {
-  id                   String             @id @default(uuid())
-  userId               String             @unique
-  name                 String
-  email                String
-  phone                String
-  address              String
-  registrationDate     DateTime           @default(now())
-  status               RegistrationStatus @default(DRAFT)
-  hoursCurrentQuarter  Float              @default(0) // Track hours to determine if registration required
-  createdAt            DateTime           @default(now())
-  updatedAt            DateTime           @updatedAt
+  id                      String             @id @default(uuid())
+  userId                  String             @unique
+  name                    String
+  email                   String
+  phone                   String
+  address                 String
+  registrationDate        DateTime           @default(now())
+  status                  RegistrationStatus @default(DRAFT)
+  hoursCurrentQuarter     Float              @default(0) // Track hours to determine if registration required
+  thresholdExceededDate   DateTime?          // When 10-hour threshold was first exceeded
+  registrationDeadline    DateTime?          // 3 working days after threshold exceeded
+  createdAt               DateTime           @default(now())
+  updatedAt               DateTime           @updatedAt
 
   user             User                     @relation(fields: [userId], references: [id], onDelete: Cascade)
   employers        LobbyistEmployer[]
   expenseReports   LobbyistExpenseReport[]
   employerPayments EmployerLobbyistPayment[]
   boardReceipts    BoardLobbyingReceipt[]
-  violations       Violation[]
+  hourLogs         HourLog[]
 
   @@index([status])
   @@index([email])
@@ -91,7 +93,6 @@ model Employer {
   user           User?                   @relation(fields: [userId], references: [id], onDelete: SetNull)
   lobbyists      LobbyistEmployer[]
   expenseReports EmployerExpenseReport[]
-  violations     Violation[]
 
   @@index([email])
   @@index([name])
@@ -116,6 +117,28 @@ model LobbyistEmployer {
   @@unique([lobbyistId, employerId, startDate])
   @@index([lobbyistId])
   @@index([employerId])
+}
+
+// ============================================================================
+// HOUR TRACKING (§3.802 - 10-hour threshold)
+// ============================================================================
+
+model HourLog {
+  id           String   @id @default(uuid())
+  lobbyistId   String
+  activityDate DateTime // When lobbying activity occurred
+  hours        Float    // Hours spent lobbying (excluding travel time)
+  description  String   // Description of lobbying activity
+  quarter      Quarter  // Which quarter this belongs to
+  year         Int
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  lobbyist Lobbyist @relation(fields: [lobbyistId], references: [id], onDelete: Cascade)
+
+  @@index([lobbyistId])
+  @@index([quarter, year])
+  @@index([activityDate])
 }
 
 // ============================================================================
@@ -151,7 +174,6 @@ model LobbyistExpenseReport {
 
   lobbyist   Lobbyist          @relation(fields: [lobbyistId], references: [id], onDelete: Cascade)
   lineItems  ExpenseLineItem[]
-  violations Violation[]
 
   @@unique([lobbyistId, quarter, year])
   @@index([status])
@@ -200,7 +222,6 @@ model EmployerExpenseReport {
   employer         Employer                  @relation(fields: [employerId], references: [id], onDelete: Cascade)
   lineItems        ExpenseLineItem[]
   lobbyistPayments EmployerLobbyistPayment[]
-  violations       Violation[]
 
   @@unique([employerId, quarter, year])
   @@index([status])
@@ -334,11 +355,9 @@ model Violation {
   createdAt            DateTime        @default(now())
   updatedAt            DateTime        @updatedAt
 
-  // Relations (one will be populated based on entityType)
-  lobbyist        Lobbyist?              @relation(fields: [entityId], references: [id], onDelete: Cascade)
-  employer        Employer?              @relation(fields: [entityId], references: [id], onDelete: Cascade)
-  lobbyistReport  LobbyistExpenseReport? @relation(fields: [entityId], references: [id], onDelete: Cascade)
-  employerReport  EmployerExpenseReport? @relation(fields: [entityId], references: [id], onDelete: Cascade)
+  // Relations - polymorphic relationship, no foreign keys
+  // entityId can reference Lobbyist, Employer, LobbyistExpenseReport, or EmployerExpenseReport
+  // based on entityType, but we don't use Prisma foreign keys for polymorphic relations
   appeals         Appeal[]
 
   @@index([entityType, entityId])
