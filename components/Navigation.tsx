@@ -250,14 +250,15 @@ export function Navigation({ user }: NavigationProps) {
                       )}
 
                       <div className="border-t">
-                        <form action="/api/auth/signout" method="POST">
-                          <button
-                            type="submit"
-                            className="block w-full text-left px-4 py-2 text-sm text-red-700 hover:bg-red-50"
-                          >
-                            🚪 Sign Out
-                          </button>
-                        </form>
+                        <button
+                          onClick={() => {
+                            // Navigate to NextAuth signout page
+                            window.location.href = "/api/auth/signout";
+                          }}
+                          className="block w-full text-left px-4 py-2 text-sm text-red-700 hover:bg-red-50"
+                        >
+                          🚪 Sign Out
+                        </button>
                       </div>
                     </div>
                   </div>
