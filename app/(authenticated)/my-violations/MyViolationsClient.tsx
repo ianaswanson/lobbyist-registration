@@ -200,16 +200,16 @@ export function MyViolationsClient({ userId, userRole }: MyViolationsClientProps
             </div>
           ) : (
             <div className="overflow-x-auto">
-              <Table>
+              <Table className="table-fixed w-full">
                 <TableHeader>
                   <TableRow>
                     <TableHead className="w-[140px]">Violation Type</TableHead>
-                    <TableHead className="min-w-[300px]">Description</TableHead>
+                    <TableHead className="w-[400px]">Description</TableHead>
                     <TableHead className="w-[120px]">Fine Amount</TableHead>
-                    <TableHead className="w-[100px]">Status</TableHead>
+                    <TableHead className="w-[110px]">Status</TableHead>
                     <TableHead className="w-[120px]">Issued Date</TableHead>
-                    <TableHead className="w-[140px]">Appeal Deadline</TableHead>
-                    <TableHead className="w-[140px] text-right">Actions</TableHead>
+                    <TableHead className="w-[150px]">Appeal Deadline</TableHead>
+                    <TableHead className="w-[160px] text-right">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
