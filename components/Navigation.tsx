@@ -97,12 +97,24 @@ const NAV_ITEMS: NavItem[] = [
     roles: ["ADMIN"],
     icon: "⚖️",
   },
+  {
+    label: "Contract Exceptions",
+    href: "/admin/contract-exceptions",
+    roles: ["ADMIN"],
+    icon: "📋",
+  },
   // Public items
   {
     label: "Search",
     href: "/search",
     roles: ["ADMIN", "LOBBYIST", "EMPLOYER", "BOARD_MEMBER", "PUBLIC"],
     icon: "🔍",
+  },
+  {
+    label: "Contract Exceptions",
+    href: "/contract-exceptions",
+    roles: ["ADMIN", "LOBBYIST", "EMPLOYER", "BOARD_MEMBER", "PUBLIC"],
+    icon: "📄",
   },
   {
     label: "Exemption Checker",

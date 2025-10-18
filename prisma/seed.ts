@@ -310,6 +310,81 @@ async function main() {
   })
   console.log('   ✓ Created audit log entries')
 
+  // Create contract exceptions
+  console.log('📋 Creating contract exceptions...')
+  await prisma.contractException.createMany({
+    data: [
+      {
+        formerOfficialId: 'FO-2024-001',
+        formerOfficialName: 'Michael Chen',
+        contractDescription: 'IT consulting services for County database modernization project. Former Deputy IT Director (2020-2024) now works for TechCorp Inc.',
+        justification: `Written findings per §9.230(C):
+
+After thorough review, the Chair finds that the best interests of the County favor this contract for the following reasons:
+
+1. SPECIALIZED EXPERTISE: Mr. Chen possesses unique technical knowledge of the County's legacy database systems that would be difficult and costly to replicate.
+
+2. PROJECT CONTINUITY: Mr. Chen led the initial planning phase of this modernization project before leaving County service. His continued involvement ensures project continuity and reduces risk of costly delays.
+
+3. COMPETITIVE PRICING: TechCorp's proposal was 15% below the next lowest bidder and 30% below the average of all bids received.
+
+4. NO UNDUE INFLUENCE: While Mr. Chen was Deputy IT Director, he had no authority to approve contracts. The contract authorization was made by the Board after his departure.
+
+5. PUBLIC INTEREST: The database modernization project is critical for improving County services to residents. Delays would negatively impact service delivery.
+
+Based on these findings, the Chair concludes that granting this exception serves the County's best interests and does not violate the spirit of §9.230.`,
+        approvedBy: 'County Chair Jessica Vega Pederson',
+        approvedDate: new Date('2024-06-15'),
+        publiclyPostedDate: new Date('2024-06-20'),
+      },
+      {
+        formerOfficialId: 'FO-2023-042',
+        formerOfficialName: 'Robert Martinez',
+        contractDescription: 'Urban planning consulting for the Transit-Oriented Development Zone project. Former Senior Planner (2018-2023).',
+        justification: `Written findings per §9.230(C):
+
+The Chair finds that Mr. Martinez's influence on this contract was minimal for the following reasons:
+
+1. LIMITED ROLE: As Senior Planner, Mr. Martinez was not involved in contract authorization or vendor selection decisions. These decisions were made at the Director level and above.
+
+2. DIFFERENT PROJECT SCOPE: While Mr. Martinez worked on preliminary TOD studies, the current contract scope was expanded significantly after his departure to include additional neighborhoods not contemplated during his tenure.
+
+3. ARMS-LENGTH PROCESS: The RFP was issued 8 months after Mr. Martinez left County employment. He had no involvement in drafting the RFP or evaluating proposals.
+
+4. POLICY COMPLIANT: Mr. Martinez did not participate in any discussions or decisions related to this contract while employed by the County.
+
+Based on these findings, the Chair concludes that Mr. Martinez's influence on contract authorization was minimal and granting this exception is appropriate.`,
+        approvedBy: 'County Chair Jessica Vega Pederson',
+        approvedDate: new Date('2024-03-10'),
+        publiclyPostedDate: new Date('2024-03-15'),
+      },
+      {
+        formerOfficialId: 'FO-2024-013',
+        formerOfficialName: 'Dr. Amanda Foster',
+        contractDescription: 'Public health consulting services for maternal health outreach program. Former Health Department Program Manager (2021-2024).',
+        justification: `Written findings per §9.230(C):
+
+The Chair finds that the best interests of the County favor this contract for the following reasons:
+
+1. CRITICAL NEED: Maternal mortality rates in Multnomah County have increased by 18% over the past two years. This program addresses a critical public health emergency.
+
+2. ESTABLISHED RELATIONSHIPS: Dr. Foster developed strong partnerships with community health organizations that are essential to the program's success. Her continued involvement leverages these existing relationships.
+
+3. COMPETITIVE ADVANTAGE: Dr. Foster's proposal included commitments from 12 community partners who specifically requested her involvement. No other bidder could demonstrate this level of community support.
+
+4. LIMITED FINANCIAL BENEFIT: The contract value ($45,000) is below the threshold that would typically raise concerns about financial self-dealing.
+
+5. TIME SENSITIVITY: The grant funding for this program expires in 90 days. Delays in contractor selection would result in loss of federal funds.
+
+The Chair concludes that granting this exception serves the County's best interests and advances critical public health objectives.`,
+        approvedBy: 'County Chair Jessica Vega Pederson',
+        approvedDate: new Date('2024-08-22'),
+        publiclyPostedDate: new Date('2024-08-25'),
+      },
+    ],
+  })
+  console.log('   ✓ Created 3 contract exceptions')
+
   console.log('')
   console.log('✅ Database seeding completed successfully!')
   console.log('')
