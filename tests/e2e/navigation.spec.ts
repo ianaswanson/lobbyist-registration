@@ -80,6 +80,47 @@ test.describe('Navigation', () => {
   });
 });
 
+test.describe('Lobbyist Navigation', () => {
+  test.beforeEach(async ({ page }) => {
+    // Sign in as lobbyist
+    await page.goto('/auth/signin');
+    await page.fill('input[name="email"]', 'john.doe@lobbying.com');
+    await page.fill('input[name="password"]', 'lobbyist123');
+    await page.click('button[type="submit"]');
+    await page.waitForURL('/dashboard');
+  });
+
+  test('should display lobbyist navigation menu', async ({ page }) => {
+    // Check logo
+    await expect(page.locator('nav a:has-text("Lobbyist Registry")').first()).toBeVisible();
+
+    // Check lobbyist menu items
+    await expect(page.locator('nav a[href="/dashboard"]').first()).toBeVisible();
+    await expect(page.locator('nav a:has-text("Register")').first()).toBeVisible();
+    await expect(page.locator('nav a:has-text("Hour Tracking")').first()).toBeVisible();
+    await expect(page.locator('nav a:has-text("My Reports")').first()).toBeVisible();
+    await expect(page.locator('nav a:has-text("Search")').first()).toBeVisible();
+    await expect(page.locator('nav a:has-text("Exemption Checker")').first()).toBeVisible();
+  });
+
+  test('should navigate to hour tracking page', async ({ page }) => {
+    await page.click('a:has-text("Hour Tracking")');
+    await page.waitForURL('/hours');
+    await expect(page).toHaveURL('/hours');
+    await expect(page.locator('h2')).toContainText('Hour Tracking');
+  });
+
+  test('should highlight active hour tracking navigation item', async ({ page }) => {
+    // Navigate to hour tracking
+    await page.click('a:has-text("Hour Tracking")');
+    await page.waitForURL('/hours');
+
+    // Check that Hour Tracking link has active styling (blue background)
+    const hourTrackingLink = page.locator('nav a:has-text("Hour Tracking")').first();
+    await expect(hourTrackingLink).toHaveClass(/bg-blue-100/);
+  });
+});
+
 test.describe('Public Navigation', () => {
   test('should display public navigation on exemption checker', async ({ page }) => {
     await page.goto('/exemption-checker');

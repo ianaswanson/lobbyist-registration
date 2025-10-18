@@ -35,6 +35,12 @@ const NAV_ITEMS: NavItem[] = [
     icon: "📝",
   },
   {
+    label: "Hour Tracking",
+    href: "/hours",
+    roles: ["LOBBYIST"],
+    icon: "⏱️",
+  },
+  {
     label: "My Reports",
     href: "/reports/lobbyist",
     roles: ["LOBBYIST"],

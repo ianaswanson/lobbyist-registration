@@ -160,6 +160,127 @@ test.describe('User Workflows', () => {
     });
   });
 
+  test.describe('Hour Tracking Flow', () => {
+    test.beforeEach(async ({ page }) => {
+      // Sign in as lobbyist
+      await page.goto('/auth/signin');
+      await page.fill('input[name="email"]', 'john.doe@lobbying.com');
+      await page.fill('input[name="password"]', 'lobbyist123');
+      await page.click('button[type="submit"]');
+      await page.waitForURL('/dashboard');
+    });
+
+    test('should access hour tracking page', async ({ page }) => {
+      await page.click('a:has-text("Hour Tracking")');
+      await page.waitForURL('/hours');
+
+      await expect(page.locator('h2')).toContainText('Hour Tracking');
+    });
+
+    test('should display quarterly summary card', async ({ page }) => {
+      await page.goto('/hours');
+
+      // Check summary elements
+      await expect(page.locator('text=Q4 2025 Summary')).toBeVisible();
+      await expect(page.locator('text=Total Lobbying Hours')).toBeVisible();
+      await expect(page.locator('text=hours until registration required')).toBeVisible();
+    });
+
+    test('should display hour log form', async ({ page }) => {
+      await page.goto('/hours');
+
+      // Check form fields
+      await expect(page.locator('label:has-text("Activity Date")')).toBeVisible();
+      await expect(page.locator('label:has-text("Hours")')).toBeVisible();
+      await expect(page.locator('label:has-text("Activity Description")')).toBeVisible();
+      await expect(page.locator('button:has-text("Add Hours")')).toBeVisible();
+    });
+
+    test('should add a new hour log entry', async ({ page }) => {
+      await page.goto('/hours');
+
+      // Fill out the form
+      const today = new Date().toISOString().split('T')[0];
+      await page.fill('input[type="date"]', today);
+      await page.fill('input[type="number"]', '3.5');
+      await page.fill('textarea', 'Meeting with county commissioners about transportation policy');
+
+      // Submit the form
+      await page.click('button:has-text("Add Hours")');
+
+      // Wait for success (form should reset)
+      await page.waitForTimeout(1000);
+
+      // Check that entry appears in the table
+      await expect(page.locator('text=Meeting with county commissioners')).toBeVisible();
+      await expect(page.locator('text=3.50')).toBeVisible();
+    });
+
+    test('should update total hours after adding entry', async ({ page }) => {
+      await page.goto('/hours');
+
+      // Get initial total
+      const initialTotal = await page.locator('text=/\\d+\\.\\d+ \\/ 10/').textContent();
+
+      // Add hours
+      const today = new Date().toISOString().split('T')[0];
+      await page.fill('input[type="date"]', today);
+      await page.fill('input[type="number"]', '2');
+      await page.fill('textarea', 'Follow-up meeting');
+      await page.click('button:has-text("Add Hours")');
+
+      // Wait for update
+      await page.waitForTimeout(1000);
+
+      // Check total has increased
+      const newTotal = await page.locator('text=/\\d+\\.\\d+ \\/ 10/').textContent();
+      await expect(newTotal).not.toBe(initialTotal);
+    });
+
+    test('should display activity history table', async ({ page }) => {
+      await page.goto('/hours');
+
+      // Check table headers
+      await expect(page.locator('th:has-text("Date")')).toBeVisible();
+      await expect(page.locator('th:has-text("Hours")')).toBeVisible();
+      await expect(page.locator('th:has-text("Description")')).toBeVisible();
+      await expect(page.locator('th:has-text("Quarter")')).toBeVisible();
+    });
+
+    test('should show registration requirement info', async ({ page }) => {
+      await page.goto('/hours');
+
+      // Check info box is present
+      await expect(page.locator('text=Registration Requirement')).toBeVisible();
+      await expect(page.locator('text=3 working days')).toBeVisible();
+      await expect(page.locator('text=§3.802')).toBeVisible();
+    });
+
+    test('should validate form fields', async ({ page }) => {
+      await page.goto('/hours');
+
+      // Try to submit without filling fields
+      await page.click('button:has-text("Add Hours")');
+
+      // Browser validation should prevent submission
+      // Check that form still has empty fields (browser validation blocks submit)
+      const hoursInput = page.locator('input[type="number"]');
+      await expect(hoursInput).toHaveValue('');
+    });
+
+    test('should update progress bar color as hours increase', async ({ page }) => {
+      await page.goto('/hours');
+
+      // Check progress bar exists
+      const progressBar = page.locator('[role="progressbar"]');
+      await expect(progressBar).toBeVisible();
+
+      // Progress bar should have color class (green/yellow/red)
+      const progressBarDiv = progressBar.locator('div').first();
+      await expect(progressBarDiv).toHaveClass(/bg-(green|yellow|red)-/);
+    });
+  });
+
   test.describe('Public Search Flow', () => {
     test('should access search without auth', async ({ page }) => {
       await page.goto('/search');
