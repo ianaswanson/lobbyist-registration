@@ -200,52 +200,69 @@ export function MyViolationsClient({ userId, userRole }: MyViolationsClientProps
             </div>
           ) : (
             <div className="overflow-x-auto">
-              <Table className="table-fixed w-full">
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="w-[140px]">Violation Type</TableHead>
-                    <TableHead className="w-[400px]">Description</TableHead>
-                    <TableHead className="w-[120px]">Fine Amount</TableHead>
-                    <TableHead className="w-[110px]">Status</TableHead>
-                    <TableHead className="w-[120px]">Issued Date</TableHead>
-                    <TableHead className="w-[150px]">Appeal Deadline</TableHead>
-                    <TableHead className="w-[160px] text-right">Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
+              <table className="w-full min-w-[1200px] border-collapse">
+                <thead>
+                  <tr className="border-b">
+                    <th className="text-left p-4 font-medium text-sm" style={{ width: '140px' }}>
+                      Violation Type
+                    </th>
+                    <th className="text-left p-4 font-medium text-sm" style={{ width: '400px' }}>
+                      Description
+                    </th>
+                    <th className="text-left p-4 font-medium text-sm" style={{ width: '120px' }}>
+                      Fine Amount
+                    </th>
+                    <th className="text-left p-4 font-medium text-sm" style={{ width: '110px' }}>
+                      Status
+                    </th>
+                    <th className="text-left p-4 font-medium text-sm" style={{ width: '120px' }}>
+                      Issued Date
+                    </th>
+                    <th className="text-left p-4 font-medium text-sm" style={{ width: '150px' }}>
+                      Appeal Deadline
+                    </th>
+                    <th className="text-right p-4 font-medium text-sm" style={{ width: '160px' }}>
+                      Actions
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
                   {violations.map((violation) => {
                     const deadline = getAppealDeadline(violation.issuedDate)
                     const daysLeft = daysUntilDeadline(violation.issuedDate)
                     const deadlinePassed = isAppealDeadlinePassed(violation.issuedDate)
 
                     return (
-                      <TableRow key={violation.id}>
-                        <TableCell className="whitespace-nowrap">
-                          <Badge variant="outline">
+                      <tr key={violation.id} className="border-b">
+                        <td className="p-4 align-top">
+                          <Badge variant="outline" className="whitespace-nowrap">
                             {violationTypeLabels[violation.violationType]}
                           </Badge>
-                        </TableCell>
-                        <TableCell>
-                          <div className="max-w-[300px]">
-                            {violation.description}
-                          </div>
-                        </TableCell>
-                        <TableCell className="whitespace-nowrap">
+                        </td>
+                        <td className="p-4 align-top" style={{
+                          maxWidth: '400px',
+                          wordWrap: 'break-word',
+                          overflowWrap: 'break-word',
+                          wordBreak: 'break-word'
+                        }}>
+                          {violation.description}
+                        </td>
+                        <td className="p-4 align-top whitespace-nowrap">
                           {violation.fineAmount > 0 ? (
                             <span className="font-semibold">${violation.fineAmount}</span>
                           ) : (
                             <span className="text-muted-foreground text-sm">$0 (Warning)</span>
                           )}
-                        </TableCell>
-                        <TableCell className="whitespace-nowrap">
-                          <Badge className={statusColors[violation.status]}>
+                        </td>
+                        <td className="p-4 align-top">
+                          <Badge className={statusColors[violation.status] + " whitespace-nowrap"}>
                             {violation.status}
                           </Badge>
-                        </TableCell>
-                        <TableCell className="whitespace-nowrap text-sm">
+                        </td>
+                        <td className="p-4 align-top text-sm whitespace-nowrap">
                           {violation.issuedDate ? new Date(violation.issuedDate).toLocaleDateString() : "N/A"}
-                        </TableCell>
-                        <TableCell className="text-sm">
+                        </td>
+                        <td className="p-4 align-top text-sm">
                           {violation.issuedDate ? (
                             <div className="space-y-0.5">
                               <div className="whitespace-nowrap">{deadline.toLocaleDateString()}</div>
@@ -261,8 +278,8 @@ export function MyViolationsClient({ userId, userRole }: MyViolationsClientProps
                           ) : (
                             "N/A"
                           )}
-                        </TableCell>
-                        <TableCell className="text-right">
+                        </td>
+                        <td className="p-4 align-top text-right">
                           {canAppeal(violation) && !deadlinePassed ? (
                             <Button
                               variant="default"
@@ -284,12 +301,12 @@ export function MyViolationsClient({ userId, userRole }: MyViolationsClientProps
                           ) : (
                             <span className="text-xs text-muted-foreground">-</span>
                           )}
-                        </TableCell>
-                      </TableRow>
+                        </td>
+                      </tr>
                     )
                   })}
-                </TableBody>
-              </Table>
+                </tbody>
+              </table>
             </div>
           )}
         </CardContent>
