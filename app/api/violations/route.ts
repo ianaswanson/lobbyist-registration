@@ -20,11 +20,6 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Only ADMIN can view violations
-    if (session.user?.role !== "ADMIN") {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-    }
-
     const searchParams = request.nextUrl.searchParams;
     const status = searchParams.get("status");
     const entityType = searchParams.get("entityType");
@@ -44,13 +39,38 @@ export async function GET(request: NextRequest) {
       where.entityId = entityId;
     }
 
+    // Non-admins can only view their own violations
+    if (session.user?.role !== "ADMIN") {
+      // If entityId is provided, verify it belongs to the user
+      if (!entityId) {
+        return NextResponse.json({ error: "Entity ID required for non-admin users" }, { status: 400 });
+      }
+
+      // Verify the entityId belongs to the current user
+      if (session.user.role === "LOBBYIST") {
+        const lobbyist = await prisma.lobbyist.findUnique({
+          where: { userId: session.user.id },
+        });
+        if (!lobbyist || lobbyist.id !== entityId) {
+          return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+        }
+      } else if (session.user.role === "EMPLOYER") {
+        const employer = await prisma.employer.findUnique({
+          where: { userId: session.user.id },
+        });
+        if (!employer || employer.id !== entityId) {
+          return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+        }
+      }
+    }
+
     const violations = await prisma.violation.findMany({
       where,
       include: {
-        appeal: true,
+        appeals: true,
       },
       orderBy: {
-        issueDate: "desc",
+        issuedDate: "desc",
       },
     });
 
