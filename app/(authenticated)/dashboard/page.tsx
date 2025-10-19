@@ -52,49 +52,19 @@ export default async function DashboardPage() {
             Quick Actions
           </h3>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {/* Exemption Checker - Available to all roles */}
-              <a
-                href="/exemption-checker"
-                className="flex items-center justify-between rounded-lg border border-gray-200 p-4 hover:border-green-500 hover:bg-green-50 transition-colors focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
-                aria-label="Check if you need to register as a lobbyist"
-              >
-                <div>
-                  <h4 className="font-semibold text-gray-900">
-                    Exemption Checker
-                  </h4>
-                  <p className="text-sm text-gray-600">
-                    Check if you need to register
-                  </p>
-                </div>
-                <svg
-                  className="h-6 w-6 text-green-600"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  aria-hidden="true"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M9 5l7 7-7 7"
-                  />
-                </svg>
-              </a>
-
               {(session.user?.role === "LOBBYIST" || session.user?.role === "ADMIN") && (
                 <>
                   <a
-                    href="/register/lobbyist"
+                    href="/hours"
                     className="flex items-center justify-between rounded-lg border border-gray-200 p-4 hover:border-blue-500 hover:bg-blue-50 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                    aria-label="Register as a lobbyist"
+                    aria-label="Track lobbying hours"
                   >
                     <div>
                       <h4 className="font-semibold text-gray-900">
-                        Lobbyist Registration
+                        Hour Tracking
                       </h4>
                       <p className="text-sm text-gray-600">
-                        Register as a lobbyist
+                        Log your lobbying hours
                       </p>
                     </div>
                     <svg
@@ -119,14 +89,42 @@ export default async function DashboardPage() {
                   >
                     <div>
                       <h4 className="font-semibold text-gray-900">
-                        Lobbyist Expense Report
+                        Quarterly Reports
                       </h4>
                       <p className="text-sm text-gray-600">
-                        Submit lobbying expenses
+                        Submit expense reports
                       </p>
                     </div>
                     <svg
                       className="h-6 w-6 text-purple-600"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      aria-hidden="true"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M9 5l7 7-7 7"
+                      />
+                    </svg>
+                  </a>
+                  <a
+                    href="/my-violations"
+                    className="flex items-center justify-between rounded-lg border border-gray-200 p-4 hover:border-orange-500 hover:bg-orange-50 transition-colors focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
+                    aria-label="View violations and appeals"
+                  >
+                    <div>
+                      <h4 className="font-semibold text-gray-900">
+                        My Violations
+                      </h4>
+                      <p className="text-sm text-gray-600">
+                        View violations and appeals
+                      </p>
+                    </div>
+                    <svg
+                      className="h-6 w-6 text-orange-600"
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke="currentColor"
