@@ -5,27 +5,60 @@ Web application to satisfy Multnomah County's Government Accountability Ordinanc
 
 ## Current Project Status
 - ✅ **Planning Complete:** User story map, wireframes, and technical architecture defined
-- ✅ **MVP Development Complete:** All Phase 1 features implemented (Issues #1-25)
-- ✅ **Production Deployment:** Live on Google Cloud Run
-- 🔄 **Next:** Gather stakeholder feedback, plan Phase 2 enhancements
+- ✅ **UI/UX Complete:** Navigation redesign, dashboard improvements, role-based separation (Oct 19, 2025)
+- ✅ **Board Member Calendar:** §3.001 compliance feature complete
+- ✅ **Dev Deployment:** Live on Google Cloud Run dev environment
+- 🔄 **In Progress:** API implementation to replace placeholder alerts (see NEXT-STEPS.md)
+- ❌ **Not Started:** Production deployment, stakeholder demos
 - 📅 **Target Launch:** June 2026 (before July 1, 2026 ordinance effective date)
 
-## Production Deployment
-- **Live URL:** https://lobbyist-registration-zzp44w3snq-uw.a.run.app
-- **Demo Guide:** https://lobbyist-registration-zzp44w3snq-uw.a.run.app/DEMO-GUIDE.html
-- **Compliance Matrix:** https://lobbyist-registration-zzp44w3snq-uw.a.run.app/ORDINANCE-COMPLIANCE.html
-- **Platform:** Google Cloud Run (serverless containers)
+## Deployment Status
+
+### Dev Environment ✅ (Latest)
+- **URL:** https://lobbyist-registration-dev-zzp44w3snq-uw.a.run.app
+- **Status:** Deployed Oct 19, 2025 (revision 00014-trf)
+- **Features:** Latest UX improvements, board calendar feature
+- **Database:** SQLite with seed data (runtime seeding on startup)
+- **Purpose:** Testing and iteration
+
+### Production Environment 🔄 (Older Version)
+- **URL:** https://lobbyist-registration-zzp44w3snq-uw.a.run.app
+- **Status:** Previous version (before UX improvements)
 - **Database:** SQLite with seed data
-- **Cost:** Free tier (~$0-5/month)
-- **Status:** Fully functional prototype ready for stakeholder demos
+- **Purpose:** Stakeholder demos (when ready)
+- **Note:** Will update after API work completes
 
 ## Project Artifacts
+
+### Planning & Design
 - `user-story-map.html` - Visual user story map with all user journeys and priorities
-- `wireframes/` - Interactive HTML wireframes for 4 core screens
+- `wireframes/` - Interactive HTML wireframes for 5 screens:
+  - `01-lobbyist-registration.html` - Multi-step registration wizard
+  - `02-quarterly-expense-report.html` - Expense reporting with CSV upload
+  - `03-admin-compliance-dashboard.html` - Admin monitoring interface
+  - `04-public-search-interface.html` - Public transparency search
+  - `dashboard-ux-improvements.html` - Interactive UX prototype (Oct 19, 2025)
+
+### Documentation
+- `CLAUDE.md` - This file - project overview and development guidelines
+- `PROJECT.md` - Comprehensive requirements and roadmap
+- `NEXT-STEPS.md` - **START HERE** - What to do next for API implementation
+- `API-IMPLEMENTATION-ROADMAP.md` - Detailed API work breakdown (40+ placeholders to fix)
+
+### Session Summaries
+- `SESSION-SUMMARY-2025-10-19-UX-Improvements.md` - Navigation & dashboard redesign
+- `SESSION-SUMMARY-2025-10-17-Database-Seeding.md` - Runtime seeding implementation
+- `SESSION-SUMMARY-2025-10-17-Production-Migration.md` - Production deployment work
+- `SESSION-SUMMARY-2025-10-17-Runtime-Seeding.md` - Database initialization
+- `SESSION-SUMMARY-2025-10-17-Security.md` - Security improvements
+- `SESSION-SUMMARY-2025-10-18-Feature-Flags.md` - Feature flag system
+
+### Compliance & Demos
 - `DEMO-GUIDE.html` - Interactive demo walkthrough (also available online)
 - `ORDINANCE-COMPLIANCE.html` - Compliance matrix showing requirements met
-- `PROJECT.md` - Comprehensive project documentation and requirements
 - `Government_Accountably_Ordinance_4.2.25_-_CA_Approved.pdf` - Source ordinance
+
+### Deployment
 - `DEPLOYMENT-PLAN.md` - Complete Google Cloud deployment guide
 - `QUICKSTART-DEPLOY.md` - Fast-track deployment instructions
 - `DEPLOYMENT-CHECKLIST.md` - Step-by-step deployment checklist
