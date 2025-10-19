@@ -240,20 +240,6 @@ export function Navigation({ user }: NavigationProps) {
 
   return (
     <>
-      {/* Role Context Banner */}
-      <div className="bg-blue-50 border-b border-blue-200 px-4 py-2 text-xs">
-        <div className="mx-auto max-w-7xl flex items-center justify-between">
-          <div>
-            <strong>Viewing as:</strong>{" "}
-            <span className="font-semibold">{getRoleDisplay()}</span>
-            <span className="mx-2 text-gray-400">|</span>
-            <Link href="/dashboard" className="text-blue-600 hover:underline">
-              What can I do?
-            </Link>
-          </div>
-        </div>
-      </div>
-
       {/* Main Navigation */}
       <nav className="border-b bg-white shadow-sm sticky top-0 z-50">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
