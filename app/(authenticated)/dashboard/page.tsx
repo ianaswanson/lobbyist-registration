@@ -52,7 +52,7 @@ export default async function DashboardPage() {
             Quick Actions
           </h3>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {(session.user?.role === "LOBBYIST" || session.user?.role === "ADMIN") && (
+              {session.user?.role === "LOBBYIST" && (
                 <>
                   <a
                     href="/hours"
@@ -141,7 +141,7 @@ export default async function DashboardPage() {
                 </>
               )}
 
-              {(session.user?.role === "EMPLOYER" || session.user?.role === "ADMIN") && (
+              {session.user?.role === "EMPLOYER" && (
                 <a
                   href="/reports/employer"
                   className="flex items-center justify-between rounded-lg border border-gray-200 p-4 hover:border-orange-500 hover:bg-orange-50 transition-colors focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
@@ -172,7 +172,7 @@ export default async function DashboardPage() {
                 </a>
               )}
 
-              {(session.user?.role === "BOARD_MEMBER" || session.user?.role === "ADMIN") && (
+              {session.user?.role === "BOARD_MEMBER" && (
                 <a
                   href="/board-member/calendar"
                   className="flex items-center justify-between rounded-lg border border-gray-200 p-4 hover:border-indigo-500 hover:bg-indigo-50 transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
