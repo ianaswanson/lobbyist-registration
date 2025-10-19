@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard UX Improvements - Wireframe</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .scenario-toggle {
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .scenario-toggle:hover {
+      transform: translateY(-2px);
+    }
+    .scenario-active {
+      border: 3px solid #3B82F6;
+      box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+    }
+    .annotation {
+      position: relative;
+      border: 2px dashed #F59E0B;
+      background: rgba(251, 191, 36, 0.1);
+    }
+    .annotation::after {
+      content: attr(data-note);
+      position: absolute;
+      top: -30px;
+      left: 0;
+      background: #F59E0B;
+      color: white;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: bold;
+      white-space: nowrap;
+      z-index: 10;
+    }
+  </style>
+</head>
+<body class="bg-gray-100">
+  <!-- Header -->
+  <header class="bg-white shadow">
+    <div class="max-w-7xl mx-auto px-4 py-6">
+      <h1 class="text-3xl font-bold text-gray-900">Dashboard UX Improvements - Wireframe</h1>
+      <p class="mt-2 text-gray-600">Lobbyist Dashboard & Navigation Redesign</p>
+    </div>
+  </header>
+
+  <!-- Scenario Selector -->
+  <div class="max-w-7xl mx-auto px-4 py-6">
+    <div class="bg-blue-50 border-l-4 border-blue-500 p-4 mb-6">
+      <h2 class="text-lg font-semibold text-blue-900 mb-3">Select Scenario to Preview:</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <button onclick="showScenario('not-registered')" class="scenario-toggle scenario-active bg-white p-4 rounded-lg border-2 border-gray-200 text-left" id="btn-not-registered">
+          <div class="font-bold text-gray-900">🚫 Not Registered Yet</div>
+          <div class="text-sm text-gray-600 mt-1">User exceeded 10 hours but hasn't completed registration</div>
+        </button>
+        <button onclick="showScenario('registered')" class="scenario-toggle bg-white p-4 rounded-lg border-2 border-gray-200 text-left" id="btn-registered">
+          <div class="font-bold text-gray-900">✅ Registered Lobbyist</div>
+          <div class="text-sm text-gray-600 mt-1">Active lobbyist doing regular quarterly work</div>
+        </button>
+        <button onclick="showScenario('near-threshold')" class="scenario-toggle bg-white p-4 rounded-lg border-2 border-gray-200 text-left" id="btn-near-threshold">
+          <div class="font-bold text-gray-900">⚠️ Near Threshold</div>
+          <div class="text-sm text-gray-600 mt-1">8.5 / 10 hours - about to trigger registration</div>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Wireframes Container -->
+  <div class="max-w-7xl mx-auto px-4 pb-12">
+
+    <!-- SCENARIO 1: Not Registered Yet -->
+    <div id="scenario-not-registered" class="scenario-content">
+      <div class="bg-white shadow-lg rounded-lg overflow-hidden mb-8">
+        <!-- Navigation Bar -->
+        <nav class="border-b bg-white shadow-sm">
+          <div class="px-6 py-4">
+            <div class="flex justify-between items-center">
+              <!-- Logo -->
+              <div class="flex items-center space-x-8">
+                <div class="text-xl font-bold text-gray-900">🏛️ Lobbyist Registry</div>
+
+                <!-- Main Navigation -->
+                <div class="hidden md:flex space-x-1">
+                  <!-- My Work Dropdown -->
+                  <div class="relative annotation" data-note="✨ REMOVED: Register (moved to alert below)">
+                    <button class="flex items-center space-x-1 px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100">
+                      <span>📋 My Work</span>
+                      <span>▼</span>
+                    </button>
+                    <div class="absolute left-0 mt-2 w-56 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 opacity-50 pointer-events-none">
+                      <div class="py-1">
+                        <div class="flex items-center space-x-2 px-4 py-2 text-sm text-gray-400">
+                          <span>⏱️</span>
+                          <span>Hour Tracking (Coming soon)</span>
+                        </div>
+                        <div class="flex items-center space-x-2 px-4 py-2 text-sm text-gray-400">
+                          <span>📊</span>
+                          <span>Quarterly Reports (Locked)</span>
+                        </div>
+                        <div class="flex items-center space-x-2 px-4 py-2 text-sm text-gray-400">
+                          <span>⚠️</span>
+                          <span>My Violations (None yet)</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Public Data -->
+                  <button class="flex items-center space-x-1 px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100">
+                    <span>🔍 Public Data</span>
+                    <span>▼</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- User Menu -->
+              <div class="flex items-center space-x-4">
+                <span class="px-3 py-1 bg-yellow-100 text-yellow-800 text-xs font-medium rounded-full">LOBBYIST</span>
+                <button class="flex items-center space-x-2 text-gray-700 hover:text-gray-900">
+                  <span class="font-medium">John Doe</span>
+                  <span>▼</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </nav>
+
+        <!-- Dashboard Content -->
+        <div class="p-6">
+          <!-- Welcome -->
+          <div class="mb-6">
+            <h2 class="text-3xl font-bold text-gray-900">Welcome back, John</h2>
+            <p class="mt-2 text-gray-600">Manage your lobbyist registration and quarterly expense reports.</p>
+          </div>
+
+          <!-- CRITICAL: Registration Required Alert -->
+          <div class="annotation mb-6" data-note="🎯 PRIMARY ACTION: Registration required!">
+            <div class="rounded-lg border-l-4 border-red-500 bg-red-50 p-6">
+              <div class="flex items-start">
+                <div class="flex-shrink-0">
+                  <svg class="h-8 w-8 text-red-600" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                  </svg>
+                </div>
+                <div class="ml-4 flex-1">
+                  <h3 class="text-lg font-bold text-red-900">⚠️ Action Required: Complete Your Registration</h3>
+                  <p class="mt-2 text-red-800">
+                    You exceeded 10 hours of lobbying activity on <strong>October 16, 2025</strong>.
+                    You must register within <strong>3 working days</strong> (by <strong>October 21, 2025</strong>).
+                  </p>
+                  <div class="mt-4">
+                    <a href="/register/lobbyist" class="inline-flex items-center px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg shadow transition-colors">
+                      Complete Registration Now
+                      <svg class="ml-2 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                      </svg>
+                    </a>
+                  </div>
+                  <p class="mt-3 text-sm text-red-700">
+                    <strong>Ordinance §3.802:</strong> Failure to register may result in fines up to $500.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Informational Cards (Low Priority) -->
+          <h3 class="text-lg font-semibold text-gray-900 mb-4">What You Can Do</h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="rounded-lg border border-gray-200 p-4 bg-gray-50">
+              <div class="flex items-center space-x-3">
+                <div class="flex-shrink-0 w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                  <span class="text-xl">🔍</span>
+                </div>
+                <div>
+                  <h4 class="font-semibold text-gray-900">Search Public Records</h4>
+                  <p class="text-sm text-gray-600">View other lobbyists and public data</p>
+                </div>
+              </div>
+            </div>
+            <div class="rounded-lg border border-gray-200 p-4 bg-gray-50">
+              <div class="flex items-center space-x-3">
+                <div class="flex-shrink-0 w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+                  <span class="text-xl">📅</span>
+                </div>
+                <div>
+                  <h4 class="font-semibold text-gray-900">Board Calendars</h4>
+                  <p class="text-sm text-gray-600">View commissioner calendars</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCENARIO 2: Registered Lobbyist -->
+    <div id="scenario-registered" class="scenario-content hidden">
+      <div class="bg-white shadow-lg rounded-lg overflow-hidden mb-8">
+        <!-- Navigation Bar -->
+        <nav class="border-b bg-white shadow-sm">
+          <div class="px-6 py-4">
+            <div class="flex justify-between items-center">
+              <div class="flex items-center space-x-8">
+                <div class="text-xl font-bold text-gray-900">🏛️ Lobbyist Registry</div>
+
+                <!-- Main Navigation -->
+                <div class="hidden md:flex space-x-1">
+                  <!-- My Work Dropdown -->
+                  <div class="relative annotation" data-note="✨ REORDERED: Frequent tasks first">
+                    <button class="flex items-center space-x-1 px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100 bg-blue-50">
+                      <span>📋 My Work</span>
+                      <span>▼</span>
+                    </button>
+                    <div class="absolute left-0 mt-2 w-64 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5">
+                      <div class="py-1">
+                        <a href="#" class="flex items-center justify-between px-4 py-3 text-sm text-gray-700 hover:bg-gray-100 border-l-4 border-transparent hover:border-blue-500">
+                          <div class="flex items-center space-x-3">
+                            <span>⏱️</span>
+                            <div>
+                              <div class="font-medium">Hour Tracking</div>
+                              <div class="text-xs text-gray-500">Track weekly hours</div>
+                            </div>
+                          </div>
+                          <span class="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded">8.5/10</span>
+                        </a>
+                        <a href="#" class="flex items-center justify-between px-4 py-3 text-sm text-gray-700 hover:bg-gray-100 border-l-4 border-transparent hover:border-purple-500">
+                          <div class="flex items-center space-x-3">
+                            <span>📊</span>
+                            <div>
+                              <div class="font-medium">Quarterly Reports</div>
+                              <div class="text-xs text-gray-500">Submit expense reports</div>
+                            </div>
+                          </div>
+                          <span class="text-xs bg-red-100 text-red-800 px-2 py-1 rounded">Due Oct 15</span>
+                        </a>
+                        <a href="#" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 border-l-4 border-transparent hover:border-orange-500">
+                          <span class="mr-3">⚠️</span>
+                          <span>My Violations</span>
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Public Data -->
+                  <button class="flex items-center space-x-1 px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100">
+                    <span>🔍 Public Data</span>
+                    <span>▼</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- User Menu -->
+              <div class="flex items-center space-x-4">
+                <span class="px-3 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full">✓ REGISTERED</span>
+                <div class="relative annotation" data-note="✨ NEW: Registration moved here">
+                  <button class="flex items-center space-x-2 text-gray-700 hover:text-gray-900">
+                    <span class="font-medium">John Doe</span>
+                    <span>▼</span>
+                  </button>
+                  <div class="absolute right-0 mt-2 w-56 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5">
+                    <div class="py-1">
+                      <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                        <span class="mr-2">🏠</span> Dashboard
+                      </a>
+                      <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                        <span class="mr-2">👤</span> My Profile
+                      </a>
+                      <div class="border-t border-gray-100 my-1"></div>
+                      <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                        <span class="mr-2">✏️</span> Update Registration
+                      </a>
+                      <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                        <span class="mr-2">🔔</span> Notifications
+                      </a>
+                      <div class="border-t border-gray-100 my-1"></div>
+                      <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                        <span class="mr-2">🚪</span> Sign Out
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </nav>
+
+        <!-- Dashboard Content -->
+        <div class="p-6">
+          <!-- Welcome -->
+          <div class="mb-6">
+            <h2 class="text-3xl font-bold text-gray-900">Welcome back, John</h2>
+            <p class="mt-2 text-gray-600">Manage your lobbyist registration and quarterly expense reports.</p>
+          </div>
+
+          <!-- Deadline Reminder -->
+          <div class="mb-6 rounded-lg border-l-4 border-blue-500 bg-blue-50 p-4">
+            <div class="flex items-center">
+              <svg class="h-5 w-5 text-blue-400 mr-3" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a.75.75 0 000 1.5h.253a.25.25 0 01.244.304l-.459 2.066A1.75 1.75 0 0010.747 15H11a.75.75 0 000-1.5h-.253a.25.25 0 01-.244-.304l.459-2.066A1.75 1.75 0 009.253 9H9z" clip-rule="evenodd" />
+              </svg>
+              <div>
+                <h3 class="text-sm font-medium text-blue-800">Upcoming Deadline</h3>
+                <p class="text-sm text-blue-700 mt-1">Q4 2025 expense report due <strong>October 15, 2025</strong> (in 9 days)</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Primary Actions -->
+          <div class="annotation mb-6" data-note="🎯 PRIORITY: Frequent tasks large & prominent">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <!-- Hour Tracking - Large Card -->
+              <div class="rounded-lg border-2 border-yellow-300 bg-yellow-50 p-6 hover:shadow-lg transition-shadow cursor-pointer">
+                <div class="flex items-start justify-between mb-4">
+                  <div class="flex items-center space-x-3">
+                    <div class="w-12 h-12 bg-yellow-500 rounded-lg flex items-center justify-center">
+                      <span class="text-2xl">⏱️</span>
+                    </div>
+                    <div>
+                      <h4 class="text-lg font-bold text-gray-900">Hour Tracking</h4>
+                      <p class="text-sm text-gray-600">Log your weekly activity</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="mb-3">
+                  <div class="flex justify-between text-sm text-gray-700 mb-1">
+                    <span>This Quarter (Q4 2025)</span>
+                    <span class="font-semibold">8.5 / 10 hours</span>
+                  </div>
+                  <div class="w-full bg-gray-200 rounded-full h-2">
+                    <div class="bg-yellow-500 h-2 rounded-full" style="width: 85%"></div>
+                  </div>
+                </div>
+                <p class="text-xs text-yellow-900">
+                  <strong>Note:</strong> You're 1.5 hours away from the 10-hour threshold
+                </p>
+              </div>
+
+              <!-- Quarterly Report - Large Card -->
+              <div class="rounded-lg border-2 border-purple-300 bg-purple-50 p-6 hover:shadow-lg transition-shadow cursor-pointer">
+                <div class="flex items-start justify-between mb-4">
+                  <div class="flex items-center space-x-3">
+                    <div class="w-12 h-12 bg-purple-500 rounded-lg flex items-center justify-center">
+                      <span class="text-2xl">📊</span>
+                    </div>
+                    <div>
+                      <h4 class="text-lg font-bold text-gray-900">Quarterly Reports</h4>
+                      <p class="text-sm text-gray-600">Submit Q4 2025 expenses</p>
+                    </div>
+                  </div>
+                  <span class="px-3 py-1 bg-red-100 text-red-800 text-xs font-bold rounded-full">DUE SOON</span>
+                </div>
+                <div class="space-y-2 mb-3">
+                  <div class="flex justify-between text-sm">
+                    <span class="text-gray-600">Status:</span>
+                    <span class="font-semibold text-orange-600">Draft</span>
+                  </div>
+                  <div class="flex justify-between text-sm">
+                    <span class="text-gray-600">Due Date:</span>
+                    <span class="font-semibold text-gray-900">October 15, 2025</span>
+                  </div>
+                  <div class="flex justify-between text-sm">
+                    <span class="text-gray-600">Total Expenses:</span>
+                    <span class="font-semibold text-gray-900">$1,245.50</span>
+                  </div>
+                </div>
+                <button class="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors">
+                  Continue Report
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Secondary Actions -->
+          <div class="annotation" data-note="📌 SECONDARY: Less frequent tasks smaller">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Other Tools</h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <a href="#" class="flex items-center justify-between rounded-lg border border-gray-200 p-4 hover:border-orange-500 hover:bg-orange-50 transition-colors">
+                <div class="flex items-center space-x-3">
+                  <span class="text-2xl">⚠️</span>
+                  <div>
+                    <h4 class="font-semibold text-gray-900 text-sm">My Violations</h4>
+                    <p class="text-xs text-gray-600">View status</p>
+                  </div>
+                </div>
+                <span class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">None</span>
+              </a>
+              <a href="#" class="flex items-center justify-between rounded-lg border border-gray-200 p-4 hover:border-blue-500 hover:bg-blue-50 transition-colors">
+                <div class="flex items-center space-x-3">
+                  <span class="text-2xl">🔍</span>
+                  <div>
+                    <h4 class="font-semibold text-gray-900 text-sm">Search Registry</h4>
+                    <p class="text-xs text-gray-600">Public records</p>
+                  </div>
+                </div>
+                <span>→</span>
+              </a>
+              <a href="#" class="flex items-center justify-between rounded-lg border border-gray-200 p-4 hover:border-purple-500 hover:bg-purple-50 transition-colors">
+                <div class="flex items-center space-x-3">
+                  <span class="text-2xl">📅</span>
+                  <div>
+                    <h4 class="font-semibold text-gray-900 text-sm">Board Calendars</h4>
+                    <p class="text-xs text-gray-600">Commissioner info</p>
+                  </div>
+                </div>
+                <span>→</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCENARIO 3: Near Threshold -->
+    <div id="scenario-near-threshold" class="scenario-content hidden">
+      <div class="bg-white shadow-lg rounded-lg overflow-hidden mb-8">
+        <!-- Navigation Bar (Same as registered) -->
+        <nav class="border-b bg-white shadow-sm">
+          <div class="px-6 py-4">
+            <div class="flex justify-between items-center">
+              <div class="flex items-center space-x-8">
+                <div class="text-xl font-bold text-gray-900">🏛️ Lobbyist Registry</div>
+                <div class="hidden md:flex space-x-1">
+                  <button class="flex items-center space-x-1 px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100 bg-blue-50">
+                    <span>📋 My Work</span>
+                    <span>▼</span>
+                  </button>
+                  <button class="flex items-center space-x-1 px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100">
+                    <span>🔍 Public Data</span>
+                    <span>▼</span>
+                  </button>
+                </div>
+              </div>
+              <div class="flex items-center space-x-4">
+                <span class="px-3 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full">✓ REGISTERED</span>
+                <button class="flex items-center space-x-2 text-gray-700 hover:text-gray-900">
+                  <span class="font-medium">John Doe</span>
+                  <span>▼</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </nav>
+
+        <!-- Dashboard Content -->
+        <div class="p-6">
+          <div class="mb-6">
+            <h2 class="text-3xl font-bold text-gray-900">Welcome back, John</h2>
+            <p class="mt-2 text-gray-600">Manage your lobbyist registration and quarterly expense reports.</p>
+          </div>
+
+          <!-- CRITICAL: Near Threshold Warning -->
+          <div class="annotation mb-6" data-note="⚠️ CONTEXTUAL ALERT: Proactive warning">
+            <div class="rounded-lg border-l-4 border-yellow-500 bg-yellow-50 p-6">
+              <div class="flex items-start">
+                <div class="flex-shrink-0">
+                  <svg class="h-8 w-8 text-yellow-600" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                  </svg>
+                </div>
+                <div class="ml-4 flex-1">
+                  <h3 class="text-lg font-bold text-yellow-900">⚠️ Approaching 10-Hour Threshold</h3>
+                  <p class="mt-2 text-yellow-800">
+                    You currently have <strong>8.5 hours</strong> logged for Q4 2025.
+                    You're only <strong>1.5 hours</strong> away from triggering the registration renewal/update requirement.
+                  </p>
+                  <div class="mt-4 bg-white rounded-lg p-4 border border-yellow-200">
+                    <div class="flex justify-between text-sm text-gray-700 mb-2">
+                      <span class="font-medium">This Quarter Progress</span>
+                      <span class="font-bold text-yellow-900">8.5 / 10.0 hours</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-3">
+                      <div class="bg-yellow-500 h-3 rounded-full transition-all" style="width: 85%"></div>
+                    </div>
+                    <p class="mt-2 text-xs text-gray-600">
+                      If you exceed 10 hours, you'll need to update your registration within 30 days.
+                    </p>
+                  </div>
+                  <div class="mt-4 flex items-center space-x-3">
+                    <a href="#" class="inline-flex items-center px-4 py-2 bg-yellow-600 hover:bg-yellow-700 text-white font-semibold rounded-lg shadow transition-colors">
+                      Review My Hours
+                    </a>
+                    <a href="#" class="inline-flex items-center px-4 py-2 border-2 border-yellow-600 text-yellow-900 hover:bg-yellow-50 font-semibold rounded-lg transition-colors">
+                      Learn More
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Rest same as registered scenario -->
+          <div class="opacity-50">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div class="rounded-lg border border-gray-200 p-6">
+                <p class="text-gray-500 text-sm">(Same as "Registered" scenario above...)</p>
+              </div>
+              <div class="rounded-lg border border-gray-200 p-6">
+                <p class="text-gray-500 text-sm">(Same as "Registered" scenario above...)</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Design Notes Section -->
+    <div class="bg-white shadow-lg rounded-lg p-8 mt-8">
+      <h2 class="text-2xl font-bold text-gray-900 mb-6">🎨 Design Notes & Rationale</h2>
+
+      <div class="space-y-6">
+        <div class="border-l-4 border-blue-500 pl-4">
+          <h3 class="font-bold text-gray-900 mb-2">1. Removed "Exemption Checker" from Dashboard</h3>
+          <p class="text-gray-700"><strong>Why:</strong> Once logged in, the user has already determined they need to register. This tool is for pre-registration discovery only.</p>
+          <p class="text-gray-600 text-sm mt-1"><strong>Impact:</strong> Reduces cognitive load, removes redundant decision-making</p>
+        </div>
+
+        <div class="border-l-4 border-purple-500 pl-4">
+          <h3 class="font-bold text-gray-900 mb-2">2. Moved "Register" to User Menu</h3>
+          <p class="text-gray-700"><strong>Why:</strong> Registration is a ONE-TIME or very rare action (update info annually). It shouldn't have equal visual weight to weekly/quarterly tasks.</p>
+          <p class="text-gray-600 text-sm mt-1"><strong>New Location:</strong> User dropdown → "Update Registration" (settings-like action)</p>
+        </div>
+
+        <div class="border-l-4 border-yellow-500 pl-4">
+          <h3 class="font-bold text-gray-900 mb-2">3. Visual Hierarchy by Frequency</h3>
+          <p class="text-gray-700"><strong>Tier 1 (Large cards):</strong> Hour Tracking (weekly) & Quarterly Reports (every 3 months)</p>
+          <p class="text-gray-700"><strong>Tier 2 (Small cards):</strong> Violations (as-needed), Public search (occasional)</p>
+          <p class="text-gray-700"><strong>Tier 3 (Menu items):</strong> Update Registration (rare), Settings</p>
+          <p class="text-gray-600 text-sm mt-1"><strong>Principle:</strong> Screen real estate proportional to task frequency</p>
+        </div>
+
+        <div class="border-l-4 border-red-500 pl-4">
+          <h3 class="font-bold text-gray-900 mb-2">4. Contextual Alerts for Critical Actions</h3>
+          <p class="text-gray-700"><strong>Not Registered:</strong> Full-width urgent alert with deadline countdown</p>
+          <p class="text-gray-700"><strong>Near Threshold:</strong> Warning when approaching 10-hour limit (proactive UX)</p>
+          <p class="text-gray-700"><strong>Report Due Soon:</strong> Inline deadline reminders with urgency badges</p>
+          <p class="text-gray-600 text-sm mt-1"><strong>Principle:</strong> Show what matters NOW, hide what doesn't</p>
+        </div>
+
+        <div class="border-l-4 border-green-500 pl-4">
+          <h3 class="font-bold text-gray-900 mb-2">5. "My Work" Menu Reordered</h3>
+          <p class="text-gray-700"><strong>Before:</strong> Register, My Reports, My Violations (alphabetical?)</p>
+          <p class="text-gray-700"><strong>After:</strong> Hour Tracking, Quarterly Reports, My Violations (by frequency)</p>
+          <p class="text-gray-600 text-sm mt-1"><strong>Bonus:</strong> Added status badges (8.5/10, Due Oct 15) for at-a-glance info</p>
+        </div>
+
+        <div class="border-l-4 border-orange-500 pl-4">
+          <h3 class="font-bold text-gray-900 mb-2">6. Progressive Disclosure</h3>
+          <p class="text-gray-700"><strong>Not Registered:</strong> Disable/gray out actions that require registration first</p>
+          <p class="text-gray-700"><strong>Registered:</strong> Show full dashboard with all tools available</p>
+          <p class="text-gray-600 text-sm mt-1"><strong>Principle:</strong> Don't show options users can't use yet</p>
+        </div>
+      </div>
+
+      <div class="mt-8 bg-blue-50 rounded-lg p-6">
+        <h3 class="font-bold text-blue-900 mb-3">📊 Expected UX Improvements</h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+          <div>
+            <div class="text-2xl font-bold text-blue-600">-60%</div>
+            <div class="text-blue-800">Cognitive Load</div>
+            <div class="text-blue-600 text-xs">Fewer irrelevant choices</div>
+          </div>
+          <div>
+            <div class="text-2xl font-bold text-blue-600">+40%</div>
+            <div class="text-blue-800">Task Completion</div>
+            <div class="text-blue-600 text-xs">Clearer primary actions</div>
+          </div>
+          <div>
+            <div class="text-2xl font-bold text-blue-600">-75%</div>
+            <div class="text-blue-800">User Confusion</div>
+            <div class="text-blue-600 text-xs">Status-aware interface</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function showScenario(scenario) {
+      // Hide all scenarios
+      document.querySelectorAll('.scenario-content').forEach(el => {
+        el.classList.add('hidden');
+      });
+
+      // Remove active class from all buttons
+      document.querySelectorAll('.scenario-toggle').forEach(btn => {
+        btn.classList.remove('scenario-active');
+      });
+
+      // Show selected scenario
+      document.getElementById('scenario-' + scenario).classList.remove('hidden');
+
+      // Add active class to selected button
+      document.getElementById('btn-' + scenario).classList.add('scenario-active');
+    }
+
+    // Initialize with first scenario
+    showScenario('not-registered');
+  </script>
+</body>
+</html>

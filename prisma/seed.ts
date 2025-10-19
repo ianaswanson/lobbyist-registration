@@ -99,6 +99,16 @@ async function main() {
   })
   console.log('   ✓ Board member created: commissioner@multnomah.gov / board123')
 
+  const boardMember2User = await prisma.user.create({
+    data: {
+      email: 'commissioner.chen@multnomah.gov',
+      name: 'Commissioner Chen',
+      role: UserRole.BOARD_MEMBER,
+      password: await hashPassword('board123'),
+    },
+  })
+  console.log('   ✓ Board member created: commissioner.chen@multnomah.gov / board123')
+
   const publicUser = await prisma.user.create({
     data: {
       email: 'public@example.com',
@@ -188,8 +198,8 @@ async function main() {
   })
   console.log('   ✓ Linked lobbyists to employers')
 
-  // Create board member
-  console.log('🏛️  Creating board member...')
+  // Create board members
+  console.log('🏛️  Creating board members...')
 
   const boardMember = await prisma.boardMember.create({
     data: {
@@ -200,7 +210,17 @@ async function main() {
       isActive: true,
     },
   })
-  console.log('   ✓ Created board member')
+
+  const boardMember2 = await prisma.boardMember.create({
+    data: {
+      userId: boardMember2User.id,
+      name: 'Commissioner Chen',
+      district: 'District 1',
+      termStart: new Date('2022-01-01'),
+      isActive: true,
+    },
+  })
+  console.log('   ✓ Created 2 board members')
 
   // Create quarterly expense reports
   console.log('📊 Creating quarterly expense reports...')
@@ -239,11 +259,12 @@ async function main() {
   })
   console.log('   ✓ Created expense reports')
 
-  // Create board calendar entries
+  // Create board calendar entries (4 quarters, 2 commissioners)
   console.log('📅 Creating board calendar entries...')
 
   await prisma.boardCalendarEntry.createMany({
     data: [
+      // Commissioner Williams - Q1
       {
         boardMemberId: boardMember.id,
         eventTitle: 'Board Meeting - Regular Session',
@@ -262,26 +283,276 @@ async function main() {
         quarter: Quarter.Q1,
         year: 2025,
       },
+      // Commissioner Williams - Q2
+      {
+        boardMemberId: boardMember.id,
+        eventTitle: 'Budget Review Session',
+        eventDate: new Date('2025-04-10'),
+        eventTime: '9:00 AM - 11:00 AM',
+        participantsList: 'Finance Director, Budget Committee, Community advocates',
+        quarter: Quarter.Q2,
+        year: 2025,
+      },
+      {
+        boardMemberId: boardMember.id,
+        eventTitle: 'Transportation Policy Hearing',
+        eventDate: new Date('2025-05-22'),
+        eventTime: '1:00 PM - 5:00 PM',
+        participantsList: 'Transit agency staff, Environmental groups, Construction lobbyists',
+        quarter: Quarter.Q2,
+        year: 2025,
+      },
+      // Commissioner Williams - Q3
+      {
+        boardMemberId: boardMember.id,
+        eventTitle: 'Public Safety Forum',
+        eventDate: new Date('2025-07-18'),
+        eventTime: '6:00 PM - 8:00 PM',
+        participantsList: 'Sheriff, Police Chief, Community organizations, Public attendees',
+        quarter: Quarter.Q3,
+        year: 2025,
+      },
+      {
+        boardMemberId: boardMember.id,
+        eventTitle: 'Housing Development Workshop',
+        eventDate: new Date('2025-08-12'),
+        eventTime: '2:00 PM - 4:00 PM',
+        participantsList: 'Housing Bureau, Developers, Affordable housing advocates',
+        quarter: Quarter.Q3,
+        year: 2025,
+      },
+      // Commissioner Williams - Q4
+      {
+        boardMemberId: boardMember.id,
+        eventTitle: 'Year-End Budget Planning',
+        eventDate: new Date('2025-10-05'),
+        eventTime: '10:00 AM - 3:00 PM',
+        participantsList: 'Department heads, County Administrator, Finance team',
+        quarter: Quarter.Q4,
+        year: 2025,
+      },
+
+      // Commissioner Chen - Q1
+      {
+        boardMemberId: boardMember2.id,
+        eventTitle: 'Environmental Policy Review',
+        eventDate: new Date('2025-01-22'),
+        eventTime: '1:00 PM - 3:00 PM',
+        participantsList: 'Environmental groups, Industry representatives, DEQ staff',
+        quarter: Quarter.Q1,
+        year: 2025,
+      },
+      {
+        boardMemberId: boardMember2.id,
+        eventTitle: 'Healthcare Access Forum',
+        eventDate: new Date('2025-03-14'),
+        eventTime: '10:00 AM - 12:00 PM',
+        participantsList: 'Hospital administrators, Health advocates, Insurance lobbyists',
+        quarter: Quarter.Q1,
+        year: 2025,
+      },
+      // Commissioner Chen - Q2
+      {
+        boardMemberId: boardMember2.id,
+        eventTitle: 'Education Funding Hearing',
+        eventDate: new Date('2025-04-18'),
+        eventTime: '3:00 PM - 6:00 PM',
+        participantsList: 'School board members, Teachers union, Parent groups',
+        quarter: Quarter.Q2,
+        year: 2025,
+      },
+      {
+        boardMemberId: boardMember2.id,
+        eventTitle: 'Parks and Recreation Planning',
+        eventDate: new Date('2025-06-08'),
+        eventTime: '11:00 AM - 1:00 PM',
+        participantsList: 'Parks department, Recreation groups, Conservation organizations',
+        quarter: Quarter.Q2,
+        year: 2025,
+      },
+      // Commissioner Chen - Q3
+      {
+        boardMemberId: boardMember2.id,
+        eventTitle: 'Climate Action Summit',
+        eventDate: new Date('2025-07-25'),
+        eventTime: '9:00 AM - 5:00 PM',
+        participantsList: 'Environmental organizations, Energy companies, Climate scientists',
+        quarter: Quarter.Q3,
+        year: 2025,
+      },
+      {
+        boardMemberId: boardMember2.id,
+        eventTitle: 'Small Business Support Meeting',
+        eventDate: new Date('2025-09-10'),
+        eventTime: '2:00 PM - 4:00 PM',
+        participantsList: 'Chamber of Commerce, Small business owners, Economic development staff',
+        quarter: Quarter.Q3,
+        year: 2025,
+      },
+      // Commissioner Chen - Q4
+      {
+        boardMemberId: boardMember2.id,
+        eventTitle: 'Veterans Services Review',
+        eventDate: new Date('2025-10-11'),
+        eventTime: '10:00 AM - 12:00 PM',
+        participantsList: 'Veterans Affairs staff, VA representatives, Veterans groups',
+        quarter: Quarter.Q4,
+        year: 2025,
+      },
+      {
+        boardMemberId: boardMember2.id,
+        eventTitle: 'Community Development Workshop',
+        eventDate: new Date('2025-11-15'),
+        eventTime: '1:00 PM - 4:00 PM',
+        participantsList: 'Urban planners, Community leaders, Development corporations',
+        quarter: Quarter.Q4,
+        year: 2025,
+      },
     ],
   })
-  console.log('   ✓ Created board calendar entries')
+  console.log('   ✓ Created board calendar entries (4 quarters, 2 commissioners)')
 
-  // Create board lobbying receipts
+  // Create board lobbying receipts (4 quarters, 2 commissioners)
   console.log('💰 Creating board lobbying receipts...')
 
-  await prisma.boardLobbyingReceipt.create({
-    data: {
-      boardMemberId: boardMember.id,
-      lobbyistId: lobbyist1.id,
-      amount: 125.00,
-      date: new Date('2025-02-15'),
-      payee: 'Portland City Grill',
-      purpose: 'Lunch meeting to discuss technology infrastructure',
-      quarter: Quarter.Q1,
-      year: 2025,
-    },
+  await prisma.boardLobbyingReceipt.createMany({
+    data: [
+      // Commissioner Williams receipts
+      {
+        boardMemberId: boardMember.id,
+        lobbyistId: lobbyist1.id,
+        amount: 125.00,
+        date: new Date('2025-02-15'),
+        payee: 'Portland City Grill',
+        purpose: 'Lunch meeting to discuss technology infrastructure',
+        quarter: Quarter.Q1,
+        year: 2025,
+      },
+      {
+        boardMemberId: boardMember.id,
+        lobbyistId: lobbyist2.id,
+        amount: 85.50,
+        date: new Date('2025-03-08'),
+        payee: 'Starbucks',
+        purpose: 'Coffee meeting regarding education policy',
+        quarter: Quarter.Q1,
+        year: 2025,
+      },
+      {
+        boardMemberId: boardMember.id,
+        lobbyistId: lobbyist1.id,
+        amount: 210.00,
+        date: new Date('2025-05-12'),
+        payee: 'The Benson Hotel',
+        purpose: 'Breakfast meeting on transportation funding',
+        quarter: Quarter.Q2,
+        year: 2025,
+      },
+      {
+        boardMemberId: boardMember.id,
+        lobbyistId: lobbyist1.id,
+        amount: 155.75,
+        date: new Date('2025-08-20'),
+        payee: 'Jake\'s Grill',
+        purpose: 'Lunch meeting regarding housing development',
+        quarter: Quarter.Q3,
+        year: 2025,
+      },
+      {
+        boardMemberId: boardMember.id,
+        lobbyistId: lobbyist2.id,
+        amount: 95.00,
+        date: new Date('2025-10-03'),
+        payee: 'Canard',
+        purpose: 'Dinner meeting on environmental regulations',
+        quarter: Quarter.Q4,
+        year: 2025,
+      },
+
+      // Commissioner Chen receipts
+      {
+        boardMemberId: boardMember2.id,
+        lobbyistId: lobbyist2.id,
+        amount: 175.00,
+        date: new Date('2025-01-28'),
+        payee: 'Departure Restaurant',
+        purpose: 'Lunch meeting on healthcare access initiatives',
+        quarter: Quarter.Q1,
+        year: 2025,
+      },
+      {
+        boardMemberId: boardMember2.id,
+        lobbyistId: lobbyist1.id,
+        amount: 68.50,
+        date: new Date('2025-03-05'),
+        payee: 'Dutch Bros',
+        purpose: 'Coffee meeting on environmental policy',
+        quarter: Quarter.Q1,
+        year: 2025,
+      },
+      {
+        boardMemberId: boardMember2.id,
+        lobbyistId: lobbyist2.id,
+        amount: 140.25,
+        date: new Date('2025-04-22'),
+        payee: 'Bamboo Sushi',
+        purpose: 'Working lunch on education funding',
+        quarter: Quarter.Q2,
+        year: 2025,
+      },
+      {
+        boardMemberId: boardMember2.id,
+        lobbyistId: lobbyist1.id,
+        amount: 220.00,
+        date: new Date('2025-06-15'),
+        payee: 'Multnomah Whiskey Library',
+        purpose: 'Evening meeting on parks development',
+        quarter: Quarter.Q2,
+        year: 2025,
+      },
+      {
+        boardMemberId: boardMember2.id,
+        lobbyistId: lobbyist2.id,
+        amount: 115.00,
+        date: new Date('2025-07-30'),
+        payee: 'Bollywood Theater',
+        purpose: 'Lunch meeting on climate action plan',
+        quarter: Quarter.Q3,
+        year: 2025,
+      },
+      {
+        boardMemberId: boardMember2.id,
+        lobbyistId: lobbyist1.id,
+        amount: 82.50,
+        date: new Date('2025-09-18'),
+        payee: 'Blue Star Donuts',
+        purpose: 'Coffee meeting on small business support',
+        quarter: Quarter.Q3,
+        year: 2025,
+      },
+      {
+        boardMemberId: boardMember2.id,
+        lobbyistId: lobbyist2.id,
+        amount: 190.00,
+        date: new Date('2025-10-25'),
+        payee: 'Le Pigeon',
+        purpose: 'Dinner meeting on veterans services',
+        quarter: Quarter.Q4,
+        year: 2025,
+      },
+      {
+        boardMemberId: boardMember2.id,
+        lobbyistId: lobbyist1.id,
+        amount: 105.75,
+        date: new Date('2025-11-20'),
+        payee: 'Tasty n Alder',
+        purpose: 'Breakfast meeting on community development',
+        quarter: Quarter.Q4,
+        year: 2025,
+      },
+    ],
   })
-  console.log('   ✓ Created board lobbying receipt')
+  console.log('   ✓ Created board lobbying receipts (4 quarters, 2 commissioners)')
 
   // Skip violation for now due to schema complexity
   console.log('⚠️  Skipping violations (complex foreign keys)')

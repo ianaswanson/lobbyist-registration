@@ -132,8 +132,12 @@ export default function Home() {
           </a>
 
           {/* View Board Calendars */}
-          <div className="relative rounded-lg border border-gray-200 bg-white p-6 shadow-sm opacity-60" aria-label="Board member calendars - Coming soon">
-            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-purple-100 text-purple-600">
+          <a
+            href="/board-calendars"
+            className="group relative rounded-lg border border-gray-200 bg-white p-6 shadow-sm transition-all hover:border-purple-500 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2"
+            aria-label="View board member calendars and lobbying receipts"
+          >
+            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-purple-100 text-purple-600 group-hover:bg-purple-600 group-hover:text-white transition-colors">
               <svg
                 className="h-6 w-6"
                 fill="none"
@@ -156,10 +160,23 @@ export default function Home() {
               View quarterly calendars and lobbying receipts for county board
               members
             </p>
-            <div className="mt-4 text-sm font-medium text-gray-400">
-              Coming soon
+            <div className="mt-4 flex items-center text-sm font-medium text-purple-600 group-hover:text-purple-700" aria-hidden="true">
+              View calendars
+              <svg
+                className="ml-2 h-4 w-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 5l7 7-7 7"
+                />
+              </svg>
             </div>
-          </div>
+          </a>
         </div>
 
         {/* Information Section */}
