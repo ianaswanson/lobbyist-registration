@@ -55,12 +55,6 @@ interface NavSection {
 const MY_WORK_ITEMS: Record<UserRole, NavItem[]> = {
   LOBBYIST: [
     {
-      label: "Register",
-      href: "/register/lobbyist",
-      icon: FileText,
-      description: "Register as a lobbyist",
-    },
-    {
       label: "My Reports",
       href: "/reports/lobbyist",
       icon: DollarSign,
@@ -108,6 +102,12 @@ const PUBLIC_DATA_ITEMS: NavItem[] = [
     description: "Search lobbyist records",
   },
   {
+    label: "Board Member Calendars",
+    href: "/board-calendars",
+    icon: Calendar,
+    description: "View board member calendars and receipts",
+  },
+  {
     label: "Analytics Dashboard",
     href: "/analytics",
     icon: TrendingUp,
@@ -118,12 +118,6 @@ const PUBLIC_DATA_ITEMS: NavItem[] = [
     href: "/contract-exceptions",
     icon: FileCheck,
     description: "View approved exceptions",
-  },
-  {
-    label: "Exemption Checker",
-    href: "/exemption-checker",
-    icon: Target,
-    description: "Check if you need to register",
   },
 ]
 
@@ -454,6 +448,18 @@ export function Navigation({ user }: NavigationProps) {
                         <Home className="w-4 h-4" />
                         <span>Dashboard</span>
                       </Link>
+
+                      {/* Update Registration (lobbyists only) */}
+                      {user.role === "LOBBYIST" && (
+                        <Link
+                          href="/register/lobbyist"
+                          onClick={() => setIsUserMenuOpen(false)}
+                          className="flex items-center space-x-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        >
+                          <FileText className="w-4 h-4" />
+                          <span>Update Registration</span>
+                        </Link>
+                      )}
 
                       <div className="border-t">
                         <button

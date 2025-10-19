@@ -3,7 +3,7 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useState, useRef, useEffect } from "react"
-import { Building2, Search, Target, FileCheck, TrendingUp, ChevronDown } from "lucide-react"
+import { Building2, Search, FileCheck, TrendingUp, ChevronDown, Calendar } from "lucide-react"
 import { FEATURE_FLAGS } from "@/lib/feature-flags"
 
 interface PublicNavigationProps {
@@ -29,6 +29,12 @@ const PUBLIC_DATA_ITEMS: NavItem[] = [
     description: "Search lobbyist records",
   },
   {
+    label: "Board Member Calendars",
+    href: "/board-calendars",
+    icon: Calendar,
+    description: "View board member calendars and receipts",
+  },
+  {
     label: "Analytics Dashboard",
     href: "/analytics",
     icon: TrendingUp,
@@ -39,12 +45,6 @@ const PUBLIC_DATA_ITEMS: NavItem[] = [
     href: "/contract-exceptions",
     icon: FileCheck,
     description: "View approved exceptions",
-  },
-  {
-    label: "Exemption Checker",
-    href: "/exemption-checker",
-    icon: Target,
-    description: "Check if you need to register",
   },
 ]
 
