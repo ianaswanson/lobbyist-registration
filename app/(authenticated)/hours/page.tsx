@@ -1,8 +1,14 @@
 import { auth } from "@/lib/auth"
-import { redirect } from "next/navigation"
+import { redirect, notFound } from "next/navigation"
 import { HourTrackerDashboard } from "@/components/hours/HourTrackerDashboard"
+import { FEATURE_FLAGS } from "@/lib/feature-flags"
 
 export default async function HourTrackingPage() {
+  // Check if feature is enabled
+  if (!FEATURE_FLAGS.HOUR_TRACKING) {
+    notFound()
+  }
+
   const session = await auth()
 
   if (!session) {

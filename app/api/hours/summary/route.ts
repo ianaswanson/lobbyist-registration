@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { getCurrentQuarter, getCurrentYear, getQuarterStartDate, getQuarterEndDate } from "@/lib/utils";
+import { FEATURE_FLAGS } from "@/lib/feature-flags";
 
 /**
  * GET /api/hours/summary
@@ -9,6 +10,11 @@ import { getCurrentQuarter, getCurrentYear, getQuarterStartDate, getQuarterEndDa
  * Returns total hours for current quarter and threshold status
  */
 export async function GET(request: NextRequest) {
+  // Check if feature is enabled
+  if (!FEATURE_FLAGS.HOUR_TRACKING) {
+    return NextResponse.json({ error: "Feature not available" }, { status: 404 });
+  }
+
   try {
     const session = await auth();
 

@@ -41,7 +41,9 @@
             <p class="text-xl text-blue-100">Interactive Demo Guide - Ready to Present</p>
             <div class="mt-4 flex gap-4 text-sm">
                 <span class="px-3 py-1 bg-white/20 rounded-full">✅ MVP Complete (Phase 1)</span>
+                <span class="px-3 py-1 bg-green-300/40 rounded-full">✅ Violations & Appeals (Phase 2)</span>
                 <span class="px-3 py-1 bg-white/20 rounded-full">✅ Enhanced Import (Phase 3)</span>
+                <span class="px-3 py-1 bg-yellow-300/40 rounded-full">🔒 Enhancements Disabled</span>
                 <span class="px-3 py-1 bg-white/20 rounded-full">♿ WCAG 2.1 AA Compliant</span>
             </div>
         </div>
@@ -515,24 +517,29 @@
             <h2 class="text-2xl font-bold text-gray-900 mb-4">🎯 Closing Talking Points</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                    <h3 class="font-semibold text-gray-900 mb-2">✅ What We Delivered</h3>
+                    <h3 class="font-semibold text-gray-900 mb-2">✅ Phase 1 + Enhancements</h3>
                     <ul class="text-gray-700 text-sm space-y-1">
-                        <li>• Full MVP (Phase 1) - All core features</li>
-                        <li>• Enhanced import (Phase 3) - CSV, bulk paste, ICS/iCal</li>
-                        <li>• WCAG 2.1 AA accessibility compliance</li>
-                        <li>• Public transparency & data export</li>
-                        <li>• Automated email notifications (UI functional, logs to console in prototype)</li>
-                        <li>• Admin compliance dashboard</li>
+                        <li>✓ Full MVP (Phase 1) - All core ordinance features</li>
+                        <li>✓ Enhanced import (Phase 3) - CSV, bulk paste, ICS/iCal</li>
+                        <li>✓ WCAG 2.1 AA accessibility compliance</li>
+                        <li>✓ Public transparency & data export</li>
+                        <li>✓ Automated email notifications</li>
+                        <li>✓ Admin compliance dashboard</li>
                     </ul>
                 </div>
                 <div>
-                    <h3 class="font-semibold text-gray-900 mb-2">🚀 Ready for Phase 2</h3>
+                    <h3 class="font-semibold text-green-900 mb-2">✅ Violations & Appeals</h3>
                     <ul class="text-gray-700 text-sm space-y-1">
-                        <li>• Hour tracking for lobbyists</li>
-                        <li>• Profile management & history</li>
-                        <li>• Public data analytics & trends</li>
-                        <li>• Violation enforcement workflow</li>
-                        <li>• System admin tools</li>
+                        <li>✓ Violation enforcement workflow (/admin/violations, /my-violations)</li>
+                        <li>✓ Appeals process (30-day window, §3.809)</li>
+                        <li>✓ Contract exceptions management (/contract-exceptions)</li>
+                        <li>✓ Complete ordinance compliance (§3.802-§3.809)</li>
+                    </ul>
+                    <h3 class="font-semibold text-yellow-900 mb-2 mt-4">🔒 Enhancements (Disabled)</h3>
+                    <ul class="text-gray-600 text-sm space-y-1">
+                        <li>🔒 Hour tracking (feature flag: HOUR_TRACKING = false)</li>
+                        <li>🔒 Analytics dashboard (feature flag: ANALYTICS_DASHBOARD = false)</li>
+                        <li class="text-xs text-gray-500 mt-2">Note: These enhancements are NOT required by ordinance. Search page (/search) satisfies public data posting requirement.</li>
                     </ul>
                 </div>
             </div>

@@ -1,8 +1,14 @@
 import { NextResponse } from "next/server"
 import { prisma } from "@/lib/db"
 import { Quarter } from "@prisma/client"
+import { FEATURE_FLAGS } from "@/lib/feature-flags"
 
 export async function GET() {
+  // Check if feature is enabled
+  if (!FEATURE_FLAGS.ANALYTICS_DASHBOARD) {
+    return NextResponse.json({ error: "Feature not available" }, { status: 404 })
+  }
+
   try {
     // Get all submitted expense reports
     const lobbyistReports = await prisma.lobbyistExpenseReport.findMany({

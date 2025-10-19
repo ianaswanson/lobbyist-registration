@@ -3,7 +3,33 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { UserRole } from "@prisma/client"
-import { useState } from "react"
+import { useState, useEffect, useRef } from "react"
+import { FEATURE_FLAGS } from "@/lib/feature-flags"
+import {
+  Building2,
+  FileText,
+  Clock,
+  DollarSign,
+  Scale,
+  Briefcase,
+  Calendar,
+  CheckCircle,
+  BarChart3,
+  AlertTriangle,
+  Gavel,
+  FileCheck,
+  Search,
+  TrendingUp,
+  Target,
+  Menu,
+  X,
+  Home,
+  Bell,
+  LogOut,
+  ChevronDown,
+  Clipboard,
+  Settings,
+} from "lucide-react"
 
 interface NavigationProps {
   user: {
@@ -16,278 +42,567 @@ interface NavigationProps {
 interface NavItem {
   label: string
   href: string
-  roles: UserRole[]
-  icon?: string
+  icon: React.ComponentType<{ className?: string }>
+  description?: string
 }
 
-const NAV_ITEMS: NavItem[] = [
+interface NavSection {
+  label: string
+  items: NavItem[]
+}
+
+// Role-specific "My Work" navigation items
+const MY_WORK_ITEMS: Record<UserRole, NavItem[]> = {
+  LOBBYIST: [
+    {
+      label: "Register",
+      href: "/register/lobbyist",
+      icon: FileText,
+      description: "Register as a lobbyist",
+    },
+    {
+      label: "My Reports",
+      href: "/reports/lobbyist",
+      icon: DollarSign,
+      description: "Submit expense reports",
+    },
+    {
+      label: "My Violations",
+      href: "/my-violations",
+      icon: AlertTriangle,
+      description: "View violations and appeals",
+    },
+  ],
+  EMPLOYER: [
+    {
+      label: "Expense Reports",
+      href: "/reports/employer",
+      icon: Briefcase,
+      description: "Submit employer reports",
+    },
+    {
+      label: "My Violations",
+      href: "/my-violations",
+      icon: AlertTriangle,
+      description: "View violations and appeals",
+    },
+  ],
+  BOARD_MEMBER: [
+    {
+      label: "Calendar & Receipts",
+      href: "/board-member/calendar",
+      icon: Calendar,
+      description: "Post calendar and receipts",
+    },
+  ],
+  ADMIN: [],
+  PUBLIC: [],
+}
+
+// Public data navigation items (available to everyone)
+const PUBLIC_DATA_ITEMS: NavItem[] = [
   {
-    label: "Dashboard",
-    href: "/dashboard",
-    roles: ["ADMIN", "LOBBYIST", "EMPLOYER", "BOARD_MEMBER", "PUBLIC"],
-    icon: "📊",
-  },
-  // Lobbyist items
-  {
-    label: "Register",
-    href: "/register/lobbyist",
-    roles: ["LOBBYIST"],
-    icon: "📝",
-  },
-  {
-    label: "Hour Tracking",
-    href: "/hours",
-    roles: ["LOBBYIST"],
-    icon: "⏱️",
-  },
-  {
-    label: "My Reports",
-    href: "/reports/lobbyist",
-    roles: ["LOBBYIST"],
-    icon: "💰",
-  },
-  {
-    label: "My Violations",
-    href: "/my-violations",
-    roles: ["LOBBYIST"],
-    icon: "⚖️",
-  },
-  // Employer items
-  {
-    label: "Expense Reports",
-    href: "/reports/employer",
-    roles: ["EMPLOYER"],
-    icon: "💼",
-  },
-  {
-    label: "My Violations",
-    href: "/my-violations",
-    roles: ["EMPLOYER"],
-    icon: "⚖️",
-  },
-  // Board Member items
-  {
-    label: "Calendar & Receipts",
-    href: "/board-member/calendar",
-    roles: ["BOARD_MEMBER"],
-    icon: "📅",
-  },
-  // Admin items
-  {
-    label: "Review",
-    href: "/admin/review/registrations",
-    roles: ["ADMIN"],
-    icon: "✅",
-  },
-  {
-    label: "Compliance",
-    href: "/admin/compliance",
-    roles: ["ADMIN"],
-    icon: "📋",
-  },
-  {
-    label: "Violations",
-    href: "/admin/violations",
-    roles: ["ADMIN"],
-    icon: "⚠️",
-  },
-  {
-    label: "Appeals",
-    href: "/admin/appeals",
-    roles: ["ADMIN"],
-    icon: "⚖️",
-  },
-  {
-    label: "Contract Exceptions",
-    href: "/admin/contract-exceptions",
-    roles: ["ADMIN"],
-    icon: "📋",
-  },
-  // Public items
-  {
-    label: "Search",
+    label: "Search Registry",
     href: "/search",
-    roles: ["ADMIN", "LOBBYIST", "EMPLOYER", "BOARD_MEMBER", "PUBLIC"],
-    icon: "🔍",
+    icon: Search,
+    description: "Search lobbyist records",
+  },
+  {
+    label: "Analytics Dashboard",
+    href: "/analytics",
+    icon: TrendingUp,
+    description: "View spending trends",
   },
   {
     label: "Contract Exceptions",
     href: "/contract-exceptions",
-    roles: ["ADMIN", "LOBBYIST", "EMPLOYER", "BOARD_MEMBER", "PUBLIC"],
-    icon: "📄",
-  },
-  {
-    label: "Analytics",
-    href: "/analytics",
-    roles: ["ADMIN", "LOBBYIST", "EMPLOYER", "BOARD_MEMBER", "PUBLIC"],
-    icon: "📊",
+    icon: FileCheck,
+    description: "View approved exceptions",
   },
   {
     label: "Exemption Checker",
     href: "/exemption-checker",
-    roles: ["LOBBYIST", "EMPLOYER", "BOARD_MEMBER", "PUBLIC"],
-    icon: "🎯",
+    icon: Target,
+    description: "Check if you need to register",
+  },
+]
+
+// Admin navigation sections
+const ADMIN_SECTIONS: NavSection[] = [
+  {
+    label: "Review & Approval",
+    items: [
+      {
+        label: "Review Registrations",
+        href: "/admin/review/registrations",
+        icon: CheckCircle,
+      },
+      {
+        label: "Review Reports",
+        href: "/admin/review/reports",
+        icon: Clipboard,
+      },
+    ],
+  },
+  {
+    label: "Enforcement",
+    items: [
+      {
+        label: "Compliance Dashboard",
+        href: "/admin/compliance",
+        icon: BarChart3,
+      },
+      {
+        label: "Violations & Fines",
+        href: "/admin/violations",
+        icon: AlertTriangle,
+      },
+      {
+        label: "Appeals",
+        href: "/admin/appeals",
+        icon: Gavel,
+      },
+    ],
+  },
+  {
+    label: "Special Cases",
+    items: [
+      {
+        label: "Contract Exceptions",
+        href: "/admin/contract-exceptions",
+        icon: FileCheck,
+      },
+      {
+        label: "Notifications",
+        href: "/admin/notifications",
+        icon: Bell,
+      },
+    ],
   },
 ]
 
 export function Navigation({ user }: NavigationProps) {
   const pathname = usePathname()
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
+  const [isMyWorkOpen, setIsMyWorkOpen] = useState(false)
+  const [isPublicDataOpen, setIsPublicDataOpen] = useState(false)
+  const [isAdminOpen, setIsAdminOpen] = useState(false)
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
-  // Filter nav items based on user role
-  const visibleItems = NAV_ITEMS.filter((item) =>
-    user.role ? item.roles.includes(user.role) : false
-  )
+  // Refs for click outside detection
+  const myWorkRef = useRef<HTMLDivElement>(null)
+  const publicDataRef = useRef<HTMLDivElement>(null)
+  const adminRef = useRef<HTMLDivElement>(null)
+  const userMenuRef = useRef<HTMLDivElement>(null)
+
+  // Get role-specific My Work items
+  const myWorkItems = user.role ? MY_WORK_ITEMS[user.role] : []
+
+  // Filter public data items by feature flags
+  const publicDataItems = PUBLIC_DATA_ITEMS.filter((item) => {
+    if (item.href === "/analytics" && !FEATURE_FLAGS.ANALYTICS_DASHBOARD) {
+      return false
+    }
+    if (item.href === "/contract-exceptions" && !FEATURE_FLAGS.CONTRACT_EXCEPTIONS) {
+      return false
+    }
+    return true
+  })
+
+  // Close dropdowns when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (myWorkRef.current && !myWorkRef.current.contains(event.target as Node)) {
+        setIsMyWorkOpen(false)
+      }
+      if (publicDataRef.current && !publicDataRef.current.contains(event.target as Node)) {
+        setIsPublicDataOpen(false)
+      }
+      if (adminRef.current && !adminRef.current.contains(event.target as Node)) {
+        setIsAdminOpen(false)
+      }
+      if (userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {
+        setIsUserMenuOpen(false)
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside)
+    return () => document.removeEventListener("mousedown", handleClickOutside)
+  }, [])
 
   const isActive = (href: string) => {
-    if (href === "/dashboard") {
-      return pathname === href
-    }
     return pathname.startsWith(href)
   }
 
+  const getRoleDisplay = () => {
+    return user.role?.replace("_", " ") || "USER"
+  }
+
   return (
-    <nav className="border-b bg-white shadow-sm sticky top-0 z-50">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="flex h-16 justify-between">
-          {/* Left side - Logo and nav items */}
-          <div className="flex items-center space-x-8">
-            {/* Logo */}
-            <Link
-              href="/dashboard"
-              className="flex items-center space-x-2 text-xl font-bold hover:text-blue-600 transition-colors"
-            >
-              <span className="text-2xl">🏛️</span>
-              <span className="hidden sm:inline">Lobbyist Registry</span>
-              <span className="sm:hidden">Registry</span>
+    <>
+      {/* Role Context Banner */}
+      <div className="bg-blue-50 border-b border-blue-200 px-4 py-2 text-xs">
+        <div className="mx-auto max-w-7xl flex items-center justify-between">
+          <div>
+            <strong>Viewing as:</strong>{" "}
+            <span className="font-semibold">{getRoleDisplay()}</span>
+            <span className="mx-2 text-gray-400">|</span>
+            <Link href="/dashboard" className="text-blue-600 hover:underline">
+              What can I do?
             </Link>
-
-            {/* Nav items */}
-            <div className="hidden md:flex items-center space-x-1">
-              {visibleItems.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                    isActive(item.href)
-                      ? "bg-blue-100 text-blue-700"
-                      : "text-gray-700 hover:bg-gray-100 hover:text-gray-900"
-                  }`}
-                >
-                  <span className="mr-1.5">{item.icon}</span>
-                  {item.label}
-                </Link>
-              ))}
-            </div>
           </div>
+        </div>
+      </div>
 
-          {/* Right side - User menu */}
-          <div className="flex items-center space-x-4">
-            {/* Role badge */}
-            <span className="hidden sm:inline-flex rounded-full bg-blue-100 px-3 py-1 text-xs font-medium text-blue-800">
-              {user.role?.replace("_", " ")}
-            </span>
-
-            {/* User menu dropdown */}
-            <div className="relative">
-              <button
-                onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-                className="flex items-center space-x-2 rounded-md px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 transition-colors"
-                aria-expanded={isUserMenuOpen}
-                aria-haspopup="true"
+      {/* Main Navigation */}
+      <nav className="border-b bg-white shadow-sm sticky top-0 z-50">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="flex h-16 justify-between items-center">
+            {/* Left side - Logo and nav items */}
+            <div className="flex items-center space-x-6">
+              {/* Logo */}
+              <Link
+                href="/dashboard"
+                className="flex items-center space-x-2 text-xl font-bold hover:text-blue-600 transition-colors"
               >
-                <span className="hidden sm:inline">{user.name || user.email}</span>
-                <span className="sm:hidden">👤</span>
-                <svg
-                  className={`h-4 w-4 transition-transform ${isUserMenuOpen ? "rotate-180" : ""}`}
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                </svg>
+                <Building2 className="w-8 h-8 text-blue-600" />
+                <span className="hidden sm:inline">Lobbyist Registry</span>
+                <span className="sm:hidden">Registry</span>
+              </Link>
+
+              {/* Desktop Navigation - Grouped Dropdowns */}
+              <div className="hidden md:flex items-center space-x-1">
+                {/* My Work Dropdown (role-specific) */}
+                {myWorkItems.length > 0 && (
+                  <div ref={myWorkRef} className="relative">
+                    <button
+                      onClick={() => {
+                        setIsMyWorkOpen(!isMyWorkOpen)
+                        setIsPublicDataOpen(false)
+                        setIsAdminOpen(false)
+                      }}
+                      className="flex items-center space-x-1 px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100 transition-colors"
+                    >
+                      <Clipboard className="w-4 h-4" />
+                      <span>My Work</span>
+                      <ChevronDown className={`w-4 h-4 transition-transform ${isMyWorkOpen ? "rotate-180" : ""}`} />
+                    </button>
+
+                    {/* Dropdown Menu */}
+                    {isMyWorkOpen && (
+                      <div className="absolute left-0 mt-2 w-56 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 z-50">
+                        <div className="py-1">
+                          {myWorkItems.map((item) => {
+                            const Icon = item.icon
+                            return (
+                              <Link
+                                key={item.href}
+                                href={item.href}
+                                onClick={() => setIsMyWorkOpen(false)}
+                                className={`flex items-center space-x-2 px-4 py-2 text-sm transition-colors ${
+                                  isActive(item.href)
+                                    ? "bg-blue-50 text-blue-700"
+                                    : "text-gray-700 hover:bg-gray-100"
+                                }`}
+                              >
+                                <Icon className="w-4 h-4" />
+                                <span>{item.label}</span>
+                              </Link>
+                            )
+                          })}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Public Data Dropdown (everyone) */}
+                <div ref={publicDataRef} className="relative">
+                  <button
+                    onClick={() => {
+                      setIsPublicDataOpen(!isPublicDataOpen)
+                      setIsMyWorkOpen(false)
+                      setIsAdminOpen(false)
+                    }}
+                    className="flex items-center space-x-1 px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100 transition-colors"
+                  >
+                    <Search className="w-4 h-4" />
+                    <span>Public Data</span>
+                    <ChevronDown className={`w-4 h-4 transition-transform ${isPublicDataOpen ? "rotate-180" : ""}`} />
+                  </button>
+
+                  {/* Dropdown Menu */}
+                  {isPublicDataOpen && (
+                    <div className="absolute left-0 mt-2 w-56 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 z-50">
+                      <div className="py-1">
+                        {publicDataItems.map((item) => {
+                          const Icon = item.icon
+                          return (
+                            <Link
+                              key={item.href}
+                              href={item.href}
+                              onClick={() => setIsPublicDataOpen(false)}
+                              className={`flex items-center space-x-2 px-4 py-2 text-sm transition-colors ${
+                                isActive(item.href)
+                                  ? "bg-blue-50 text-blue-700"
+                                  : "text-gray-700 hover:bg-gray-100"
+                              }`}
+                            >
+                              <Icon className="w-4 h-4" />
+                              <span>{item.label}</span>
+                            </Link>
+                          )
+                        })}
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Admin Dropdown (admin only) */}
+                {user.role === "ADMIN" && (
+                  <div ref={adminRef} className="relative">
+                    <button
+                      onClick={() => {
+                        setIsAdminOpen(!isAdminOpen)
+                        setIsMyWorkOpen(false)
+                        setIsPublicDataOpen(false)
+                      }}
+                      className="flex items-center space-x-1 px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100 transition-colors"
+                    >
+                      <Settings className="w-4 h-4" />
+                      <span>Admin</span>
+                      <ChevronDown className={`w-4 h-4 transition-transform ${isAdminOpen ? "rotate-180" : ""}`} />
+                    </button>
+
+                    {/* Dropdown Menu */}
+                    {isAdminOpen && (
+                      <div className="absolute left-0 mt-2 w-64 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 z-50">
+                        <div className="py-1">
+                          {ADMIN_SECTIONS.map((section, sectionIndex) => (
+                            <div key={section.label}>
+                              {sectionIndex > 0 && <div className="border-t my-1" />}
+                              <div className="px-3 py-2 text-xs font-semibold text-gray-500 uppercase">
+                                {section.label}
+                              </div>
+                              {section.items.map((item) => {
+                                const Icon = item.icon
+                                return (
+                                  <Link
+                                    key={item.href}
+                                    href={item.href}
+                                    onClick={() => setIsAdminOpen(false)}
+                                    className={`flex items-center space-x-2 px-4 py-2 text-sm transition-colors ${
+                                      isActive(item.href)
+                                        ? "bg-blue-50 text-blue-700"
+                                        : "text-gray-700 hover:bg-gray-100"
+                                    }`}
+                                  >
+                                    <Icon className="w-4 h-4" />
+                                    <span>{item.label}</span>
+                                  </Link>
+                                )
+                              })}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Right side - Mobile menu button and User menu */}
+            <div className="flex items-center space-x-4">
+              {/* Mobile menu button */}
+              <button
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                className="md:hidden p-2 rounded-md text-gray-700 hover:bg-gray-100"
+                aria-label="Toggle mobile menu"
+              >
+                {isMobileMenuOpen ? (
+                  <X className="w-6 h-6" />
+                ) : (
+                  <Menu className="w-6 h-6" />
+                )}
               </button>
 
-              {/* Dropdown menu */}
-              {isUserMenuOpen && (
-                <>
-                  {/* Backdrop */}
-                  <div
-                    className="fixed inset-0 z-10"
-                    onClick={() => setIsUserMenuOpen(false)}
-                  />
+              {/* Role badge */}
+              <span className="hidden sm:inline-flex rounded-full bg-blue-100 px-3 py-1 text-xs font-medium text-blue-800">
+                {getRoleDisplay()}
+              </span>
 
-                  {/* Menu */}
-                  <div className="absolute right-0 mt-2 w-56 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 z-20">
+              {/* User menu dropdown */}
+              <div ref={userMenuRef} className="relative">
+                <button
+                  onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+                  className="flex items-center space-x-2 rounded-md px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 transition-colors"
+                  aria-expanded={isUserMenuOpen}
+                  aria-haspopup="true"
+                >
+                  <span className="hidden sm:inline">{user.name || user.email}</span>
+                  <span className="sm:hidden">
+                    <Home className="w-5 h-5" />
+                  </span>
+                  <ChevronDown className={`w-4 h-4 transition-transform ${isUserMenuOpen ? "rotate-180" : ""}`} />
+                </button>
+
+                {/* User Dropdown Menu */}
+                {isUserMenuOpen && (
+                  <div className="absolute right-0 mt-2 w-56 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 z-50">
                     <div className="py-1">
                       {/* User info */}
                       <div className="px-4 py-3 border-b">
                         <p className="text-sm font-medium text-gray-900">
                           {user.name || "User"}
                         </p>
-                        <p className="text-xs text-gray-500 truncate">
-                          {user.email}
-                        </p>
+                        <p className="text-xs text-gray-500 truncate">{user.email}</p>
                       </div>
 
                       {/* Menu items */}
                       <Link
                         href="/dashboard"
                         onClick={() => setIsUserMenuOpen(false)}
-                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        className="flex items-center space-x-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                       >
-                        📊 Dashboard
+                        <Home className="w-4 h-4" />
+                        <span>Dashboard</span>
                       </Link>
-
-                      {user.role === "ADMIN" && (
-                        <Link
-                          href="/admin/notifications"
-                          onClick={() => setIsUserMenuOpen(false)}
-                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                        >
-                          🔔 Notifications
-                        </Link>
-                      )}
 
                       <div className="border-t">
                         <button
                           onClick={() => {
-                            // Navigate to NextAuth signout page
-                            window.location.href = "/api/auth/signout";
+                            window.location.href = "/auth/signout"
                           }}
-                          className="block w-full text-left px-4 py-2 text-sm text-red-700 hover:bg-red-50"
+                          className="flex items-center space-x-2 w-full text-left px-4 py-2 text-sm text-red-700 hover:bg-red-50"
                         >
-                          🚪 Sign Out
+                          <LogOut className="w-4 h-4" />
+                          <span>Sign Out</span>
                         </button>
                       </div>
                     </div>
                   </div>
-                </>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      </nav>
+
+      {/* Mobile Menu Drawer */}
+      {isMobileMenuOpen && (
+        <div className="fixed inset-0 z-40 md:hidden">
+          {/* Backdrop */}
+          <div
+            className="fixed inset-0 bg-black bg-opacity-50"
+            onClick={() => setIsMobileMenuOpen(false)}
+          />
+
+          {/* Drawer */}
+          <div className="fixed inset-y-0 left-0 w-80 max-w-full bg-white shadow-xl overflow-y-auto">
+            <div className="p-4">
+              <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center space-x-2">
+                  <Building2 className="w-8 h-8 text-blue-600" />
+                  <span className="text-lg font-bold">Menu</span>
+                </div>
+                <button
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="p-2 rounded-md hover:bg-gray-100"
+                >
+                  <X className="w-6 h-6" />
+                </button>
+              </div>
+
+              {/* My Work Section */}
+              {myWorkItems.length > 0 && (
+                <div className="mb-6">
+                  <h3 className="px-4 py-2 text-xs font-semibold text-gray-500 uppercase">
+                    My Work
+                  </h3>
+                  {myWorkItems.map((item) => {
+                    const Icon = item.icon
+                    return (
+                      <Link
+                        key={item.href}
+                        href={item.href}
+                        onClick={() => setIsMobileMenuOpen(false)}
+                        className={`flex items-center space-x-3 px-4 py-3 rounded-md transition-colors ${
+                          isActive(item.href)
+                            ? "bg-blue-50 text-blue-700"
+                            : "text-gray-700 hover:bg-gray-100"
+                        }`}
+                      >
+                        <Icon className="w-5 h-5" />
+                        <span>{item.label}</span>
+                      </Link>
+                    )
+                  })}
+                </div>
+              )}
+
+              {/* Public Data Section */}
+              <div className="mb-6">
+                <h3 className="px-4 py-2 text-xs font-semibold text-gray-500 uppercase">
+                  Public Data
+                </h3>
+                {publicDataItems.map((item) => {
+                  const Icon = item.icon
+                  return (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className={`flex items-center space-x-3 px-4 py-3 rounded-md transition-colors ${
+                        isActive(item.href)
+                          ? "bg-blue-50 text-blue-700"
+                          : "text-gray-700 hover:bg-gray-100"
+                      }`}
+                    >
+                      <Icon className="w-5 h-5" />
+                      <span>{item.label}</span>
+                    </Link>
+                  )
+                })}
+              </div>
+
+              {/* Admin Section */}
+              {user.role === "ADMIN" && (
+                <div>
+                  <h3 className="px-4 py-2 text-xs font-semibold text-gray-500 uppercase">
+                    Admin
+                  </h3>
+                  {ADMIN_SECTIONS.map((section) => (
+                    <div key={section.label} className="mb-4">
+                      <h4 className="px-4 py-2 text-xs font-medium text-gray-400">
+                        {section.label}
+                      </h4>
+                      {section.items.map((item) => {
+                        const Icon = item.icon
+                        return (
+                          <Link
+                            key={item.href}
+                            href={item.href}
+                            onClick={() => setIsMobileMenuOpen(false)}
+                            className={`flex items-center space-x-3 px-4 py-3 rounded-md transition-colors ${
+                              isActive(item.href)
+                                ? "bg-blue-50 text-blue-700"
+                                : "text-gray-700 hover:bg-gray-100"
+                            }`}
+                          >
+                            <Icon className="w-5 h-5" />
+                            <span>{item.label}</span>
+                          </Link>
+                        )
+                      })}
+                    </div>
+                  ))}
+                </div>
               )}
             </div>
           </div>
         </div>
-
-        {/* Mobile nav */}
-        <div className="md:hidden pb-3 pt-2">
-          <div className="flex flex-wrap gap-2">
-            {visibleItems.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
-                  isActive(item.href)
-                    ? "bg-blue-100 text-blue-700"
-                    : "text-gray-700 hover:bg-gray-100"
-                }`}
-              >
-                <span className="mr-1">{item.icon}</span>
-                {item.label}
-              </Link>
-            ))}
-          </div>
-        </div>
-      </div>
-    </nav>
+      )}
+    </>
   )
 }

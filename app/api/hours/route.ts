@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { getQuarterFromDate, getCurrentQuarter, getCurrentYear } from "@/lib/utils";
+import { FEATURE_FLAGS } from "@/lib/feature-flags";
 
 /**
  * GET /api/hours
@@ -11,6 +12,11 @@ import { getQuarterFromDate, getCurrentQuarter, getCurrentYear } from "@/lib/uti
  *   - year: number (optional)
  */
 export async function GET(request: NextRequest) {
+  // Check if feature is enabled
+  if (!FEATURE_FLAGS.HOUR_TRACKING) {
+    return NextResponse.json({ error: "Feature not available" }, { status: 404 });
+  }
+
   try {
     const session = await auth();
 
@@ -72,6 +78,11 @@ export async function GET(request: NextRequest) {
  *   - description: string
  */
 export async function POST(request: NextRequest) {
+  // Check if feature is enabled
+  if (!FEATURE_FLAGS.HOUR_TRACKING) {
+    return NextResponse.json({ error: "Feature not available" }, { status: 404 });
+  }
+
   try {
     const session = await auth();
 
