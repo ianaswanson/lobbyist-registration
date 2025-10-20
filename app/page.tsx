@@ -1,28 +1,14 @@
 import { SkipLink } from "@/components/SkipLink"
+import { PublicNavigation } from "@/components/PublicNavigation"
+import { auth } from "@/lib/auth"
 
-export default function Home() {
+export default async function Home() {
+  const session = await auth()
+
   return (
     <div className="min-h-screen bg-gray-50">
       <SkipLink />
-      <nav className="border-b bg-white" aria-label="Main navigation">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="flex h-16 justify-between">
-            <div className="flex items-center">
-              <h1 className="text-xl font-bold">
-                Lobbyist Registration System
-              </h1>
-            </div>
-            <div className="flex items-center space-x-4">
-              <a
-                href="/auth/signin"
-                className="rounded-md bg-blue-600 px-4 py-2 text-sm text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-              >
-                Sign In
-              </a>
-            </div>
-          </div>
-        </div>
-      </nav>
+      <PublicNavigation user={session?.user} />
 
       <main id="main-content" className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
         <div className="text-center">
