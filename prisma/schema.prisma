@@ -64,6 +64,9 @@ model Lobbyist {
   hoursCurrentQuarter     Float              @default(0) // Track hours to determine if registration required
   thresholdExceededDate   DateTime?          // When 10-hour threshold was first exceeded
   registrationDeadline    DateTime?          // 3 working days after threshold exceeded
+  reviewedBy              String?            // Admin user ID who reviewed
+  reviewedAt              DateTime?          // When reviewed
+  rejectionReason         String?            // Why rejected (if status = REJECTED)
   createdAt               DateTime           @default(now())
   updatedAt               DateTime           @updatedAt
 
@@ -146,11 +149,13 @@ model HourLog {
 // ============================================================================
 
 enum ReportStatus {
-  DRAFT      // In progress
-  SUBMITTED  // Submitted on time
-  LATE       // Submitted after deadline
-  OVERDUE    // Not yet submitted, past deadline
-  REVIEWED   // Admin has reviewed
+  DRAFT                 // In progress
+  SUBMITTED             // Submitted on time
+  LATE                  // Submitted after deadline
+  OVERDUE               // Not yet submitted, past deadline
+  APPROVED              // Admin approved
+  REJECTED              // Admin rejected
+  NEEDS_CLARIFICATION   // Admin requested more info
 }
 
 enum Quarter {
@@ -169,11 +174,14 @@ model LobbyistExpenseReport {
   status                 ReportStatus @default(DRAFT)
   submittedAt            DateTime?
   dueDate                DateTime
+  reviewedBy             String?      // Admin user ID who reviewed
+  reviewedAt             DateTime?    // When reviewed
+  reviewNotes            String?      // Admin's review notes
   createdAt              DateTime     @default(now())
   updatedAt              DateTime     @updatedAt
 
   lobbyist   Lobbyist          @relation(fields: [lobbyistId], references: [id], onDelete: Cascade)
-  lineItems  ExpenseLineItem[]
+  lineItems  ExpenseLineItem[] @relation("LobbyistExpenses")
 
   @@unique([lobbyistId, quarter, year])
   @@index([status])
@@ -217,11 +225,14 @@ model EmployerExpenseReport {
   status              ReportStatus @default(DRAFT)
   submittedAt         DateTime?
   dueDate             DateTime
+  reviewedBy          String?      // Admin user ID who reviewed
+  reviewedAt          DateTime?    // When reviewed
+  reviewNotes         String?      // Admin's review notes
   createdAt           DateTime     @default(now())
   updatedAt           DateTime     @updatedAt
 
   employer         Employer                  @relation(fields: [employerId], references: [id], onDelete: Cascade)
-  lineItems        ExpenseLineItem[]
+  lineItems        ExpenseLineItem[]         @relation("EmployerExpenses")
   lobbyistPayments EmployerLobbyistPayment[]
 
   @@unique([employerId, quarter, year])
