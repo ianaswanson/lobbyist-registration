@@ -14,7 +14,7 @@ export const FEATURE_FLAGS = {
    *
    * Set to false to hide from navigation and disable access.
    */
-  HOUR_TRACKING: false,
+  HOUR_TRACKING: true,
 
   /**
    * Analytics Dashboard - Enhancement (not ordinance requirement)
