@@ -1,16 +1,28 @@
 "use client"
 
+import { useState } from "react"
+import { useRouter } from "next/navigation"
 import { ReviewActions } from "./ReviewActions"
 
 interface Registration {
   id: string
-  lobbyistName: string
-  lobbyistEmail: string
-  employerName: string
-  subjectsOfInterest: string
-  submittedDate: string
+  name: string
+  email: string
+  phone: string
+  address: string
   hoursCurrentQuarter: number
-  hasAuthorizationDoc: boolean
+  status: string
+  user: {
+    name: string
+    email: string
+  }
+  employers: Array<{
+    employer: {
+      name: string
+    }
+    subjectsOfInterest: string
+  }>
+  createdAt: string
 }
 
 interface ReviewRegistrationsListProps {
@@ -18,8 +30,64 @@ interface ReviewRegistrationsListProps {
 }
 
 export function ReviewRegistrationsList({
-  registrations,
+  registrations: initialRegistrations,
 }: ReviewRegistrationsListProps) {
+  const router = useRouter()
+  const [registrations, setRegistrations] = useState(initialRegistrations)
+  const [loadingId, setLoadingId] = useState<string | null>(null)
+  const [message, setMessage] = useState<{
+    type: "success" | "error"
+    text: string
+  } | null>(null)
+
+  const handleReview = async (
+    registrationId: string,
+    action: "approve" | "reject",
+    notes?: string
+  ) => {
+    setLoadingId(registrationId)
+    setMessage(null)
+
+    try {
+      const response = await fetch(`/api/admin/registrations/${registrationId}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ action, notes }),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to process review")
+      }
+
+      // Show success message
+      setMessage({
+        type: "success",
+        text: data.message,
+      })
+
+      // Remove the reviewed registration from the list
+      setRegistrations((prev) => prev.filter((r) => r.id !== registrationId))
+
+      // Refresh the page data after a short delay
+      setTimeout(() => {
+        router.refresh()
+      }, 2000)
+    } catch (error) {
+      console.error("Error reviewing registration:", error)
+      setMessage({
+        type: "error",
+        text:
+          error instanceof Error ? error.message : "Failed to process review",
+      })
+    } finally {
+      setLoadingId(null)
+    }
+  }
+
   if (registrations.length === 0) {
     return (
       <div className="rounded-lg border bg-white p-12 text-center shadow-sm">
@@ -48,96 +116,108 @@ export function ReviewRegistrationsList({
 
   return (
     <div className="space-y-6">
-      {registrations.map((registration) => (
+      {/* Success/Error Message */}
+      {message && (
         <div
-          key={registration.id}
-          className="rounded-lg border bg-white p-6 shadow-sm"
+          className={`rounded-lg p-4 ${
+            message.type === "success"
+              ? "bg-green-50 text-green-800 border border-green-200"
+              : "bg-red-50 text-red-800 border border-red-200"
+          }`}
         >
-          <div className="flex items-start justify-between">
-            <div className="flex-1">
-              <div className="flex items-center">
-                <h3 className="text-lg font-semibold text-gray-900">
-                  {registration.lobbyistName}
-                </h3>
-                <span className="ml-3 rounded-full bg-yellow-100 px-3 py-1 text-xs font-medium text-yellow-800">
-                  Pending Review
-                </span>
-              </div>
-              <p className="mt-1 text-sm text-gray-600">
-                {registration.lobbyistEmail}
-              </p>
-            </div>
-            <div className="text-right text-sm text-gray-500">
-              Submitted {registration.submittedDate}
-            </div>
-          </div>
-
-          <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <div>
-              <label className="text-xs font-medium uppercase tracking-wider text-gray-500">
-                Employer
-              </label>
-              <p className="mt-1 text-sm text-gray-900">
-                {registration.employerName}
-              </p>
-            </div>
-            <div>
-              <label className="text-xs font-medium uppercase tracking-wider text-gray-500">
-                Hours This Quarter
-              </label>
-              <p className="mt-1 text-sm text-gray-900">
-                {registration.hoursCurrentQuarter} hours
-              </p>
-            </div>
-            <div className="sm:col-span-2">
-              <label className="text-xs font-medium uppercase tracking-wider text-gray-500">
-                Subjects of Interest
-              </label>
-              <p className="mt-1 text-sm text-gray-900">
-                {registration.subjectsOfInterest}
-              </p>
-            </div>
-            <div>
-              <label className="text-xs font-medium uppercase tracking-wider text-gray-500">
-                Authorization Document
-              </label>
-              <p className="mt-1 text-sm">
-                {registration.hasAuthorizationDoc ? (
-                  <span className="text-green-600 flex items-center">
-                    <svg
-                      className="h-4 w-4 mr-1"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                    Uploaded
-                  </span>
-                ) : (
-                  <span className="text-red-600">Not uploaded</span>
-                )}
-              </p>
-            </div>
-          </div>
-
-          {/* Review Actions */}
-          <div className="mt-6 border-t pt-4">
-            <ReviewActions
-              entityName={registration.lobbyistName}
-              onApprove={() =>
-                alert(`Registration approved for ${registration.lobbyistName}`)
-              }
-              onReject={() =>
-                alert(`Registration rejected for ${registration.lobbyistName}`)
-              }
-            />
+          <div className="flex items-center justify-between">
+            <p className="text-sm font-medium">{message.text}</p>
+            <button
+              onClick={() => setMessage(null)}
+              className="text-sm underline hover:no-underline"
+            >
+              Dismiss
+            </button>
           </div>
         </div>
-      ))}
+      )}
+
+      {registrations.map((registration) => {
+        const isLoading = loadingId === registration.id
+        const primaryEmployer = registration.employers[0]
+        const submittedDate = new Date(registration.createdAt).toLocaleDateString()
+
+        return (
+          <div
+            key={registration.id}
+            className={`rounded-lg border bg-white p-6 shadow-sm ${
+              isLoading ? "opacity-50 pointer-events-none" : ""
+            }`}
+          >
+            <div className="flex items-start justify-between">
+              <div className="flex-1">
+                <div className="flex items-center">
+                  <h3 className="text-lg font-semibold text-gray-900">
+                    {registration.name}
+                  </h3>
+                  <span className="ml-3 rounded-full bg-yellow-100 px-3 py-1 text-xs font-medium text-yellow-800">
+                    Pending Review
+                  </span>
+                </div>
+                <p className="mt-1 text-sm text-gray-600">
+                  {registration.email}
+                </p>
+              </div>
+              <div className="text-right text-sm text-gray-500">
+                Submitted {submittedDate}
+              </div>
+            </div>
+
+            <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <div>
+                <label className="text-xs font-medium uppercase tracking-wider text-gray-500">
+                  Employer
+                </label>
+                <p className="mt-1 text-sm text-gray-900">
+                  {primaryEmployer ? primaryEmployer.employer.name : "N/A"}
+                </p>
+              </div>
+              <div>
+                <label className="text-xs font-medium uppercase tracking-wider text-gray-500">
+                  Hours This Quarter
+                </label>
+                <p className="mt-1 text-sm text-gray-900">
+                  {registration.hoursCurrentQuarter} hours
+                </p>
+              </div>
+              <div className="sm:col-span-2">
+                <label className="text-xs font-medium uppercase tracking-wider text-gray-500">
+                  Subjects of Interest
+                </label>
+                <p className="mt-1 text-sm text-gray-900">
+                  {primaryEmployer
+                    ? primaryEmployer.subjectsOfInterest
+                    : "N/A"}
+                </p>
+              </div>
+            </div>
+
+            {/* Review Actions */}
+            <div className="mt-6 border-t pt-4">
+              {isLoading && (
+                <div className="mb-4 flex items-center justify-center">
+                  <div className="h-6 w-6 animate-spin rounded-full border-2 border-gray-300 border-t-blue-600"></div>
+                  <span className="ml-2 text-sm text-gray-600">
+                    Processing...
+                  </span>
+                </div>
+              )}
+              <ReviewActions
+                entityName={registration.name}
+                onApprove={() => handleReview(registration.id, "approve")}
+                onReject={(notes) =>
+                  handleReview(registration.id, "reject", notes)
+                }
+              />
+            </div>
+          </div>
+        )
+      })}
     </div>
   )
 }

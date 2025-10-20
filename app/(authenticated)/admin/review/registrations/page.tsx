@@ -2,6 +2,21 @@ import { auth } from "@/lib/auth"
 import { redirect } from "next/navigation"
 import { ReviewRegistrationsList } from "@/components/admin/ReviewRegistrationsList"
 
+async function getPendingRegistrations() {
+  const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000"
+  const response = await fetch(`${baseUrl}/api/admin/registrations?status=PENDING`, {
+    cache: "no-store",
+  })
+
+  if (!response.ok) {
+    console.error("Failed to fetch registrations:", await response.text())
+    return []
+  }
+
+  const data = await response.json()
+  return data.registrations || []
+}
+
 export default async function AdminReviewRegistrationsPage() {
   const session = await auth()
 
@@ -9,29 +24,7 @@ export default async function AdminReviewRegistrationsPage() {
     redirect("/auth/signin")
   }
 
-  // Mock data for pending registrations
-  const pendingRegistrations = [
-    {
-      id: "reg-001",
-      lobbyistName: "Sarah Johnson",
-      lobbyistEmail: "sarah.johnson@example.com",
-      employerName: "Tech Solutions LLC",
-      subjectsOfInterest: "Technology policy, data privacy, cybersecurity",
-      submittedDate: "2025-10-10",
-      hoursCurrentQuarter: 15,
-      hasAuthorizationDoc: true,
-    },
-    {
-      id: "reg-002",
-      lobbyistName: "Michael Chen",
-      lobbyistEmail: "mchen@advocacy.org",
-      employerName: "Community Advocacy Group",
-      subjectsOfInterest: "Housing, homelessness services, affordable housing",
-      submittedDate: "2025-10-12",
-      hoursCurrentQuarter: 22,
-      hasAuthorizationDoc: true,
-    },
-  ]
+  const registrations = await getPendingRegistrations()
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -55,7 +48,7 @@ export default async function AdminReviewRegistrationsPage() {
           </div>
         </div>
 
-        <ReviewRegistrationsList registrations={pendingRegistrations} />
+        <ReviewRegistrationsList registrations={registrations} />
       </main>
     </div>
   )

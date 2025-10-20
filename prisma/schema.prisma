@@ -208,6 +208,8 @@ model ExpenseLineItem {
   updatedAt    DateTime          @updatedAt
 
   // Polymorphic relations - named to avoid conflicts
+  // NOTE: These relations are managed at application level
+  // The database does NOT have FK constraints (removed via manual migration)
   lobbyistReport LobbyistExpenseReport? @relation("LobbyistExpenses", fields: [reportId], references: [id], onDelete: Cascade)
   employerReport EmployerExpenseReport? @relation("EmployerExpenses", fields: [reportId], references: [id], onDelete: Cascade)
 

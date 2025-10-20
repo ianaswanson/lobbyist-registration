@@ -2,6 +2,21 @@ import { auth } from "@/lib/auth"
 import { redirect } from "next/navigation"
 import { ReviewReportsList } from "@/components/admin/ReviewReportsList"
 
+async function getPendingReports() {
+  const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000"
+  const response = await fetch(`${baseUrl}/api/admin/reports?status=SUBMITTED`, {
+    cache: "no-store",
+  })
+
+  if (!response.ok) {
+    console.error("Failed to fetch reports:", await response.text())
+    return []
+  }
+
+  const data = await response.json()
+  return data.reports || []
+}
+
 export default async function AdminReviewReportsPage() {
   const session = await auth()
 
@@ -9,33 +24,7 @@ export default async function AdminReviewReportsPage() {
     redirect("/auth/signin")
   }
 
-  // Mock data for pending reports
-  const pendingReports = [
-    {
-      id: "report-001",
-      type: "Lobbyist Expense Report",
-      submitterName: "John Smith",
-      submitterEmail: "jsmith@example.com",
-      quarter: "Q3",
-      year: 2025,
-      totalAmount: 1250.5,
-      expenseCount: 8,
-      submittedDate: "2025-10-13",
-      hasDocuments: true,
-    },
-    {
-      id: "report-002",
-      type: "Employer Expense Report",
-      submitterName: "Acme Corporation",
-      submitterEmail: "contact@acme.com",
-      quarter: "Q3",
-      year: 2025,
-      totalAmount: 8500.0,
-      expenseCount: 15,
-      submittedDate: "2025-10-14",
-      hasDocuments: false,
-    },
-  ]
+  const reports = await getPendingReports()
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -59,7 +48,7 @@ export default async function AdminReviewReportsPage() {
           </div>
         </div>
 
-        <ReviewReportsList reports={pendingReports} />
+        <ReviewReportsList reports={reports} />
       </main>
     </div>
   )

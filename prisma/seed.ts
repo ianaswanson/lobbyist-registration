@@ -259,6 +259,130 @@ async function main() {
   })
   console.log('   ✓ Created expense reports')
 
+  // Create pending lobbyist registration for testing admin review
+  console.log('⏳ Creating pending registrations for admin review...')
+
+  const pendingLobbyistUser = await prisma.user.create({
+    data: {
+      email: 'michael.chen@advocacy.com',
+      name: 'Michael Chen',
+      role: UserRole.LOBBYIST,
+      password: await hashPassword('lobbyist123'),
+    },
+  })
+
+  const pendingEmployer = await prisma.employer.create({
+    data: {
+      name: 'Community Advocacy Group',
+      email: 'info@communityadvocacy.org',
+      phone: '503-555-0303',
+      address: '555 Advocacy Lane, Portland, OR 97205',
+      businessDescription: 'Non-profit focused on affordable housing and homelessness services',
+    },
+  })
+
+  const pendingLobbyist = await prisma.lobbyist.create({
+    data: {
+      userId: pendingLobbyistUser.id,
+      name: 'Michael Chen',
+      email: 'michael.chen@advocacy.com',
+      phone: '503-555-0303',
+      address: '555 Advocacy Lane, Portland, OR 97205',
+      status: RegistrationStatus.PENDING,
+      hoursCurrentQuarter: 15.0,
+      registrationDate: new Date('2025-10-15'),
+    },
+  })
+
+  await prisma.lobbyistEmployer.create({
+    data: {
+      lobbyistId: pendingLobbyist.id,
+      employerId: pendingEmployer.id,
+      authorizationDocumentUrl: '/uploads/auth-michael-community.pdf',
+      authorizationDate: new Date('2025-10-10'),
+      subjectsOfInterest: 'Housing policy, homelessness services, affordable housing',
+    },
+  })
+  console.log('   ✓ Created 1 pending lobbyist registration')
+
+  // Create additional pending reports for admin review
+  console.log('📋 Creating pending reports for admin review...')
+
+  const pendingLobbyistReport = await prisma.lobbyistExpenseReport.create({
+    data: {
+      lobbyistId: lobbyist2.id,
+      quarter: Quarter.Q2,
+      year: 2025,
+      totalFoodEntertainment: 520.75,
+      status: ReportStatus.SUBMITTED,
+      submittedAt: new Date('2025-07-12'),
+      dueDate: new Date('2025-07-15'),
+    },
+  })
+
+  // Create expense line items for the pending report
+  await prisma.expenseLineItem.createMany({
+    data: [
+      {
+        reportId: pendingLobbyistReport.id,
+        reportType: 'LOBBYIST',
+        officialName: 'Commissioner Williams',
+        date: new Date('2025-06-15'),
+        payee: 'Portland City Grill',
+        purpose: 'Lunch meeting to discuss housing policy',
+        amount: 85.50,
+        isEstimate: false,
+      },
+      {
+        reportId: pendingLobbyistReport.id,
+        reportType: 'LOBBYIST',
+        officialName: 'Commissioner Chen',
+        date: new Date('2025-06-22'),
+        payee: 'Starbucks',
+        purpose: 'Coffee meeting regarding homelessness services',
+        amount: 12.75,
+        isEstimate: false,
+      },
+    ],
+  })
+
+  const pendingEmployerReport = await prisma.employerExpenseReport.create({
+    data: {
+      employerId: employer2.id,
+      quarter: Quarter.Q2,
+      year: 2025,
+      totalLobbyingSpend: 22500.00,
+      status: ReportStatus.LATE,
+      submittedAt: new Date('2025-07-18'), // 3 days late
+      dueDate: new Date('2025-07-15'),
+    },
+  })
+
+  await prisma.employerLobbyistPayment.create({
+    data: {
+      employerReportId: pendingEmployerReport.id,
+      lobbyistId: lobbyist2.id,
+      amountPaid: 22500.00,
+    },
+  })
+
+  await prisma.expenseLineItem.createMany({
+    data: [
+      {
+        reportId: pendingEmployerReport.id,
+        reportType: 'EMPLOYER',
+        officialName: 'Board of Commissioners',
+        date: new Date('2025-06-10'),
+        payee: 'Portland Convention Center',
+        purpose: 'Healthcare policy forum and networking event',
+        amount: 2500.00,
+        isEstimate: false,
+      },
+    ],
+  })
+
+  console.log('   ✓ Created 2 pending expense reports (1 submitted, 1 late)')
+
   // Create board calendar entries (4 quarters, 2 commissioners)
   console.log('📅 Creating board calendar entries...')
 
