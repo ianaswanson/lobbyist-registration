@@ -1,20 +1,42 @@
 import { auth } from "@/lib/auth"
 import { redirect } from "next/navigation"
 import { ReviewRegistrationsList } from "@/components/admin/ReviewRegistrationsList"
+import { prisma } from "@/lib/db"
+import { RegistrationStatus } from "@prisma/client"
 
 async function getPendingRegistrations() {
-  const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000"
-  const response = await fetch(`${baseUrl}/api/admin/registrations?status=PENDING`, {
-    cache: "no-store",
-  })
+  try {
+    const registrations = await prisma.lobbyist.findMany({
+      where: {
+        status: RegistrationStatus.PENDING,
+      },
+      include: {
+        user: {
+          select: {
+            name: true,
+            email: true,
+          },
+        },
+        employers: {
+          include: {
+            employer: {
+              select: {
+                name: true,
+              },
+            },
+          },
+        },
+      },
+      orderBy: {
+        createdAt: "asc", // Oldest first
+      },
+    })
 
-  if (!response.ok) {
-    console.error("Failed to fetch registrations:", await response.text())
+    return registrations
+  } catch (error) {
+    console.error("Error fetching pending registrations:", error)
     return []
   }
-
-  const data = await response.json()
-  return data.registrations || []
 }
 
 export default async function AdminReviewRegistrationsPage() {

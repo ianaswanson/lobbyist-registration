@@ -1,20 +1,104 @@
 import { auth } from "@/lib/auth"
 import { redirect } from "next/navigation"
 import { ReviewReportsList } from "@/components/admin/ReviewReportsList"
+import { prisma } from "@/lib/db"
+import { ReportStatus } from "@prisma/client"
 
 async function getPendingReports() {
-  const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000"
-  const response = await fetch(`${baseUrl}/api/admin/reports?status=SUBMITTED`, {
-    cache: "no-store",
-  })
+  try {
+    // Fetch lobbyist reports
+    const lobbyistReports = await prisma.lobbyistExpenseReport.findMany({
+      where: {
+        status: {
+          in: [ReportStatus.SUBMITTED, ReportStatus.LATE],
+        },
+      },
+      include: {
+        lobbyist: {
+          select: {
+            name: true,
+            email: true,
+          },
+        },
+        lineItems: {
+          select: {
+            id: true,
+          },
+        },
+      },
+      orderBy: {
+        submittedAt: "asc", // Oldest first
+      },
+    })
 
-  if (!response.ok) {
-    console.error("Failed to fetch reports:", await response.text())
+    // Fetch employer reports
+    const employerReports = await prisma.employerExpenseReport.findMany({
+      where: {
+        status: {
+          in: [ReportStatus.SUBMITTED, ReportStatus.LATE],
+        },
+      },
+      include: {
+        employer: {
+          select: {
+            name: true,
+            email: true,
+          },
+        },
+        lineItems: {
+          select: {
+            id: true,
+          },
+        },
+      },
+      orderBy: {
+        submittedAt: "asc", // Oldest first
+      },
+    })
+
+    // Combine and format reports
+    const allReports = [
+      ...lobbyistReports.map((report) => ({
+        id: report.id,
+        type: "Lobbyist Expense Report" as const,
+        reportType: "lobbyist" as const,
+        submitterName: report.lobbyist.name,
+        submitterEmail: report.lobbyist.email,
+        quarter: report.quarter,
+        year: report.year,
+        totalAmount: report.totalFoodEntertainment,
+        expenseCount: report.lineItems.length,
+        submittedDate: report.submittedAt,
+        status: report.status,
+        dueDate: report.dueDate,
+      })),
+      ...employerReports.map((report) => ({
+        id: report.id,
+        type: "Employer Expense Report" as const,
+        reportType: "employer" as const,
+        submitterName: report.employer.name,
+        submitterEmail: report.employer.email,
+        quarter: report.quarter,
+        year: report.year,
+        totalAmount: report.totalLobbyingSpend,
+        expenseCount: report.lineItems.length,
+        submittedDate: report.submittedAt,
+        status: report.status,
+        dueDate: report.dueDate,
+      })),
+    ]
+
+    // Sort by submitted date
+    allReports.sort((a, b) => {
+      if (!a.submittedDate || !b.submittedDate) return 0
+      return a.submittedDate.getTime() - b.submittedDate.getTime()
+    })
+
+    return allReports
+  } catch (error) {
+    console.error("Error fetching pending reports:", error)
     return []
   }
-
-  const data = await response.json()
-  return data.reports || []
 }
 
 export default async function AdminReviewReportsPage() {
