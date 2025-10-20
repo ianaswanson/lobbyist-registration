@@ -1,60 +1,212 @@
 import { auth } from "@/lib/auth"
 import { redirect } from "next/navigation"
+import { prisma } from "@/lib/db"
+import { RegistrationStatus, ReportStatus } from "@prisma/client"
 
-// Mock data for demonstration
-const complianceData = {
-  totalLobbyists: 48,
-  totalEmployers: 23,
-  totalBoardMembers: 5,
-  upcomingDeadline: {
-    type: "Q1 Reports",
-    date: "2025-04-15",
-    daysUntil: 12,
-  },
-  overdueReports: [
-    {
-      id: "1",
-      type: "Lobbyist Expense Report",
-      entity: "Jane Smith",
-      quarter: "Q4 2024",
-      dueDate: "2025-01-15",
-      daysOverdue: 90,
-    },
-    {
-      id: "2",
-      type: "Employer Expense Report",
-      entity: "Tech Industry Association",
-      quarter: "Q4 2024",
-      dueDate: "2025-01-15",
-      daysOverdue: 90,
-    },
-  ],
-  recentRegistrations: [
-    {
-      id: "1",
-      lobbyistName: "John Doe",
-      employer: "Downtown Business Coalition",
-      date: "2025-10-10",
-      status: "Pending Review",
-    },
-    {
-      id: "2",
-      lobbyistName: "Sarah Johnson",
-      employer: "Environmental Alliance",
-      date: "2025-10-12",
-      status: "Pending Review",
-    },
-  ],
-  violations: [
-    {
-      id: "1",
-      entity: "ABC Consulting",
-      type: "Late Report Submission",
-      date: "2025-10-01",
-      fineAmount: 500,
-      status: "Issued",
-    },
-  ],
+async function getComplianceData() {
+  try {
+    const today = new Date()
+
+    // Get counts
+    const totalLobbyists = await prisma.lobbyist.count()
+    const totalEmployers = await prisma.employer.count()
+    const totalBoardMembers = await prisma.user.count({
+      where: { role: "BOARD_MEMBER" }
+    })
+
+    // Get pending registrations (for review section)
+    const pendingRegistrations = await prisma.lobbyist.findMany({
+      where: {
+        status: RegistrationStatus.PENDING,
+      },
+      include: {
+        user: {
+          select: {
+            name: true,
+            email: true,
+          },
+        },
+        employers: {
+          include: {
+            employer: {
+              select: {
+                name: true,
+              },
+            },
+          },
+        },
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+      take: 5, // Show up to 5 recent ones
+    })
+
+    // Get pending reports (submitted but not yet approved)
+    const pendingLobbyistReports = await prisma.lobbyistExpenseReport.count({
+      where: {
+        status: {
+          in: [ReportStatus.SUBMITTED, ReportStatus.LATE],
+        },
+      },
+    })
+
+    const pendingEmployerReports = await prisma.employerExpenseReport.count({
+      where: {
+        status: {
+          in: [ReportStatus.SUBMITTED, ReportStatus.LATE],
+        },
+      },
+    })
+
+    const totalPendingReports = pendingLobbyistReports + pendingEmployerReports
+
+    // Get overdue reports (reports where today > dueDate and status is not APPROVED)
+    const overdueLobbyistReports = await prisma.lobbyistExpenseReport.findMany({
+      where: {
+        dueDate: {
+          lt: today,
+        },
+        status: {
+          notIn: [ReportStatus.APPROVED],
+        },
+      },
+      include: {
+        lobbyist: {
+          select: {
+            name: true,
+          },
+        },
+      },
+      orderBy: {
+        dueDate: "asc",
+      },
+    })
+
+    const overdueEmployerReports = await prisma.employerExpenseReport.findMany({
+      where: {
+        dueDate: {
+          lt: today,
+        },
+        status: {
+          notIn: [ReportStatus.APPROVED],
+        },
+      },
+      include: {
+        employer: {
+          select: {
+            name: true,
+          },
+        },
+      },
+      orderBy: {
+        dueDate: "asc",
+      },
+    })
+
+    // Combine overdue reports
+    const overdueReports = [
+      ...overdueLobbyistReports.map((r) => ({
+        id: r.id,
+        entity: r.lobbyist.name,
+        type: "Lobbyist Expense",
+        quarter: `Q${r.quarter} ${r.year}`,
+        dueDate: r.dueDate.toISOString().split('T')[0],
+        daysOverdue: Math.floor((today.getTime() - r.dueDate.getTime()) / (1000 * 60 * 60 * 24)),
+      })),
+      ...overdueEmployerReports.map((r) => ({
+        id: r.id,
+        entity: r.employer.name,
+        type: "Employer Expense",
+        quarter: `Q${r.quarter} ${r.year}`,
+        dueDate: r.dueDate.toISOString().split('T')[0],
+        daysOverdue: Math.floor((today.getTime() - r.dueDate.getTime()) / (1000 * 60 * 60 * 24)),
+      })),
+    ]
+
+    // Calculate upcoming deadline (next quarterly deadline)
+    const currentMonth = today.getMonth() + 1 // 1-12
+    const currentYear = today.getFullYear()
+
+    let nextDeadline = new Date()
+    let quarterType = ""
+
+    if (currentMonth <= 1 || (currentMonth === 1 && today.getDate() <= 15)) {
+      // Q4 previous year deadline (Jan 15)
+      nextDeadline = new Date(currentYear, 0, 15)
+      quarterType = `Q4 ${currentYear - 1} Reports`
+    } else if (currentMonth <= 4 || (currentMonth === 4 && today.getDate() <= 15)) {
+      // Q1 deadline (Apr 15)
+      nextDeadline = new Date(currentYear, 3, 15)
+      quarterType = `Q1 ${currentYear} Reports`
+    } else if (currentMonth <= 7 || (currentMonth === 7 && today.getDate() <= 15)) {
+      // Q2 deadline (Jul 15)
+      nextDeadline = new Date(currentYear, 6, 15)
+      quarterType = `Q2 ${currentYear} Reports`
+    } else if (currentMonth <= 10 || (currentMonth === 10 && today.getDate() <= 15)) {
+      // Q3 deadline (Oct 15)
+      nextDeadline = new Date(currentYear, 9, 15)
+      quarterType = `Q3 ${currentYear} Reports`
+    } else {
+      // Q4 deadline (Jan 15 next year)
+      nextDeadline = new Date(currentYear + 1, 0, 15)
+      quarterType = `Q4 ${currentYear} Reports`
+    }
+
+    const daysUntil = Math.ceil((nextDeadline.getTime() - today.getTime()) / (1000 * 60 * 60 * 24))
+
+    // Get recent violations
+    const recentViolations = await prisma.violation.findMany({
+      orderBy: {
+        issuedDate: "desc",
+      },
+      take: 5,
+    })
+
+    return {
+      totalLobbyists,
+      totalEmployers,
+      totalBoardMembers,
+      recentRegistrations: pendingRegistrations.map((reg) => ({
+        id: reg.id,
+        lobbyistName: reg.name,
+        employer: reg.employers[0]?.employer.name || "N/A",
+        date: reg.createdAt.toISOString().split('T')[0],
+        status: reg.status,
+      })),
+      pendingReportsCount: totalPendingReports,
+      overdueReports,
+      upcomingDeadline: {
+        type: quarterType,
+        date: nextDeadline.toISOString().split('T')[0],
+        daysUntil,
+      },
+      violations: recentViolations.map((v) => ({
+        id: v.id,
+        entity: v.entityName,
+        type: v.violationType,
+        date: v.issuedDate.toISOString().split('T')[0],
+        fineAmount: v.fineAmount,
+        status: v.status,
+      })),
+    }
+  } catch (error) {
+    console.error("Error fetching compliance data:", error)
+    return {
+      totalLobbyists: 0,
+      totalEmployers: 0,
+      totalBoardMembers: 0,
+      recentRegistrations: [],
+      pendingReportsCount: 0,
+      overdueReports: [],
+      upcomingDeadline: {
+        type: "No upcoming deadline",
+        date: new Date().toISOString().split('T')[0],
+        daysUntil: 0,
+      },
+      violations: [],
+    }
+  }
 }
 
 export default async function AdminComplianceDashboardPage() {
@@ -64,8 +216,10 @@ export default async function AdminComplianceDashboardPage() {
     redirect("/auth/signin")
   }
 
-  const today = new Date()
-  const upcomingDate = new Date(complianceData.upcomingDeadline.date)
+  const complianceData = await getComplianceData()
+  const upcomingDate = complianceData.upcomingDeadline
+    ? new Date(complianceData.upcomingDeadline.date)
+    : new Date()
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -214,15 +368,21 @@ export default async function AdminComplianceDashboardPage() {
                 <h3 className="text-sm font-semibold text-yellow-900">
                   Upcoming Deadline
                 </h3>
-                <div className="mt-2 text-sm text-yellow-700">
-                  <p>
-                    <strong>{complianceData.upcomingDeadline.type}</strong> due{" "}
-                    {upcomingDate.toLocaleDateString()}
-                  </p>
-                  <p className="mt-1">
-                    {complianceData.upcomingDeadline.daysUntil} days remaining
-                  </p>
-                </div>
+                {complianceData.upcomingDeadline ? (
+                  <div className="mt-2 text-sm text-yellow-700">
+                    <p>
+                      <strong>{complianceData.upcomingDeadline.type}</strong> due{" "}
+                      {upcomingDate.toLocaleDateString()}
+                    </p>
+                    <p className="mt-1">
+                      {complianceData.upcomingDeadline.daysUntil} days remaining
+                    </p>
+                  </div>
+                ) : (
+                  <div className="mt-2 text-sm text-yellow-700">
+                    <p>No upcoming deadlines</p>
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -321,13 +481,21 @@ export default async function AdminComplianceDashboardPage() {
             </a>
           </div>
           <div className="p-6 text-center text-sm text-gray-600">
-            <p>2 expense reports awaiting review</p>
-            <a
-              href="/admin/review/reports"
-              className="mt-2 inline-block rounded-md bg-blue-600 px-4 py-2 text-sm text-white hover:bg-blue-700"
-            >
-              Review Reports
-            </a>
+            <p>
+              {complianceData.pendingReportsCount === 0
+                ? "No expense reports awaiting review"
+                : `${complianceData.pendingReportsCount} expense report${
+                    complianceData.pendingReportsCount === 1 ? "" : "s"
+                  } awaiting review`}
+            </p>
+            {complianceData.pendingReportsCount > 0 && (
+              <a
+                href="/admin/review/reports"
+                className="mt-2 inline-block rounded-md bg-blue-600 px-4 py-2 text-sm text-white hover:bg-blue-700"
+              >
+                Review Reports
+              </a>
+            )}
           </div>
         </div>
 
