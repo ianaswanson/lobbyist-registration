@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { ManualEntryMode } from "./ManualEntryMode"
 import { CSVUploadMode } from "./CSVUploadMode"
 import { BulkPasteMode } from "./BulkPasteMode"
@@ -28,6 +28,8 @@ export function EmployerExpenseReportForm({
   const [quarter, setQuarter] = useState("Q1")
   const [year, setYear] = useState(new Date().getFullYear())
   const [uploadedDocuments, setUploadedDocuments] = useState<UploadedFile[]>([])
+  const [isLoading, setIsLoading] = useState(false)
+  const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null)
 
   // New lobbyist payment form state
   const [newPayment, setNewPayment] = useState({
@@ -69,33 +71,63 @@ export function EmployerExpenseReportForm({
     setLobbyistPayments(lobbyistPayments.filter((pay) => pay.id !== id))
   }
 
-  const handleSaveDraft = () => {
-    console.log("Saving draft employer expense report:", {
-      quarter,
-      year,
-      totalExpenses,
-      totalPayments,
-      grandTotal,
-      expenses,
-      lobbyistPayments,
-    })
-    alert(`Draft saved! (API integration pending)\nQuarter: ${quarter} ${year}\nTotal Lobbying Expenses: $${totalExpenses.toFixed(2)}\nTotal Lobbyist Payments: $${totalPayments.toFixed(2)}\nGrand Total: $${grandTotal.toFixed(2)}`)
+  const submitReport = async (isDraft: boolean) => {
+    try {
+      setIsLoading(true)
+      setMessage(null)
+
+      const response = await fetch("/api/reports/employer", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          quarter,
+          year,
+          expenses,
+          lobbyistPayments,
+          isDraft,
+        }),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to submit report")
+      }
+
+      setMessage({
+        type: "success",
+        text: isDraft
+          ? `Draft saved successfully! Quarter: ${quarter} ${year}`
+          : `Report submitted successfully! Quarter: ${quarter} ${year}`,
+      })
+
+      // Clear form after successful submission (after a short delay to show success message)
+      if (!isDraft) {
+        setTimeout(() => {
+          setExpenses([])
+          setLobbyistPayments([])
+          setUploadedDocuments([])
+        }, 3000)
+      }
+    } catch (error) {
+      console.error("Error submitting report:", error)
+      setMessage({
+        type: "error",
+        text: error instanceof Error ? error.message : "Failed to submit report",
+      })
+    } finally {
+      setIsLoading(false)
+    }
   }
 
-  const handleSubmit = async () => {
-    // TODO: Submit to API
-    console.log("Submitting employer expense report:", {
-      quarter,
-      year,
-      totalExpenses,
-      totalPayments,
-      grandTotal,
-      expenses,
-      lobbyistPayments,
-    })
-    alert(
-      `Employer expense report submitted! (API integration pending)\nQuarter: ${quarter} ${year}\nTotal Lobbying Expenses: $${totalExpenses.toFixed(2)}\nTotal Lobbyist Payments: $${totalPayments.toFixed(2)}\nGrand Total: $${grandTotal.toFixed(2)}`
-    )
+  const handleSaveDraft = () => {
+    submitReport(true)
+  }
+
+  const handleSubmit = () => {
+    submitReport(false)
   }
 
   return (
@@ -445,22 +477,66 @@ export function EmployerExpenseReportForm({
         />
       </div>
 
+      {/* Success/Error Message */}
+      {message && (
+        <div
+          className={`rounded-lg p-4 ${
+            message.type === "success"
+              ? "bg-green-50 text-green-800 border border-green-200"
+              : "bg-red-50 text-red-800 border border-red-200"
+          }`}
+        >
+          <div className="flex items-center justify-between">
+            <p className="text-sm font-medium">{message.text}</p>
+            <button
+              onClick={() => setMessage(null)}
+              className="text-sm underline hover:no-underline"
+            >
+              Dismiss
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Submit Button */}
       <div className="flex justify-end space-x-4">
         <button
           type="button"
           onClick={handleSaveDraft}
-          className="rounded-md border border-gray-300 bg-white px-6 py-2 text-gray-700 hover:bg-gray-50"
+          disabled={isLoading}
+          className="rounded-md border border-gray-300 bg-white px-6 py-2 text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          Save as Draft
+          {isLoading ? "Saving..." : "Save as Draft"}
         </button>
         <button
           type="button"
           onClick={handleSubmit}
-          disabled={lobbyistPayments.length === 0 && expenses.length === 0}
-          className="rounded-md bg-green-600 px-6 py-2 text-white hover:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed"
+          disabled={isLoading || (lobbyistPayments.length === 0 && expenses.length === 0)}
+          className="rounded-md bg-green-600 px-6 py-2 text-white hover:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed flex items-center space-x-2"
         >
-          Submit Report
+          {isLoading && (
+            <svg
+              className="animate-spin h-4 w-4 text-white"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                className="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                strokeWidth="4"
+              ></circle>
+              <path
+                className="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+              ></path>
+            </svg>
+          )}
+          <span>{isLoading ? "Submitting..." : "Submit Report"}</span>
         </button>
       </div>
     </div>
