@@ -199,8 +199,9 @@ model ExpenseLineItem {
   createdAt    DateTime          @default(now())
   updatedAt    DateTime          @updatedAt
 
-  lobbyistReport LobbyistExpenseReport? @relation(fields: [reportId], references: [id], onDelete: Cascade)
-  employerReport EmployerExpenseReport? @relation(fields: [reportId], references: [id], onDelete: Cascade)
+  // Polymorphic relations - named to avoid conflicts
+  lobbyistReport LobbyistExpenseReport? @relation("LobbyistExpenses", fields: [reportId], references: [id], onDelete: Cascade)
+  employerReport EmployerExpenseReport? @relation("EmployerExpenses", fields: [reportId], references: [id], onDelete: Cascade)
 
   @@index([reportId])
   @@index([officialName])

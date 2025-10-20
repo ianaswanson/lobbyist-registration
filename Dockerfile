@@ -16,16 +16,7 @@ COPY . .
 # Generate Prisma Client
 RUN npx prisma generate
 
-# Create and seed database (during build)
-# Set DATABASE_URL for build-time operations (absolute path to avoid nesting)
-ENV DATABASE_URL="file:/app/prisma/dev.db"
-RUN npx prisma migrate deploy
-RUN npm run db:seed
-
-# Verify database was created
-RUN ls -lh /app/prisma/dev.db
-
-# Build Next.js
+# Build Next.js (no database seeding at build time)
 RUN npm run build
 
 # Production stage
@@ -33,26 +24,43 @@ FROM node:20-alpine AS runner
 
 WORKDIR /app
 
+# Install sqlite3 for database operations (needed for startup script)
+RUN apk add --no-cache sqlite
+
 # Copy necessary files from builder
 COPY --from=builder /app/next.config.ts ./
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 
-# Copy Prisma schema and migrations (WITHOUT the database files from .dockerignore)
+# Copy Prisma files (schema, migrations, generated client)
 COPY --from=builder /app/prisma/schema.prisma ./prisma/
 COPY --from=builder /app/prisma/migrations ./prisma/migrations
 COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
+COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
 
-# Now explicitly copy the seeded database from the builder stage
-COPY --from=builder /app/prisma/dev.db ./prisma/dev.db
+# Copy seed script and its dependencies
+COPY --from=builder /app/prisma/seed.ts ./prisma/seed.ts
+COPY --from=builder /app/lib/password.ts ./lib/password.ts
+
+# Copy package files
+COPY --from=builder /app/package.json ./package.json
+COPY --from=builder /app/package-lock.json ./package-lock.json
+
+# Install ONLY the dependencies needed for seeding (tsx, bcryptjs)
+# This is a minimal install for runtime database operations
+RUN npm install --omit=dev --no-save tsx bcryptjs
+
+# Copy startup script
+COPY scripts/startup.sh /app/startup.sh
+RUN chmod +x /app/startup.sh
 
 # Set environment
 ENV NODE_ENV=production
 ENV PORT=8080
 ENV DATABASE_URL="file:/app/prisma/dev.db"
 
-# Start server (database already seeded during build)
-CMD ["node", "server.js"]
+# Use startup script for runtime seeding
+CMD ["/app/startup.sh"]
 
 EXPOSE 8080
