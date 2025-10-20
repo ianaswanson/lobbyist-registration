@@ -30,6 +30,8 @@ export function LobbyistExpenseReportForm({
   const [quarter, setQuarter] = useState("Q1")
   const [year, setYear] = useState(new Date().getFullYear())
   const [uploadedDocuments, setUploadedDocuments] = useState<UploadedFile[]>([])
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null)
 
   const totalAmount = expenses.reduce((sum, exp) => sum + exp.amount, 0)
 
@@ -41,29 +43,122 @@ export function LobbyistExpenseReportForm({
     setExpenses(expenses.filter((exp) => exp.id !== id))
   }
 
+  const submitReport = async (isDraft: boolean) => {
+    setIsSubmitting(true)
+    setMessage(null)
+
+    try {
+      const response = await fetch("/api/reports/lobbyist", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          quarter,
+          year,
+          expenses,
+          isDraft,
+        }),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to save report")
+      }
+
+      // Show success message
+      setMessage({
+        type: "success",
+        text: data.message,
+      })
+
+      // If submitted (not draft), clear the form after a delay
+      if (!isDraft) {
+        setTimeout(() => {
+          setExpenses([])
+          setMessage(null)
+        }, 3000)
+      }
+    } catch (error) {
+      setMessage({
+        type: "error",
+        text: error instanceof Error ? error.message : "Failed to save report",
+      })
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
   const handleSaveDraft = () => {
-    console.log("Saving draft expense report:", {
-      quarter,
-      year,
-      totalAmount,
-      expenses,
-    })
-    alert(`Draft saved! (API integration pending)\nQuarter: ${quarter} ${year}\nTotal: $${totalAmount.toFixed(2)}\nExpenses: ${expenses.length}`)
+    submitReport(true)
   }
 
   const handleSubmit = async () => {
-    // TODO: Submit to API
-    console.log("Submitting expense report:", {
-      quarter,
-      year,
-      totalAmount,
-      expenses,
-    })
-    alert(`Expense report submitted! (API integration pending)\nQuarter: ${quarter} ${year}\nTotal: $${totalAmount.toFixed(2)}\nExpenses: ${expenses.length}`)
+    submitReport(false)
   }
 
   return (
     <div className="space-y-6">
+      {/* Success/Error Message */}
+      {message && (
+        <div
+          className={`rounded-md p-4 ${
+            message.type === "success"
+              ? "bg-green-50 text-green-800 border border-green-200"
+              : "bg-red-50 text-red-800 border border-red-200"
+          }`}
+        >
+          <div className="flex">
+            <div className="flex-shrink-0">
+              {message.type === "success" ? (
+                <svg
+                  className="h-5 w-5 text-green-400"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              ) : (
+                <svg
+                  className="h-5 w-5 text-red-400"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              )}
+            </div>
+            <div className="ml-3">
+              <p className="text-sm font-medium">{message.text}</p>
+            </div>
+            <div className="ml-auto pl-3">
+              <button
+                onClick={() => setMessage(null)}
+                className="inline-flex rounded-md p-1.5 hover:bg-black hover:bg-opacity-10 focus:outline-none"
+              >
+                <span className="sr-only">Dismiss</span>
+                <svg className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                  <path
+                    fillRule="evenodd"
+                    d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Quarter and Year Selection */}
       <div className="rounded-lg border bg-white p-6 shadow-sm">
         <h3 className="text-lg font-semibold text-gray-900 mb-4">
@@ -265,17 +360,70 @@ export function LobbyistExpenseReportForm({
         <button
           type="button"
           onClick={handleSaveDraft}
-          className="rounded-md border border-gray-300 bg-white px-6 py-2 text-gray-700 hover:bg-gray-50"
+          disabled={isSubmitting || expenses.length === 0}
+          className="rounded-md border border-gray-300 bg-white px-6 py-2 text-gray-700 hover:bg-gray-50 disabled:bg-gray-100 disabled:cursor-not-allowed disabled:text-gray-400 flex items-center space-x-2"
         >
-          Save as Draft
+          {isSubmitting ? (
+            <>
+              <svg
+                className="animate-spin h-4 w-4 text-gray-600"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                ></circle>
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                ></path>
+              </svg>
+              <span>Saving...</span>
+            </>
+          ) : (
+            <span>Save as Draft</span>
+          )}
         </button>
         <button
           type="button"
           onClick={handleSubmit}
-          disabled={expenses.length === 0}
-          className="rounded-md bg-green-600 px-6 py-2 text-white hover:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed"
+          disabled={isSubmitting || expenses.length === 0}
+          className="rounded-md bg-green-600 px-6 py-2 text-white hover:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed flex items-center space-x-2"
         >
-          Submit Report
+          {isSubmitting ? (
+            <>
+              <svg
+                className="animate-spin h-4 w-4 text-white"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                ></circle>
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                ></path>
+              </svg>
+              <span>Submitting...</span>
+            </>
+          ) : (
+            <span>Submit Report</span>
+          )}
         </button>
       </div>
     </div>
