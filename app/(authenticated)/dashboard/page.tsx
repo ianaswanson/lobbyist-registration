@@ -1,6 +1,7 @@
 import { auth } from "@/lib/auth"
 import { redirect } from "next/navigation"
 import { SkipLink } from "@/components/SkipLink"
+import { FEATURE_FLAGS } from "@/lib/feature-flags"
 
 export default async function DashboardPage() {
   const session = await auth()
@@ -54,34 +55,36 @@ export default async function DashboardPage() {
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {session.user?.role === "LOBBYIST" && (
                 <>
-                  <a
-                    href="/hours"
-                    className="flex items-center justify-between rounded-lg border border-gray-200 p-4 hover:border-blue-500 hover:bg-blue-50 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                    aria-label="Track lobbying hours"
-                  >
-                    <div>
-                      <h4 className="font-semibold text-gray-900">
-                        Hour Tracking
-                      </h4>
-                      <p className="text-sm text-gray-600">
-                        Log your lobbying hours
-                      </p>
-                    </div>
-                    <svg
-                      className="h-6 w-6 text-blue-600"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                      aria-hidden="true"
+                  {FEATURE_FLAGS.HOUR_TRACKING && (
+                    <a
+                      href="/hours"
+                      className="flex items-center justify-between rounded-lg border border-gray-200 p-4 hover:border-blue-500 hover:bg-blue-50 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                      aria-label="Track lobbying hours"
                     >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M9 5l7 7-7 7"
-                      />
-                    </svg>
-                  </a>
+                      <div>
+                        <h4 className="font-semibold text-gray-900">
+                          Hour Tracking
+                        </h4>
+                        <p className="text-sm text-gray-600">
+                          Log your lobbying hours
+                        </p>
+                      </div>
+                      <svg
+                        className="h-6 w-6 text-blue-600"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        aria-hidden="true"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M9 5l7 7-7 7"
+                        />
+                      </svg>
+                    </a>
+                  )}
                   <a
                     href="/reports/lobbyist"
                     className="flex items-center justify-between rounded-lg border border-gray-200 p-4 hover:border-purple-500 hover:bg-purple-50 transition-colors focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2"
