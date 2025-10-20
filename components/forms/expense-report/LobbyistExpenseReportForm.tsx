@@ -1,6 +1,7 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { useRouter } from "next/navigation"
 import { ManualEntryMode } from "./ManualEntryMode"
 import { CSVUploadMode } from "./CSVUploadMode"
 import { BulkPasteMode } from "./BulkPasteMode"
@@ -31,16 +32,122 @@ export function LobbyistExpenseReportForm({
   const [year, setYear] = useState(new Date().getFullYear())
   const [uploadedDocuments, setUploadedDocuments] = useState<UploadedFile[]>([])
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false)
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null)
+
+  // Fetch existing report data when quarter or year changes
+  useEffect(() => {
+    async function fetchExistingReport() {
+      setIsLoading(true)
+      try {
+        const response = await fetch(`/api/reports/lobbyist?quarter=${quarter}&year=${year}`)
+
+        if (response.ok) {
+          const data = await response.json()
+
+          // Check if we have reports for this quarter/year
+          if (data.reports && data.reports.length > 0) {
+            const report = data.reports[0] // Get the first (and should be only) report
+
+            // Transform line items to match our ExpenseLineItem type
+            if (report.lineItems && report.lineItems.length > 0) {
+              const transformedExpenses = report.lineItems.map((item: any) => ({
+                id: item.id,
+                officialName: item.officialName,
+                date: new Date(item.date).toISOString().split('T')[0], // Format as YYYY-MM-DD
+                payee: item.payee,
+                purpose: item.purpose,
+                amount: item.amount,
+                isEstimate: item.isEstimate,
+              }))
+
+              setExpenses(transformedExpenses)
+              setHasUnsavedChanges(false) // Data is loaded from DB, no unsaved changes
+            } else {
+              // No line items for this report
+              setExpenses([])
+              setHasUnsavedChanges(false)
+            }
+          } else {
+            // No report found for this quarter/year - start fresh
+            setExpenses([])
+            setHasUnsavedChanges(false)
+          }
+        } else {
+          // API error - start fresh
+          console.error('Failed to load existing report')
+          setExpenses([])
+          setHasUnsavedChanges(false)
+        }
+      } catch (error) {
+        console.error('Error fetching existing report:', error)
+        setExpenses([])
+        setHasUnsavedChanges(false)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchExistingReport()
+  }, [quarter, year])
+
+  // Warn before leaving page with unsaved changes (page refresh/close)
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (hasUnsavedChanges) {
+        e.preventDefault()
+        e.returnValue = '' // Chrome requires returnValue to be set
+      }
+    }
+
+    window.addEventListener('beforeunload', handleBeforeUnload)
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload)
+  }, [hasUnsavedChanges])
+
+  // Warn before client-side navigation (clicking Next.js Links)
+  useEffect(() => {
+    const handleClick = (e: MouseEvent) => {
+      if (!hasUnsavedChanges) return
+
+      // Find the closest anchor tag (Next.js Link renders as <a>)
+      const target = e.target as HTMLElement
+      const anchor = target.closest('a[href]')
+
+      if (anchor) {
+        const href = anchor.getAttribute('href')
+        const currentPath = window.location.pathname
+
+        // Check if it's navigating to a different page
+        if (href && href !== currentPath && !href.startsWith('#')) {
+          const confirmed = window.confirm(
+            'You have unsaved changes. Are you sure you want to leave this page? Your changes will be lost.'
+          )
+
+          if (!confirmed) {
+            e.preventDefault()
+            e.stopPropagation()
+            e.stopImmediatePropagation()
+          }
+        }
+      }
+    }
+
+    // Use capture phase to intercept before Next.js Link handler
+    document.addEventListener('click', handleClick, { capture: true })
+    return () => document.removeEventListener('click', handleClick, { capture: true })
+  }, [hasUnsavedChanges])
 
   const totalAmount = expenses.reduce((sum, exp) => sum + exp.amount, 0)
 
   const handleAddExpenses = (newExpenses: ExpenseLineItem[]) => {
     setExpenses([...expenses, ...newExpenses])
+    setHasUnsavedChanges(true)
   }
 
   const handleRemoveExpense = (id: string) => {
     setExpenses(expenses.filter((exp) => exp.id !== id))
+    setHasUnsavedChanges(true)
   }
 
   const submitReport = async (isDraft: boolean) => {
@@ -73,13 +180,16 @@ export function LobbyistExpenseReportForm({
         text: data.message,
       })
 
-      // If submitted (not draft), clear the form after a delay
-      if (!isDraft) {
-        setTimeout(() => {
-          setExpenses([])
-          setMessage(null)
-        }, 3000)
-      }
+      // Clear unsaved changes flag
+      setHasUnsavedChanges(false)
+
+      // Clear message after 3 seconds
+      setTimeout(() => {
+        setMessage(null)
+      }, 3000)
+
+      // Note: We don't clear expenses anymore because they persist in the database
+      // and will be reloaded if the user changes quarter/year or refreshes the page
     } catch (error) {
       setMessage({
         type: "error",
@@ -100,6 +210,64 @@ export function LobbyistExpenseReportForm({
 
   return (
     <div className="space-y-6">
+      {/* Loading Indicator */}
+      {isLoading && (
+        <div className="rounded-md border border-blue-200 bg-blue-50 p-4">
+          <div className="flex items-center">
+            <svg
+              className="animate-spin h-5 w-5 text-blue-600"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                className="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                strokeWidth="4"
+              ></circle>
+              <path
+                className="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+              ></path>
+            </svg>
+            <span className="ml-3 text-sm font-medium text-blue-800">
+              Loading existing report data...
+            </span>
+          </div>
+        </div>
+      )}
+
+      {/* Unsaved Changes Warning */}
+      {hasUnsavedChanges && (
+        <div className="rounded-md border border-yellow-300 bg-yellow-50 p-4">
+          <div className="flex items-center">
+            <svg
+              className="h-5 w-5 text-yellow-600"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
+              <path
+                fillRule="evenodd"
+                d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+                clipRule="evenodd"
+              />
+            </svg>
+            <div className="ml-3 flex-1">
+              <p className="text-sm font-medium text-yellow-800">
+                You have unsaved changes
+              </p>
+              <p className="mt-1 text-xs text-yellow-700">
+                Click "Save as Draft" or "Submit Report" to save your work. If you leave this page, your changes will be lost.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Success/Error Message */}
       {message && (
         <div
