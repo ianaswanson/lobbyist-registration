@@ -57,6 +57,7 @@ export function MyViolationsClient({ userId, userRole }: MyViolationsClientProps
   const [selectedViolation, setSelectedViolation] = useState<any>(null)
   const [appealReason, setAppealReason] = useState("")
   const [submitting, setSubmitting] = useState(false)
+  const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null)
 
   useEffect(() => {
     fetchViolations()
@@ -102,6 +103,8 @@ export function MyViolationsClient({ userId, userRole }: MyViolationsClientProps
     }
 
     setSubmitting(true)
+    setMessage(null)
+
     try {
       const response = await fetch("/api/appeals", {
         method: "POST",
@@ -115,16 +118,30 @@ export function MyViolationsClient({ userId, userRole }: MyViolationsClientProps
       })
 
       if (response.ok) {
-        alert("Appeal submitted successfully!")
+        setMessage({
+          type: "success",
+          text: "Appeal submitted successfully! Your appeal will be reviewed by an administrator.",
+        })
         setAppealDialogOpen(false)
         fetchViolations() // Refresh the list
+
+        // Clear message after 5 seconds
+        setTimeout(() => {
+          setMessage(null)
+        }, 5000)
       } else {
         const error = await response.json()
-        alert(`Error: ${error.error || "Failed to submit appeal"}`)
+        setMessage({
+          type: "error",
+          text: error.error || "Failed to submit appeal. Please try again.",
+        })
       }
     } catch (error) {
       console.error("Error submitting appeal:", error)
-      alert("Error submitting appeal. Please try again.")
+      setMessage({
+        type: "error",
+        text: "Error submitting appeal. Please try again.",
+      })
     } finally {
       setSubmitting(false)
     }
@@ -161,8 +178,8 @@ export function MyViolationsClient({ userId, userRole }: MyViolationsClientProps
   }
 
   return (
-    <div className="container mx-auto py-8 max-w-7xl">
-      <div className="mb-8">
+    <div className="container mx-auto py-4 max-w-7xl">
+      <div className="mb-4">
         <h1 className="text-3xl font-bold tracking-tight mb-2">
           My Violations
         </h1>
@@ -171,9 +188,22 @@ export function MyViolationsClient({ userId, userRole }: MyViolationsClientProps
         </p>
       </div>
 
+      {/* Success/Error Message */}
+      {message && (
+        <Alert className={`mb-4 ${message.type === "success" ? "border-green-200 bg-green-50" : "border-red-200 bg-red-50"}`}>
+          <AlertCircle className={`h-4 w-4 ${message.type === "success" ? "text-green-600" : "text-red-600"}`} />
+          <AlertTitle className={message.type === "success" ? "text-green-800" : "text-red-800"}>
+            {message.type === "success" ? "Success" : "Error"}
+          </AlertTitle>
+          <AlertDescription className={message.type === "success" ? "text-green-700" : "text-red-700"}>
+            {message.text}
+          </AlertDescription>
+        </Alert>
+      )}
+
       {/* Summary Alert */}
       {violations.some((v) => v.status === "ISSUED" && !isAppealDeadlinePassed(v.issuedDate)) && (
-        <Alert className="mb-6 border-orange-200 bg-orange-50">
+        <Alert className="mb-4 border-orange-200 bg-orange-50">
           <AlertCircle className="h-4 w-4 text-orange-600" />
           <AlertTitle className="text-orange-800">Action Required</AlertTitle>
           <AlertDescription className="text-orange-700">
@@ -185,13 +215,13 @@ export function MyViolationsClient({ userId, userRole }: MyViolationsClientProps
 
       {/* Violations Table */}
       <Card>
-        <CardHeader>
+        <CardHeader className="pb-3">
           <CardTitle>Violation Records</CardTitle>
           <CardDescription>
             Your compliance violations and enforcement history
           </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="pt-0">
           {violations.length === 0 ? (
             <div className="text-center py-12 text-muted-foreground">
               <FileText className="h-12 w-12 mx-auto mb-4 text-gray-400" />
@@ -203,25 +233,25 @@ export function MyViolationsClient({ userId, userRole }: MyViolationsClientProps
               <table className="w-full min-w-[1200px] border-collapse">
                 <thead>
                   <tr className="border-b">
-                    <th className="text-left p-4 font-medium text-sm" style={{ width: '140px' }}>
+                    <th className="text-left px-3 py-2 font-medium text-sm" style={{ width: '140px' }}>
                       Violation Type
                     </th>
-                    <th className="text-left p-4 font-medium text-sm" style={{ width: '400px' }}>
+                    <th className="text-left px-3 py-2 font-medium text-sm" style={{ width: '400px' }}>
                       Description
                     </th>
-                    <th className="text-left p-4 font-medium text-sm" style={{ width: '120px' }}>
+                    <th className="text-left px-3 py-2 font-medium text-sm" style={{ width: '120px' }}>
                       Fine Amount
                     </th>
-                    <th className="text-left p-4 font-medium text-sm" style={{ width: '110px' }}>
+                    <th className="text-left px-3 py-2 font-medium text-sm" style={{ width: '110px' }}>
                       Status
                     </th>
-                    <th className="text-left p-4 font-medium text-sm" style={{ width: '120px' }}>
+                    <th className="text-left px-3 py-2 font-medium text-sm" style={{ width: '120px' }}>
                       Issued Date
                     </th>
-                    <th className="text-left p-4 font-medium text-sm" style={{ width: '150px' }}>
+                    <th className="text-left px-3 py-2 font-medium text-sm" style={{ width: '150px' }}>
                       Appeal Deadline
                     </th>
-                    <th className="text-right p-4 font-medium text-sm" style={{ width: '160px' }}>
+                    <th className="text-right px-3 py-2 font-medium text-sm" style={{ width: '160px' }}>
                       Actions
                     </th>
                   </tr>
@@ -234,12 +264,12 @@ export function MyViolationsClient({ userId, userRole }: MyViolationsClientProps
 
                     return (
                       <tr key={violation.id} className="border-b">
-                        <td className="p-4 align-top">
+                        <td className="px-3 py-2 align-top">
                           <Badge variant="outline" className="whitespace-nowrap">
                             {violationTypeLabels[violation.violationType]}
                           </Badge>
                         </td>
-                        <td className="p-4 align-top" style={{
+                        <td className="px-3 py-2 align-top" style={{
                           maxWidth: '400px',
                           wordWrap: 'break-word',
                           overflowWrap: 'break-word',
@@ -247,22 +277,22 @@ export function MyViolationsClient({ userId, userRole }: MyViolationsClientProps
                         }}>
                           {violation.description}
                         </td>
-                        <td className="p-4 align-top whitespace-nowrap">
+                        <td className="px-3 py-2 align-top whitespace-nowrap">
                           {violation.fineAmount > 0 ? (
                             <span className="font-semibold">${violation.fineAmount}</span>
                           ) : (
                             <span className="text-muted-foreground text-sm">$0 (Warning)</span>
                           )}
                         </td>
-                        <td className="p-4 align-top">
+                        <td className="px-3 py-2 align-top">
                           <Badge className={statusColors[violation.status] + " whitespace-nowrap"}>
                             {violation.status}
                           </Badge>
                         </td>
-                        <td className="p-4 align-top text-sm whitespace-nowrap">
+                        <td className="px-3 py-2 align-top text-sm whitespace-nowrap">
                           {violation.issuedDate ? new Date(violation.issuedDate).toLocaleDateString() : "N/A"}
                         </td>
-                        <td className="p-4 align-top text-sm">
+                        <td className="px-3 py-2 align-top text-sm">
                           {violation.issuedDate ? (
                             <div className="space-y-0.5">
                               <div className="whitespace-nowrap">{deadline.toLocaleDateString()}</div>
@@ -279,7 +309,7 @@ export function MyViolationsClient({ userId, userRole }: MyViolationsClientProps
                             "N/A"
                           )}
                         </td>
-                        <td className="p-4 align-top text-right">
+                        <td className="px-3 py-2 align-top text-right">
                           {canAppeal(violation) && !deadlinePassed ? (
                             <Button
                               variant="default"
@@ -313,14 +343,14 @@ export function MyViolationsClient({ userId, userRole }: MyViolationsClientProps
       </Card>
 
       {/* Appeal Info */}
-      <Card className="mt-6">
-        <CardHeader>
+      <Card className="mt-4">
+        <CardHeader className="pb-3">
           <CardTitle className="flex items-center gap-2">
             <Gavel className="h-5 w-5" />
             Appeals Process
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-3 pt-0">
           <div>
             <h4 className="font-semibold mb-2">Your Right to Appeal (§3.809)</h4>
             <p className="text-sm text-muted-foreground mb-2">
@@ -328,7 +358,7 @@ export function MyViolationsClient({ userId, userRole }: MyViolationsClientProps
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-4">
+          <div className="grid md:grid-cols-2 gap-3">
             <div className="space-y-2">
               <h5 className="text-sm font-semibold">What to Include:</h5>
               <ul className="text-sm text-muted-foreground space-y-1 list-disc list-inside">

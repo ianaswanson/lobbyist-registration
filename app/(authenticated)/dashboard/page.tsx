@@ -88,14 +88,14 @@ export default async function DashboardPage() {
                   <a
                     href="/reports/lobbyist"
                     className="flex items-center justify-between rounded-lg border border-gray-200 p-4 hover:border-purple-500 hover:bg-purple-50 transition-colors focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2"
-                    aria-label="Submit lobbyist expense report"
+                    aria-label="View and manage expense reports"
                   >
                     <div>
                       <h4 className="font-semibold text-gray-900">
-                        Quarterly Reports
+                        My Expense Reports
                       </h4>
                       <p className="text-sm text-gray-600">
-                        Submit expense reports
+                        View and manage reports
                       </p>
                     </div>
                     <svg
@@ -148,14 +148,14 @@ export default async function DashboardPage() {
                 <a
                   href="/reports/employer"
                   className="flex items-center justify-between rounded-lg border border-gray-200 p-4 hover:border-orange-500 hover:bg-orange-50 transition-colors focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
-                  aria-label="Submit employer expense report"
+                  aria-label="View and manage expense reports"
                 >
                   <div>
                     <h4 className="font-semibold text-gray-900">
-                      Employer Expense Report
+                      My Expense Reports
                     </h4>
                     <p className="text-sm text-gray-600">
-                      Report lobbying expenditures
+                      View and manage reports
                     </p>
                   </div>
                   <svg
@@ -176,27 +176,56 @@ export default async function DashboardPage() {
               )}
 
               {session.user?.role === "BOARD_MEMBER" && (
-                <a
-                  href="/board-member/calendar"
-                  className="flex items-center justify-between rounded-lg border border-gray-200 p-4 hover:border-indigo-500 hover:bg-indigo-50 transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                  aria-label="Post calendar and lobbying receipts"
-                >
-                  <div>
-                    <h4 className="font-semibold text-gray-900">
-                      Calendar & Receipts
-                    </h4>
-                    <p className="text-sm text-gray-600">
-                      Post calendar and lobbying receipts
-                    </p>
-                  </div>
-                  <svg
-                    className="h-6 w-6 text-indigo-600"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    aria-hidden="true"
+                <>
+                  <a
+                    href="/board-member/calendar"
+                    className="flex items-center justify-between rounded-lg border border-gray-200 p-4 hover:border-indigo-500 hover:bg-indigo-50 transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                    aria-label="Post calendar and lobbying receipts"
                   >
-                    <path
+                    <div>
+                      <h4 className="font-semibold text-gray-900">
+                        Calendar & Receipts
+                      </h4>
+                      <p className="text-sm text-gray-600">
+                        Post calendar and lobbying receipts
+                      </p>
+                    </div>
+                    <svg
+                      className="h-6 w-6 text-indigo-600"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      aria-hidden="true"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M9 5l7 7-7 7"
+                      />
+                    </svg>
+                  </a>
+                  <a
+                    href="/reports/board-member"
+                    className="flex items-center justify-between rounded-lg border border-gray-200 p-4 hover:border-purple-500 hover:bg-purple-50 transition-colors focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2"
+                    aria-label="View submission history"
+                  >
+                    <div>
+                      <h4 className="font-semibold text-gray-900">
+                        My Submissions
+                      </h4>
+                      <p className="text-sm text-gray-600">
+                        View submission history
+                      </p>
+                    </div>
+                    <svg
+                      className="h-6 w-6 text-purple-600"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      aria-hidden="true"
+                    >
+                      <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
                       strokeWidth={2}
@@ -204,6 +233,7 @@ export default async function DashboardPage() {
                     />
                   </svg>
                 </a>
+                </>
               )}
 
               {session.user?.role === "ADMIN" && (
@@ -264,34 +294,36 @@ export default async function DashboardPage() {
                       />
                     </svg>
                   </a>
-                  <a
-                    href="/admin/notifications"
-                    className="flex items-center justify-between rounded-lg border border-gray-200 p-4 hover:border-yellow-500 hover:bg-yellow-50 transition-colors focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2"
-                    aria-label="Manage email notifications"
-                  >
-                    <div>
-                      <h4 className="font-semibold text-gray-900">
-                        Email Notifications
-                      </h4>
-                      <p className="text-sm text-gray-600">
-                        Manage automated reminders
-                      </p>
-                    </div>
-                    <svg
-                      className="h-6 w-6 text-yellow-600"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                      aria-hidden="true"
+                  {FEATURE_FLAGS.EMAIL_NOTIFICATIONS && (
+                    <a
+                      href="/admin/notifications"
+                      className="flex items-center justify-between rounded-lg border border-gray-200 p-4 hover:border-yellow-500 hover:bg-yellow-50 transition-colors focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2"
+                      aria-label="Manage email notifications"
                     >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M9 5l7 7-7 7"
-                      />
-                    </svg>
-                  </a>
+                      <div>
+                        <h4 className="font-semibold text-gray-900">
+                          Email Notifications
+                        </h4>
+                        <p className="text-sm text-gray-600">
+                          Manage automated reminders
+                        </p>
+                      </div>
+                      <svg
+                        className="h-6 w-6 text-yellow-600"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        aria-hidden="true"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M9 5l7 7-7 7"
+                        />
+                      </svg>
+                    </a>
+                  )}
                 </>
               )}
           </div>
