@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/db"
-import { ReportStatus } from "@prisma/client"
+import { ReportStatus, ExpenseReportType } from "@prisma/client"
 
 /**
  * Calculate due date for quarterly reports
@@ -102,7 +102,7 @@ export async function POST(request: NextRequest) {
     await prisma.expenseLineItem.deleteMany({
       where: {
         reportId: report.id,
-        reportType: "employer",
+        reportType: ExpenseReportType.EMPLOYER,
       },
     })
 
@@ -111,7 +111,7 @@ export async function POST(request: NextRequest) {
       await prisma.expenseLineItem.createMany({
         data: expenses.map((expense: any) => ({
           reportId: report.id,
-          reportType: "employer",
+          reportType: ExpenseReportType.EMPLOYER,
           officialName: expense.officialName,
           date: new Date(expense.date),
           payee: expense.payee,
@@ -133,27 +133,32 @@ export async function POST(request: NextRequest) {
     if (lobbyistPayments && lobbyistPayments.length > 0) {
       // For each payment, try to find the lobbyist by name
       for (const payment of lobbyistPayments) {
-        // Try to find lobbyist by name
+        // Try to find lobbyist by name (case-insensitive search for SQLite)
         const lobbyist = await prisma.lobbyist.findFirst({
           where: {
             name: {
               contains: payment.lobbyistName,
-              mode: 'insensitive',
             },
           },
         })
 
-        await prisma.employerLobbyistPayment.create({
-          data: {
-            employerReportId: report.id,
-            lobbyistId: lobbyist?.id || null, // Store null if lobbyist not found
-            amountPaid: payment.amountPaid,
-          },
-        })
+        // Only create payment if lobbyist is found (lobbyistId is required)
+        if (lobbyist) {
+          await prisma.employerLobbyistPayment.create({
+            data: {
+              employerReportId: report.id,
+              lobbyistId: lobbyist.id,
+              amountPaid: payment.amountPaid,
+            },
+          })
+        }
+        // TODO: Warn user if lobbyist not found in system
       }
     }
 
     // TODO: Send email notification if submitted (not draft)
+    // NOTE: Email notifications disabled via FEATURE_FLAGS.EMAIL_NOTIFICATIONS = false
+    // This is not required by ordinance, just a UX enhancement
     // TODO: Trigger compliance check if submitted
 
     return NextResponse.json({

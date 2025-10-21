@@ -181,7 +181,7 @@ model LobbyistExpenseReport {
   updatedAt              DateTime     @updatedAt
 
   lobbyist   Lobbyist          @relation(fields: [lobbyistId], references: [id], onDelete: Cascade)
-  lineItems  ExpenseLineItem[] @relation("LobbyistExpenses")
+  // Note: lineItems accessed via application-level query using reportId + reportType
 
   @@unique([lobbyistId, quarter, year])
   @@index([status])
@@ -207,11 +207,10 @@ model ExpenseLineItem {
   createdAt    DateTime          @default(now())
   updatedAt    DateTime          @updatedAt
 
-  // Polymorphic relations - named to avoid conflicts
-  // NOTE: These relations are managed at application level
-  // The database does NOT have FK constraints (removed via manual migration)
-  lobbyistReport LobbyistExpenseReport? @relation("LobbyistExpenses", fields: [reportId], references: [id], onDelete: Cascade)
-  employerReport EmployerExpenseReport? @relation("EmployerExpenses", fields: [reportId], references: [id], onDelete: Cascade)
+  // NOTE: Polymorphic relationship managed at application level
+  // reportId can point to either LobbyistExpenseReport.id OR EmployerExpenseReport.id
+  // reportType indicates which table to join with
+  // No Prisma relations defined = No FK constraints in database
 
   @@index([reportId])
   @@index([officialName])
@@ -234,7 +233,7 @@ model EmployerExpenseReport {
   updatedAt           DateTime     @updatedAt
 
   employer         Employer                  @relation(fields: [employerId], references: [id], onDelete: Cascade)
-  lineItems        ExpenseLineItem[]         @relation("EmployerExpenses")
+  // Note: lineItems accessed via application-level query using reportId + reportType
   lobbyistPayments EmployerLobbyistPayment[]
 
   @@unique([employerId, quarter, year])

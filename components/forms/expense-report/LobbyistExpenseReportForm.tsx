@@ -21,15 +21,20 @@ type InputMode = "manual" | "csv" | "paste"
 
 interface LobbyistExpenseReportFormProps {
   userId: string
+  initialQuarter?: string
+  initialYear?: number
 }
 
 export function LobbyistExpenseReportForm({
   userId,
+  initialQuarter,
+  initialYear,
 }: LobbyistExpenseReportFormProps) {
+  const router = useRouter()
   const [mode, setMode] = useState<InputMode>("manual")
   const [expenses, setExpenses] = useState<ExpenseLineItem[]>([])
-  const [quarter, setQuarter] = useState("Q1")
-  const [year, setYear] = useState(new Date().getFullYear())
+  const [quarter, setQuarter] = useState(initialQuarter || "Q1")
+  const [year, setYear] = useState(initialYear || new Date().getFullYear())
   const [uploadedDocuments, setUploadedDocuments] = useState<UploadedFile[]>([])
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
@@ -183,13 +188,17 @@ export function LobbyistExpenseReportForm({
       // Clear unsaved changes flag
       setHasUnsavedChanges(false)
 
-      // Clear message after 3 seconds
-      setTimeout(() => {
-        setMessage(null)
-      }, 3000)
-
-      // Note: We don't clear expenses anymore because they persist in the database
-      // and will be reloaded if the user changes quarter/year or refreshes the page
+      // If submitting final report (not draft), redirect to reports list after brief delay
+      if (!isDraft) {
+        setTimeout(() => {
+          router.push('/reports/lobbyist')
+        }, 1500)
+      } else {
+        // For drafts, just clear message after 3 seconds
+        setTimeout(() => {
+          setMessage(null)
+        }, 3000)
+      }
     } catch (error) {
       setMessage({
         type: "error",

@@ -138,27 +138,31 @@ export async function POST(
     }
 
     // 8. TODO: Send email notification
-    // const email = reportType === "lobbyist" ? report.lobbyist.email : report.employer.email
-    // if (action === "approve") {
-    //   await sendEmail({
-    //     to: email,
-    //     subject: "Expense Report Approved",
-    //     template: "report-approved",
-    //   })
-    // } else if (action === "reject") {
-    //   await sendEmail({
-    //     to: email,
-    //     subject: "Expense Report Rejected",
-    //     template: "report-rejected",
-    //     data: { reason: notes }
-    //   })
-    // } else {
-    //   await sendEmail({
-    //     to: email,
-    //     subject: "Clarification Needed for Expense Report",
-    //     template: "report-clarification",
-    //     data: { message: notes }
-    //   })
+    // NOTE: Email notifications disabled via FEATURE_FLAGS.EMAIL_NOTIFICATIONS = false
+    // This is not required by ordinance, just a UX enhancement
+    // if (FEATURE_FLAGS.EMAIL_NOTIFICATIONS) {
+    //   const email = reportType === "lobbyist" ? report.lobbyist.email : report.employer.email
+    //   if (action === "approve") {
+    //     await sendEmail({
+    //       to: email,
+    //       subject: "Expense Report Approved",
+    //       template: "report-approved",
+    //     })
+    //   } else if (action === "reject") {
+    //     await sendEmail({
+    //       to: email,
+    //       subject: "Expense Report Rejected",
+    //       template: "report-rejected",
+    //       data: { reason: notes }
+    //     })
+    //   } else {
+    //     await sendEmail({
+    //       to: email,
+    //       subject: "Clarification Needed for Expense Report",
+    //       template: "report-clarification",
+    //       data: { message: notes }
+    //     })
+    //   }
     // }
 
     // 9. Return success response

@@ -1,6 +1,8 @@
 "use client"
 
 import { useState } from "react"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import { AlertCircle, AlertTriangle } from "lucide-react"
 
 interface Props {
   onSuccess: () => void
@@ -12,11 +14,13 @@ export function HourLogForm({ onSuccess }: Props) {
   const [description, setDescription] = useState("")
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [thresholdWarning, setThresholdWarning] = useState<string | null>(null)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
     setError(null)
+    setThresholdWarning(null)
 
     try {
       const response = await fetch("/api/hours", {
@@ -38,9 +42,11 @@ export function HourLogForm({ onSuccess }: Props) {
 
       const data = await response.json()
 
-      // Show success message if threshold was just exceeded
+      // Show warning if threshold was just exceeded
       if (data.thresholdExceeded && data.totalHours >= 10 && data.totalHours - parseFloat(hours) < 10) {
-        alert("⚠️ You have exceeded 10 hours! Registration is now required within 3 working days.")
+        setThresholdWarning(
+          "You have exceeded 10 hours this quarter! Registration is now required within 3 working days."
+        )
       }
 
       // Reset form
@@ -60,9 +66,21 @@ export function HourLogForm({ onSuccess }: Props) {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       {error && (
-        <div className="rounded-md bg-red-50 p-4 border border-red-200">
-          <p className="text-sm text-red-800">{error}</p>
-        </div>
+        <Alert className="border-red-200 bg-red-50">
+          <AlertCircle className="h-4 w-4 text-red-600" />
+          <AlertTitle className="text-red-800">Error</AlertTitle>
+          <AlertDescription className="text-red-700">{error}</AlertDescription>
+        </Alert>
+      )}
+
+      {thresholdWarning && (
+        <Alert className="border-yellow-200 bg-yellow-50">
+          <AlertTriangle className="h-4 w-4 text-yellow-600" />
+          <AlertTitle className="text-yellow-800">Registration Required</AlertTitle>
+          <AlertDescription className="text-yellow-700">
+            {thresholdWarning}
+          </AlertDescription>
+        </Alert>
       )}
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">

@@ -203,10 +203,11 @@ export function ReviewReportsList({
             <div className="mt-4 flex items-center space-x-6">
               <button
                 type="button"
-                className="text-sm font-medium text-blue-600 hover:text-blue-700"
-                onClick={() => alert("View detailed report (not implemented)")}
+                disabled
+                className="text-sm font-medium text-gray-400 cursor-not-allowed"
+                title="Detailed report view coming soon"
               >
-                View Full Report →
+                View Full Report → (Coming Soon)
               </button>
             </div>
 

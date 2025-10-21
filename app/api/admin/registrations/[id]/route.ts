@@ -84,19 +84,23 @@ export async function POST(
     })
 
     // 7. TODO: Send email notification to lobbyist
-    // if (action === "approve") {
-    //   await sendEmail({
-    //     to: lobbyist.email,
-    //     subject: "Registration Approved",
-    //     template: "registration-approved",
-    //   })
-    // } else {
-    //   await sendEmail({
-    //     to: lobbyist.email,
-    //     subject: "Registration Requires Attention",
-    //     template: "registration-rejected",
-    //     data: { reason: notes }
-    //   })
+    // NOTE: Email notifications disabled via FEATURE_FLAGS.EMAIL_NOTIFICATIONS = false
+    // This is not required by ordinance, just a UX enhancement
+    // if (FEATURE_FLAGS.EMAIL_NOTIFICATIONS) {
+    //   if (action === "approve") {
+    //     await sendEmail({
+    //       to: lobbyist.email,
+    //       subject: "Registration Approved",
+    //       template: "registration-approved",
+    //     })
+    //   } else {
+    //     await sendEmail({
+    //       to: lobbyist.email,
+    //       subject: "Registration Requires Attention",
+    //       template: "registration-rejected",
+    //       data: { reason: notes }
+    //     })
+    //   }
     // }
 
     // 8. Return success response

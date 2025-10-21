@@ -163,7 +163,9 @@ export async function POST(req: Request) {
     // This would integrate with the file storage system
 
     // 8. TODO: Send email notification if submitted (not draft)
-    // if (!isDraft) {
+    // NOTE: Email notifications disabled via FEATURE_FLAGS.EMAIL_NOTIFICATIONS = false
+    // This is not required by ordinance, just a UX enhancement
+    // if (FEATURE_FLAGS.EMAIL_NOTIFICATIONS && !isDraft) {
     //   await sendEmail({
     //     to: session.user.email,
     //     subject: "Expense Report Submitted",

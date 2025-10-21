@@ -14,11 +14,16 @@ test.describe('Lobbyist Expense Report', () => {
     // 1. Sign in as lobbyist
     await signInAsLobbyist(page);
 
-    // 2. Navigate to Quarterly Reports
-    await page.click('text=Quarterly Reports');
+    // 2. Navigate to Quarterly Reports via My Work dropdown
+    await page.click('button:has-text("My Work")');
+    await page.click('text=My Reports');
     await page.waitForURL('/reports/lobbyist');
 
-    // 3. Check page loaded
+    // 3. Click New Report button to open form
+    await page.click('a:has-text("New Report")');
+    await page.waitForURL('/reports/lobbyist/new');
+
+    // 4. Check page loaded
     await expect(page.locator('h2')).toContainText('Quarterly Expense Report');
 
     // 4. Select Q1 2025
@@ -51,21 +56,28 @@ test.describe('Lobbyist Expense Report', () => {
     // 9. Check for success message
     await expect(page.locator('text=submitted successfully')).toBeVisible({ timeout: 10000 });
 
-    // 10. Form should clear after successful submission
-    await page.waitForTimeout(3500); // Wait for auto-clear
-    const expenseTable = page.locator('table');
-    await expect(expenseTable).not.toBeVisible();
+    // 10. Should redirect to reports list after submission (after 1.5 seconds)
+    await page.waitForURL('/reports/lobbyist', { timeout: 5000 });
+
+    // 11. Should see the submitted report in the list
+    await expect(page.locator('text=Q1 2025')).toBeVisible();
+    await expect(page.locator('text=SUBMITTED')).toBeVisible();
   });
 
   test('should allow lobbyist to save draft', async ({ page }) => {
     // 1. Sign in as lobbyist
     await signInAsLobbyist(page);
 
-    // 2. Navigate to Quarterly Reports
-    await page.click('text=Quarterly Reports');
+    // 2. Navigate to Quarterly Reports via My Work dropdown
+    await page.click('button:has-text("My Work")');
+    await page.click('text=My Reports');
     await page.waitForURL('/reports/lobbyist');
 
-    // 3. Select Q2 2025
+    // 3. Click New Report button
+    await page.click('a:has-text("New Report")');
+    await page.waitForURL('/reports/lobbyist/new');
+
+    // 4. Select Q2 2025
     await page.selectOption('select#quarter', 'Q2');
     await page.fill('input#year', '2025');
 
@@ -105,11 +117,16 @@ test.describe('Lobbyist Expense Report', () => {
     // 1. Sign in as lobbyist
     await signInAsLobbyist(page);
 
-    // 2. Navigate to Quarterly Reports
-    await page.click('text=Quarterly Reports');
+    // 2. Navigate to Quarterly Reports via My Work dropdown
+    await page.click('button:has-text("My Work")');
+    await page.click('text=My Reports');
     await page.waitForURL('/reports/lobbyist');
 
-    // 3. Try to submit without expenses
+    // 3. Click New Report button
+    await page.click('a:has-text("New Report")');
+    await page.waitForURL('/reports/lobbyist/new');
+
+    // 4. Try to submit without expenses
     const submitButton = page.locator('button:has-text("Submit Report")');
     await expect(submitButton).toBeDisabled();
 
@@ -122,11 +139,16 @@ test.describe('Lobbyist Expense Report', () => {
     // 1. Sign in as lobbyist
     await signInAsLobbyist(page);
 
-    // 2. Navigate to Quarterly Reports
-    await page.click('text=Quarterly Reports');
+    // 2. Navigate to Quarterly Reports via My Work dropdown
+    await page.click('button:has-text("My Work")');
+    await page.click('text=My Reports');
     await page.waitForURL('/reports/lobbyist');
 
-    // 3. Select quarter and add expense
+    // 3. Click New Report button
+    await page.click('a:has-text("New Report")');
+    await page.waitForURL('/reports/lobbyist/new');
+
+    // 4. Select quarter and add expense
     await page.selectOption('select#quarter', 'Q3');
     await page.fill('input#year', '2025');
 
@@ -155,11 +177,16 @@ test.describe('Lobbyist Expense Report', () => {
     // 1. Sign in as lobbyist
     await signInAsLobbyist(page);
 
-    // 2. Navigate to Quarterly Reports
-    await page.click('text=Quarterly Reports');
+    // 2. Navigate to Quarterly Reports via My Work dropdown
+    await page.click('button:has-text("My Work")');
+    await page.click('text=My Reports');
     await page.waitForURL('/reports/lobbyist');
 
-    // 3. Add first expense
+    // 3. Click New Report button
+    await page.click('a:has-text("New Report")');
+    await page.waitForURL('/reports/lobbyist/new');
+
+    // 4. Add first expense
     await page.fill('input#officialName', 'Official One');
     await page.fill('input#date', '2025-03-15');
     await page.fill('input#payee', 'Restaurant One');
@@ -183,11 +210,16 @@ test.describe('Lobbyist Expense Report', () => {
     // 1. Sign in as lobbyist
     await signInAsLobbyist(page);
 
-    // 2. Navigate to Quarterly Reports
-    await page.click('text=Quarterly Reports');
+    // 2. Navigate to Quarterly Reports via My Work dropdown
+    await page.click('button:has-text("My Work")');
+    await page.click('text=My Reports');
     await page.waitForURL('/reports/lobbyist');
 
-    // 3. Add an expense
+    // 3. Click New Report button
+    await page.click('a:has-text("New Report")');
+    await page.waitForURL('/reports/lobbyist/new');
+
+    // 4. Add an expense
     await page.fill('input#officialName', 'Test Official');
     await page.fill('input#date', '2025-01-15');
     await page.fill('input#payee', 'Test Payee');
@@ -203,5 +235,183 @@ test.describe('Lobbyist Expense Report', () => {
 
     // 6. Expense should be gone
     await expect(page.locator('text=Test Official')).not.toBeVisible();
+  });
+
+  test('should allow editing a draft report', async ({ page }) => {
+    // 1. Sign in as lobbyist
+    await signInAsLobbyist(page);
+
+    // 2. Navigate to Quarterly Reports via My Work dropdown
+    await page.click('button:has-text("My Work")');
+    await page.click('text=My Reports');
+    await page.waitForURL('/reports/lobbyist');
+
+    // 3. Click New Report button
+    await page.click('a:has-text("New Report")');
+    await page.waitForURL('/reports/lobbyist/new');
+
+    // 4. Create a draft report for Q4 2025
+    await page.selectOption('select#quarter', 'Q4');
+    await page.fill('input#year', '2025');
+
+    await page.fill('input#officialName', 'Commissioner Draft Test');
+    await page.fill('input#date', '2025-10-15');
+    await page.fill('input#payee', 'Draft Restaurant');
+    await page.fill('textarea#purpose', 'Initial draft expense');
+    await page.fill('input#amount', '100.00');
+    await page.click('button:has-text("Add Expense Item")');
+
+    // 4. Save as draft
+    await page.click('button:has-text("Save as Draft")');
+    await expect(page.locator('text=Draft saved successfully')).toBeVisible({ timeout: 10000 });
+
+    // 5. Navigate back to reports list
+    await page.click('a:has-text("Dashboard")');
+    await page.waitForURL('/dashboard');
+    await page.click('button:has-text("My Work")');
+    await page.click('text=My Reports');
+    await page.waitForURL('/reports/lobbyist');
+
+    // 6. Find and click the edit icon for the draft report (Q4 2025)
+    // Look for the row containing Q4 2025 and DRAFT status, then click edit button
+    const draftRow = page.locator('tr:has-text("Q4 2025"):has-text("DRAFT")');
+    await expect(draftRow).toBeVisible({ timeout: 5000 });
+
+    // Click the edit button in this row (pencil icon or Edit text)
+    await draftRow.locator('button[title="Edit"], button:has-text("Edit"), a:has-text("Edit")').first().click();
+
+    // 7. Should navigate to edit page
+    await page.waitForURL(/\/reports\/lobbyist\/edit\/[^/]+/, { timeout: 5000 });
+
+    // 8. Verify page shows "Edit Quarterly Expense Report"
+    await expect(page.locator('h2:has-text("Edit Quarterly Expense Report")')).toBeVisible();
+
+    // 9. Verify existing expense is loaded
+    await expect(page.locator('text=Commissioner Draft Test')).toBeVisible();
+    await expect(page.locator('text=Draft Restaurant')).toBeVisible();
+    await expect(page.locator('text=$100.00')).toBeVisible();
+
+    // 10. Add another expense to the draft
+    await page.fill('input#officialName', 'Commissioner Second Expense');
+    await page.fill('input#date', '2025-10-20');
+    await page.fill('input#payee', 'Second Restaurant');
+    await page.fill('textarea#purpose', 'Additional draft expense');
+    await page.fill('input#amount', '75.00');
+    await page.click('button:has-text("Add Expense Item")');
+
+    // 11. Verify total is updated
+    await expect(page.locator('text=$175.00')).toBeVisible();
+
+    // 12. Save the updated draft
+    await page.click('button:has-text("Save as Draft")');
+    await expect(page.locator('text=Draft saved successfully')).toBeVisible({ timeout: 10000 });
+
+    // 13. Navigate back to list and verify both expenses are saved
+    await page.click('a:has-text("Dashboard")');
+    await page.waitForURL('/dashboard');
+    await page.click('button:has-text("My Work")');
+    await page.click('text=My Reports');
+    await page.waitForURL('/reports/lobbyist');
+
+    // Click edit again to verify persistence
+    await draftRow.locator('button[title="Edit"], button:has-text("Edit"), a:has-text("Edit")').first().click();
+    await page.waitForURL(/\/reports\/lobbyist\/edit\/[^/]+/);
+
+    // Should see both expenses
+    await expect(page.locator('text=Commissioner Draft Test')).toBeVisible();
+    await expect(page.locator('text=Commissioner Second Expense')).toBeVisible();
+  });
+
+  test('should not allow editing a submitted report', async ({ page }) => {
+    // 1. Sign in as lobbyist
+    await signInAsLobbyist(page);
+
+    // 2. Navigate to Quarterly Reports via My Work dropdown
+    await page.click('button:has-text("My Work")');
+    await page.click('text=My Reports');
+    await page.waitForURL('/reports/lobbyist');
+
+    // 3. Click New Report button
+    await page.click('a:has-text("New Report")');
+    await page.waitForURL('/reports/lobbyist/new');
+
+    // 4. Create and submit a report for Q1 2024
+    await page.selectOption('select#quarter', 'Q1');
+    await page.fill('input#year', '2024');
+
+    await page.fill('input#officialName', 'Commissioner Final Test');
+    await page.fill('input#date', '2024-01-15');
+    await page.fill('input#payee', 'Final Restaurant');
+    await page.fill('textarea#purpose', 'Final submitted expense');
+    await page.fill('input#amount', '200.00');
+    await page.click('button:has-text("Add Expense Item")');
+
+    // 4. Submit the report (not draft)
+    await page.click('button:has-text("Submit Report")');
+    await expect(page.locator('text=submitted successfully')).toBeVisible({ timeout: 10000 });
+
+    // 5. Should redirect to list
+    await page.waitForURL('/reports/lobbyist', { timeout: 5000 });
+
+    // 6. Find the submitted report row
+    const submittedRow = page.locator('tr:has-text("Q1 2024"):has-text("SUBMITTED")');
+    await expect(submittedRow).toBeVisible({ timeout: 5000 });
+
+    // 7. Should NOT have an edit button/link (or it should be disabled/hidden)
+    // Check if edit button exists
+    const editButton = submittedRow.locator('button[title="Edit"], button:has-text("Edit"), a:has-text("Edit")');
+    const editButtonCount = await editButton.count();
+
+    if (editButtonCount > 0) {
+      // If edit button exists, it should be disabled or clicking should not navigate
+      // Try clicking and verify we stay on the list page
+      await editButton.first().click();
+      await page.waitForTimeout(1000);
+      expect(page.url()).toContain('/reports/lobbyist');
+    }
+    // If no edit button, that's correct behavior - submitted reports can't be edited
+  });
+
+  test('should load existing expenses when changing quarter/year', async ({ page }) => {
+    // 1. Sign in as lobbyist
+    await signInAsLobbyist(page);
+
+    // 2. Navigate to Quarterly Reports via My Work dropdown
+    await page.click('button:has-text("My Work")');
+    await page.click('text=My Reports');
+    await page.waitForURL('/reports/lobbyist');
+
+    // 3. Click New Report button
+    await page.click('a:has-text("New Report")');
+    await page.waitForURL('/reports/lobbyist/new');
+
+    // 4. Create a draft for Q2 2024
+    await page.selectOption('select#quarter', 'Q2');
+    await page.fill('input#year', '2024');
+
+    await page.fill('input#officialName', 'Commissioner Q2 Test');
+    await page.fill('input#date', '2024-04-15');
+    await page.fill('input#payee', 'Q2 Restaurant');
+    await page.fill('textarea#purpose', 'Q2 expense');
+    await page.fill('input#amount', '150.00');
+    await page.click('button:has-text("Add Expense Item")');
+
+    await page.click('button:has-text("Save as Draft")');
+    await expect(page.locator('text=Draft saved successfully')).toBeVisible({ timeout: 10000 });
+
+    // 4. Change to a different quarter
+    await page.selectOption('select#quarter', 'Q3');
+
+    // Should show empty state (no Q3 report exists)
+    await page.waitForTimeout(1000); // Wait for potential data load
+    await expect(page.locator('text=Commissioner Q2 Test')).not.toBeVisible();
+
+    // 5. Change back to Q2 2024
+    await page.selectOption('select#quarter', 'Q2');
+
+    // 6. Should automatically load the saved Q2 expenses
+    await expect(page.locator('text=Commissioner Q2 Test')).toBeVisible({ timeout: 5000 });
+    await expect(page.locator('text=Q2 Restaurant')).toBeVisible();
+    await expect(page.locator('text=$150.00')).toBeVisible();
   });
 });

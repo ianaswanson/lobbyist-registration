@@ -142,8 +142,8 @@ export async function POST(request: NextRequest) {
         violationType,
         description,
         fineAmount: fineAmount || 0,
-        status: "ACTIVE",
-        issueDate: new Date(),
+        status: "ISSUED",
+        issuedDate: new Date(),
         isFirstTimeViolation: sendEducationalLetter,
       },
     });

@@ -71,7 +71,7 @@ npm run test:e2e:report
 ## Test Data
 
 The tests use the demo accounts created by the seed script:
-- **Admin**: admin@multnomah.gov / admin123
+- **Admin**: admin@multnomah.gov / Demo2025!Admin
 - **Lobbyist**: lobbyist@example.com / lobbyist123
 - **Employer**: employer@example.com / employer123
 - **Board Member**: board@multnomah.gov / board123
@@ -116,7 +116,7 @@ test.describe('New Feature', () => {
     // Setup
     await page.goto('/auth/signin');
     await page.fill('input[name="email"]', 'admin@multnomah.gov');
-    await page.fill('input[name="password"]', 'admin123');
+    await page.fill('input[name="password"]', 'Demo2025!Admin');
     await page.click('button[type="submit"]');
     await page.waitForURL('/dashboard');
   });

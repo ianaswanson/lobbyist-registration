@@ -58,7 +58,7 @@ const MY_WORK_ITEMS: Record<UserRole, NavItem[]> = {
       label: "My Reports",
       href: "/reports/lobbyist",
       icon: DollarSign,
-      description: "Submit expense reports",
+      description: "View and manage expense reports",
     },
     {
       label: "My Violations",
@@ -72,7 +72,7 @@ const MY_WORK_ITEMS: Record<UserRole, NavItem[]> = {
       label: "Expense Reports",
       href: "/reports/employer",
       icon: Briefcase,
-      description: "Submit employer reports",
+      description: "View and manage employer reports",
     },
     {
       label: "My Violations",
@@ -87,6 +87,12 @@ const MY_WORK_ITEMS: Record<UserRole, NavItem[]> = {
       href: "/board-member/calendar",
       icon: Calendar,
       description: "Post calendar and receipts",
+    },
+    {
+      label: "My Submissions",
+      href: "/reports/board-member",
+      icon: FileText,
+      description: "View submission history",
     },
   ],
   ADMIN: [],
@@ -166,11 +172,15 @@ const ADMIN_SECTIONS: NavSection[] = [
         href: "/admin/contract-exceptions",
         icon: FileCheck,
       },
-      {
-        label: "Notifications",
-        href: "/admin/notifications",
-        icon: Bell,
-      },
+      ...(FEATURE_FLAGS.EMAIL_NOTIFICATIONS
+        ? [
+            {
+              label: "Notifications",
+              href: "/admin/notifications",
+              icon: Bell,
+            },
+          ]
+        : []),
     ],
   },
 ]
@@ -252,7 +262,7 @@ export function Navigation({ user }: NavigationProps) {
 
               {/* Desktop Navigation - Grouped Dropdowns */}
               <div className="hidden md:flex items-center space-x-1">
-                {/* My Work Dropdown (role-specific) */}
+                {/* My Work Dropdown (role-specific) - for non-admins */}
                 {myWorkItems.length > 0 && (
                   <div ref={myWorkRef} className="relative">
                     <button
@@ -296,49 +306,7 @@ export function Navigation({ user }: NavigationProps) {
                   </div>
                 )}
 
-                {/* Public Data Dropdown (everyone) */}
-                <div ref={publicDataRef} className="relative">
-                  <button
-                    onClick={() => {
-                      setIsPublicDataOpen(!isPublicDataOpen)
-                      setIsMyWorkOpen(false)
-                      setIsAdminOpen(false)
-                    }}
-                    className="flex items-center space-x-1 px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100 transition-colors"
-                  >
-                    <Search className="w-4 h-4" />
-                    <span>Public Data</span>
-                    <ChevronDown className={`w-4 h-4 transition-transform ${isPublicDataOpen ? "rotate-180" : ""}`} />
-                  </button>
-
-                  {/* Dropdown Menu */}
-                  {isPublicDataOpen && (
-                    <div className="absolute left-0 mt-2 w-56 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 z-50">
-                      <div className="py-1">
-                        {publicDataItems.map((item) => {
-                          const Icon = item.icon
-                          return (
-                            <Link
-                              key={item.href}
-                              href={item.href}
-                              onClick={() => setIsPublicDataOpen(false)}
-                              className={`flex items-center space-x-2 px-4 py-2 text-sm transition-colors ${
-                                isActive(item.href)
-                                  ? "bg-blue-50 text-blue-700"
-                                  : "text-gray-700 hover:bg-gray-100"
-                              }`}
-                            >
-                              <Icon className="w-4 h-4" />
-                              <span>{item.label}</span>
-                            </Link>
-                          )
-                        })}
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                {/* Admin Dropdown (admin only) */}
+                {/* Admin Dropdown (admin only) - shown FIRST for admins */}
                 {user.role === "ADMIN" && (
                   <div ref={adminRef} className="relative">
                     <button
@@ -389,6 +357,48 @@ export function Navigation({ user }: NavigationProps) {
                     )}
                   </div>
                 )}
+
+                {/* Public Data Dropdown (everyone) - shown AFTER role-specific menus */}
+                <div ref={publicDataRef} className="relative">
+                  <button
+                    onClick={() => {
+                      setIsPublicDataOpen(!isPublicDataOpen)
+                      setIsMyWorkOpen(false)
+                      setIsAdminOpen(false)
+                    }}
+                    className="flex items-center space-x-1 px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100 transition-colors"
+                  >
+                    <Search className="w-4 h-4" />
+                    <span>Public Data</span>
+                    <ChevronDown className={`w-4 h-4 transition-transform ${isPublicDataOpen ? "rotate-180" : ""}`} />
+                  </button>
+
+                  {/* Dropdown Menu */}
+                  {isPublicDataOpen && (
+                    <div className="absolute left-0 mt-2 w-56 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 z-50">
+                      <div className="py-1">
+                        {publicDataItems.map((item) => {
+                          const Icon = item.icon
+                          return (
+                            <Link
+                              key={item.href}
+                              href={item.href}
+                              onClick={() => setIsPublicDataOpen(false)}
+                              className={`flex items-center space-x-2 px-4 py-2 text-sm transition-colors ${
+                                isActive(item.href)
+                                  ? "bg-blue-50 text-blue-700"
+                                  : "text-gray-700 hover:bg-gray-100"
+                              }`}
+                            >
+                              <Icon className="w-4 h-4" />
+                              <span>{item.label}</span>
+                            </Link>
+                          )
+                        })}
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
 

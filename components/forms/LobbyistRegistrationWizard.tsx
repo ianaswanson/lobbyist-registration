@@ -1,11 +1,14 @@
 "use client"
 
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import { Step1PersonalInfo } from "./registration-steps/Step1PersonalInfo"
 import { Step2EmployerInfo } from "./registration-steps/Step2EmployerInfo"
 import { Step3Documentation } from "./registration-steps/Step3Documentation"
 import { Step4Review } from "./registration-steps/Step4Review"
 import { UploadedFile } from "@/components/FileUpload"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import { AlertCircle, Loader2 } from "lucide-react"
 
 type RegistrationData = {
   // Step 1: Personal Information
@@ -34,7 +37,10 @@ interface LobbyistRegistrationWizardProps {
 export function LobbyistRegistrationWizard({
   userId,
 }: LobbyistRegistrationWizardProps) {
+  const router = useRouter()
   const [currentStep, setCurrentStep] = useState(1)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null)
   const [formData, setFormData] = useState<RegistrationData>({
     name: "",
     email: "",
@@ -68,9 +74,42 @@ export function LobbyistRegistrationWizard({
   }
 
   const handleSubmit = async () => {
-    // TODO: Submit to API
-    console.log("Submitting registration:", formData)
-    alert("Registration submitted! (API integration pending)")
+    setIsSubmitting(true)
+    setMessage(null)
+
+    try {
+      const response = await fetch("/api/lobbyist", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to submit registration")
+      }
+
+      setMessage({
+        type: "success",
+        text: data.message || "Registration submitted successfully!",
+      })
+
+      // Redirect to dashboard after 2 seconds
+      setTimeout(() => {
+        router.push("/dashboard")
+      }, 2000)
+    } catch (error) {
+      console.error("Error submitting registration:", error)
+      setMessage({
+        type: "error",
+        text: error instanceof Error ? error.message : "Failed to submit registration. Please try again.",
+      })
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
@@ -133,6 +172,40 @@ export function LobbyistRegistrationWizard({
         </div>
       </div>
 
+      {/* Success/Error Message */}
+      {message && (
+        <div className="px-6 pt-6">
+          <Alert
+            className={`${
+              message.type === "success"
+                ? "border-green-200 bg-green-50"
+                : "border-red-200 bg-red-50"
+            }`}
+          >
+            <AlertCircle
+              className={`h-4 w-4 ${
+                message.type === "success" ? "text-green-600" : "text-red-600"
+              }`}
+            />
+            <AlertTitle
+              className={message.type === "success" ? "text-green-800" : "text-red-800"}
+            >
+              {message.type === "success" ? "Success" : "Error"}
+            </AlertTitle>
+            <AlertDescription
+              className={message.type === "success" ? "text-green-700" : "text-red-700"}
+            >
+              {message.text}
+              {message.type === "success" && (
+                <span className="ml-2 inline-block">
+                  Redirecting to dashboard...
+                </span>
+              )}
+            </AlertDescription>
+          </Alert>
+        </div>
+      )}
+
       {/* Step Content */}
       <div className="p-6">
         {currentStep === 1 && (
@@ -163,6 +236,7 @@ export function LobbyistRegistrationWizard({
             data={formData}
             onBack={prevStep}
             onSubmit={handleSubmit}
+            isSubmitting={isSubmitting}
           />
         )}
       </div>

@@ -5,7 +5,7 @@ test.describe('Navigation', () => {
     // Sign in as admin for navigation tests
     await page.goto('/auth/signin');
     await page.fill('input[name="email"]', 'admin@multnomah.gov');
-    await page.fill('input[name="password"]', 'admin123');
+    await page.fill('input[name="password"]', 'Demo2025!Admin');
     await page.click('button[type="submit"]');
     await page.waitForURL('/dashboard');
   });

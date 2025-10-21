@@ -16,7 +16,7 @@ const DEMO_ACCOUNTS: DemoAccount[] = [
     role: "Admin",
     name: "County Administrator",
     email: "admin@multnomah.gov",
-    password: "admin123",
+    password: "Demo2025!Admin",
     icon: "👤",
     color: "bg-purple-600 hover:bg-purple-700",
   },

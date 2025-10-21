@@ -43,7 +43,7 @@ test.describe('Authentication', () => {
     const passwordInput = page.locator('input[name="password"]');
 
     await expect(emailInput).toHaveValue('admin@multnomah.gov');
-    await expect(passwordInput).toHaveValue('admin123');
+    await expect(passwordInput).toHaveValue('Demo2025!Admin');
   });
 
   test('should successfully sign in as admin', async ({ page }) => {
@@ -51,7 +51,7 @@ test.describe('Authentication', () => {
 
     // Fill in admin credentials
     await page.fill('input[name="email"]', 'admin@multnomah.gov');
-    await page.fill('input[name="password"]', 'admin123');
+    await page.fill('input[name="password"]', 'Demo2025!Admin');
 
     // Submit form
     await page.click('button[type="submit"]');

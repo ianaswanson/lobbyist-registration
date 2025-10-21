@@ -1,6 +1,9 @@
 "use client"
 
 import { useState } from "react"
+import { useRouter } from "next/navigation"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import { AlertCircle, Loader2 } from "lucide-react"
 import { ICSUploadMode } from "./ICSUploadMode"
 import { CSVUploadMode } from "./CSVUploadMode"
 import { ReceiptsCSVUploadMode } from "./ReceiptsCSVUploadMode"
@@ -30,11 +33,14 @@ interface BoardMemberCalendarFormProps {
 export function BoardMemberCalendarForm({
   userId,
 }: BoardMemberCalendarFormProps) {
+  const router = useRouter()
   const [quarter, setQuarter] = useState("Q1")
   const [year, setYear] = useState(new Date().getFullYear())
   const [activeTab, setActiveTab] = useState<"calendar" | "receipts">("calendar")
   const [calendarInputMode, setCalendarInputMode] = useState<"manual" | "csv" | "ics">("manual")
   const [receiptsInputMode, setReceiptsInputMode] = useState<"manual" | "csv" | "paste">("manual")
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null)
 
   // Calendar state
   const [calendarEntries, setCalendarEntries] = useState<CalendarEntry[]>([])
@@ -119,33 +125,130 @@ export function BoardMemberCalendarForm({
     setReceipts([...receipts, ...newReceipts])
   }
 
-  const handleSaveDraft = () => {
-    console.log("Saving draft board member data:", {
-      quarter,
-      year,
-      calendarEntries,
-      receipts,
-      totalReceiptAmount,
-    })
-    alert(`Draft saved! (API integration pending)\nQuarter: ${quarter} ${year}\nCalendar Entries: ${calendarEntries.length}\nLobbying Receipts: ${receipts.length}\nTotal Receipt Amount: $${totalReceiptAmount.toFixed(2)}`)
+  const handleSaveDraft = async () => {
+    setIsSubmitting(true)
+    setMessage(null)
+
+    try {
+      const response = await fetch("/api/board-member-calendars", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          quarter,
+          year,
+          calendarEntries,
+          receipts,
+          isDraft: true,
+        }),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to save draft")
+      }
+
+      setMessage({
+        type: "success",
+        text: data.message || "Draft saved successfully!",
+      })
+
+      // Clear message after 5 seconds
+      setTimeout(() => {
+        setMessage(null)
+      }, 5000)
+    } catch (error) {
+      console.error("Error saving draft:", error)
+      setMessage({
+        type: "error",
+        text: error instanceof Error ? error.message : "Failed to save draft. Please try again.",
+      })
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   const handleSubmit = async () => {
-    // TODO: Submit to API
-    console.log("Submitting board member data:", {
-      quarter,
-      year,
-      calendarEntries,
-      receipts,
-      totalReceiptAmount,
-    })
-    alert(
-      `Board member data submitted! (API integration pending)\nQuarter: ${quarter} ${year}\nCalendar Entries: ${calendarEntries.length}\nLobbying Receipts: ${receipts.length}\nTotal Receipt Amount: $${totalReceiptAmount.toFixed(2)}`
-    )
+    setIsSubmitting(true)
+    setMessage(null)
+
+    try {
+      const response = await fetch("/api/board-member-calendars", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          quarter,
+          year,
+          calendarEntries,
+          receipts,
+          isDraft: false,
+        }),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to submit calendar and receipts")
+      }
+
+      setMessage({
+        type: "success",
+        text: data.message || "Calendar and receipts submitted successfully!",
+      })
+
+      // Redirect to dashboard after 2 seconds
+      setTimeout(() => {
+        router.push("/dashboard")
+      }, 2000)
+    } catch (error) {
+      console.error("Error submitting:", error)
+      setMessage({
+        type: "error",
+        text: error instanceof Error ? error.message : "Failed to submit. Please try again.",
+      })
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
     <div className="space-y-6">
+      {/* Success/Error Message */}
+      {message && (
+        <Alert
+          className={`${
+            message.type === "success"
+              ? "border-green-200 bg-green-50"
+              : "border-red-200 bg-red-50"
+          }`}
+        >
+          <AlertCircle
+            className={`h-4 w-4 ${
+              message.type === "success" ? "text-green-600" : "text-red-600"
+            }`}
+          />
+          <AlertTitle
+            className={message.type === "success" ? "text-green-800" : "text-red-800"}
+          >
+            {message.type === "success" ? "Success" : "Error"}
+          </AlertTitle>
+          <AlertDescription
+            className={message.type === "success" ? "text-green-700" : "text-red-700"}
+          >
+            {message.text}
+            {message.type === "success" && message.text.includes("submitted") && (
+              <span className="ml-2 inline-block">
+                Redirecting to dashboard...
+              </span>
+            )}
+          </AlertDescription>
+        </Alert>
+      )}
+
       {/* Quarter and Year Selection */}
       <div className="rounded-lg border bg-white p-6 shadow-sm">
         <h3 className="text-lg font-semibold text-gray-900 mb-4">
@@ -712,16 +815,20 @@ export function BoardMemberCalendarForm({
           <button
             type="button"
             onClick={handleSaveDraft}
-            className="rounded-md border border-gray-300 bg-white px-6 py-2 text-gray-700 hover:bg-gray-50"
+            disabled={isSubmitting}
+            className="flex items-center gap-2 rounded-md border border-gray-300 bg-white px-6 py-2 text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
           >
+            {isSubmitting && <Loader2 className="h-4 w-4 animate-spin" />}
             Save as Draft
           </button>
           <button
             type="button"
             onClick={handleSubmit}
-            className="rounded-md bg-green-600 px-6 py-2 text-white hover:bg-green-700"
+            disabled={isSubmitting}
+            className="flex items-center gap-2 rounded-md bg-green-600 px-6 py-2 text-white hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-50"
           >
-            Submit & Post Publicly
+            {isSubmitting && <Loader2 className="h-4 w-4 animate-spin" />}
+            {isSubmitting ? "Submitting..." : "Submit & Post Publicly"}
           </button>
         </div>
       )}

@@ -54,10 +54,10 @@ async function main() {
       email: 'admin@multnomah.gov',
       name: 'County Administrator',
       role: UserRole.ADMIN,
-      password: await hashPassword('admin123'),
+      password: await hashPassword('Demo2025!Admin'),
     },
   })
-  console.log('   ✓ Admin user created: admin@multnomah.gov / admin123')
+  console.log('   ✓ Admin user created: admin@multnomah.gov / Demo2025!Admin')
 
   const lobbyist1User = await prisma.user.create({
     data: {
@@ -119,6 +119,16 @@ async function main() {
   })
   console.log('   ✓ Public user created: public@example.com / public123')
 
+  const employer3User = await prisma.user.create({
+    data: {
+      email: 'contact@greenenergy.org',
+      name: 'Maria Rodriguez',
+      role: UserRole.EMPLOYER,
+      password: await hashPassword('employer123'),
+    },
+  })
+  console.log('   ✓ Employer user created: contact@greenenergy.org / employer123')
+
   // Create lobbyist profiles
   console.log('🎯 Creating lobbyist profiles...')
 
@@ -172,7 +182,18 @@ async function main() {
       businessDescription: 'Non-profit organization advocating for healthcare policy reform',
     },
   })
-  console.log('   ✓ Created 2 employer profiles')
+
+  const employer3 = await prisma.employer.create({
+    data: {
+      userId: employer3User.id,
+      name: 'Green Energy Coalition',
+      email: 'contact@greenenergy.org',
+      phone: '503-555-0203',
+      address: '444 Renewable Way, Portland, OR 97206',
+      businessDescription: 'Environmental advocacy organization promoting renewable energy and climate action',
+    },
+  })
+  console.log('   ✓ Created 3 employer profiles')
 
   // Link lobbyists to employers
   console.log('🔗 Linking lobbyists to employers...')
@@ -230,11 +251,59 @@ async function main() {
       lobbyistId: lobbyist1.id,
       quarter: Quarter.Q1,
       year: 2025,
-      totalFoodEntertainment: 350.00,
-      status: ReportStatus.SUBMITTED,
+      totalFoodEntertainment: 455.75,
+      status: ReportStatus.APPROVED,
       submittedAt: new Date('2025-04-10'),
       dueDate: new Date('2025-04-15'),
+      reviewedBy: adminUser.id,
+      reviewedAt: new Date('2025-04-11'),
     },
+  })
+
+  // Add expense line items for lobbyist1 Q1 report
+  await prisma.expenseLineItem.createMany({
+    data: [
+      {
+        reportId: lobbyistReport.id,
+        reportType: 'LOBBYIST',
+        officialName: 'Commissioner Williams',
+        date: new Date('2025-01-22'),
+        payee: 'Jake\'s Famous Crawfish',
+        purpose: 'Lunch meeting to discuss technology infrastructure budget priorities',
+        amount: 125.50,
+        isEstimate: false,
+      },
+      {
+        reportId: lobbyistReport.id,
+        reportType: 'LOBBYIST',
+        officialName: 'Commissioner Chen',
+        date: new Date('2025-02-05'),
+        payee: 'Canard',
+        purpose: 'Dinner meeting regarding green energy initiatives',
+        amount: 185.25,
+        isEstimate: false,
+      },
+      {
+        reportId: lobbyistReport.id,
+        reportType: 'LOBBYIST',
+        officialName: 'Deputy Director Sarah Martinez',
+        date: new Date('2025-03-10'),
+        payee: 'Starbucks',
+        purpose: 'Coffee meeting on IT procurement policies',
+        amount: 18.00,
+        isEstimate: false,
+      },
+      {
+        reportId: lobbyistReport.id,
+        reportType: 'LOBBYIST',
+        officialName: 'Commissioner Williams',
+        date: new Date('2025-03-28'),
+        payee: 'Le Pigeon',
+        purpose: 'Working dinner discussing broadband expansion',
+        amount: 127.00,
+        isEstimate: false,
+      },
+    ],
   })
 
   const employerReport = await prisma.employerExpenseReport.create({
@@ -242,14 +311,16 @@ async function main() {
       employerId: employer1.id,
       quarter: Quarter.Q1,
       year: 2025,
-      totalLobbyingSpend: 15000.00,
-      status: ReportStatus.SUBMITTED,
+      totalLobbyingSpend: 16235.50,
+      status: ReportStatus.APPROVED,
       submittedAt: new Date('2025-04-12'),
       dueDate: new Date('2025-04-15'),
+      reviewedBy: adminUser.id,
+      reviewedAt: new Date('2025-04-13'),
     },
   })
 
-  // Add lobbyist payments
+  // Add lobbyist payments for employer1 Q1
   await prisma.employerLobbyistPayment.create({
     data: {
       employerReportId: employerReport.id,
@@ -257,7 +328,139 @@ async function main() {
       amountPaid: 15000.00,
     },
   })
-  console.log('   ✓ Created expense reports')
+
+  // Add expense line items for employer1 Q1 report
+  await prisma.expenseLineItem.createMany({
+    data: [
+      {
+        reportId: employerReport.id,
+        reportType: 'EMPLOYER',
+        officialName: 'Board of Commissioners',
+        date: new Date('2025-01-18'),
+        payee: 'Portland Convention Center',
+        purpose: 'Technology industry forum and networking event',
+        amount: 850.00,
+        isEstimate: false,
+      },
+      {
+        reportId: employerReport.id,
+        reportType: 'EMPLOYER',
+        officialName: 'Commissioner Williams',
+        date: new Date('2025-02-14'),
+        payee: 'Urban Farmer',
+        purpose: 'Legislative stakeholder dinner',
+        amount: 285.50,
+        isEstimate: false,
+      },
+      {
+        reportId: employerReport.id,
+        reportType: 'EMPLOYER',
+        officialName: 'IT Department Staff',
+        date: new Date('2025-03-20'),
+        payee: 'Multnomah Athletic Club',
+        purpose: 'Technology demonstration and networking lunch',
+        amount: 100.00,
+        isEstimate: false,
+      },
+    ],
+  })
+
+  // Add lobbyist1 Q3 report (APPROVED - shows successful review)
+  const lobbyist1Q3Report = await prisma.lobbyistExpenseReport.create({
+    data: {
+      lobbyistId: lobbyist1.id,
+      quarter: Quarter.Q3,
+      year: 2025,
+      totalFoodEntertainment: 398.25,
+      status: ReportStatus.APPROVED,
+      submittedAt: new Date('2025-10-12'),
+      dueDate: new Date('2025-10-15'),
+      reviewedBy: adminUser.id,
+      reviewedAt: new Date('2025-10-13'),
+    },
+  })
+
+  await prisma.expenseLineItem.createMany({
+    data: [
+      {
+        reportId: lobbyist1Q3Report.id,
+        reportType: 'LOBBYIST',
+        officialName: 'Commissioner Chen',
+        date: new Date('2025-08-15'),
+        payee: 'Portland City Grill',
+        purpose: 'Lunch meeting on renewable energy contracts',
+        amount: 142.50,
+        isEstimate: false,
+      },
+      {
+        reportId: lobbyist1Q3Report.id,
+        reportType: 'LOBBYIST',
+        officialName: 'Commissioner Williams',
+        date: new Date('2025-09-22'),
+        payee: 'Departure Restaurant',
+        purpose: 'Dinner meeting regarding county IT modernization',
+        amount: 178.75,
+        isEstimate: false,
+      },
+      {
+        reportId: lobbyist1Q3Report.id,
+        reportType: 'LOBBYIST',
+        officialName: 'Budget Director James Thompson',
+        date: new Date('2025-09-30'),
+        payee: 'Dutch Bros',
+        purpose: 'Coffee meeting on Q4 budget priorities',
+        amount: 77.00,
+        isEstimate: false,
+      },
+    ],
+  })
+
+  // Add employer3 Q3 report (DRAFT - shows work in progress)
+  const employer3Q3Report = await prisma.employerExpenseReport.create({
+    data: {
+      employerId: employer3.id,
+      quarter: Quarter.Q3,
+      year: 2025,
+      totalLobbyingSpend: 8450.00,
+      status: ReportStatus.DRAFT,
+      dueDate: new Date('2025-10-15'),
+    },
+  })
+
+  await prisma.employerLobbyistPayment.create({
+    data: {
+      employerReportId: employer3Q3Report.id,
+      lobbyistId: lobbyist2.id,
+      amountPaid: 8000.00,
+    },
+  })
+
+  await prisma.expenseLineItem.createMany({
+    data: [
+      {
+        reportId: employer3Q3Report.id,
+        reportType: 'EMPLOYER',
+        officialName: 'Commissioner Chen',
+        date: new Date('2025-08-05'),
+        payee: 'Bamboo Sushi',
+        purpose: 'Working lunch on climate action plan',
+        amount: 250.00,
+        isEstimate: false,
+      },
+      {
+        reportId: employer3Q3Report.id,
+        reportType: 'EMPLOYER',
+        officialName: 'Environmental Services Director',
+        date: new Date('2025-09-10'),
+        payee: 'Portland Art Museum',
+        purpose: 'Green energy showcase event',
+        amount: 200.00,
+        isEstimate: false,
+      },
+    ],
+  })
+
+  console.log('   ✓ Created expense reports with comprehensive line items')
 
   // Create pending lobbyist registration for testing admin review
   console.log('⏳ Creating pending registrations for admin review...')
@@ -992,6 +1195,99 @@ The Chair concludes that granting this exception serves the County's best intere
   })
   console.log('   ✓ Created 3 contract exceptions')
 
+  // Create hour logs (show 10-hour threshold scenarios)
+  console.log('⏱️  Creating hour logs...')
+  await prisma.hourLog.createMany({
+    data: [
+      // Lobbyist1 logs - showing progression toward 10-hour threshold
+      {
+        lobbyistId: lobbyist1.id,
+        activityDate: new Date('2025-10-01'),
+        hours: 2.5,
+        description: 'Prepared briefing materials for county commissioners on IT modernization proposal',
+        quarter: Quarter.Q4,
+        year: 2025,
+      },
+      {
+        lobbyistId: lobbyist1.id,
+        activityDate: new Date('2025-10-08'),
+        hours: 3.0,
+        description: 'Attended board meeting and provided testimony on broadband expansion',
+        quarter: Quarter.Q4,
+        year: 2025,
+      },
+      {
+        lobbyistId: lobbyist1.id,
+        activityDate: new Date('2025-10-15'),
+        hours: 4.5,
+        description: 'Met with IT department staff to discuss procurement timeline and requirements',
+        quarter: Quarter.Q4,
+        year: 2025,
+      },
+      {
+        lobbyistId: lobbyist1.id,
+        activityDate: new Date('2025-10-22'),
+        hours: 5.0,
+        description: 'Drafted policy recommendations and coordinated with county legal counsel',
+        quarter: Quarter.Q4,
+        year: 2025,
+      },
+      {
+        lobbyistId: lobbyist1.id,
+        activityDate: new Date('2025-11-05'),
+        hours: 6.0,
+        description: 'Organized stakeholder roundtable with commissioners and technology vendors',
+        quarter: Quarter.Q4,
+        year: 2025,
+      },
+      {
+        lobbyistId: lobbyist1.id,
+        activityDate: new Date('2025-11-12'),
+        hours: 4.5,
+        description: 'Follow-up meetings with budget committee on funding allocation',
+        quarter: Quarter.Q4,
+        year: 2025,
+      },
+      // Total: 25.5 hours (exceeds 10-hour threshold, triggers registration requirement)
+
+      // Lobbyist2 logs - regular quarterly tracking
+      {
+        lobbyistId: lobbyist2.id,
+        activityDate: new Date('2025-10-10'),
+        hours: 4.0,
+        description: 'Healthcare policy briefing with county health department leadership',
+        quarter: Quarter.Q4,
+        year: 2025,
+      },
+      {
+        lobbyistId: lobbyist2.id,
+        activityDate: new Date('2025-10-18'),
+        hours: 5.5,
+        description: 'Testified at public hearing on Medicaid expansion and met with commissioners',
+        quarter: Quarter.Q4,
+        year: 2025,
+      },
+      {
+        lobbyistId: lobbyist2.id,
+        activityDate: new Date('2025-11-01'),
+        hours: 3.5,
+        description: 'Research and preparation of mental health services white paper for board review',
+        quarter: Quarter.Q4,
+        year: 2025,
+      },
+      {
+        lobbyistId: lobbyist2.id,
+        activityDate: new Date('2025-11-20'),
+        hours: 5.0,
+        description: 'Coalition building meetings with healthcare stakeholders and county staff',
+        quarter: Quarter.Q4,
+        year: 2025,
+      },
+      // Total: 18.0 hours (exceeds 10-hour threshold)
+    ],
+  })
+  console.log('   ✓ Created hour logs (2 lobbyists, 10 entries, demonstrating 10-hour threshold)')
+
   console.log('')
   console.log('✅ Database seeding completed successfully!')
   console.log('')
@@ -1001,7 +1297,7 @@ The Chair concludes that granting this exception serves the County's best intere
   console.log('')
   console.log('🔑 ADMIN:')
   console.log('   Email:    admin@multnomah.gov')
-  console.log('   Password: admin123')
+  console.log('   Password: Demo2025!Admin')
   console.log('')
   console.log('🎯 LOBBYIST #1:')
   console.log('   Email:    john.doe@lobbying.com')
@@ -1011,12 +1307,20 @@ The Chair concludes that granting this exception serves the County's best intere
   console.log('   Email:    jane.smith@advocacy.com')
   console.log('   Password: lobbyist123')
   console.log('')
-  console.log('🏢 EMPLOYER:')
+  console.log('🏢 EMPLOYER #1:')
   console.log('   Email:    contact@techcorp.com')
   console.log('   Password: employer123')
   console.log('')
-  console.log('🏛️  BOARD MEMBER:')
+  console.log('🏢 EMPLOYER #2:')
+  console.log('   Email:    contact@greenenergy.org')
+  console.log('   Password: employer123')
+  console.log('')
+  console.log('🏛️  BOARD MEMBER #1:')
   console.log('   Email:    commissioner@multnomah.gov')
+  console.log('   Password: board123')
+  console.log('')
+  console.log('🏛️  BOARD MEMBER #2:')
+  console.log('   Email:    commissioner.chen@multnomah.gov')
   console.log('   Password: board123')
   console.log('')
   console.log('👥 PUBLIC USER:')

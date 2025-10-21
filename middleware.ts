@@ -13,6 +13,9 @@ export default auth((req) => {
     "/auth/error",
     "/search", // Public search interface
     "/view", // Public data viewing
+    "/contract-exceptions", // Public contract exceptions (§9.230)
+    "/board-calendars", // Public board member calendars (§3.001)
+    "/exemption-checker", // Public exemption checker tool
   ]
 
   // API routes that should be public
