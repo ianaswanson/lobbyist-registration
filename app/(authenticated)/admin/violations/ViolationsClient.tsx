@@ -63,6 +63,7 @@ export function ViolationsClient() {
   const [summary, setSummary] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
   // Form state for new violation
   const [newViolation, setNewViolation] = useState({
@@ -108,6 +109,7 @@ export function ViolationsClient() {
 
   const handleIssueViolation = async () => {
     setIsSubmitting(true);
+    setMessage(null);
     try {
       const response = await fetch("/api/violations", {
         method: "POST",
@@ -125,7 +127,7 @@ export function ViolationsClient() {
       });
 
       if (response.ok) {
-        alert("Violation issued successfully!");
+        setMessage({ type: "success", text: "Violation issued successfully!" });
         setIsIssueDialogOpen(false);
         setNewViolation({
           entityType: "",
@@ -138,13 +140,16 @@ export function ViolationsClient() {
         // Refresh data
         fetchViolations();
         fetchSummary();
+
+        // Clear message after 5 seconds
+        setTimeout(() => setMessage(null), 5000);
       } else {
         const error = await response.json();
-        alert(`Error: ${error.error || "Failed to issue violation"}`);
+        setMessage({ type: "error", text: error.error || "Failed to issue violation" });
       }
     } catch (error) {
       console.error("Error issuing violation:", error);
-      alert("Error issuing violation. Please try again.");
+      setMessage({ type: "error", text: "Error issuing violation. Please try again." });
     } finally {
       setIsSubmitting(false);
     }
@@ -179,7 +184,40 @@ export function ViolationsClient() {
             Monitor compliance violations, issue fines, and track appeals per §3.808
           </p>
         </div>
+      </div>
 
+      {/* Success/Error Message */}
+      {message && (
+        <Alert
+          className={`mb-6 ${
+            message.type === "success"
+              ? "border-green-200 bg-green-50"
+              : "border-red-200 bg-red-50"
+          }`}
+        >
+          <AlertCircle
+            className={`h-4 w-4 ${
+              message.type === "success" ? "text-green-600" : "text-red-600"
+            }`}
+          />
+          <AlertTitle
+            className={
+              message.type === "success" ? "text-green-800" : "text-red-800"
+            }
+          >
+            {message.type === "success" ? "Success" : "Error"}
+          </AlertTitle>
+          <AlertDescription
+            className={
+              message.type === "success" ? "text-green-700" : "text-red-700"
+            }
+          >
+            {message.text}
+          </AlertDescription>
+        </Alert>
+      )}
+
+      <div className="flex justify-end mb-8">
         <Dialog open={isIssueDialogOpen} onOpenChange={setIsIssueDialogOpen}>
           <DialogTrigger asChild>
             <Button size="lg">

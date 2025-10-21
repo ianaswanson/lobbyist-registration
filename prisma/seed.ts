@@ -678,8 +678,220 @@ async function main() {
   })
   console.log('   ✓ Created board lobbying receipts (4 quarters, 2 commissioners)')
 
-  // Skip violation for now due to schema complexity
-  console.log('⚠️  Skipping violations (complex foreign keys)')
+  // Create violations and appeals
+  console.log('⚠️  Creating violations and appeals...')
+
+  // Violation 1: Late registration (ISSUED status)
+  const violation1 = await prisma.violation.create({
+    data: {
+      entityType: 'LOBBYIST',
+      entityId: pendingLobbyist.id,
+      violationType: 'LATE_REGISTRATION',
+      description: 'Failed to register within 3 working days after exceeding 10 hours threshold. Registration was submitted 7 days after threshold was reached.',
+      fineAmount: 250.00,
+      status: 'ISSUED',
+      issuedDate: new Date('2025-10-20'),
+      isFirstTimeViolation: true,
+    },
+  })
+
+  // Violation 2: Late report (ISSUED status, will have appeal)
+  const violation2 = await prisma.violation.create({
+    data: {
+      entityType: 'LOBBYIST_REPORT',
+      entityId: pendingLobbyistReport.id,
+      violationType: 'LATE_REPORT',
+      description: 'Q2 2025 expense report submitted 5 days after the July 15 deadline.',
+      fineAmount: 150.00,
+      status: 'ISSUED',
+      issuedDate: new Date('2025-07-20'),
+      isFirstTimeViolation: false,
+    },
+  })
+
+  // Violation 3: Missing authorization (APPEALED status)
+  const violation3 = await prisma.violation.create({
+    data: {
+      entityType: 'LOBBYIST',
+      entityId: lobbyist2.id,
+      violationType: 'MISSING_AUTHORIZATION',
+      description: 'Authorization document from employer not provided within required timeframe.',
+      fineAmount: 200.00,
+      status: 'APPEALED',
+      issuedDate: new Date('2025-09-15'),
+      isFirstTimeViolation: false,
+    },
+  })
+
+  // Violation 4: False statement (UPHELD after appeal)
+  const violation4 = await prisma.violation.create({
+    data: {
+      entityType: 'LOBBYIST_REPORT',
+      entityId: lobbyistReport.id,
+      violationType: 'FALSE_STATEMENT',
+      description: 'Expense report contained inaccurate information regarding lobbying activities.',
+      fineAmount: 500.00,
+      status: 'UPHELD',
+      issuedDate: new Date('2025-08-01'),
+      isFirstTimeViolation: false,
+    },
+  })
+
+  // Violation 5: Warning only (no fine)
+  const violation5 = await prisma.violation.create({
+    data: {
+      entityType: 'EMPLOYER_REPORT',
+      entityId: employerReport.id,
+      violationType: 'LATE_REPORT',
+      description: 'First-time late report submission. Educational letter sent instead of fine.',
+      fineAmount: 0.00,
+      status: 'ISSUED',
+      issuedDate: new Date('2025-04-20'),
+      isFirstTimeViolation: true,
+    },
+  })
+
+  console.log('   ✓ Created 5 violations')
+
+  // Create appeals
+  console.log('📋 Creating appeals...')
+
+  // Appeal 1: Pending (awaiting review)
+  const appeal1 = await prisma.appeal.create({
+    data: {
+      violationId: violation2.id,
+      reason: `I respectfully appeal this violation on the following grounds:
+
+1. TECHNICAL DIFFICULTIES: On July 14, 2025, I attempted to submit my quarterly expense report through the online portal. However, I encountered a technical error (Error Code: 500) that prevented submission. I have screenshots documenting this error.
+
+2. GOOD FAITH EFFORT: I made multiple attempts to submit the report on both July 14 and July 15 (the due date). After repeated failures, I contacted the County IT helpdesk on July 15 at 3:47 PM (ticket #2025-0715-047).
+
+3. PROMPT COMPLETION: Once the technical issue was resolved, I submitted the report immediately on July 16, just one day after the deadline.
+
+4. NO PRIOR VIOLATIONS: This is my first late submission in 3 years of quarterly reporting. My compliance history demonstrates a pattern of timely submissions.
+
+I request that this violation be dismissed given the technical circumstances beyond my control and my documented good faith efforts to comply with the deadline.`,
+      submittedDate: new Date('2025-07-25'),
+      appealDeadline: new Date('2025-08-19'), // 30 days from violation
+      status: 'PENDING',
+    },
+  })
+
+  // Appeal 2: Scheduled for hearing
+  const appeal2 = await prisma.appeal.create({
+    data: {
+      violationId: violation3.id,
+      reason: `I am appealing this violation because I believe there was a misunderstanding about the timeline requirements:
+
+1. AUTHORIZATION WAS PROVIDED: I submitted my initial registration on September 1, 2025, which included the authorization document from my employer (Healthcare Advocates Group).
+
+2. DOCUMENT RECEIPT CONFIRMED: I have email confirmation from the County system showing that the authorization document was received on September 1 at 2:34 PM.
+
+3. ADMINISTRATIVE ERROR: It appears there may have been an administrative error in processing my registration packet. The violation notice states the authorization was "not provided," but my records show it was included in the original submission.
+
+4. COMPLIANCE INTENT: I have always intended to comply fully with all registration requirements and took every reasonable step to ensure complete documentation.
+
+I request a hearing to present my email confirmations and submission receipts demonstrating that the authorization document was properly submitted.`,
+      submittedDate: new Date('2025-09-20'),
+      appealDeadline: new Date('2025-10-15'),
+      status: 'SCHEDULED',
+      hearingDate: new Date('2025-10-28T14:00:00'),
+    },
+  })
+
+  // Appeal 3: Decided - Upheld
+  const appeal3 = await prisma.appeal.create({
+    data: {
+      violationId: violation4.id,
+      reason: `I appeal this violation because I believe the characterization as a "false statement" is incorrect:
+
+The expense report in question accurately reflected my understanding of the lobbying activities at the time of submission. Any discrepancies were the result of unintentional errors, not deliberate misrepresentation.
+
+Specifically:
+- The meeting dates were transcribed from my calendar, which I later discovered had incorrect entries due to a calendar sync error
+- The expense amounts were estimates based on typical costs for similar events
+- I had no intent to deceive or provide false information
+
+I request that this violation be reduced from "false statement" to a lesser violation category, or dismissed entirely given the unintentional nature of the errors.`,
+      submittedDate: new Date('2025-08-05'),
+      appealDeadline: new Date('2025-08-31'),
+      status: 'DECIDED',
+      hearingDate: new Date('2025-08-20T10:00:00'),
+      decidedAt: new Date('2025-08-25'),
+      decision: `After careful review of the evidence and the appellant's arguments, the appeal is DENIED and the violation is UPHELD.
+
+FINDINGS:
+
+1. SUBSTANTIAL INACCURACIES: The expense report contained multiple significant discrepancies beyond simple transcription errors. Three separate meetings were reported on dates when no meetings occurred, and expense amounts differed from receipts by more than 40%.
+
+2. PATTERN OF ERRORS: This is not an isolated incident. The appellant's previous two quarterly reports also contained similar discrepancies, though of lesser magnitude.
+
+3. RECKLESS DISREGARD: Even if the errors were unintentional, they demonstrate a reckless disregard for accuracy requirements. Lobbyists have a heightened duty to ensure accuracy in public filings.
+
+4. REASONABLE VERIFICATION: The appellant had ample opportunity to verify information before submission, including cross-checking calendar entries and reviewing actual receipts rather than relying on estimates.
+
+CONCLUSION:
+
+While the Board accepts that the appellant may not have intentionally provided false information, the level of inaccuracy rises to the level of a violation under §3.807. The $500 fine is appropriate given the severity of the inaccuracies and the pattern of reporting issues.
+
+The violation stands as issued. The fine must be paid within 30 days.`,
+    },
+  })
+
+  // Appeal 4: Decided - Overturned
+  const oldViolation = await prisma.violation.create({
+    data: {
+      entityType: 'LOBBYIST',
+      entityId: lobbyist1.id,
+      violationType: 'MISSING_REPORT',
+      description: 'Q4 2024 expense report not received by January 15, 2025 deadline.',
+      fineAmount: 300.00,
+      status: 'OVERTURNED',
+      issuedDate: new Date('2025-01-20'),
+      isFirstTimeViolation: false,
+    },
+  })
+
+  const appeal4 = await prisma.appeal.create({
+    data: {
+      violationId: oldViolation.id,
+      reason: `I appeal this violation because the report was submitted on time, but appears to have been lost in processing:
+
+1. TIMELY SUBMISSION: I submitted my Q4 2024 expense report via the online portal on January 12, 2025, three days before the deadline.
+
+2. CONFIRMATION RECEIVED: I have a system-generated confirmation email (attached) showing successful submission at 4:23 PM on January 12.
+
+3. TECHNICAL ISSUE: The County has acknowledged that there was a database migration issue in mid-January that resulted in some submitted reports not appearing in the admin system.
+
+4. RESUBMISSION: Upon learning of this issue, I immediately resubmitted the report on January 25 when the system was restored.
+
+I request that this violation be dismissed as the late receipt was due to County system issues, not any failure on my part.`,
+      submittedDate: new Date('2025-01-25'),
+      appealDeadline: new Date('2025-02-19'),
+      status: 'DECIDED',
+      hearingDate: new Date('2025-02-05T13:00:00'),
+      decidedAt: new Date('2025-02-10'),
+      decision: `After review of the evidence, including system logs and the appellant's submission confirmation, the appeal is GRANTED and the violation is OVERTURNED.
+
+FINDINGS:
+
+1. TIMELY SUBMISSION VERIFIED: System logs confirm that the appellant's Q4 2024 expense report was successfully submitted on January 12, 2025 at 4:23 PM, three days before the deadline.
+
+2. COUNTY SYSTEM ERROR: The IT Department has confirmed that a database migration performed on January 16-17, 2025 inadvertently failed to migrate approximately 35 submitted reports to the new system.
+
+3. APPELLANT NOT AT FAULT: The appellant took all required actions to comply with the deadline. The late availability of the report was entirely due to County system issues beyond the appellant's control.
+
+4. GOOD FAITH COMPLIANCE: The appellant immediately resubmitted when notified of the issue, demonstrating good faith compliance.
+
+CONCLUSION:
+
+It would be unjust to penalize the appellant for a system error that was not their responsibility. The violation is overturned and the fine is dismissed.
+
+The County apologizes for the inconvenience caused by the system migration issue.`,
+    },
+  })
+
+  console.log('   ✓ Created 4 appeals (1 pending, 1 scheduled, 2 decided)')
 
   // Create audit log entries
   console.log('📝 Creating audit log entries...')

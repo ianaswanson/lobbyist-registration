@@ -49,6 +49,7 @@ export function ContractExceptionsClient() {
   const [selectedException, setSelectedException] = useState<ContractException | null>(null)
   const [submitting, setSubmitting] = useState(false)
   const [showUnposted, setShowUnposted] = useState(true)
+  const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null)
 
   // Form state
   const [formData, setFormData] = useState({
@@ -128,11 +129,12 @@ export function ContractExceptionsClient() {
       !formData.approvedBy ||
       !formData.approvedDate
     ) {
-      alert("Please fill in all required fields")
+      setMessage({ type: "error", text: "Please fill in all required fields" })
       return
     }
 
     setSubmitting(true)
+    setMessage(null)
     try {
       const url = editMode && selectedException
         ? `/api/contract-exceptions/${selectedException.id}`
@@ -149,16 +151,22 @@ export function ContractExceptionsClient() {
       })
 
       if (response.ok) {
-        alert(editMode ? "Exception updated successfully!" : "Exception created successfully!")
+        setMessage({
+          type: "success",
+          text: editMode ? "Exception updated successfully!" : "Exception created successfully!",
+        })
         setDialogOpen(false)
         fetchExceptions()
+
+        // Clear message after 5 seconds
+        setTimeout(() => setMessage(null), 5000)
       } else {
         const error = await response.json()
-        alert(`Error: ${error.error || "Failed to save exception"}`)
+        setMessage({ type: "error", text: error.error || "Failed to save exception" })
       }
     } catch (error) {
       console.error("Error saving exception:", error)
-      alert("Error saving exception. Please try again.")
+      setMessage({ type: "error", text: "Error saving exception. Please try again." })
     } finally {
       setSubmitting(false)
     }
@@ -169,24 +177,29 @@ export function ContractExceptionsClient() {
       return
     }
 
+    setMessage(null)
     try {
       const response = await fetch(`/api/contract-exceptions/${id}`, {
         method: "DELETE",
       })
 
       if (response.ok) {
-        alert("Exception deleted successfully!")
+        setMessage({ type: "success", text: "Exception deleted successfully!" })
         fetchExceptions()
+
+        // Clear message after 5 seconds
+        setTimeout(() => setMessage(null), 5000)
       } else {
-        alert("Failed to delete exception")
+        setMessage({ type: "error", text: "Failed to delete exception" })
       }
     } catch (error) {
       console.error("Error deleting exception:", error)
-      alert("Error deleting exception. Please try again.")
+      setMessage({ type: "error", text: "Error deleting exception. Please try again." })
     }
   }
 
   const handleTogglePosted = async (exception: ContractException) => {
+    setMessage(null)
     try {
       const response = await fetch(`/api/contract-exceptions/${exception.id}`, {
         method: "PATCH",
@@ -199,16 +212,20 @@ export function ContractExceptionsClient() {
       })
 
       if (response.ok) {
-        alert(
-          exception.publiclyPostedDate
+        setMessage({
+          type: "success",
+          text: exception.publiclyPostedDate
             ? "Exception removed from public posting"
-            : "Exception publicly posted!"
-        )
+            : "Exception publicly posted!",
+        })
         fetchExceptions()
+
+        // Clear message after 5 seconds
+        setTimeout(() => setMessage(null), 5000)
       }
     } catch (error) {
       console.error("Error toggling posted status:", error)
-      alert("Error updating posted status")
+      setMessage({ type: "error", text: "Error updating posted status" })
     }
   }
 
@@ -230,6 +247,37 @@ export function ContractExceptionsClient() {
           Manage exceptions to §9.230(C) 1-year cooling-off period for former County officials
         </p>
       </div>
+
+      {/* Success/Error Message */}
+      {message && (
+        <Alert
+          className={`mb-6 ${
+            message.type === "success"
+              ? "border-green-200 bg-green-50"
+              : "border-red-200 bg-red-50"
+          }`}
+        >
+          <AlertCircle
+            className={`h-4 w-4 ${
+              message.type === "success" ? "text-green-600" : "text-red-600"
+            }`}
+          />
+          <AlertTitle
+            className={
+              message.type === "success" ? "text-green-800" : "text-red-800"
+            }
+          >
+            {message.type === "success" ? "Success" : "Error"}
+          </AlertTitle>
+          <AlertDescription
+            className={
+              message.type === "success" ? "text-green-700" : "text-red-700"
+            }
+          >
+            {message.text}
+          </AlertDescription>
+        </Alert>
+      )}
 
       {/* Info Alert */}
       <Alert className="mb-6 border-blue-200 bg-blue-50">

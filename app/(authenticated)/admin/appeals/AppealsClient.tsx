@@ -25,7 +25,7 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Input } from "@/components/ui/input"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
-import { Gavel, Calendar, CheckCircle, XCircle, Clock, FileText } from "lucide-react"
+import { Gavel, Calendar, CheckCircle, XCircle, Clock, FileText, AlertCircle } from "lucide-react"
 
 const violationTypeLabels: Record<string, string> = {
   LATE_REGISTRATION: "Late Registration",
@@ -53,6 +53,7 @@ export function AppealsClient() {
   const [decisionOutcome, setDecisionOutcome] = useState<"UPHELD" | "OVERTURNED" | null>(null)
   const [hearingDate, setHearingDate] = useState("")
   const [submitting, setSubmitting] = useState(false)
+  const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null)
 
   useEffect(() => {
     fetchAppeals()
@@ -75,11 +76,12 @@ export function AppealsClient() {
 
   const handleScheduleHearing = async (appealId: string) => {
     if (!hearingDate) {
-      alert("Please select a hearing date")
+      setMessage({ type: "error", text: "Please select a hearing date" })
       return
     }
 
     setSubmitting(true)
+    setMessage(null)
     try {
       const response = await fetch(`/api/appeals/${appealId}`, {
         method: "PATCH",
@@ -93,17 +95,20 @@ export function AppealsClient() {
       })
 
       if (response.ok) {
-        alert("Hearing scheduled successfully!")
+        setMessage({ type: "success", text: "Hearing scheduled successfully!" })
         setHearingDate("")
         setReviewDialogOpen(false)
         fetchAppeals()
+
+        // Clear message after 5 seconds
+        setTimeout(() => setMessage(null), 5000)
       } else {
         const error = await response.json()
-        alert(`Error: ${error.error || "Failed to schedule hearing"}`)
+        setMessage({ type: "error", text: error.error || "Failed to schedule hearing" })
       }
     } catch (error) {
       console.error("Error scheduling hearing:", error)
-      alert("Error scheduling hearing. Please try again.")
+      setMessage({ type: "error", text: "Error scheduling hearing. Please try again." })
     } finally {
       setSubmitting(false)
     }
@@ -111,11 +116,12 @@ export function AppealsClient() {
 
   const handleDecideAppeal = async () => {
     if (!selectedAppeal || !decisionOutcome || !decisionText.trim()) {
-      alert("Please provide both outcome and decision text")
+      setMessage({ type: "error", text: "Please provide both outcome and decision text" })
       return
     }
 
     setSubmitting(true)
+    setMessage(null)
     try {
       const response = await fetch(`/api/appeals/${selectedAppeal.id}/decide`, {
         method: "POST",
@@ -129,18 +135,21 @@ export function AppealsClient() {
       })
 
       if (response.ok) {
-        alert(`Appeal ${decisionOutcome.toLowerCase()} successfully!`)
+        setMessage({ type: "success", text: `Appeal ${decisionOutcome.toLowerCase()} successfully!` })
         setDecisionDialogOpen(false)
         setDecisionText("")
         setDecisionOutcome(null)
         fetchAppeals()
+
+        // Clear message after 5 seconds
+        setTimeout(() => setMessage(null), 5000)
       } else {
         const error = await response.json()
-        alert(`Error: ${error.error || "Failed to decide appeal"}`)
+        setMessage({ type: "error", text: error.error || "Failed to decide appeal" })
       }
     } catch (error) {
       console.error("Error deciding appeal:", error)
-      alert("Error deciding appeal. Please try again.")
+      setMessage({ type: "error", text: "Error deciding appeal. Please try again." })
     } finally {
       setSubmitting(false)
     }
@@ -199,6 +208,37 @@ export function AppealsClient() {
           Review and decide on violation appeals per §3.809 (30-day appeal window)
         </p>
       </div>
+
+      {/* Success/Error Message */}
+      {message && (
+        <Alert
+          className={`mb-6 ${
+            message.type === "success"
+              ? "border-green-200 bg-green-50"
+              : "border-red-200 bg-red-50"
+          }`}
+        >
+          <AlertCircle
+            className={`h-4 w-4 ${
+              message.type === "success" ? "text-green-600" : "text-red-600"
+            }`}
+          />
+          <AlertTitle
+            className={
+              message.type === "success" ? "text-green-800" : "text-red-800"
+            }
+          >
+            {message.type === "success" ? "Success" : "Error"}
+          </AlertTitle>
+          <AlertDescription
+            className={
+              message.type === "success" ? "text-green-700" : "text-red-700"
+            }
+          >
+            {message.text}
+          </AlertDescription>
+        </Alert>
+      )}
 
       {/* Summary Cards */}
       <div className="grid gap-4 md:grid-cols-4 mb-8">
