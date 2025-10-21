@@ -2,6 +2,7 @@ import { signIn } from "@/lib/auth"
 import { AuthError } from "next-auth"
 import { redirect } from "next/navigation"
 import { DemoCredentialsPanel } from "@/components/DemoCredentialsPanel"
+import Link from "next/link"
 
 export default async function SignInPage({
   searchParams,
@@ -40,6 +41,25 @@ export default async function SignInPage({
 
       <div className="w-full max-w-md space-y-8 rounded-lg border bg-white p-8 shadow-lg">
         <div className="text-center">
+          <Link
+            href="/"
+            className="inline-flex items-center text-sm text-blue-600 hover:text-blue-800 mb-4"
+          >
+            <svg
+              className="w-4 h-4 mr-1"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M10 19l-7-7m0 0l7-7m-7 7h18"
+              />
+            </svg>
+            Back to Home
+          </Link>
           <h2 className="text-3xl font-bold tracking-tight">
             Lobbyist Registration System
           </h2>
