@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import { useState } from "react"
+import { useState } from "react";
 import {
   exportLobbyistsToCSV,
   exportEmployersToCSV,
@@ -8,25 +8,25 @@ import {
   downloadCSV,
   type LobbyistExportData,
   type EmployerExportData,
-} from "@/lib/csv-export"
-import { PublicNavigation } from "@/components/PublicNavigation"
+} from "@/lib/csv-export";
+import { PublicNavigation } from "@/components/PublicNavigation";
 
 interface SearchClientProps {
   user?: {
-    name?: string | null
-    email?: string | null
-    role?: string | null
-  } | null
+    name?: string | null;
+    email?: string | null;
+    role?: string | null;
+  } | null;
 }
 
 interface SearchFilters {
-  searchTerm: string
-  entityType: "all" | "lobbyists" | "employers"
-  dateFrom: string
-  dateTo: string
-  minAmount: string
-  maxAmount: string
-  showAdvanced: boolean
+  searchTerm: string;
+  entityType: "all" | "lobbyists" | "employers";
+  dateFrom: string;
+  dateTo: string;
+  minAmount: string;
+  maxAmount: string;
+  showAdvanced: boolean;
 }
 
 // Mock data for demonstration
@@ -38,7 +38,7 @@ const mockLobbyists = [
     employer: "Tech Industry Association",
     subjects: "Technology policy, infrastructure",
     registrationDate: "2025-01-15",
-    totalExpenses: 2450.00,
+    totalExpenses: 2450.0,
   },
   {
     id: "2",
@@ -47,9 +47,9 @@ const mockLobbyists = [
     employer: "Downtown Business Coalition",
     subjects: "Economic development, zoning",
     registrationDate: "2025-02-01",
-    totalExpenses: 1850.00,
+    totalExpenses: 1850.0,
   },
-]
+];
 
 const mockEmployers = [
   {
@@ -58,7 +58,7 @@ const mockEmployers = [
     email: "info@techassoc.org",
     businessDescription: "Trade association representing technology companies",
     lobbyistCount: 3,
-    totalExpenses: 7500.00,
+    totalExpenses: 7500.0,
   },
   {
     id: "2",
@@ -66,9 +66,9 @@ const mockEmployers = [
     email: "contact@downtownbiz.org",
     businessDescription: "Business improvement district",
     lobbyistCount: 2,
-    totalExpenses: 4200.00,
+    totalExpenses: 4200.0,
   },
-]
+];
 
 export function SearchClient({ user }: SearchClientProps) {
   const [filters, setFilters] = useState<SearchFilters>({
@@ -79,15 +79,15 @@ export function SearchClient({ user }: SearchClientProps) {
     minAmount: "",
     maxAmount: "",
     showAdvanced: false,
-  })
+  });
 
-  const [hasSearched, setHasSearched] = useState(false)
+  const [hasSearched, setHasSearched] = useState(false);
 
   const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault()
-    setHasSearched(true)
+    e.preventDefault();
+    setHasSearched(true);
     // TODO: Actual search logic with API call
-  }
+  };
 
   const handleReset = () => {
     setFilters({
@@ -98,75 +98,93 @@ export function SearchClient({ user }: SearchClientProps) {
       minAmount: "",
       maxAmount: "",
       showAdvanced: false,
-    })
-    setHasSearched(false)
-  }
+    });
+    setHasSearched(false);
+  };
 
   const handleExport = () => {
-    const timestamp = new Date().toISOString().split("T")[0]
+    const timestamp = new Date().toISOString().split("T")[0];
 
     if (filters.entityType === "lobbyists") {
-      const csv = exportLobbyistsToCSV(filteredLobbyists)
-      downloadCSV(csv, `lobbyists-export-${timestamp}.csv`)
+      const csv = exportLobbyistsToCSV(filteredLobbyists);
+      downloadCSV(csv, `lobbyists-export-${timestamp}.csv`);
     } else if (filters.entityType === "employers") {
-      const csv = exportEmployersToCSV(filteredEmployers)
-      downloadCSV(csv, `employers-export-${timestamp}.csv`)
+      const csv = exportEmployersToCSV(filteredEmployers);
+      downloadCSV(csv, `employers-export-${timestamp}.csv`);
     } else {
       // Export all
-      const csv = exportAllToCSV(filteredLobbyists, filteredEmployers)
-      downloadCSV(csv, `lobbying-data-export-${timestamp}.csv`)
+      const csv = exportAllToCSV(filteredLobbyists, filteredEmployers);
+      downloadCSV(csv, `lobbying-data-export-${timestamp}.csv`);
     }
-  }
+  };
 
   // Filter results based on search term and advanced filters
   const filteredLobbyists = mockLobbyists.filter((lobbyist) => {
     // Search term filter
     const matchesSearch = filters.searchTerm
-      ? lobbyist.name.toLowerCase().includes(filters.searchTerm.toLowerCase()) ||
-        lobbyist.employer.toLowerCase().includes(filters.searchTerm.toLowerCase()) ||
-        lobbyist.subjects.toLowerCase().includes(filters.searchTerm.toLowerCase())
-      : true
+      ? lobbyist.name
+          .toLowerCase()
+          .includes(filters.searchTerm.toLowerCase()) ||
+        lobbyist.employer
+          .toLowerCase()
+          .includes(filters.searchTerm.toLowerCase()) ||
+        lobbyist.subjects
+          .toLowerCase()
+          .includes(filters.searchTerm.toLowerCase())
+      : true;
 
     // Date range filter
-    const lobbyistDate = new Date(lobbyist.registrationDate)
+    const lobbyistDate = new Date(lobbyist.registrationDate);
     const matchesDateFrom = filters.dateFrom
       ? lobbyistDate >= new Date(filters.dateFrom)
-      : true
+      : true;
     const matchesDateTo = filters.dateTo
       ? lobbyistDate <= new Date(filters.dateTo)
-      : true
+      : true;
 
     // Expense amount filter
     const matchesMinAmount = filters.minAmount
       ? lobbyist.totalExpenses >= parseFloat(filters.minAmount)
-      : true
+      : true;
     const matchesMaxAmount = filters.maxAmount
       ? lobbyist.totalExpenses <= parseFloat(filters.maxAmount)
-      : true
+      : true;
 
-    return matchesSearch && matchesDateFrom && matchesDateTo && matchesMinAmount && matchesMaxAmount
-  })
+    return (
+      matchesSearch &&
+      matchesDateFrom &&
+      matchesDateTo &&
+      matchesMinAmount &&
+      matchesMaxAmount
+    );
+  });
 
   const filteredEmployers = mockEmployers.filter((employer) => {
     // Search term filter
     const matchesSearch = filters.searchTerm
-      ? employer.name.toLowerCase().includes(filters.searchTerm.toLowerCase()) ||
-        employer.businessDescription.toLowerCase().includes(filters.searchTerm.toLowerCase())
-      : true
+      ? employer.name
+          .toLowerCase()
+          .includes(filters.searchTerm.toLowerCase()) ||
+        employer.businessDescription
+          .toLowerCase()
+          .includes(filters.searchTerm.toLowerCase())
+      : true;
 
     // Expense amount filter (no date for employers in mock data)
     const matchesMinAmount = filters.minAmount
       ? employer.totalExpenses >= parseFloat(filters.minAmount)
-      : true
+      : true;
     const matchesMaxAmount = filters.maxAmount
       ? employer.totalExpenses <= parseFloat(filters.maxAmount)
-      : true
+      : true;
 
-    return matchesSearch && matchesMinAmount && matchesMaxAmount
-  })
+    return matchesSearch && matchesMinAmount && matchesMaxAmount;
+  });
 
-  const showLobbyists = filters.entityType === "all" || filters.entityType === "lobbyists"
-  const showEmployers = filters.entityType === "all" || filters.entityType === "employers"
+  const showLobbyists =
+    filters.entityType === "all" || filters.entityType === "lobbyists";
+  const showEmployers =
+    filters.entityType === "all" || filters.entityType === "employers";
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -191,7 +209,7 @@ export function SearchClient({ user }: SearchClientProps) {
               <div>
                 <label
                   htmlFor="searchTerm"
-                  className="block text-sm font-medium text-gray-700 mb-2"
+                  className="mb-2 block text-sm font-medium text-gray-700"
                 >
                   Search
                 </label>
@@ -203,12 +221,12 @@ export function SearchClient({ user }: SearchClientProps) {
                     setFilters({ ...filters, searchTerm: e.target.value })
                   }
                   placeholder="Search by name, employer, or subject..."
-                  className="block w-full rounded-md border border-gray-300 px-4 py-3 focus:border-blue-500 focus:outline-none focus:ring-blue-500"
+                  className="block w-full rounded-md border border-gray-300 px-4 py-3 focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="mb-2 block text-sm font-medium text-gray-700">
                   Search In:
                 </label>
                 <div className="flex space-x-4">
@@ -268,11 +286,14 @@ export function SearchClient({ user }: SearchClientProps) {
             </div>
 
             {/* Advanced Filters Toggle */}
-            <div className="mt-4 pt-4 border-t">
+            <div className="mt-4 border-t pt-4">
               <button
                 type="button"
                 onClick={() =>
-                  setFilters({ ...filters, showAdvanced: !filters.showAdvanced })
+                  setFilters({
+                    ...filters,
+                    showAdvanced: !filters.showAdvanced,
+                  })
                 }
                 className="flex items-center text-sm font-medium text-blue-600 hover:text-blue-700"
               >
@@ -297,12 +318,12 @@ export function SearchClient({ user }: SearchClientProps) {
 
             {/* Advanced Filters */}
             {filters.showAdvanced && (
-              <div className="mt-4 pt-4 border-t space-y-4">
+              <div className="mt-4 space-y-4 border-t pt-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label
                       htmlFor="dateFrom"
-                      className="block text-sm font-medium text-gray-700 mb-1"
+                      className="mb-1 block text-sm font-medium text-gray-700"
                     >
                       Date From
                     </label>
@@ -313,13 +334,13 @@ export function SearchClient({ user }: SearchClientProps) {
                       onChange={(e) =>
                         setFilters({ ...filters, dateFrom: e.target.value })
                       }
-                      className="block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-blue-500"
+                      className="block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
                     />
                   </div>
                   <div>
                     <label
                       htmlFor="dateTo"
-                      className="block text-sm font-medium text-gray-700 mb-1"
+                      className="mb-1 block text-sm font-medium text-gray-700"
                     >
                       Date To
                     </label>
@@ -330,7 +351,7 @@ export function SearchClient({ user }: SearchClientProps) {
                       onChange={(e) =>
                         setFilters({ ...filters, dateTo: e.target.value })
                       }
-                      className="block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-blue-500"
+                      className="block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
                     />
                   </div>
                 </div>
@@ -339,7 +360,7 @@ export function SearchClient({ user }: SearchClientProps) {
                   <div>
                     <label
                       htmlFor="minAmount"
-                      className="block text-sm font-medium text-gray-700 mb-1"
+                      className="mb-1 block text-sm font-medium text-gray-700"
                     >
                       Min Expense Amount
                     </label>
@@ -356,7 +377,7 @@ export function SearchClient({ user }: SearchClientProps) {
                         onChange={(e) =>
                           setFilters({ ...filters, minAmount: e.target.value })
                         }
-                        className="block w-full rounded-md border border-gray-300 py-2 pl-7 pr-3 focus:border-blue-500 focus:outline-none focus:ring-blue-500"
+                        className="block w-full rounded-md border border-gray-300 py-2 pr-3 pl-7 focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
                         placeholder="0.00"
                       />
                     </div>
@@ -364,7 +385,7 @@ export function SearchClient({ user }: SearchClientProps) {
                   <div>
                     <label
                       htmlFor="maxAmount"
-                      className="block text-sm font-medium text-gray-700 mb-1"
+                      className="mb-1 block text-sm font-medium text-gray-700"
                     >
                       Max Expense Amount
                     </label>
@@ -381,7 +402,7 @@ export function SearchClient({ user }: SearchClientProps) {
                         onChange={(e) =>
                           setFilters({ ...filters, maxAmount: e.target.value })
                         }
-                        className="block w-full rounded-md border border-gray-300 py-2 pl-7 pr-3 focus:border-blue-500 focus:outline-none focus:ring-blue-500"
+                        className="block w-full rounded-md border border-gray-300 py-2 pr-3 pl-7 focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
                         placeholder="10000.00"
                       />
                     </div>
@@ -413,7 +434,7 @@ export function SearchClient({ user }: SearchClientProps) {
         {hasSearched && (
           <div className="mt-8 space-y-6">
             {/* Results Summary */}
-            <div className="rounded-lg border bg-white p-4 shadow-sm flex items-center justify-between">
+            <div className="flex items-center justify-between rounded-lg border bg-white p-4 shadow-sm">
               <p className="text-sm text-gray-600">
                 Found{" "}
                 <strong>
@@ -458,7 +479,7 @@ export function SearchClient({ user }: SearchClientProps) {
                   {filteredLobbyists.map((lobbyist) => (
                     <div
                       key={lobbyist.id}
-                      className="p-6 hover:bg-gray-50 transition-colors"
+                      className="p-6 transition-colors hover:bg-gray-50"
                     >
                       <div className="flex items-start justify-between">
                         <div className="flex-1">
@@ -486,7 +507,7 @@ export function SearchClient({ user }: SearchClientProps) {
                         </div>
                         <button
                           disabled
-                          className="ml-4 rounded-md bg-gray-300 px-4 py-2 text-sm text-gray-500 cursor-not-allowed"
+                          className="ml-4 cursor-not-allowed rounded-md bg-gray-300 px-4 py-2 text-sm text-gray-500"
                           title="Detail view coming soon"
                         >
                           View Details
@@ -510,7 +531,7 @@ export function SearchClient({ user }: SearchClientProps) {
                   {filteredEmployers.map((employer) => (
                     <div
                       key={employer.id}
-                      className="p-6 hover:bg-gray-50 transition-colors"
+                      className="p-6 transition-colors hover:bg-gray-50"
                     >
                       <div className="flex items-start justify-between">
                         <div className="flex-1">
@@ -531,7 +552,7 @@ export function SearchClient({ user }: SearchClientProps) {
                         </div>
                         <button
                           disabled
-                          className="ml-4 rounded-md bg-gray-300 px-4 py-2 text-sm text-gray-500 cursor-not-allowed"
+                          className="ml-4 cursor-not-allowed rounded-md bg-gray-300 px-4 py-2 text-sm text-gray-500"
                           title="Detail view coming soon"
                         >
                           View Details
@@ -576,15 +597,15 @@ export function SearchClient({ user }: SearchClientProps) {
         {/* Information */}
         {!hasSearched && (
           <div className="mt-8 rounded-lg border border-blue-200 bg-blue-50 p-6">
-            <h3 className="font-semibold text-blue-900 mb-2">
+            <h3 className="mb-2 font-semibold text-blue-900">
               About This Database
             </h3>
-            <p className="text-sm text-blue-700 mb-3">
+            <p className="mb-3 text-sm text-blue-700">
               This public database contains information about registered
               lobbyists, their employers, and lobbying expenditures in Multnomah
               County as required by ordinance.
             </p>
-            <ul className="text-sm text-blue-700 space-y-1 list-inside list-disc">
+            <ul className="list-inside list-disc space-y-1 text-sm text-blue-700">
               <li>Search by lobbyist name, employer, or subject matter</li>
               <li>View expense reports and lobbying activities</li>
               <li>Filter by date range and expense amounts</li>
@@ -594,5 +615,5 @@ export function SearchClient({ user }: SearchClientProps) {
         )}
       </main>
     </div>
-  )
+  );
 }

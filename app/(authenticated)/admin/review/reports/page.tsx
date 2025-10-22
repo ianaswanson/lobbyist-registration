@@ -1,8 +1,8 @@
-import { auth } from "@/lib/auth"
-import { redirect } from "next/navigation"
-import { ReviewReportsList } from "@/components/admin/ReviewReportsList"
-import { prisma } from "@/lib/db"
-import { ReportStatus } from "@prisma/client"
+import { auth } from "@/lib/auth";
+import { redirect } from "next/navigation";
+import { ReviewReportsList } from "@/components/admin/ReviewReportsList";
+import { prisma } from "@/lib/db";
+import { ReportStatus } from "@prisma/client";
 
 async function getPendingReports() {
   try {
@@ -29,7 +29,7 @@ async function getPendingReports() {
       orderBy: {
         submittedAt: "asc", // Oldest first
       },
-    })
+    });
 
     // Fetch employer reports
     const employerReports = await prisma.employerExpenseReport.findMany({
@@ -54,7 +54,7 @@ async function getPendingReports() {
       orderBy: {
         submittedAt: "asc", // Oldest first
       },
-    })
+    });
 
     // Combine and format reports
     const allReports = [
@@ -86,29 +86,29 @@ async function getPendingReports() {
         status: report.status,
         dueDate: report.dueDate,
       })),
-    ]
+    ];
 
     // Sort by submitted date
     allReports.sort((a, b) => {
-      if (!a.submittedDate || !b.submittedDate) return 0
-      return a.submittedDate.getTime() - b.submittedDate.getTime()
-    })
+      if (!a.submittedDate || !b.submittedDate) return 0;
+      return a.submittedDate.getTime() - b.submittedDate.getTime();
+    });
 
-    return allReports
+    return allReports;
   } catch (error) {
-    console.error("Error fetching pending reports:", error)
-    return []
+    console.error("Error fetching pending reports:", error);
+    return [];
   }
 }
 
 export default async function AdminReviewReportsPage() {
-  const session = await auth()
+  const session = await auth();
 
   if (!session || session.user?.role !== "ADMIN") {
-    redirect("/auth/signin")
+    redirect("/auth/signin");
   }
 
-  const reports = await getPendingReports()
+  const reports = await getPendingReports();
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -135,5 +135,5 @@ export default async function AdminReviewReportsPage() {
         <ReviewReportsList reports={reports} />
       </main>
     </div>
-  )
+  );
 }

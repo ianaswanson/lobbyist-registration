@@ -1,7 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
-import { getQuarterFromDate, getCurrentQuarter, getCurrentYear } from "@/lib/utils";
+import {
+  getQuarterFromDate,
+  getCurrentQuarter,
+  getCurrentYear,
+} from "@/lib/utils";
 import { FEATURE_FLAGS } from "@/lib/feature-flags";
 
 /**
@@ -14,7 +18,10 @@ import { FEATURE_FLAGS } from "@/lib/feature-flags";
 export async function GET(request: NextRequest) {
   // Check if feature is enabled
   if (!FEATURE_FLAGS.HOUR_TRACKING) {
-    return NextResponse.json({ error: "Feature not available" }, { status: 404 });
+    return NextResponse.json(
+      { error: "Feature not available" },
+      { status: 404 }
+    );
   }
 
   try {
@@ -80,7 +87,10 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   // Check if feature is enabled
   if (!FEATURE_FLAGS.HOUR_TRACKING) {
-    return NextResponse.json({ error: "Feature not available" }, { status: 404 });
+    return NextResponse.json(
+      { error: "Feature not available" },
+      { status: 404 }
+    );
   }
 
   try {
@@ -97,7 +107,10 @@ export async function POST(request: NextRequest) {
 
     if (!lobbyist) {
       return NextResponse.json(
-        { error: "Lobbyist profile not found. Please register as a lobbyist first." },
+        {
+          error:
+            "Lobbyist profile not found. Please register as a lobbyist first.",
+        },
         { status: 404 }
       );
     }
@@ -149,7 +162,10 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    const totalHours = currentQuarterLogs.reduce((sum, log) => sum + log.hours, 0);
+    const totalHours = currentQuarterLogs.reduce(
+      (sum, log) => sum + log.hours,
+      0
+    );
 
     // Update lobbyist's current quarter hours
     // Check if 10-hour threshold just exceeded
@@ -161,7 +177,11 @@ export async function POST(request: NextRequest) {
     };
 
     // If threshold just exceeded, set deadline dates
-    if (wasUnderThreshold && isNowOverThreshold && !lobbyist.thresholdExceededDate) {
+    if (
+      wasUnderThreshold &&
+      isNowOverThreshold &&
+      !lobbyist.thresholdExceededDate
+    ) {
       updateData.thresholdExceededDate = new Date();
 
       // Calculate 3 working days from now
@@ -185,11 +205,14 @@ export async function POST(request: NextRequest) {
       data: updateData,
     });
 
-    return NextResponse.json({
-      hourLog,
-      totalHours,
-      thresholdExceeded: totalHours >= 10,
-    }, { status: 201 });
+    return NextResponse.json(
+      {
+        hourLog,
+        totalHours,
+        thresholdExceeded: totalHours >= 10,
+      },
+      { status: 201 }
+    );
   } catch (error) {
     console.error("Error creating hour log:", error);
     return NextResponse.json(

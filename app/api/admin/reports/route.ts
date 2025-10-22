@@ -1,7 +1,7 @@
-import { auth } from "@/lib/auth"
-import { prisma } from "@/lib/db"
-import { NextResponse } from "next/server"
-import { ReportStatus } from "@prisma/client"
+import { auth } from "@/lib/auth";
+import { prisma } from "@/lib/db";
+import { NextResponse } from "next/server";
+import { ReportStatus } from "@prisma/client";
 
 /**
  * GET /api/admin/reports
@@ -10,72 +10,76 @@ import { ReportStatus } from "@prisma/client"
 export async function GET(req: Request) {
   try {
     // 1. Check authentication and admin role
-    const session = await auth()
+    const session = await auth();
     if (!session?.user || session.user.role !== "ADMIN") {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     // 2. Get query parameters
-    const { searchParams } = new URL(req.url)
-    const status = searchParams.get("status") || "SUBMITTED"
-    const reportType = searchParams.get("type") // "lobbyist", "employer", or null for both
+    const { searchParams } = new URL(req.url);
+    const status = searchParams.get("status") || "SUBMITTED";
+    const reportType = searchParams.get("type"); // "lobbyist", "employer", or null for both
 
     // 3. Fetch reports
-    const lobbyistReports = reportType !== "employer"
-      ? await prisma.lobbyistExpenseReport.findMany({
-          where: {
-            status: {
-              in: status === "SUBMITTED"
-                ? [ReportStatus.SUBMITTED, ReportStatus.LATE]
-                : [status as ReportStatus],
-            },
-          },
-          include: {
-            lobbyist: {
-              select: {
-                name: true,
-                email: true,
+    const lobbyistReports =
+      reportType !== "employer"
+        ? await prisma.lobbyistExpenseReport.findMany({
+            where: {
+              status: {
+                in:
+                  status === "SUBMITTED"
+                    ? [ReportStatus.SUBMITTED, ReportStatus.LATE]
+                    : [status as ReportStatus],
               },
             },
-            lineItems: {
-              select: {
-                id: true,
+            include: {
+              lobbyist: {
+                select: {
+                  name: true,
+                  email: true,
+                },
+              },
+              lineItems: {
+                select: {
+                  id: true,
+                },
               },
             },
-          },
-          orderBy: {
-            submittedAt: "asc", // Oldest first
-          },
-        })
-      : []
+            orderBy: {
+              submittedAt: "asc", // Oldest first
+            },
+          })
+        : [];
 
-    const employerReports = reportType !== "lobbyist"
-      ? await prisma.employerExpenseReport.findMany({
-          where: {
-            status: {
-              in: status === "SUBMITTED"
-                ? [ReportStatus.SUBMITTED, ReportStatus.LATE]
-                : [status as ReportStatus],
-            },
-          },
-          include: {
-            employer: {
-              select: {
-                name: true,
-                email: true,
+    const employerReports =
+      reportType !== "lobbyist"
+        ? await prisma.employerExpenseReport.findMany({
+            where: {
+              status: {
+                in:
+                  status === "SUBMITTED"
+                    ? [ReportStatus.SUBMITTED, ReportStatus.LATE]
+                    : [status as ReportStatus],
               },
             },
-            lineItems: {
-              select: {
-                id: true,
+            include: {
+              employer: {
+                select: {
+                  name: true,
+                  email: true,
+                },
+              },
+              lineItems: {
+                select: {
+                  id: true,
+                },
               },
             },
-          },
-          orderBy: {
-            submittedAt: "asc", // Oldest first
-          },
-        })
-      : []
+            orderBy: {
+              submittedAt: "asc", // Oldest first
+            },
+          })
+        : [];
 
     // 4. Combine and format reports
     const allReports = [
@@ -107,24 +111,24 @@ export async function GET(req: Request) {
         status: report.status,
         dueDate: report.dueDate,
       })),
-    ]
+    ];
 
     // 5. Sort by submitted date
     allReports.sort((a, b) => {
-      if (!a.submittedDate || !b.submittedDate) return 0
-      return a.submittedDate.getTime() - b.submittedDate.getTime()
-    })
+      if (!a.submittedDate || !b.submittedDate) return 0;
+      return a.submittedDate.getTime() - b.submittedDate.getTime();
+    });
 
     // 6. Return reports
     return NextResponse.json({
       reports: allReports,
       count: allReports.length,
-    })
+    });
   } catch (error) {
-    console.error("Error fetching expense reports:", error)
+    console.error("Error fetching expense reports:", error);
     return NextResponse.json(
       { error: "Failed to fetch reports" },
       { status: 500 }
-    )
+    );
   }
 }

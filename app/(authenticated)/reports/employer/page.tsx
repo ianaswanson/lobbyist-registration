@@ -1,17 +1,17 @@
-import { auth } from "@/lib/auth"
-import { redirect } from "next/navigation"
-import { prisma } from "@/lib/db"
-import { EmployerReportsClient } from "@/components/reports/EmployerReportsClient"
+import { auth } from "@/lib/auth";
+import { redirect } from "next/navigation";
+import { prisma } from "@/lib/db";
+import { EmployerReportsClient } from "@/components/reports/EmployerReportsClient";
 
 async function getReports(userId: string) {
   try {
     // Get employer record
     const employer = await prisma.employer.findUnique({
       where: { userId },
-    })
+    });
 
     if (!employer) {
-      return []
+      return [];
     }
 
     // Fetch all reports
@@ -35,27 +35,24 @@ async function getReports(userId: string) {
           },
         },
       },
-      orderBy: [
-        { year: "desc" },
-        { quarter: "desc" },
-      ],
-    })
+      orderBy: [{ year: "desc" }, { quarter: "desc" }],
+    });
 
-    return reports
+    return reports;
   } catch (error) {
-    console.error("Error fetching employer expense reports:", error)
-    return []
+    console.error("Error fetching employer expense reports:", error);
+    return [];
   }
 }
 
 export default async function EmployerReportsPage() {
-  const session = await auth()
+  const session = await auth();
 
   if (!session || session.user?.role !== "EMPLOYER") {
-    redirect("/auth/signin")
+    redirect("/auth/signin");
   }
 
-  const reports = await getReports(session.user.id)
+  const reports = await getReports(session.user.id);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -90,5 +87,5 @@ export default async function EmployerReportsPage() {
         <EmployerReportsClient reports={reports} />
       </main>
     </div>
-  )
+  );
 }

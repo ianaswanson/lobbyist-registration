@@ -1,74 +1,74 @@
-"use client"
+"use client";
 
-import { useEffect, useState } from "react"
-import { Calendar, DollarSign, User, MapPin, Clock } from "lucide-react"
+import { useEffect, useState } from "react";
+import { Calendar, DollarSign, User, MapPin, Clock } from "lucide-react";
 
 interface CalendarEntry {
-  id: string
-  eventTitle: string
-  eventDate: string
-  eventTime: string | null
-  participants: string
-  quarter: string
-  year: number
+  id: string;
+  eventTitle: string;
+  eventDate: string;
+  eventTime: string | null;
+  participants: string;
+  quarter: string;
+  year: number;
 }
 
 interface LobbyingReceipt {
-  id: string
-  lobbyistName: string
-  lobbyistEmail: string
-  amount: number
-  date: string
-  payee: string
-  purpose: string
-  quarter: string
-  year: number
+  id: string;
+  lobbyistName: string;
+  lobbyistEmail: string;
+  amount: number;
+  date: string;
+  payee: string;
+  purpose: string;
+  quarter: string;
+  year: number;
 }
 
 interface BoardMember {
-  id: string
-  name: string
-  district: string | null
-  termStart: string
-  termEnd: string | null
-  calendarEntries: CalendarEntry[]
-  lobbyingReceipts: LobbyingReceipt[]
-  totalReceipts: number
-  totalReceiptAmount: number
+  id: string;
+  name: string;
+  district: string | null;
+  termStart: string;
+  termEnd: string | null;
+  calendarEntries: CalendarEntry[];
+  lobbyingReceipts: LobbyingReceipt[];
+  totalReceipts: number;
+  totalReceiptAmount: number;
 }
 
 interface ApiResponse {
-  boardMembers: BoardMember[]
-  retentionPeriod: string
-  cutoffDate: string
-  count: number
+  boardMembers: BoardMember[];
+  retentionPeriod: string;
+  cutoffDate: string;
+  count: number;
 }
 
 export function BoardCalendarsClient() {
-  const [data, setData] = useState<ApiResponse | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const [selectedMember, setSelectedMember] = useState<string | null>(null)
+  const [data, setData] = useState<ApiResponse | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [selectedMember, setSelectedMember] = useState<string | null>(null);
 
   useEffect(() => {
     fetch("/api/board-member-calendars")
       .then((res) => {
-        if (!res.ok) throw new Error("Failed to fetch data")
-        return res.json()
+        if (!res.ok) throw new Error("Failed to fetch data");
+        return res.json();
       })
       .then((data) => {
-        setData(data)
+        setData(data);
         // Select first member by default
         if (data.boardMembers.length > 0) {
-          setSelectedMember(data.boardMembers[0].id)
+          setSelectedMember(data.boardMembers[0].id);
         }
-        setLoading(false)
+        setLoading(false);
       })
       .catch((err) => {
-        setError(err.message)
-        setLoading(false)
-      })
-  }, [])
+        setError(err.message);
+        setLoading(false);
+      });
+  }, []);
 
   if (loading) {
     return (
@@ -78,7 +78,7 @@ export function BoardCalendarsClient() {
           <p className="mt-2 text-gray-600">Loading board member data...</p>
         </div>
       </div>
-    )
+    );
   }
 
   if (error) {
@@ -88,7 +88,7 @@ export function BoardCalendarsClient() {
           <strong>Error:</strong> {error}
         </p>
       </div>
-    )
+    );
   }
 
   if (!data || data.boardMembers.length === 0) {
@@ -98,10 +98,10 @@ export function BoardCalendarsClient() {
           No board member data available at this time.
         </p>
       </div>
-    )
+    );
   }
 
-  const currentMember = data.boardMembers.find((m) => m.id === selectedMember)
+  const currentMember = data.boardMembers.find((m) => m.id === selectedMember);
 
   return (
     <div className="space-y-6">
@@ -226,7 +226,7 @@ export function BoardCalendarsClient() {
                           </p>
                           {entry.participants && (
                             <p className="flex items-start">
-                              <User className="mr-2 mt-0.5 h-4 w-4 flex-shrink-0" />
+                              <User className="mt-0.5 mr-2 h-4 w-4 flex-shrink-0" />
                               <span>{entry.participants}</span>
                             </p>
                           )}
@@ -256,25 +256,25 @@ export function BoardCalendarsClient() {
                 <table className="w-full">
                   <thead className="bg-gray-50">
                     <tr>
-                      <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                      <th className="px-4 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
                         Date
                       </th>
-                      <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                      <th className="px-4 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
                         Lobbyist
                       </th>
-                      <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                      <th className="px-4 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
                         Email
                       </th>
-                      <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                      <th className="px-4 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
                         Payee
                       </th>
-                      <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                      <th className="px-4 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
                         Purpose
                       </th>
-                      <th className="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500">
+                      <th className="px-4 py-3 text-right text-xs font-medium tracking-wider text-gray-500 uppercase">
                         Amount
                       </th>
-                      <th className="px-4 py-3 text-center text-xs font-medium uppercase tracking-wider text-gray-500">
+                      <th className="px-4 py-3 text-center text-xs font-medium tracking-wider text-gray-500 uppercase">
                         Quarter
                       </th>
                     </tr>
@@ -282,7 +282,7 @@ export function BoardCalendarsClient() {
                   <tbody className="divide-y divide-gray-200 bg-white">
                     {currentMember.lobbyingReceipts.map((receipt) => (
                       <tr key={receipt.id} className="hover:bg-gray-50">
-                        <td className="whitespace-nowrap px-4 py-4 text-sm text-gray-900">
+                        <td className="px-4 py-4 text-sm whitespace-nowrap text-gray-900">
                           {new Date(receipt.date).toLocaleDateString()}
                         </td>
                         <td className="px-4 py-4 text-sm text-gray-900">
@@ -297,10 +297,10 @@ export function BoardCalendarsClient() {
                         <td className="px-4 py-4 text-sm text-gray-600">
                           {receipt.purpose}
                         </td>
-                        <td className="whitespace-nowrap px-4 py-4 text-right text-sm font-medium text-gray-900">
+                        <td className="px-4 py-4 text-right text-sm font-medium whitespace-nowrap text-gray-900">
                           ${receipt.amount.toFixed(2)}
                         </td>
-                        <td className="whitespace-nowrap px-4 py-4 text-center text-sm text-gray-600">
+                        <td className="px-4 py-4 text-center text-sm whitespace-nowrap text-gray-600">
                           {receipt.quarter} {receipt.year}
                         </td>
                       </tr>
@@ -314,7 +314,7 @@ export function BoardCalendarsClient() {
                       >
                         Total:
                       </td>
-                      <td className="whitespace-nowrap px-4 py-3 text-right text-sm font-bold text-gray-900">
+                      <td className="px-4 py-3 text-right text-sm font-bold whitespace-nowrap text-gray-900">
                         ${currentMember.totalReceiptAmount.toFixed(2)}
                       </td>
                       <td></td>
@@ -337,5 +337,5 @@ export function BoardCalendarsClient() {
         </p>
       </div>
     </div>
-  )
+  );
 }

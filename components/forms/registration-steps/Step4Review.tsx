@@ -1,32 +1,37 @@
-"use client"
+"use client";
 
-import { Loader2 } from "lucide-react"
+import { Loader2 } from "lucide-react";
 
 interface Step4Props {
   data: {
-    name: string
-    email: string
-    phone: string
-    address: string
-    hoursCurrentQuarter: number
-    employerName: string
-    employerEmail: string
-    employerPhone: string
-    employerAddress: string
-    employerBusinessDescription: string
-    subjectsOfInterest: string
-    authorizationDocument?: File
-  }
-  onBack: () => void
-  onSubmit: () => void
-  isSubmitting?: boolean
+    name: string;
+    email: string;
+    phone: string;
+    address: string;
+    hoursCurrentQuarter: number;
+    employerName: string;
+    employerEmail: string;
+    employerPhone: string;
+    employerAddress: string;
+    employerBusinessDescription: string;
+    subjectsOfInterest: string;
+    authorizationDocument?: File;
+  };
+  onBack: () => void;
+  onSubmit: () => void;
+  isSubmitting?: boolean;
 }
 
-export function Step4Review({ data, onBack, onSubmit, isSubmitting = false }: Step4Props) {
+export function Step4Review({
+  data,
+  onBack,
+  onSubmit,
+  isSubmitting = false,
+}: Step4Props) {
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    onSubmit()
-  }
+    e.preventDefault();
+    onSubmit();
+  };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
@@ -58,7 +63,7 @@ export function Step4Review({ data, onBack, onSubmit, isSubmitting = false }: St
           </div>
           <div className="flex justify-between text-sm">
             <dt className="text-gray-600">Address:</dt>
-            <dd className="font-medium text-gray-900 text-right">
+            <dd className="text-right font-medium text-gray-900">
               {data.address}
             </dd>
           </div>
@@ -89,7 +94,7 @@ export function Step4Review({ data, onBack, onSubmit, isSubmitting = false }: St
           </div>
           <div className="flex justify-between text-sm">
             <dt className="text-gray-600">Address:</dt>
-            <dd className="font-medium text-gray-900 text-right">
+            <dd className="text-right font-medium text-gray-900">
               {data.employerAddress}
             </dd>
           </div>
@@ -157,19 +162,19 @@ export function Step4Review({ data, onBack, onSubmit, isSubmitting = false }: St
           type="button"
           onClick={onBack}
           disabled={isSubmitting}
-          className="rounded-md border border-gray-300 bg-white px-6 py-2 text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+          className="rounded-md border border-gray-300 bg-white px-6 py-2 text-gray-700 hover:bg-gray-50 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
         >
           Back
         </button>
         <button
           type="submit"
           disabled={isSubmitting}
-          className="flex items-center gap-2 rounded-md bg-green-600 px-6 py-2 text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+          className="flex items-center gap-2 rounded-md bg-green-600 px-6 py-2 text-white hover:bg-green-700 focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
         >
           {isSubmitting && <Loader2 className="h-4 w-4 animate-spin" />}
           {isSubmitting ? "Submitting..." : "Submit Registration"}
         </button>
       </div>
     </form>
-  )
+  );
 }

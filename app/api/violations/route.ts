@@ -43,7 +43,10 @@ export async function GET(request: NextRequest) {
     if (session.user?.role !== "ADMIN") {
       // If entityId is provided, verify it belongs to the user
       if (!entityId) {
-        return NextResponse.json({ error: "Entity ID required for non-admin users" }, { status: 400 });
+        return NextResponse.json(
+          { error: "Entity ID required for non-admin users" },
+          { status: 400 }
+        );
       }
 
       // Verify the entityId belongs to the current user

@@ -1,24 +1,24 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { parseICSFile, type ICSEvent } from "@/lib/ics-parser"
+import { useState } from "react";
+import { parseICSFile, type ICSEvent } from "@/lib/ics-parser";
 
 export interface ICSParseResult<T> {
-  data: T[]
-  errors: string[]
+  data: T[];
+  errors: string[];
 }
 
 export interface ICSMapConfig<T> {
-  mapEvent: (event: ICSEvent) => T | null
+  mapEvent: (event: ICSEvent) => T | null;
 }
 
 interface GenericICSUploadProps<T> {
-  mapConfig: ICSMapConfig<T>
-  onImport: (items: T[]) => void
-  entityName: string
-  description?: string
-  renderPreview?: (item: T, index: number) => React.ReactNode
-  colorScheme?: "blue" | "green" | "purple" | "orange"
+  mapConfig: ICSMapConfig<T>;
+  onImport: (items: T[]) => void;
+  entityName: string;
+  description?: string;
+  renderPreview?: (item: T, index: number) => React.ReactNode;
+  colorScheme?: "blue" | "green" | "purple" | "orange";
 }
 
 export function GenericICSUpload<T>({
@@ -27,12 +27,12 @@ export function GenericICSUpload<T>({
   entityName,
   description = "Upload an ICS/iCal calendar file to import events.",
   renderPreview,
-  colorScheme = "purple"
+  colorScheme = "purple",
 }: GenericICSUploadProps<T>) {
-  const [selectedFile, setSelectedFile] = useState<File | null>(null)
-  const [parsedData, setParsedData] = useState<T[]>([])
-  const [parseErrors, setParseErrors] = useState<string[]>([])
-  const [isProcessing, setIsProcessing] = useState(false)
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [parsedData, setParsedData] = useState<T[]>([]);
+  const [parseErrors, setParseErrors] = useState<string[]>([]);
+  const [isProcessing, setIsProcessing] = useState(false);
 
   const colorClasses = {
     blue: {
@@ -40,86 +40,91 @@ export function GenericICSUpload<T>({
       bg: "bg-blue-50 dark:bg-blue-900/20",
       text: "text-blue-700 dark:text-blue-300",
       button: "bg-blue-600 hover:bg-blue-700",
-      badge: "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200"
+      badge: "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200",
     },
     green: {
       border: "border-green-300 dark:border-green-700",
       bg: "bg-green-50 dark:bg-green-900/20",
       text: "text-green-700 dark:text-green-300",
       button: "bg-green-600 hover:bg-green-700",
-      badge: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
+      badge:
+        "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200",
     },
     purple: {
       border: "border-purple-300 dark:border-purple-700",
       bg: "bg-purple-50 dark:bg-purple-900/20",
       text: "text-purple-700 dark:text-purple-300",
       button: "bg-purple-600 hover:bg-purple-700",
-      badge: "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200"
+      badge:
+        "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200",
     },
     orange: {
       border: "border-orange-300 dark:border-orange-700",
       bg: "bg-orange-50 dark:bg-orange-900/20",
       text: "text-orange-700 dark:text-orange-300",
       button: "bg-orange-600 hover:bg-orange-700",
-      badge: "bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200"
-    }
-  }
+      badge:
+        "bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200",
+    },
+  };
 
-  const colors = colorClasses[colorScheme]
+  const colors = colorClasses[colorScheme];
 
   async function handleFileSelect(event: React.ChangeEvent<HTMLInputElement>) {
-    const file = event.target.files?.[0]
-    if (!file) return
+    const file = event.target.files?.[0];
+    if (!file) return;
 
-    setSelectedFile(file)
-    setIsProcessing(true)
-    setParsedData([])
-    setParseErrors([])
+    setSelectedFile(file);
+    setIsProcessing(true);
+    setParsedData([]);
+    setParseErrors([]);
 
     try {
-      const text = await file.text()
-      const { events, errors } = parseICSFile(text)
+      const text = await file.text();
+      const { events, errors } = parseICSFile(text);
 
       // Map ICS events to target type
-      const mapped: T[] = []
-      const mappingErrors: string[] = [...errors]
+      const mapped: T[] = [];
+      const mappingErrors: string[] = [...errors];
 
       events.forEach((event, index) => {
         try {
-          const mappedItem = mapConfig.mapEvent(event)
+          const mappedItem = mapConfig.mapEvent(event);
           if (mappedItem) {
-            mapped.push(mappedItem)
+            mapped.push(mappedItem);
           } else {
-            mappingErrors.push(`Event ${index + 1}: Could not map event "${event.summary}"`)
+            mappingErrors.push(
+              `Event ${index + 1}: Could not map event "${event.summary}"`
+            );
           }
         } catch (error) {
-          mappingErrors.push(`Event ${index + 1}: Mapping error - ${error}`)
+          mappingErrors.push(`Event ${index + 1}: Mapping error - ${error}`);
         }
-      })
+      });
 
-      setParsedData(mapped)
-      setParseErrors(mappingErrors)
+      setParsedData(mapped);
+      setParseErrors(mappingErrors);
     } catch (error) {
-      setParseErrors([`Failed to read file: ${error}`])
+      setParseErrors([`Failed to read file: ${error}`]);
     } finally {
-      setIsProcessing(false)
+      setIsProcessing(false);
     }
   }
 
   function handleImport() {
     if (parsedData.length > 0) {
-      onImport(parsedData)
+      onImport(parsedData);
       // Reset state
-      setSelectedFile(null)
-      setParsedData([])
-      setParseErrors([])
+      setSelectedFile(null);
+      setParsedData([]);
+      setParseErrors([]);
     }
   }
 
   function handleCancel() {
-    setSelectedFile(null)
-    setParsedData([])
-    setParseErrors([])
+    setSelectedFile(null);
+    setParsedData([]);
+    setParseErrors([]);
   }
 
   return (
@@ -132,10 +137,12 @@ export function GenericICSUpload<T>({
       )}
 
       {/* File Upload */}
-      <div className={`border-2 border-dashed rounded-lg p-6 ${colors.border} ${colors.bg}`}>
+      <div
+        className={`rounded-lg border-2 border-dashed p-6 ${colors.border} ${colors.bg}`}
+      >
         <div className="flex flex-col items-center gap-4">
           <svg
-            className={`w-12 h-12 ${colors.text}`}
+            className={`h-12 w-12 ${colors.text}`}
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -164,13 +171,16 @@ export function GenericICSUpload<T>({
               className="sr-only"
               aria-describedby="ics-upload-instructions"
             />
-            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1" id="ics-upload-instructions">
+            <p
+              className="mt-1 text-xs text-gray-500 dark:text-gray-400"
+              id="ics-upload-instructions"
+            >
               Supports .ics and .ical calendar files
             </p>
           </div>
 
           {selectedFile && (
-            <div className={`px-3 py-1 rounded-full text-sm ${colors.badge}`}>
+            <div className={`rounded-full px-3 py-1 text-sm ${colors.badge}`}>
               {selectedFile.name}
             </div>
           )}
@@ -179,11 +189,15 @@ export function GenericICSUpload<T>({
 
       {/* Processing State */}
       {isProcessing && (
-        <div className="text-center py-4">
-          <div className="animate-spin inline-block w-6 h-6 border-2 border-current border-t-transparent rounded-full" role="status" aria-label="Loading">
+        <div className="py-4 text-center">
+          <div
+            className="inline-block h-6 w-6 animate-spin rounded-full border-2 border-current border-t-transparent"
+            role="status"
+            aria-label="Loading"
+          >
             <span className="sr-only">Processing...</span>
           </div>
-          <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
+          <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
             Parsing calendar file...
           </p>
         </div>
@@ -191,11 +205,14 @@ export function GenericICSUpload<T>({
 
       {/* Errors */}
       {parseErrors.length > 0 && (
-        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4" role="alert">
-          <h3 className="font-semibold text-red-800 dark:text-red-200 mb-2">
+        <div
+          className="rounded-lg border border-red-200 bg-red-50 p-4 dark:border-red-800 dark:bg-red-900/20"
+          role="alert"
+        >
+          <h3 className="mb-2 font-semibold text-red-800 dark:text-red-200">
             Parsing Issues
           </h3>
-          <ul className="text-sm text-red-700 dark:text-red-300 space-y-1">
+          <ul className="space-y-1 text-sm text-red-700 dark:text-red-300">
             {parseErrors.map((error, index) => (
               <li key={index}>• {error}</li>
             ))}
@@ -205,34 +222,37 @@ export function GenericICSUpload<T>({
 
       {/* Preview */}
       {parsedData.length > 0 && (
-        <div className="bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
-          <div className="flex justify-between items-center mb-3">
+        <div className="rounded-lg border border-gray-200 bg-gray-50 p-4 dark:border-gray-700 dark:bg-gray-900">
+          <div className="mb-3 flex items-center justify-between">
             <h3 className="font-semibold text-gray-900 dark:text-gray-100">
-              Preview ({parsedData.length} {parsedData.length === 1 ? 'event' : 'events'})
+              Preview ({parsedData.length}{" "}
+              {parsedData.length === 1 ? "event" : "events"})
             </h3>
           </div>
 
-          <div className="space-y-2 max-h-64 overflow-y-auto">
+          <div className="max-h-64 space-y-2 overflow-y-auto">
             {renderPreview ? (
               parsedData.map((item, index) => renderPreview(item, index))
             ) : (
               <p className="text-sm text-gray-600 dark:text-gray-400">
-                {parsedData.length} item{parsedData.length !== 1 ? 's' : ''} ready to import
+                {parsedData.length} item{parsedData.length !== 1 ? "s" : ""}{" "}
+                ready to import
               </p>
             )}
           </div>
 
           {/* Action Buttons */}
-          <div className="flex gap-3 mt-4">
+          <div className="mt-4 flex gap-3">
             <button
               onClick={handleImport}
-              className={`flex-1 ${colors.button} text-white px-4 py-2 rounded-lg hover:shadow-md transition-all`}
+              className={`flex-1 ${colors.button} rounded-lg px-4 py-2 text-white transition-all hover:shadow-md`}
             >
-              Import {parsedData.length} {parsedData.length === 1 ? 'Event' : 'Events'}
+              Import {parsedData.length}{" "}
+              {parsedData.length === 1 ? "Event" : "Events"}
             </button>
             <button
               onClick={handleCancel}
-              className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+              className="rounded-lg border border-gray-300 px-4 py-2 transition-colors hover:bg-gray-50 dark:border-gray-600 dark:hover:bg-gray-800"
             >
               Cancel
             </button>
@@ -240,5 +260,5 @@ export function GenericICSUpload<T>({
         </div>
       )}
     </div>
-  )
+  );
 }

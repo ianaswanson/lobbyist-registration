@@ -1,16 +1,16 @@
-import { auth } from "@/lib/auth"
-import { redirect } from "next/navigation"
-import { Navigation } from "@/components/Navigation"
+import { auth } from "@/lib/auth";
+import { redirect } from "next/navigation";
+import { Navigation } from "@/components/Navigation";
 
 export default async function AuthenticatedLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
-  const session = await auth()
+  const session = await auth();
 
   if (!session || !session.user) {
-    redirect("/auth/signin")
+    redirect("/auth/signin");
   }
 
   return (
@@ -18,5 +18,5 @@ export default async function AuthenticatedLayout({
       <Navigation user={session.user} />
       {children}
     </>
-  )
+  );
 }

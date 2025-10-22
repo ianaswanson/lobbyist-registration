@@ -1,11 +1,11 @@
-"use client"
+"use client";
 
-import { useState } from "react"
+import { useState } from "react";
 import {
   checkExemption,
   type ExemptionCheckData,
   type ExemptionResult,
-} from "@/lib/exemption-checker"
+} from "@/lib/exemption-checker";
 
 export function ExemptionChecker() {
   const [formData, setFormData] = useState<ExemptionCheckData>({
@@ -15,15 +15,15 @@ export function ExemptionChecker() {
     isPublicTestimonyOnly: false,
     isRespondingToCountyRequest: false,
     isAdvisoryCommitteeMember: false,
-  })
+  });
 
-  const [result, setResult] = useState<ExemptionResult | null>(null)
+  const [result, setResult] = useState<ExemptionResult | null>(null);
 
   const handleCheck = (e: React.FormEvent) => {
-    e.preventDefault()
-    const exemptionResult = checkExemption(formData)
-    setResult(exemptionResult)
-  }
+    e.preventDefault();
+    const exemptionResult = checkExemption(formData);
+    setResult(exemptionResult);
+  };
 
   const handleReset = () => {
     setFormData({
@@ -33,15 +33,15 @@ export function ExemptionChecker() {
       isPublicTestimonyOnly: false,
       isRespondingToCountyRequest: false,
       isAdvisoryCommitteeMember: false,
-    })
-    setResult(null)
-  }
+    });
+    setResult(null);
+  };
 
   return (
     <div className="space-y-6">
       {/* Informational Header */}
       <div className="rounded-lg border-2 border-blue-200 bg-blue-50 p-4">
-        <h3 className="font-semibold text-blue-900 mb-2">
+        <h3 className="mb-2 font-semibold text-blue-900">
           Do I Need to Register as a Lobbyist?
         </h3>
         <p className="text-sm text-blue-700">
@@ -57,12 +57,12 @@ export function ExemptionChecker() {
           <div className="mb-4">
             <label
               htmlFor="hoursPerQuarter"
-              className="block text-sm font-medium text-gray-700 mb-2"
+              className="mb-2 block text-sm font-medium text-gray-700"
             >
               How many hours per quarter do you spend on lobbying activities?
               <span className="text-red-600">*</span>
             </label>
-            <p className="text-xs text-gray-500 mb-3">
+            <p className="mb-3 text-xs text-gray-500">
               Include time spent communicating with public officials to
               influence legislative or administrative action. Do NOT include
               travel time.
@@ -80,27 +80,27 @@ export function ExemptionChecker() {
                   hoursPerQuarter: parseFloat(e.target.value) || 0,
                 })
               }
-              className="block w-full max-w-xs rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-blue-500"
+              className="block w-full max-w-xs rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
               placeholder="e.g., 15"
             />
           </div>
 
           <div className="rounded-md bg-gray-50 p-3 text-xs text-gray-600">
-            <strong>Tip:</strong> A quarter is a 3-month period. If you spend
-            10 hours or less per quarter, you are generally exempt from
+            <strong>Tip:</strong> A quarter is a 3-month period. If you spend 10
+            hours or less per quarter, you are generally exempt from
             registration.
           </div>
         </div>
 
         {/* Exemption Questions */}
         <div className="rounded-lg border bg-white p-6 shadow-sm">
-          <h4 className="font-semibold text-gray-900 mb-4">
+          <h4 className="mb-4 font-semibold text-gray-900">
             Check any that apply to you:
           </h4>
 
           <div className="space-y-4">
             {/* News Media */}
-            <label className="flex items-start space-x-3 cursor-pointer">
+            <label className="flex cursor-pointer items-start space-x-3">
               <input
                 type="checkbox"
                 checked={formData.isNewsMedia}
@@ -110,9 +110,7 @@ export function ExemptionChecker() {
                 className="mt-1 h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
               />
               <div>
-                <div className="font-medium text-gray-900">
-                  I am news media
-                </div>
+                <div className="font-medium text-gray-900">I am news media</div>
                 <div className="text-sm text-gray-600">
                   You are engaged in publishing or broadcasting news to the
                   general public
@@ -121,7 +119,7 @@ export function ExemptionChecker() {
             </label>
 
             {/* Government Official */}
-            <label className="flex items-start space-x-3 cursor-pointer">
+            <label className="flex cursor-pointer items-start space-x-3">
               <input
                 type="checkbox"
                 checked={formData.isGovernmentOfficial}
@@ -145,7 +143,7 @@ export function ExemptionChecker() {
             </label>
 
             {/* Public Testimony Only */}
-            <label className="flex items-start space-x-3 cursor-pointer">
+            <label className="flex cursor-pointer items-start space-x-3">
               <input
                 type="checkbox"
                 checked={formData.isPublicTestimonyOnly}
@@ -169,7 +167,7 @@ export function ExemptionChecker() {
             </label>
 
             {/* County Request */}
-            <label className="flex items-start space-x-3 cursor-pointer">
+            <label className="flex cursor-pointer items-start space-x-3">
               <input
                 type="checkbox"
                 checked={formData.isRespondingToCountyRequest}
@@ -193,7 +191,7 @@ export function ExemptionChecker() {
             </label>
 
             {/* Advisory Committee */}
-            <label className="flex items-start space-x-3 cursor-pointer">
+            <label className="flex cursor-pointer items-start space-x-3">
               <input
                 type="checkbox"
                 checked={formData.isAdvisoryCommitteeMember}
@@ -298,8 +296,8 @@ export function ExemptionChecker() {
               </p>
 
               {result.mustRegister && result.registrationDeadline && (
-                <div className="rounded-md bg-orange-100 p-4 mt-4">
-                  <p className="text-sm font-semibold text-orange-900 mb-2">
+                <div className="mt-4 rounded-md bg-orange-100 p-4">
+                  <p className="mb-2 text-sm font-semibold text-orange-900">
                     Registration Deadline:
                   </p>
                   <p className="text-sm text-orange-800">
@@ -333,7 +331,8 @@ export function ExemptionChecker() {
                     </svg>
                   </a>
                   <p className="mt-2 text-xs text-orange-700">
-                    You'll need to sign in or create an account to complete your registration
+                    You'll need to sign in or create an account to complete your
+                    registration
                   </p>
                 </div>
               )}
@@ -344,7 +343,7 @@ export function ExemptionChecker() {
 
       {/* Additional Information */}
       <div className="rounded-lg border bg-gray-50 p-4 text-sm text-gray-600">
-        <h4 className="font-semibold text-gray-900 mb-2">
+        <h4 className="mb-2 font-semibold text-gray-900">
           Important Information:
         </h4>
         <ul className="list-inside list-disc space-y-1">
@@ -366,5 +365,5 @@ export function ExemptionChecker() {
         </ul>
       </div>
     </div>
-  )
+  );
 }

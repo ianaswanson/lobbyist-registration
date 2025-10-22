@@ -1,13 +1,13 @@
-import { auth } from "@/lib/auth"
-import { redirect } from "next/navigation"
-import { EmployerExpenseReportForm } from "@/components/forms/expense-report/EmployerExpenseReportForm"
-import { DemoFilesPanel } from "@/components/DemoFilesPanel"
+import { auth } from "@/lib/auth";
+import { redirect } from "next/navigation";
+import { EmployerExpenseReportForm } from "@/components/forms/expense-report/EmployerExpenseReportForm";
+import { DemoFilesPanel } from "@/components/DemoFilesPanel";
 
 export default async function EmployerExpenseReportPage() {
-  const session = await auth()
+  const session = await auth();
 
   if (!session) {
-    redirect("/auth/signin")
+    redirect("/auth/signin");
   }
 
   return (
@@ -21,14 +21,14 @@ export default async function EmployerExpenseReportPage() {
             Employer Quarterly Expense Report
           </h2>
           <p className="mt-2 text-sm text-gray-600">
-            Report your organization's lobbying expenditures for the current
-            quarter. Reports are due April 15, July 15, October 15, and January
-            15.
+            Report your organization&apos;s lobbying expenditures for the
+            current quarter. Reports are due April 15, July 15, October 15, and
+            January 15.
           </p>
         </div>
 
         <EmployerExpenseReportForm userId={session.user.id} />
       </main>
     </div>
-  )
+  );
 }

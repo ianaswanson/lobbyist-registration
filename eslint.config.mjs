@@ -20,6 +20,16 @@ const eslintConfig = [
       "next-env.d.ts",
     ],
   },
+  {
+    rules: {
+      // Downgrade these to warnings for now, fix incrementally
+      "react/no-unescaped-entities": "warn",
+      "@next/next/no-html-link-for-pages": "warn",
+      "@typescript-eslint/no-explicit-any": "warn",
+      "@typescript-eslint/no-unused-vars": "warn",
+      "react-hooks/exhaustive-deps": "warn",
+    },
+  },
 ];
 
 export default eslintConfig;

@@ -47,7 +47,10 @@ export async function GET(request: NextRequest) {
       });
 
       if (!lobbyist && !employer) {
-        return NextResponse.json({ error: "Not authorized to view appeals" }, { status: 403 });
+        return NextResponse.json(
+          { error: "Not authorized to view appeals" },
+          { status: 403 }
+        );
       }
 
       // Get violations for this entity
@@ -147,8 +150,12 @@ export async function POST(request: NextRequest) {
       });
 
       const canAppeal =
-        (lobbyist && violation.entityId === lobbyist.id && violation.entityType === "LOBBYIST") ||
-        (employer && violation.entityId === employer.id && violation.entityType === "EMPLOYER");
+        (lobbyist &&
+          violation.entityId === lobbyist.id &&
+          violation.entityType === "LOBBYIST") ||
+        (employer &&
+          violation.entityId === employer.id &&
+          violation.entityType === "EMPLOYER");
 
       if (!canAppeal) {
         return NextResponse.json(
@@ -161,7 +168,12 @@ export async function POST(request: NextRequest) {
     // Check if violation is in appealable status
     if (violation.status !== "ISSUED") {
       return NextResponse.json(
-        { error: "This violation cannot be appealed (status: " + violation.status + ")" },
+        {
+          error:
+            "This violation cannot be appealed (status: " +
+            violation.status +
+            ")",
+        },
         { status: 400 }
       );
     }

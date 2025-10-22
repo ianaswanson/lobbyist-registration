@@ -1,12 +1,12 @@
-"use client"
+"use client";
 
-import { useState } from "react"
+import { useState } from "react";
 
 interface ReviewActionsProps {
-  entityName: string
-  onApprove: () => void
-  onReject: (notes: string) => void
-  onRequestClarification?: (notes: string) => void
+  entityName: string;
+  onApprove: () => void;
+  onReject: (notes: string) => void;
+  onRequestClarification?: (notes: string) => void;
 }
 
 export function ReviewActions({
@@ -15,43 +15,43 @@ export function ReviewActions({
   onReject,
   onRequestClarification,
 }: ReviewActionsProps) {
-  const [showRejectDialog, setShowRejectDialog] = useState(false)
-  const [showClarifyDialog, setShowClarifyDialog] = useState(false)
-  const [notes, setNotes] = useState("")
+  const [showRejectDialog, setShowRejectDialog] = useState(false);
+  const [showClarifyDialog, setShowClarifyDialog] = useState(false);
+  const [notes, setNotes] = useState("");
 
   const handleApprove = () => {
-    onApprove()
-  }
+    onApprove();
+  };
 
   const handleRejectClick = () => {
-    setShowRejectDialog(true)
-    setNotes("")
-  }
+    setShowRejectDialog(true);
+    setNotes("");
+  };
 
   const handleRejectSubmit = () => {
-    onReject(notes)
-    setShowRejectDialog(false)
-    setNotes("")
-  }
+    onReject(notes);
+    setShowRejectDialog(false);
+    setNotes("");
+  };
 
   const handleClarifyClick = () => {
-    setShowClarifyDialog(true)
-    setNotes("")
-  }
+    setShowClarifyDialog(true);
+    setNotes("");
+  };
 
   const handleClarifySubmit = () => {
     if (onRequestClarification) {
-      onRequestClarification(notes)
+      onRequestClarification(notes);
     }
-    setShowClarifyDialog(false)
-    setNotes("")
-  }
+    setShowClarifyDialog(false);
+    setNotes("");
+  };
 
   const handleCancel = () => {
-    setShowRejectDialog(false)
-    setShowClarifyDialog(false)
-    setNotes("")
-  }
+    setShowRejectDialog(false);
+    setShowClarifyDialog(false);
+    setNotes("");
+  };
 
   // Reject dialog
   if (showRejectDialog) {
@@ -63,7 +63,7 @@ export function ReviewActions({
           </label>
           <textarea
             rows={3}
-            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-blue-500"
+            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
             placeholder="Explain why this is being rejected..."
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
@@ -79,7 +79,7 @@ export function ReviewActions({
           </button>
           <button
             type="button"
-            className="rounded-md bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="rounded-md bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-50"
             onClick={handleRejectSubmit}
             disabled={!notes.trim()}
           >
@@ -87,7 +87,7 @@ export function ReviewActions({
           </button>
         </div>
       </div>
-    )
+    );
   }
 
   // Clarification dialog
@@ -100,7 +100,7 @@ export function ReviewActions({
           </label>
           <textarea
             rows={3}
-            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-blue-500"
+            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
             placeholder="What clarification is needed..."
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
@@ -116,7 +116,7 @@ export function ReviewActions({
           </button>
           <button
             type="button"
-            className="rounded-md bg-yellow-600 px-4 py-2 text-sm font-medium text-white hover:bg-yellow-700 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="rounded-md bg-yellow-600 px-4 py-2 text-sm font-medium text-white hover:bg-yellow-700 disabled:cursor-not-allowed disabled:opacity-50"
             onClick={handleClarifySubmit}
             disabled={!notes.trim()}
           >
@@ -124,7 +124,7 @@ export function ReviewActions({
           </button>
         </div>
       </div>
-    )
+    );
   }
 
   // Default action buttons
@@ -154,5 +154,5 @@ export function ReviewActions({
         Approve
       </button>
     </div>
-  )
+  );
 }

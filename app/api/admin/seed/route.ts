@@ -74,11 +74,13 @@ export async function POST() {
       ],
     });
 
-    return NextResponse.json({
-      message: "Database seeded successfully",
-      usersCreated: users.count,
-    }, { status: 201 });
-
+    return NextResponse.json(
+      {
+        message: "Database seeded successfully",
+        usersCreated: users.count,
+      },
+      { status: 201 }
+    );
   } catch (error) {
     console.error("Seed error:", error);
     return NextResponse.json(

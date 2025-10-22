@@ -1,13 +1,13 @@
-import { auth } from "@/lib/auth"
-import { redirect } from "next/navigation"
-import { LobbyistExpenseReportForm } from "@/components/forms/expense-report/LobbyistExpenseReportForm"
-import { DemoFilesPanel } from "@/components/DemoFilesPanel"
+import { auth } from "@/lib/auth";
+import { redirect } from "next/navigation";
+import { LobbyistExpenseReportForm } from "@/components/forms/expense-report/LobbyistExpenseReportForm";
+import { DemoFilesPanel } from "@/components/DemoFilesPanel";
 
 export default async function LobbyistExpenseReportPage() {
-  const session = await auth()
+  const session = await auth();
 
   if (!session) {
-    redirect("/auth/signin")
+    redirect("/auth/signin");
   }
 
   return (
@@ -29,5 +29,5 @@ export default async function LobbyistExpenseReportPage() {
         <LobbyistExpenseReportForm userId={session.user.id} />
       </main>
     </div>
-  )
+  );
 }

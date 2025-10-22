@@ -1,9 +1,9 @@
-import NextAuth from "next-auth"
-import Credentials from "next-auth/providers/credentials"
-import { PrismaAdapter } from "@auth/prisma-adapter"
-import { prisma } from "./db"
-import bcrypt from "bcryptjs"
-import type { UserRole } from "@prisma/client"
+import NextAuth from "next-auth";
+import Credentials from "next-auth/providers/credentials";
+import { PrismaAdapter } from "@auth/prisma-adapter";
+import { prisma } from "./db";
+import bcrypt from "bcryptjs";
+import type { UserRole } from "@prisma/client";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   adapter: PrismaAdapter(prisma),
@@ -24,26 +24,26 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {
-          return null
+          return null;
         }
 
         const user = await prisma.user.findUnique({
           where: {
             email: credentials.email as string,
           },
-        })
+        });
 
         if (!user) {
-          return null
+          return null;
         }
 
         const passwordMatch = await bcrypt.compare(
           credentials.password as string,
           user.password
-        )
+        );
 
         if (!passwordMatch) {
-          return null
+          return null;
         }
 
         return {
@@ -51,24 +51,24 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           email: user.email,
           name: user.name,
           role: user.role,
-        }
+        };
       },
     }),
   ],
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        token.id = user.id
-        token.role = (user as any).role
+        token.id = user.id;
+        token.role = (user as any).role;
       }
-      return token
+      return token;
     },
     async session({ session, token }) {
       if (session.user) {
-        session.user.id = token.id as string
-        session.user.role = token.role as UserRole
+        session.user.id = token.id as string;
+        session.user.role = token.role as UserRole;
       }
-      return session
+      return session;
     },
   },
-})
+});

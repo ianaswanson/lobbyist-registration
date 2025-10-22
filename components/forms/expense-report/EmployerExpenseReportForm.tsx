@@ -1,25 +1,25 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { useRouter } from "next/navigation"
-import { ManualEntryMode } from "./ManualEntryMode"
-import { CSVUploadMode } from "./CSVUploadMode"
-import { BulkPasteMode } from "./BulkPasteMode"
-import FileUpload, { UploadedFile } from "@/components/FileUpload"
-import type { ExpenseLineItem } from "./LobbyistExpenseReportForm"
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { ManualEntryMode } from "./ManualEntryMode";
+import { CSVUploadMode } from "./CSVUploadMode";
+import { BulkPasteMode } from "./BulkPasteMode";
+import FileUpload, { UploadedFile } from "@/components/FileUpload";
+import type { ExpenseLineItem } from "./LobbyistExpenseReportForm";
 
-type InputMode = "manual" | "csv" | "paste"
+type InputMode = "manual" | "csv" | "paste";
 
 interface LobbyistPayment {
-  id: string
-  lobbyistName: string
-  amountPaid: number
+  id: string;
+  lobbyistName: string;
+  amountPaid: number;
 }
 
 interface EmployerExpenseReportFormProps {
-  userId: string
-  initialQuarter?: string
-  initialYear?: number
+  userId: string;
+  initialQuarter?: string;
+  initialYear?: number;
 }
 
 export function EmployerExpenseReportForm({
@@ -27,179 +27,194 @@ export function EmployerExpenseReportForm({
   initialQuarter,
   initialYear,
 }: EmployerExpenseReportFormProps) {
-  const router = useRouter()
-  const [mode, setMode] = useState<InputMode>("manual")
-  const [expenses, setExpenses] = useState<ExpenseLineItem[]>([])
-  const [lobbyistPayments, setLobbyistPayments] = useState<LobbyistPayment[]>([])
-  const [quarter, setQuarter] = useState(initialQuarter || "Q1")
-  const [year, setYear] = useState(initialYear || new Date().getFullYear())
-  const [uploadedDocuments, setUploadedDocuments] = useState<UploadedFile[]>([])
-  const [isLoading, setIsLoading] = useState(false)
-  const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null)
-  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false)
+  const router = useRouter();
+  const [mode, setMode] = useState<InputMode>("manual");
+  const [expenses, setExpenses] = useState<ExpenseLineItem[]>([]);
+  const [lobbyistPayments, setLobbyistPayments] = useState<LobbyistPayment[]>(
+    []
+  );
+  const [quarter, setQuarter] = useState(initialQuarter || "Q1");
+  const [year, setYear] = useState(initialYear || new Date().getFullYear());
+  const [uploadedDocuments, setUploadedDocuments] = useState<UploadedFile[]>(
+    []
+  );
+  const [isLoading, setIsLoading] = useState(false);
+  const [message, setMessage] = useState<{
+    type: "success" | "error";
+    text: string;
+  } | null>(null);
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
 
   // New lobbyist payment form state
   const [newPayment, setNewPayment] = useState({
     lobbyistName: "",
     amountPaid: "",
-  })
+  });
 
-  const totalExpenses = expenses.reduce((sum, exp) => sum + exp.amount, 0)
-  const totalPayments = lobbyistPayments.reduce((sum, pay) => sum + pay.amountPaid, 0)
-  const grandTotal = totalExpenses + totalPayments
+  const totalExpenses = expenses.reduce((sum, exp) => sum + exp.amount, 0);
+  const totalPayments = lobbyistPayments.reduce(
+    (sum, pay) => sum + pay.amountPaid,
+    0
+  );
+  const grandTotal = totalExpenses + totalPayments;
 
   // Load existing report data when quarter/year changes
   useEffect(() => {
     async function fetchExistingReport() {
-      setIsLoading(true)
+      setIsLoading(true);
       try {
-        const response = await fetch(`/api/reports/employer?quarter=${quarter}&year=${year}`)
+        const response = await fetch(
+          `/api/reports/employer?quarter=${quarter}&year=${year}`
+        );
 
         if (response.ok) {
-          const data = await response.json()
+          const data = await response.json();
 
           // Check if we have reports for this quarter/year
           if (data.reports && data.reports.length > 0) {
-            const report = data.reports[0] // Get the first (and should be only) report
+            const report = data.reports[0]; // Get the first (and should be only) report
 
             // Transform line items to match our ExpenseLineItem type
             if (report.lineItems && report.lineItems.length > 0) {
               const transformedExpenses = report.lineItems.map((item: any) => ({
                 id: item.id,
                 officialName: item.officialName,
-                date: new Date(item.date).toISOString().split('T')[0], // Format as YYYY-MM-DD
+                date: new Date(item.date).toISOString().split("T")[0], // Format as YYYY-MM-DD
                 payee: item.payee,
                 purpose: item.purpose,
                 amount: item.amount,
                 isEstimate: item.isEstimate,
-              }))
+              }));
 
-              setExpenses(transformedExpenses)
+              setExpenses(transformedExpenses);
             } else {
-              setExpenses([])
+              setExpenses([]);
             }
 
             // Transform lobbyist payments
             if (report.lobbyistPayments && report.lobbyistPayments.length > 0) {
-              const transformedPayments = report.lobbyistPayments.map((payment: any) => ({
-                id: payment.id,
-                lobbyistName: payment.lobbyist.name,
-                amountPaid: payment.amountPaid,
-              }))
+              const transformedPayments = report.lobbyistPayments.map(
+                (payment: any) => ({
+                  id: payment.id,
+                  lobbyistName: payment.lobbyist.name,
+                  amountPaid: payment.amountPaid,
+                })
+              );
 
-              setLobbyistPayments(transformedPayments)
+              setLobbyistPayments(transformedPayments);
             } else {
-              setLobbyistPayments([])
+              setLobbyistPayments([]);
             }
 
-            setHasUnsavedChanges(false) // Data is loaded from DB, no unsaved changes
+            setHasUnsavedChanges(false); // Data is loaded from DB, no unsaved changes
           } else {
             // No report found for this quarter/year - start fresh
-            setExpenses([])
-            setLobbyistPayments([])
-            setHasUnsavedChanges(false)
+            setExpenses([]);
+            setLobbyistPayments([]);
+            setHasUnsavedChanges(false);
           }
         } else {
           // API error - start fresh
-          console.error('Failed to load existing report')
-          setExpenses([])
-          setLobbyistPayments([])
-          setHasUnsavedChanges(false)
+          console.error("Failed to load existing report");
+          setExpenses([]);
+          setLobbyistPayments([]);
+          setHasUnsavedChanges(false);
         }
       } catch (error) {
-        console.error('Error fetching existing report:', error)
-        setExpenses([])
-        setLobbyistPayments([])
-        setHasUnsavedChanges(false)
+        console.error("Error fetching existing report:", error);
+        setExpenses([]);
+        setLobbyistPayments([]);
+        setHasUnsavedChanges(false);
       } finally {
-        setIsLoading(false)
+        setIsLoading(false);
       }
     }
 
-    fetchExistingReport()
-  }, [quarter, year])
+    fetchExistingReport();
+  }, [quarter, year]);
 
   // Warn before leaving page with unsaved changes (page refresh/close)
   useEffect(() => {
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
       if (hasUnsavedChanges) {
-        e.preventDefault()
-        e.returnValue = '' // Chrome requires returnValue to be set
+        e.preventDefault();
+        e.returnValue = ""; // Chrome requires returnValue to be set
       }
-    }
+    };
 
-    window.addEventListener('beforeunload', handleBeforeUnload)
-    return () => window.removeEventListener('beforeunload', handleBeforeUnload)
-  }, [hasUnsavedChanges])
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, [hasUnsavedChanges]);
 
   // Warn before client-side navigation (clicking Next.js Links)
   useEffect(() => {
     const handleClick = (e: MouseEvent) => {
-      if (!hasUnsavedChanges) return
+      if (!hasUnsavedChanges) return;
 
-      const target = e.target as HTMLElement
-      const anchor = target.closest('a[href]')
+      const target = e.target as HTMLElement;
+      const anchor = target.closest("a[href]");
 
       if (anchor) {
-        const href = anchor.getAttribute('href')
-        const currentPath = window.location.pathname
+        const href = anchor.getAttribute("href");
+        const currentPath = window.location.pathname;
 
-        if (href && href !== currentPath && !href.startsWith('#')) {
+        if (href && href !== currentPath && !href.startsWith("#")) {
           const confirmed = window.confirm(
-            'You have unsaved changes. Are you sure you want to leave this page? Your changes will be lost.'
-          )
+            "You have unsaved changes. Are you sure you want to leave this page? Your changes will be lost."
+          );
 
           if (!confirmed) {
-            e.preventDefault()
-            e.stopPropagation()
-            e.stopImmediatePropagation()
+            e.preventDefault();
+            e.stopPropagation();
+            e.stopImmediatePropagation();
           }
         }
       }
-    }
+    };
 
-    document.addEventListener('click', handleClick, { capture: true })
-    return () => document.removeEventListener('click', handleClick, { capture: true })
-  }, [hasUnsavedChanges])
+    document.addEventListener("click", handleClick, { capture: true });
+    return () =>
+      document.removeEventListener("click", handleClick, { capture: true });
+  }, [hasUnsavedChanges]);
 
   const handleAddExpenses = (newExpenses: ExpenseLineItem[]) => {
-    setExpenses([...expenses, ...newExpenses])
-    setHasUnsavedChanges(true)
-  }
+    setExpenses([...expenses, ...newExpenses]);
+    setHasUnsavedChanges(true);
+  };
 
   const handleRemoveExpense = (id: string) => {
-    setExpenses(expenses.filter((exp) => exp.id !== id))
-    setHasUnsavedChanges(true)
-  }
+    setExpenses(expenses.filter((exp) => exp.id !== id));
+    setHasUnsavedChanges(true);
+  };
 
   const handleAddPayment = (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
 
     const payment: LobbyistPayment = {
       id: crypto.randomUUID(),
       lobbyistName: newPayment.lobbyistName,
       amountPaid: parseFloat(newPayment.amountPaid),
-    }
+    };
 
-    setLobbyistPayments([...lobbyistPayments, payment])
-    setHasUnsavedChanges(true)
+    setLobbyistPayments([...lobbyistPayments, payment]);
+    setHasUnsavedChanges(true);
 
     // Reset form
     setNewPayment({
       lobbyistName: "",
       amountPaid: "",
-    })
-  }
+    });
+  };
 
   const handleRemovePayment = (id: string) => {
-    setLobbyistPayments(lobbyistPayments.filter((pay) => pay.id !== id))
-    setHasUnsavedChanges(true)
-  }
+    setLobbyistPayments(lobbyistPayments.filter((pay) => pay.id !== id));
+    setHasUnsavedChanges(true);
+  };
 
   const submitReport = async (isDraft: boolean) => {
     try {
-      setIsLoading(true)
-      setMessage(null)
+      setIsLoading(true);
+      setMessage(null);
 
       const response = await fetch("/api/reports/employer", {
         method: "POST",
@@ -213,12 +228,12 @@ export function EmployerExpenseReportForm({
           lobbyistPayments,
           isDraft,
         }),
-      })
+      });
 
-      const data = await response.json()
+      const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || "Failed to submit report")
+        throw new Error(data.error || "Failed to submit report");
       }
 
       setMessage({
@@ -226,48 +241,49 @@ export function EmployerExpenseReportForm({
         text: isDraft
           ? `Draft saved successfully! Quarter: ${quarter} ${year}`
           : `Report submitted successfully! Quarter: ${quarter} ${year}`,
-      })
+      });
 
       // Clear unsaved changes flag since we just saved
-      setHasUnsavedChanges(false)
+      setHasUnsavedChanges(false);
 
       // If submitting final report (not draft), redirect to reports list after brief delay
       if (!isDraft) {
         setTimeout(() => {
-          router.push('/reports/employer')
-        }, 1500)
+          router.push("/reports/employer");
+        }, 1500);
       }
     } catch (error) {
-      console.error("Error submitting report:", error)
+      console.error("Error submitting report:", error);
       setMessage({
         type: "error",
-        text: error instanceof Error ? error.message : "Failed to submit report",
-      })
+        text:
+          error instanceof Error ? error.message : "Failed to submit report",
+      });
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   const handleSaveDraft = () => {
-    submitReport(true)
-  }
+    submitReport(true);
+  };
 
   const handleSubmit = () => {
-    submitReport(false)
-  }
+    submitReport(false);
+  };
 
   return (
     <div className="space-y-6">
       {/* Quarter and Year Selection */}
       <div className="rounded-lg border bg-white p-6 shadow-sm">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">
+        <h3 className="mb-4 text-lg font-semibold text-gray-900">
           Reporting Period
         </h3>
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label
               htmlFor="quarter"
-              className="block text-sm font-medium text-gray-700 mb-1"
+              className="mb-1 block text-sm font-medium text-gray-700"
             >
               Quarter
             </label>
@@ -275,7 +291,7 @@ export function EmployerExpenseReportForm({
               id="quarter"
               value={quarter}
               onChange={(e) => setQuarter(e.target.value)}
-              className="block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-blue-500"
+              className="block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
             >
               <option value="Q1">Q1 (Jan-Mar) - Due April 15</option>
               <option value="Q2">Q2 (Apr-Jun) - Due July 15</option>
@@ -286,7 +302,7 @@ export function EmployerExpenseReportForm({
           <div>
             <label
               htmlFor="year"
-              className="block text-sm font-medium text-gray-700 mb-1"
+              className="mb-1 block text-sm font-medium text-gray-700"
             >
               Year
             </label>
@@ -295,7 +311,7 @@ export function EmployerExpenseReportForm({
               id="year"
               value={year}
               onChange={(e) => setYear(parseInt(e.target.value))}
-              className="block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-blue-500"
+              className="block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
             />
           </div>
         </div>
@@ -303,16 +319,16 @@ export function EmployerExpenseReportForm({
 
       {/* Lobbyist Payments Section */}
       <div className="rounded-lg border bg-white p-6 shadow-sm">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">
+        <h3 className="mb-4 text-lg font-semibold text-gray-900">
           Payments to Registered Lobbyists
         </h3>
-        <p className="text-sm text-gray-600 mb-4">
+        <p className="mb-4 text-sm text-gray-600">
           Report all payments made to registered lobbyists for lobbying services
           during this quarter.
         </p>
 
         {/* Add Payment Form */}
-        <form onSubmit={handleAddPayment} className="space-y-4 mb-6">
+        <form onSubmit={handleAddPayment} className="mb-6 space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label
@@ -329,7 +345,7 @@ export function EmployerExpenseReportForm({
                 onChange={(e) =>
                   setNewPayment({ ...newPayment, lobbyistName: e.target.value })
                 }
-                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-blue-500"
+                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
                 placeholder="Jane Smith"
               />
             </div>
@@ -354,7 +370,7 @@ export function EmployerExpenseReportForm({
                   onChange={(e) =>
                     setNewPayment({ ...newPayment, amountPaid: e.target.value })
                   }
-                  className="block w-full rounded-md border border-gray-300 py-2 pl-7 pr-3 focus:border-blue-500 focus:outline-none focus:ring-blue-500"
+                  className="block w-full rounded-md border border-gray-300 py-2 pr-3 pl-7 focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
                   placeholder="5000.00"
                 />
               </div>
@@ -376,10 +392,10 @@ export function EmployerExpenseReportForm({
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="px-3 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                  <th className="px-3 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
                     Lobbyist Name
                   </th>
-                  <th className="px-3 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                  <th className="px-3 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
                     Amount Paid
                   </th>
                   <th className="px-3 py-3"></th>
@@ -388,13 +404,13 @@ export function EmployerExpenseReportForm({
               <tbody className="divide-y divide-gray-200 bg-white">
                 {lobbyistPayments.map((payment) => (
                   <tr key={payment.id} className="hover:bg-gray-50">
-                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-900">
+                    <td className="px-3 py-4 text-sm whitespace-nowrap text-gray-900">
                       {payment.lobbyistName}
                     </td>
-                    <td className="whitespace-nowrap px-3 py-4 text-sm font-medium text-gray-900">
+                    <td className="px-3 py-4 text-sm font-medium whitespace-nowrap text-gray-900">
                       ${payment.amountPaid.toFixed(2)}
                     </td>
-                    <td className="whitespace-nowrap px-3 py-4 text-right text-sm">
+                    <td className="px-3 py-4 text-right text-sm whitespace-nowrap">
                       <button
                         onClick={() => handleRemovePayment(payment.id)}
                         className="text-red-600 hover:text-red-900"
@@ -406,7 +422,7 @@ export function EmployerExpenseReportForm({
                 ))}
               </tbody>
             </table>
-            <div className="mt-4 rounded-md bg-blue-50 p-4 flex justify-between items-center">
+            <div className="mt-4 flex items-center justify-between rounded-md bg-blue-50 p-4">
               <span className="text-sm font-medium text-blue-900">
                 Total Lobbyist Payments:
               </span>
@@ -420,22 +436,22 @@ export function EmployerExpenseReportForm({
 
       {/* Lobbying Expenses Section */}
       <div className="rounded-lg border bg-white p-6 shadow-sm">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">
+        <h3 className="mb-4 text-lg font-semibold text-gray-900">
           Lobbying Expenses (Food, Refreshments, Entertainment)
         </h3>
-        <p className="text-sm text-gray-600 mb-4">
+        <p className="mb-4 text-sm text-gray-600">
           Itemize expenses over $50 paid to or for any public official.
         </p>
 
         <div className="mb-6">
-          <label className="block text-sm font-semibold text-gray-700 mb-3">
+          <label className="mb-3 block text-sm font-semibold text-gray-700">
             Choose Input Method:
           </label>
           <div className="flex space-x-2">
             <button
               type="button"
               onClick={() => setMode("manual")}
-              className={`px-4 py-2 rounded-md font-medium text-sm transition-colors ${
+              className={`rounded-md px-4 py-2 text-sm font-medium transition-colors ${
                 mode === "manual"
                   ? "bg-blue-600 text-white"
                   : "bg-gray-100 text-gray-700 hover:bg-gray-200"
@@ -446,7 +462,7 @@ export function EmployerExpenseReportForm({
             <button
               type="button"
               onClick={() => setMode("csv")}
-              className={`px-4 py-2 rounded-md font-medium text-sm transition-colors ${
+              className={`rounded-md px-4 py-2 text-sm font-medium transition-colors ${
                 mode === "csv"
                   ? "bg-blue-600 text-white"
                   : "bg-gray-100 text-gray-700 hover:bg-gray-200"
@@ -457,7 +473,7 @@ export function EmployerExpenseReportForm({
             <button
               type="button"
               onClick={() => setMode("paste")}
-              className={`px-4 py-2 rounded-md font-medium text-sm transition-colors ${
+              className={`rounded-md px-4 py-2 text-sm font-medium transition-colors ${
                 mode === "paste"
                   ? "bg-blue-600 text-white"
                   : "bg-gray-100 text-gray-700 hover:bg-gray-200"
@@ -477,7 +493,7 @@ export function EmployerExpenseReportForm({
       {/* Expenses List */}
       {expenses.length > 0 && (
         <div className="rounded-lg border bg-white p-6 shadow-sm">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">
+          <h3 className="mb-4 text-lg font-semibold text-gray-900">
             Expense Items ({expenses.length})
           </h3>
 
@@ -485,19 +501,19 @@ export function EmployerExpenseReportForm({
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="px-3 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                  <th className="px-3 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
                     Official Name
                   </th>
-                  <th className="px-3 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                  <th className="px-3 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
                     Date
                   </th>
-                  <th className="px-3 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                  <th className="px-3 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
                     Payee
                   </th>
-                  <th className="px-3 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                  <th className="px-3 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
                     Purpose
                   </th>
-                  <th className="px-3 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                  <th className="px-3 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
                     Amount
                   </th>
                   <th className="px-3 py-3"></th>
@@ -506,7 +522,7 @@ export function EmployerExpenseReportForm({
               <tbody className="divide-y divide-gray-200 bg-white">
                 {expenses.map((expense) => (
                   <tr key={expense.id} className="hover:bg-gray-50">
-                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-900">
+                    <td className="px-3 py-4 text-sm whitespace-nowrap text-gray-900">
                       {expense.officialName}
                       {expense.isEstimate && (
                         <span className="ml-2 text-xs text-yellow-600">
@@ -514,19 +530,19 @@ export function EmployerExpenseReportForm({
                         </span>
                       )}
                     </td>
-                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                    <td className="px-3 py-4 text-sm whitespace-nowrap text-gray-500">
                       {expense.date}
                     </td>
-                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                    <td className="px-3 py-4 text-sm whitespace-nowrap text-gray-500">
                       {expense.payee}
                     </td>
                     <td className="px-3 py-4 text-sm text-gray-500">
                       {expense.purpose}
                     </td>
-                    <td className="whitespace-nowrap px-3 py-4 text-sm font-medium text-gray-900">
+                    <td className="px-3 py-4 text-sm font-medium whitespace-nowrap text-gray-900">
                       ${expense.amount.toFixed(2)}
                     </td>
-                    <td className="whitespace-nowrap px-3 py-4 text-right text-sm">
+                    <td className="px-3 py-4 text-right text-sm whitespace-nowrap">
                       <button
                         onClick={() => handleRemoveExpense(expense.id)}
                         className="text-red-600 hover:text-red-900"
@@ -540,7 +556,7 @@ export function EmployerExpenseReportForm({
             </table>
           </div>
 
-          <div className="mt-4 rounded-md bg-purple-50 p-4 flex justify-between items-center">
+          <div className="mt-4 flex items-center justify-between rounded-md bg-purple-50 p-4">
             <span className="text-sm font-medium text-purple-900">
               Total Expenses:
             </span>
@@ -555,19 +571,19 @@ export function EmployerExpenseReportForm({
       {(lobbyistPayments.length > 0 || expenses.length > 0) && (
         <div className="rounded-lg border-2 border-gray-900 bg-gray-50 p-6 shadow-md">
           <div className="space-y-3">
-            <div className="flex justify-between items-center text-sm">
+            <div className="flex items-center justify-between text-sm">
               <span className="text-gray-700">Total Lobbyist Payments:</span>
               <span className="font-medium text-gray-900">
                 ${totalPayments.toFixed(2)}
               </span>
             </div>
-            <div className="flex justify-between items-center text-sm">
+            <div className="flex items-center justify-between text-sm">
               <span className="text-gray-700">Total Lobbying Expenses:</span>
               <span className="font-medium text-gray-900">
                 ${totalExpenses.toFixed(2)}
               </span>
             </div>
-            <div className="border-t pt-3 flex justify-between items-center">
+            <div className="flex items-center justify-between border-t pt-3">
               <span className="text-lg font-semibold text-gray-900">
                 Grand Total:
               </span>
@@ -589,7 +605,7 @@ export function EmployerExpenseReportForm({
 
       {/* Supporting Documents */}
       <div className="rounded-lg border bg-white p-6 shadow-sm">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">
+        <h3 className="mb-4 text-lg font-semibold text-gray-900">
           Supporting Documents (Optional)
         </h3>
         <FileUpload
@@ -625,7 +641,8 @@ export function EmployerExpenseReportForm({
                 You have unsaved changes
               </p>
               <p className="mt-1 text-xs text-yellow-700">
-                Click "Save as Draft" or "Submit Report" to save your work. If you leave this page, your changes will be lost.
+                Click "Save as Draft" or "Submit Report" to save your work. If
+                you leave this page, your changes will be lost.
               </p>
             </div>
           </div>
@@ -637,8 +654,8 @@ export function EmployerExpenseReportForm({
         <div
           className={`rounded-lg p-4 ${
             message.type === "success"
-              ? "bg-green-50 text-green-800 border border-green-200"
-              : "bg-red-50 text-red-800 border border-red-200"
+              ? "border border-green-200 bg-green-50 text-green-800"
+              : "border border-red-200 bg-red-50 text-red-800"
           }`}
         >
           <div className="flex items-center justify-between">
@@ -659,19 +676,22 @@ export function EmployerExpenseReportForm({
           type="button"
           onClick={handleSaveDraft}
           disabled={isLoading}
-          className="rounded-md border border-gray-300 bg-white px-6 py-2 text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="rounded-md border border-gray-300 bg-white px-6 py-2 text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
         >
           {isLoading ? "Saving..." : "Save as Draft"}
         </button>
         <button
           type="button"
           onClick={handleSubmit}
-          disabled={isLoading || (lobbyistPayments.length === 0 && expenses.length === 0)}
-          className="rounded-md bg-green-600 px-6 py-2 text-white hover:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed flex items-center space-x-2"
+          disabled={
+            isLoading ||
+            (lobbyistPayments.length === 0 && expenses.length === 0)
+          }
+          className="flex items-center space-x-2 rounded-md bg-green-600 px-6 py-2 text-white hover:bg-green-700 disabled:cursor-not-allowed disabled:bg-gray-300"
         >
           {isLoading && (
             <svg
-              className="animate-spin h-4 w-4 text-white"
+              className="h-4 w-4 animate-spin text-white"
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"
@@ -695,5 +715,5 @@ export function EmployerExpenseReportForm({
         </button>
       </div>
     </div>
-  )
+  );
 }

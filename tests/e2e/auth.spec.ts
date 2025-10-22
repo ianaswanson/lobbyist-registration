@@ -1,12 +1,14 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from "@playwright/test";
 
-test.describe('Authentication', () => {
-  test('should display sign-in page correctly', async ({ page }) => {
-    await page.goto('/auth/signin');
+test.describe("Authentication", () => {
+  test("should display sign-in page correctly", async ({ page }) => {
+    await page.goto("/auth/signin");
 
     // Check page title
-    await expect(page.locator('h2')).toContainText('Lobbyist Registration System');
-    await expect(page.locator('text=Sign in to your account')).toBeVisible();
+    await expect(page.locator("h2")).toContainText(
+      "Lobbyist Registration System"
+    );
+    await expect(page.locator("text=Sign in to your account")).toBeVisible();
 
     // Check form fields exist
     await expect(page.locator('input[name="email"]')).toBeVisible();
@@ -14,8 +16,8 @@ test.describe('Authentication', () => {
     await expect(page.locator('button[type="submit"]')).toBeVisible();
   });
 
-  test('should show demo credentials panel', async ({ page }) => {
-    await page.goto('/auth/signin');
+  test("should show demo credentials panel", async ({ page }) => {
+    await page.goto("/auth/signin");
 
     // Check demo credentials button is visible
     const demoButton = page.locator('button:has-text("Demo Accounts")');
@@ -25,12 +27,14 @@ test.describe('Authentication', () => {
     await demoButton.click();
 
     // Check demo accounts are visible
-    await expect(page.locator('text=County Administrator')).toBeVisible();
-    await expect(page.locator('text=Sarah Johnson')).toBeVisible();
+    await expect(page.locator("text=County Administrator")).toBeVisible();
+    await expect(page.locator("text=Sarah Johnson")).toBeVisible();
   });
 
-  test('should auto-fill credentials when clicking demo account', async ({ page }) => {
-    await page.goto('/auth/signin');
+  test("should auto-fill credentials when clicking demo account", async ({
+    page,
+  }) => {
+    await page.goto("/auth/signin");
 
     // Expand demo credentials
     await page.locator('button:has-text("Demo Accounts")').click();
@@ -42,49 +46,49 @@ test.describe('Authentication', () => {
     const emailInput = page.locator('input[name="email"]');
     const passwordInput = page.locator('input[name="password"]');
 
-    await expect(emailInput).toHaveValue('admin@multnomah.gov');
-    await expect(passwordInput).toHaveValue('Demo2025!Admin');
+    await expect(emailInput).toHaveValue("admin@multnomah.gov");
+    await expect(passwordInput).toHaveValue("Demo2025!Admin");
   });
 
-  test('should successfully sign in as admin', async ({ page }) => {
-    await page.goto('/auth/signin');
+  test("should successfully sign in as admin", async ({ page }) => {
+    await page.goto("/auth/signin");
 
     // Fill in admin credentials
-    await page.fill('input[name="email"]', 'admin@multnomah.gov');
-    await page.fill('input[name="password"]', 'Demo2025!Admin');
+    await page.fill('input[name="email"]', "admin@multnomah.gov");
+    await page.fill('input[name="password"]', "Demo2025!Admin");
 
     // Submit form
     await page.click('button[type="submit"]');
 
     // Should redirect to dashboard
-    await page.waitForURL('/dashboard');
-    await expect(page).toHaveURL('/dashboard');
+    await page.waitForURL("/dashboard");
+    await expect(page).toHaveURL("/dashboard");
 
     // Check welcome message
-    await expect(page.locator('h2')).toContainText('Welcome back');
+    await expect(page.locator("h2")).toContainText("Welcome back");
   });
 
-  test('should successfully sign in as lobbyist', async ({ page }) => {
-    await page.goto('/auth/signin');
+  test("should successfully sign in as lobbyist", async ({ page }) => {
+    await page.goto("/auth/signin");
 
     // Fill in lobbyist credentials
-    await page.fill('input[name="email"]', 'john.doe@lobbying.com');
-    await page.fill('input[name="password"]', 'lobbyist123');
+    await page.fill('input[name="email"]', "john.doe@lobbying.com");
+    await page.fill('input[name="password"]', "lobbyist123");
 
     // Submit form
     await page.click('button[type="submit"]');
 
     // Should redirect to dashboard
-    await page.waitForURL('/dashboard');
-    await expect(page).toHaveURL('/dashboard');
+    await page.waitForURL("/dashboard");
+    await expect(page).toHaveURL("/dashboard");
   });
 
-  test('should show error for invalid credentials', async ({ page }) => {
-    await page.goto('/auth/signin');
+  test("should show error for invalid credentials", async ({ page }) => {
+    await page.goto("/auth/signin");
 
     // Fill in invalid credentials
-    await page.fill('input[name="email"]', 'invalid@example.com');
-    await page.fill('input[name="password"]', 'wrongpassword');
+    await page.fill('input[name="email"]', "invalid@example.com");
+    await page.fill('input[name="password"]', "wrongpassword");
 
     // Submit form
     await page.click('button[type="submit"]');

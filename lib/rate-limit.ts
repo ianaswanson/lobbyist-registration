@@ -4,17 +4,17 @@
  */
 
 interface RateLimitStore {
-  count: number
-  resetTime: number
+  count: number;
+  resetTime: number;
 }
 
 // In-memory store for rate limiting
 // TODO: For production with multiple instances, use Redis or similar
-const rateLimitMap = new Map<string, RateLimitStore>()
+const rateLimitMap = new Map<string, RateLimitStore>();
 
 interface RateLimitConfig {
-  interval: number // Time window in milliseconds
-  uniqueTokenPerInterval: number // Max requests per interval
+  interval: number; // Time window in milliseconds
+  uniqueTokenPerInterval: number; // Max requests per interval
 }
 
 /**
@@ -30,26 +30,26 @@ export function rateLimit(
     uniqueTokenPerInterval: 5, // 5 requests per minute
   }
 ) {
-  const now = Date.now()
-  const tokenData = rateLimitMap.get(identifier)
+  const now = Date.now();
+  const tokenData = rateLimitMap.get(identifier);
 
   // If no existing data or window expired, create new entry
   if (!tokenData || now > tokenData.resetTime) {
     rateLimitMap.set(identifier, {
       count: 1,
       resetTime: now + config.interval,
-    })
+    });
 
     return {
       success: true,
       limit: config.uniqueTokenPerInterval,
       remaining: config.uniqueTokenPerInterval - 1,
       reset: new Date(now + config.interval),
-    }
+    };
   }
 
   // Increment count if within window
-  tokenData.count++
+  tokenData.count++;
 
   // Check if limit exceeded
   if (tokenData.count > config.uniqueTokenPerInterval) {
@@ -58,7 +58,7 @@ export function rateLimit(
       limit: config.uniqueTokenPerInterval,
       remaining: 0,
       reset: new Date(tokenData.resetTime),
-    }
+    };
   }
 
   // Within limit
@@ -67,7 +67,7 @@ export function rateLimit(
     limit: config.uniqueTokenPerInterval,
     remaining: config.uniqueTokenPerInterval - tokenData.count,
     reset: new Date(tokenData.resetTime),
-  }
+  };
 }
 
 /**
@@ -76,19 +76,19 @@ export function rateLimit(
  */
 export function getClientIdentifier(request: Request): string {
   // Try to get real IP from headers (when behind proxy/CDN)
-  const forwarded = request.headers.get("x-forwarded-for")
-  const realIp = request.headers.get("x-real-ip")
+  const forwarded = request.headers.get("x-forwarded-for");
+  const realIp = request.headers.get("x-real-ip");
 
   if (forwarded) {
-    return forwarded.split(",")[0].trim()
+    return forwarded.split(",")[0].trim();
   }
 
   if (realIp) {
-    return realIp
+    return realIp;
   }
 
   // Fallback to a default (not ideal, but better than nothing)
-  return "unknown"
+  return "unknown";
 }
 
 /**
@@ -96,15 +96,15 @@ export function getClientIdentifier(request: Request): string {
  * Call this periodically to prevent memory leaks
  */
 export function cleanupRateLimitStore() {
-  const now = Date.now()
+  const now = Date.now();
   for (const [key, value] of rateLimitMap.entries()) {
     if (now > value.resetTime) {
-      rateLimitMap.delete(key)
+      rateLimitMap.delete(key);
     }
   }
 }
 
 // Run cleanup every 5 minutes
 if (typeof setInterval !== "undefined") {
-  setInterval(cleanupRateLimitStore, 5 * 60 * 1000)
+  setInterval(cleanupRateLimitStore, 5 * 60 * 1000);
 }

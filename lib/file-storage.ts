@@ -6,7 +6,7 @@
  * For production: Can be adapted to use cloud storage (S3, Azure Blob, Google Cloud Storage)
  */
 
-import { UploadedFile } from "@/components/FileUpload"
+import { UploadedFile } from "@/components/FileUpload";
 
 /**
  * Save uploaded files to storage
@@ -19,7 +19,7 @@ export async function saveFiles(
   entityId: string
 ): Promise<UploadedFile[]> {
   // Simulate upload delay
-  await new Promise((resolve) => setTimeout(resolve, 500))
+  await new Promise((resolve) => setTimeout(resolve, 500));
 
   // For prototype: create mock URLs
   // In production: would use actual cloud storage URLs
@@ -30,9 +30,9 @@ export async function saveFiles(
     type: file.type,
     uploadedAt: new Date(),
     url: `/api/files/${entityType}/${entityId}/${file.name}`,
-  }))
+  }));
 
-  return uploadedFiles
+  return uploadedFiles;
 }
 
 /**
@@ -40,11 +40,11 @@ export async function saveFiles(
  */
 export async function deleteFile(fileId: string): Promise<void> {
   // Simulate deletion delay
-  await new Promise((resolve) => setTimeout(resolve, 200))
+  await new Promise((resolve) => setTimeout(resolve, 200));
 
   // For prototype: just return success
   // In production: would delete from cloud storage
-  console.log(`File ${fileId} deleted`)
+  console.log(`File ${fileId} deleted`);
 }
 
 /**
@@ -53,7 +53,7 @@ export async function deleteFile(fileId: string): Promise<void> {
 export function getFileDownloadUrl(file: UploadedFile): string {
   // For prototype: return the URL directly
   // In production: might generate signed URLs for cloud storage
-  return file.url || "#"
+  return file.url || "#";
 }
 
 /**
@@ -62,58 +62,58 @@ export function getFileDownloadUrl(file: UploadedFile): string {
 export function validateFile(
   file: File,
   options: {
-    maxSizeMB?: number
-    allowedExtensions?: string[]
+    maxSizeMB?: number;
+    allowedExtensions?: string[];
   } = {}
 ): { valid: boolean; error?: string } {
-  const { maxSizeMB = 10, allowedExtensions = [] } = options
+  const { maxSizeMB = 10, allowedExtensions = [] } = options;
 
   // Check file size
-  const maxBytes = maxSizeMB * 1024 * 1024
+  const maxBytes = maxSizeMB * 1024 * 1024;
   if (file.size > maxBytes) {
     return {
       valid: false,
       error: `File "${file.name}" exceeds ${maxSizeMB}MB limit`,
-    }
+    };
   }
 
   // Check file extension
   if (allowedExtensions.length > 0) {
-    const extension = "." + file.name.split(".").pop()?.toLowerCase()
+    const extension = "." + file.name.split(".").pop()?.toLowerCase();
     if (!allowedExtensions.includes(extension)) {
       return {
         valid: false,
         error: `File "${file.name}" type not allowed. Accepted: ${allowedExtensions.join(", ")}`,
-      }
+      };
     }
   }
 
-  return { valid: true }
+  return { valid: true };
 }
 
 /**
  * Get file icon based on file type
  */
 export function getFileIcon(fileName: string): string {
-  const extension = fileName.split(".").pop()?.toLowerCase()
+  const extension = fileName.split(".").pop()?.toLowerCase();
 
   switch (extension) {
     case "pdf":
-      return "📄"
+      return "📄";
     case "doc":
     case "docx":
-      return "📝"
+      return "📝";
     case "jpg":
     case "jpeg":
     case "png":
     case "gif":
-      return "🖼️"
+      return "🖼️";
     case "xls":
     case "xlsx":
     case "csv":
-      return "📊"
+      return "📊";
     default:
-      return "📎"
+      return "📎";
   }
 }
 
@@ -122,11 +122,11 @@ export function getFileIcon(fileName: string): string {
  */
 export async function fileToBase64(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
-    const reader = new FileReader()
-    reader.readAsDataURL(file)
-    reader.onload = () => resolve(reader.result as string)
-    reader.onerror = (error) => reject(error)
-  })
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = (error) => reject(error);
+  });
 }
 
 /**
@@ -151,4 +151,4 @@ export const UPLOAD_CONFIG = {
     expenseReport: "uploads/expense-reports",
     receipt: "uploads/receipts",
   },
-}
+};

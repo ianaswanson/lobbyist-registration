@@ -1,92 +1,95 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { useRouter } from "next/navigation"
-import { ReviewActions } from "./ReviewActions"
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { ReviewActions } from "./ReviewActions";
 
 interface Registration {
-  id: string
-  name: string
-  email: string
-  phone: string
-  address: string
-  hoursCurrentQuarter: number
-  status: string
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  address: string;
+  hoursCurrentQuarter: number;
+  status: string;
   user: {
-    name: string
-    email: string
-  }
+    name: string;
+    email: string;
+  };
   employers: Array<{
     employer: {
-      name: string
-    }
-    subjectsOfInterest: string
-  }>
-  createdAt: string
+      name: string;
+    };
+    subjectsOfInterest: string;
+  }>;
+  createdAt: string;
 }
 
 interface ReviewRegistrationsListProps {
-  registrations: Registration[]
+  registrations: Registration[];
 }
 
 export function ReviewRegistrationsList({
   registrations: initialRegistrations,
 }: ReviewRegistrationsListProps) {
-  const router = useRouter()
-  const [registrations, setRegistrations] = useState(initialRegistrations)
-  const [loadingId, setLoadingId] = useState<string | null>(null)
+  const router = useRouter();
+  const [registrations, setRegistrations] = useState(initialRegistrations);
+  const [loadingId, setLoadingId] = useState<string | null>(null);
   const [message, setMessage] = useState<{
-    type: "success" | "error"
-    text: string
-  } | null>(null)
+    type: "success" | "error";
+    text: string;
+  } | null>(null);
 
   const handleReview = async (
     registrationId: string,
     action: "approve" | "reject",
     notes?: string
   ) => {
-    setLoadingId(registrationId)
-    setMessage(null)
+    setLoadingId(registrationId);
+    setMessage(null);
 
     try {
-      const response = await fetch(`/api/admin/registrations/${registrationId}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ action, notes }),
-      })
+      const response = await fetch(
+        `/api/admin/registrations/${registrationId}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ action, notes }),
+        }
+      );
 
-      const data = await response.json()
+      const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || "Failed to process review")
+        throw new Error(data.error || "Failed to process review");
       }
 
       // Show success message
       setMessage({
         type: "success",
         text: data.message,
-      })
+      });
 
       // Remove the reviewed registration from the list
-      setRegistrations((prev) => prev.filter((r) => r.id !== registrationId))
+      setRegistrations((prev) => prev.filter((r) => r.id !== registrationId));
 
       // Refresh the page data after a short delay
       setTimeout(() => {
-        router.refresh()
-      }, 2000)
+        router.refresh();
+      }, 2000);
     } catch (error) {
-      console.error("Error reviewing registration:", error)
+      console.error("Error reviewing registration:", error);
       setMessage({
         type: "error",
         text:
           error instanceof Error ? error.message : "Failed to process review",
-      })
+      });
     } finally {
-      setLoadingId(null)
+      setLoadingId(null);
     }
-  }
+  };
 
   if (registrations.length === 0) {
     return (
@@ -111,7 +114,7 @@ export function ReviewRegistrationsList({
           All registrations have been reviewed
         </p>
       </div>
-    )
+    );
   }
 
   return (
@@ -121,8 +124,8 @@ export function ReviewRegistrationsList({
         <div
           className={`rounded-lg p-4 ${
             message.type === "success"
-              ? "bg-green-50 text-green-800 border border-green-200"
-              : "bg-red-50 text-red-800 border border-red-200"
+              ? "border border-green-200 bg-green-50 text-green-800"
+              : "border border-red-200 bg-red-50 text-red-800"
           }`}
         >
           <div className="flex items-center justify-between">
@@ -138,15 +141,17 @@ export function ReviewRegistrationsList({
       )}
 
       {registrations.map((registration) => {
-        const isLoading = loadingId === registration.id
-        const primaryEmployer = registration.employers[0]
-        const submittedDate = new Date(registration.createdAt).toLocaleDateString()
+        const isLoading = loadingId === registration.id;
+        const primaryEmployer = registration.employers[0];
+        const submittedDate = new Date(
+          registration.createdAt
+        ).toLocaleDateString();
 
         return (
           <div
             key={registration.id}
             className={`rounded-lg border bg-white p-6 shadow-sm ${
-              isLoading ? "opacity-50 pointer-events-none" : ""
+              isLoading ? "pointer-events-none opacity-50" : ""
             }`}
           >
             <div className="flex items-start justify-between">
@@ -170,7 +175,7 @@ export function ReviewRegistrationsList({
 
             <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div>
-                <label className="text-xs font-medium uppercase tracking-wider text-gray-500">
+                <label className="text-xs font-medium tracking-wider text-gray-500 uppercase">
                   Employer
                 </label>
                 <p className="mt-1 text-sm text-gray-900">
@@ -178,7 +183,7 @@ export function ReviewRegistrationsList({
                 </p>
               </div>
               <div>
-                <label className="text-xs font-medium uppercase tracking-wider text-gray-500">
+                <label className="text-xs font-medium tracking-wider text-gray-500 uppercase">
                   Hours This Quarter
                 </label>
                 <p className="mt-1 text-sm text-gray-900">
@@ -186,13 +191,11 @@ export function ReviewRegistrationsList({
                 </p>
               </div>
               <div className="sm:col-span-2">
-                <label className="text-xs font-medium uppercase tracking-wider text-gray-500">
+                <label className="text-xs font-medium tracking-wider text-gray-500 uppercase">
                   Subjects of Interest
                 </label>
                 <p className="mt-1 text-sm text-gray-900">
-                  {primaryEmployer
-                    ? primaryEmployer.subjectsOfInterest
-                    : "N/A"}
+                  {primaryEmployer ? primaryEmployer.subjectsOfInterest : "N/A"}
                 </p>
               </div>
             </div>
@@ -216,8 +219,8 @@ export function ReviewRegistrationsList({
               />
             </div>
           </div>
-        )
+        );
       })}
     </div>
-  )
+  );
 }

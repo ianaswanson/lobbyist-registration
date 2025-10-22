@@ -1,24 +1,35 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { EmployerExpenseReport, ExpenseLineItem, EmployerLobbyistPayment, ReportStatus, Lobbyist } from "@prisma/client"
-import { Trash2, Edit, Eye } from "lucide-react"
+import { useState } from "react";
+import {
+  EmployerExpenseReport,
+  ExpenseLineItem,
+  EmployerLobbyistPayment,
+  ReportStatus,
+  Lobbyist,
+} from "@prisma/client";
+import { Trash2, Edit, Eye } from "lucide-react";
 
 type ReportWithDetails = EmployerExpenseReport & {
-  lineItems: ExpenseLineItem[]
+  lineItems: ExpenseLineItem[];
   lobbyistPayments: (EmployerLobbyistPayment & {
-    lobbyist: Pick<Lobbyist, 'name'>
-  })[]
-}
+    lobbyist: Pick<Lobbyist, "name">;
+  })[];
+};
 
 interface EmployerReportsClientProps {
-  reports: ReportWithDetails[]
+  reports: ReportWithDetails[];
 }
 
-export function EmployerReportsClient({ reports: initialReports }: EmployerReportsClientProps) {
-  const [reports, setReports] = useState(initialReports)
-  const [loading, setLoading] = useState<string | null>(null)
-  const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null)
+export function EmployerReportsClient({
+  reports: initialReports,
+}: EmployerReportsClientProps) {
+  const [reports, setReports] = useState(initialReports);
+  const [loading, setLoading] = useState<string | null>(null);
+  const [message, setMessage] = useState<{
+    type: "success" | "error";
+    text: string;
+  } | null>(null);
 
   const getStatusBadge = (status: ReportStatus) => {
     const styles = {
@@ -28,74 +39,83 @@ export function EmployerReportsClient({ reports: initialReports }: EmployerRepor
       APPROVED: "bg-green-100 text-green-800",
       REJECTED: "bg-red-100 text-red-800",
       NEEDS_CLARIFICATION: "bg-yellow-100 text-yellow-800",
-    }
+    };
 
     return (
-      <span className={`inline-flex rounded-full px-2 py-1 text-xs font-semibold ${styles[status]}`}>
-        {status.replace(/_/g, ' ')}
+      <span
+        className={`inline-flex rounded-full px-2 py-1 text-xs font-semibold ${styles[status]}`}
+      >
+        {status.replace(/_/g, " ")}
       </span>
-    )
-  }
+    );
+  };
 
   const handleDelete = async (reportId: string) => {
     const confirmed = window.confirm(
       "Are you sure you want to delete this report? This action cannot be undone."
-    )
+    );
 
-    if (!confirmed) return
+    if (!confirmed) return;
 
-    setLoading(reportId)
-    setMessage(null)
+    setLoading(reportId);
+    setMessage(null);
 
     try {
       const response = await fetch(`/api/reports/employer/${reportId}`, {
         method: "DELETE",
-      })
+      });
 
       if (!response.ok) {
-        const data = await response.json()
-        throw new Error(data.error || "Failed to delete report")
+        const data = await response.json();
+        throw new Error(data.error || "Failed to delete report");
       }
 
       // Remove from list
-      setReports(reports.filter(r => r.id !== reportId))
-      setMessage({ type: 'success', text: 'Report deleted successfully' })
+      setReports(reports.filter((r) => r.id !== reportId));
+      setMessage({ type: "success", text: "Report deleted successfully" });
     } catch (error) {
-      console.error("Error deleting report:", error)
+      console.error("Error deleting report:", error);
       setMessage({
-        type: 'error',
-        text: error instanceof Error ? error.message : 'Failed to delete report'
-      })
+        type: "error",
+        text:
+          error instanceof Error ? error.message : "Failed to delete report",
+      });
     } finally {
-      setLoading(null)
+      setLoading(null);
     }
-  }
+  };
 
   const formatDate = (date: Date | null) => {
-    if (!date) return 'N/A'
-    return new Date(date).toLocaleDateString()
-  }
+    if (!date) return "N/A";
+    return new Date(date).toLocaleDateString();
+  };
 
   const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-    }).format(amount)
-  }
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
+    }).format(amount);
+  };
 
   return (
     <div>
       {message && (
-        <div className={`mb-4 rounded-md p-4 ${
-          message.type === 'success' ? 'bg-green-50 text-green-800' : 'bg-red-50 text-red-800'
-        }`}>
+        <div
+          className={`mb-4 rounded-md p-4 ${
+            message.type === "success"
+              ? "bg-green-50 text-green-800"
+              : "bg-red-50 text-red-800"
+          }`}
+        >
           <p className="text-sm font-medium">{message.text}</p>
         </div>
       )}
 
       {reports.length === 0 ? (
         <div className="rounded-lg border-2 border-dashed border-gray-300 p-12 text-center">
-          <h3 className="text-lg font-medium text-gray-900">No expense reports yet</h3>
+          <h3 className="text-lg font-medium text-gray-900">
+            No expense reports yet
+          </h3>
           <p className="mt-2 text-sm text-gray-600">
             Get started by creating your first quarterly expense report.
           </p>
@@ -111,31 +131,31 @@ export function EmployerReportsClient({ reports: initialReports }: EmployerRepor
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
                   Quarter
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
                   Year
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
                   Total Spend
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
                   Expenses
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
                   Payments
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
                   Status
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
                   Submitted
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
                   Due Date
                 </th>
-                <th className="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500">
+                <th className="px-6 py-3 text-right text-xs font-medium tracking-wider text-gray-500 uppercase">
                   Actions
                 </th>
               </tr>
@@ -143,31 +163,31 @@ export function EmployerReportsClient({ reports: initialReports }: EmployerRepor
             <tbody className="divide-y divide-gray-200 bg-white">
               {reports.map((report) => (
                 <tr key={report.id} className="hover:bg-gray-50">
-                  <td className="whitespace-nowrap px-6 py-4 text-sm font-medium text-gray-900">
+                  <td className="px-6 py-4 text-sm font-medium whitespace-nowrap text-gray-900">
                     {report.quarter}
                   </td>
-                  <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-900">
+                  <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-900">
                     {report.year}
                   </td>
-                  <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-900">
+                  <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-900">
                     {formatCurrency(report.totalLobbyingSpend)}
                   </td>
-                  <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
+                  <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-500">
                     {report.lineItems.length}
                   </td>
-                  <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
+                  <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-500">
                     {report.lobbyistPayments.length}
                   </td>
-                  <td className="whitespace-nowrap px-6 py-4 text-sm">
+                  <td className="px-6 py-4 text-sm whitespace-nowrap">
                     {getStatusBadge(report.status)}
                   </td>
-                  <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
+                  <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-500">
                     {formatDate(report.submittedAt)}
                   </td>
-                  <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
+                  <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-500">
                     {formatDate(report.dueDate)}
                   </td>
-                  <td className="whitespace-nowrap px-6 py-4 text-right text-sm font-medium">
+                  <td className="px-6 py-4 text-right text-sm font-medium whitespace-nowrap">
                     <div className="flex justify-end gap-2">
                       <a
                         href={`/reports/employer/${report.id}`}
@@ -208,5 +228,5 @@ export function EmployerReportsClient({ reports: initialReports }: EmployerRepor
         </div>
       )}
     </div>
-  )
+  );
 }

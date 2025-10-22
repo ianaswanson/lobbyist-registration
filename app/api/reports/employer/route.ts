@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from "next/server"
-import { auth } from "@/lib/auth"
-import { prisma } from "@/lib/db"
-import { ReportStatus, ExpenseReportType } from "@prisma/client"
+import { NextRequest, NextResponse } from "next/server";
+import { auth } from "@/lib/auth";
+import { prisma } from "@/lib/db";
+import { ReportStatus, ExpenseReportType } from "@prisma/client";
 
 /**
  * Calculate due date for quarterly reports
@@ -11,15 +11,17 @@ import { ReportStatus, ExpenseReportType } from "@prisma/client"
  * Q4 (Oct-Dec) → Due January 15 (next year)
  */
 function calculateDueDate(quarter: string, year: number): Date {
-  const quarterMap: { [key: string]: { month: number; day: number; yearOffset: number } } = {
-    Q1: { month: 3, day: 15, yearOffset: 0 },  // April 15
-    Q2: { month: 6, day: 15, yearOffset: 0 },  // July 15
-    Q3: { month: 9, day: 15, yearOffset: 0 },  // October 15
-    Q4: { month: 0, day: 15, yearOffset: 1 },  // January 15 next year
-  }
+  const quarterMap: {
+    [key: string]: { month: number; day: number; yearOffset: number };
+  } = {
+    Q1: { month: 3, day: 15, yearOffset: 0 }, // April 15
+    Q2: { month: 6, day: 15, yearOffset: 0 }, // July 15
+    Q3: { month: 9, day: 15, yearOffset: 0 }, // October 15
+    Q4: { month: 0, day: 15, yearOffset: 1 }, // January 15 next year
+  };
 
-  const { month, day, yearOffset } = quarterMap[quarter]
-  return new Date(year + yearOffset, month, day)
+  const { month, day, yearOffset } = quarterMap[quarter];
+  return new Date(year + yearOffset, month, day);
 }
 
 /**
@@ -28,47 +30,52 @@ function calculateDueDate(quarter: string, year: number): Date {
  */
 export async function POST(request: NextRequest) {
   try {
-    const session = await auth()
+    const session = await auth();
 
     if (!session || !session.user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const body = await request.json()
-    const { quarter, year, expenses, lobbyistPayments, isDraft } = body
+    const body = await request.json();
+    const { quarter, year, expenses, lobbyistPayments, isDraft } = body;
 
     // Validate required fields
     if (!quarter || !year) {
       return NextResponse.json(
         { error: "Quarter and year are required" },
         { status: 400 }
-      )
+      );
     }
 
     // Get employer record for this user
     const employer = await prisma.employer.findUnique({
       where: { userId: session.user.id },
-    })
+    });
 
     if (!employer) {
       return NextResponse.json(
         { error: "Employer record not found" },
         { status: 404 }
-      )
+      );
     }
 
     // Calculate totals
-    const totalExpenses = expenses?.reduce((sum: number, exp: any) => sum + exp.amount, 0) || 0
-    const totalPayments = lobbyistPayments?.reduce((sum: number, pay: any) => sum + pay.amountPaid, 0) || 0
-    const totalLobbyingSpend = totalExpenses + totalPayments
+    const totalExpenses =
+      expenses?.reduce((sum: number, exp: any) => sum + exp.amount, 0) || 0;
+    const totalPayments =
+      lobbyistPayments?.reduce(
+        (sum: number, pay: any) => sum + pay.amountPaid,
+        0
+      ) || 0;
+    const totalLobbyingSpend = totalExpenses + totalPayments;
 
-    const dueDate = calculateDueDate(quarter, year)
-    const now = new Date()
+    const dueDate = calculateDueDate(quarter, year);
+    const now = new Date();
 
     // Determine status
-    let status = isDraft ? ReportStatus.DRAFT : ReportStatus.SUBMITTED
+    let status = isDraft ? ReportStatus.DRAFT : ReportStatus.SUBMITTED;
     if (!isDraft && now > dueDate) {
-      status = ReportStatus.LATE
+      status = ReportStatus.LATE;
     }
 
     // Upsert the report (update if exists, create if not)
@@ -96,7 +103,7 @@ export async function POST(request: NextRequest) {
         submittedAt: isDraft ? null : now,
         dueDate,
       },
-    })
+    });
 
     // Delete existing expense line items for this report
     await prisma.expenseLineItem.deleteMany({
@@ -104,7 +111,7 @@ export async function POST(request: NextRequest) {
         reportId: report.id,
         reportType: ExpenseReportType.EMPLOYER,
       },
-    })
+    });
 
     // Create new expense line items
     if (expenses && expenses.length > 0) {
@@ -119,7 +126,7 @@ export async function POST(request: NextRequest) {
           amount: expense.amount,
           isEstimate: expense.isEstimate || false,
         })),
-      })
+      });
     }
 
     // Delete existing lobbyist payments for this report
@@ -127,7 +134,7 @@ export async function POST(request: NextRequest) {
       where: {
         employerReportId: report.id,
       },
-    })
+    });
 
     // Create new lobbyist payments
     if (lobbyistPayments && lobbyistPayments.length > 0) {
@@ -140,7 +147,7 @@ export async function POST(request: NextRequest) {
               contains: payment.lobbyistName,
             },
           },
-        })
+        });
 
         // Only create payment if lobbyist is found (lobbyistId is required)
         if (lobbyist) {
@@ -150,7 +157,7 @@ export async function POST(request: NextRequest) {
               lobbyistId: lobbyist.id,
               amountPaid: payment.amountPaid,
             },
-          })
+          });
         }
         // TODO: Warn user if lobbyist not found in system
       }
@@ -171,13 +178,13 @@ export async function POST(request: NextRequest) {
         status: report.status,
         submittedAt: report.submittedAt,
       },
-    })
+    });
   } catch (error) {
-    console.error("Error submitting employer expense report:", error)
+    console.error("Error submitting employer expense report:", error);
     return NextResponse.json(
       { error: "Failed to submit report" },
       { status: 500 }
-    )
+    );
   }
 }
 
@@ -187,51 +194,46 @@ export async function POST(request: NextRequest) {
  */
 export async function GET(request: NextRequest) {
   try {
-    const session = await auth()
+    const session = await auth();
 
     if (!session || !session.user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     // Get query parameters
-    const searchParams = request.nextUrl.searchParams
-    const quarter = searchParams.get("quarter")
-    const year = searchParams.get("year")
+    const searchParams = request.nextUrl.searchParams;
+    const quarter = searchParams.get("quarter");
+    const year = searchParams.get("year");
 
     // Get employer record for this user
     const employer = await prisma.employer.findUnique({
       where: { userId: session.user.id },
-    })
+    });
 
     if (!employer) {
       return NextResponse.json(
         { error: "Employer record not found" },
         { status: 404 }
-      )
+      );
     }
 
     // Build where clause
     const where: any = {
       employerId: employer.id,
-    }
+    };
 
     if (quarter) {
-      where.quarter = quarter
+      where.quarter = quarter;
     }
 
     if (year) {
-      where.year = parseInt(year)
+      where.year = parseInt(year);
     }
 
-    // Fetch reports
+    // Fetch reports (without lineItems - polymorphic relation)
     const reports = await prisma.employerExpenseReport.findMany({
       where,
       include: {
-        lineItems: {
-          orderBy: {
-            date: "desc",
-          },
-        },
         lobbyistPayments: {
           include: {
             lobbyist: {
@@ -242,18 +244,32 @@ export async function GET(request: NextRequest) {
           },
         },
       },
-      orderBy: [
-        { year: "desc" },
-        { quarter: "desc" },
-      ],
-    })
+      orderBy: [{ year: "desc" }, { quarter: "desc" }],
+    });
 
-    return NextResponse.json({ reports })
+    // Fetch line items separately for each report (polymorphic relationship)
+    const reportsWithLineItems = await Promise.all(
+      reports.map(async (report) => {
+        const lineItems = await prisma.expenseLineItem.findMany({
+          where: {
+            reportId: report.id,
+            reportType: ExpenseReportType.EMPLOYER,
+          },
+          orderBy: { date: "desc" },
+        });
+        return {
+          ...report,
+          lineItems,
+        };
+      })
+    );
+
+    return NextResponse.json({ reports: reportsWithLineItems });
   } catch (error) {
-    console.error("Error fetching employer expense reports:", error)
+    console.error("Error fetching employer expense reports:", error);
     return NextResponse.json(
       { error: "Failed to fetch reports" },
       { status: 500 }
-    )
+    );
   }
 }

@@ -7,15 +7,15 @@
  */
 
 export interface EmailRecipient {
-  email: string
-  name?: string
+  email: string;
+  name?: string;
 }
 
 export interface EmailOptions {
-  to: EmailRecipient[]
-  subject: string
-  htmlBody: string
-  textBody?: string
+  to: EmailRecipient[];
+  subject: string;
+  htmlBody: string;
+  textBody?: string;
 }
 
 /**
@@ -26,13 +26,15 @@ export interface EmailOptions {
 export async function sendEmail(options: EmailOptions): Promise<boolean> {
   try {
     // Simulate email sending delay
-    await new Promise((resolve) => setTimeout(resolve, 100))
+    await new Promise((resolve) => setTimeout(resolve, 100));
 
     // For prototype: log to console
-    console.log("📧 EMAIL SENT:")
-    console.log(`To: ${options.to.map((r) => r.email).join(", ")}`)
-    console.log(`Subject: ${options.subject}`)
-    console.log(`Body: ${options.textBody || options.htmlBody.substring(0, 100)}...`)
+    console.log("📧 EMAIL SENT:");
+    console.log(`To: ${options.to.map((r) => r.email).join(", ")}`);
+    console.log(`Subject: ${options.subject}`);
+    console.log(
+      `Body: ${options.textBody || options.htmlBody.substring(0, 100)}...`
+    );
 
     // For production: integrate with email service
     // Example with SendGrid:
@@ -44,10 +46,10 @@ export async function sendEmail(options: EmailOptions): Promise<boolean> {
     //   text: options.textBody,
     // })
 
-    return true
+    return true;
   } catch (error) {
-    console.error("Failed to send email:", error)
-    return false
+    console.error("Failed to send email:", error);
+    return false;
   }
 }
 
@@ -61,7 +63,7 @@ export async function sendDeadlineReminder(
   dueDate: string,
   daysUntilDue: number
 ): Promise<boolean> {
-  const subject = `Reminder: ${quarter} ${year} Expense Report Due ${dueDate}`
+  const subject = `Reminder: ${quarter} ${year} Expense Report Due ${dueDate}`;
 
   const htmlBody = `
     <!DOCTYPE html>
@@ -112,7 +114,7 @@ export async function sendDeadlineReminder(
       </div>
     </body>
     </html>
-  `
+  `;
 
   const textBody = `
 Multnomah County Lobbyist Registration - Quarterly Report Deadline Reminder
@@ -138,14 +140,14 @@ If you have any questions, please contact us at lobbying@multco.us or call (503)
 ---
 Multnomah County Lobbyist Registration System
 This is an automated message. Please do not reply to this email.
-  `
+  `;
 
   return sendEmail({
     to: [recipient],
     subject,
     htmlBody,
     textBody,
-  })
+  });
 }
 
 /**
@@ -158,7 +160,7 @@ export async function sendOverdueNotification(
   dueDate: string,
   daysOverdue: number
 ): Promise<boolean> {
-  const subject = `OVERDUE: ${quarter} ${year} Expense Report - Action Required`
+  const subject = `OVERDUE: ${quarter} ${year} Expense Report - Action Required`;
 
   const htmlBody = `
     <!DOCTYPE html>
@@ -206,7 +208,7 @@ export async function sendOverdueNotification(
       </div>
     </body>
     </html>
-  `
+  `;
 
   const textBody = `
 OVERDUE REPORT NOTICE - Multnomah County Lobbyist Registration
@@ -231,14 +233,14 @@ Phone: (503) 988-3308
 ---
 Multnomah County Lobbyist Registration System
 This is an automated message. Please do not reply to this email.
-  `
+  `;
 
   return sendEmail({
     to: [recipient],
     subject,
     htmlBody,
     textBody,
-  })
+  });
 }
 
 /**
@@ -247,7 +249,7 @@ This is an automated message. Please do not reply to this email.
 export async function sendRegistrationApproval(
   recipient: EmailRecipient
 ): Promise<boolean> {
-  const subject = "Your Lobbyist Registration Has Been Approved"
+  const subject = "Your Lobbyist Registration Has Been Approved";
 
   const htmlBody = `
     <!DOCTYPE html>
@@ -295,13 +297,13 @@ export async function sendRegistrationApproval(
       </div>
     </body>
     </html>
-  `
+  `;
 
   return sendEmail({
     to: [recipient],
     subject,
     htmlBody,
-  })
+  });
 }
 
 /**
@@ -312,14 +314,14 @@ export const QUARTERLY_DEADLINES = {
   Q2: { month: 7, day: 15, label: "July 15" }, // Apr-Jun
   Q3: { month: 10, day: 15, label: "October 15" }, // Jul-Sep
   Q4: { month: 1, day: 15, label: "January 15" }, // Oct-Dec (next year)
-}
+};
 
 /**
  * Calculate days until a deadline
  */
 export function daysUntilDeadline(deadline: Date): number {
-  const today = new Date()
-  const diffTime = deadline.getTime() - today.getTime()
-  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
-  return diffDays
+  const today = new Date();
+  const diffTime = deadline.getTime() - today.getTime();
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  return diffDays;
 }

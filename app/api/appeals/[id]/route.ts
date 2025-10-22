@@ -15,7 +15,7 @@ export async function PATCH(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id: appealId } = await params
+    const { id: appealId } = await params;
     const session = await auth();
 
     if (!session) {
@@ -65,7 +65,7 @@ export async function PATCH(
     }
 
     // If status is DECIDED, also update the violation status
-    let violationUpdate = null;
+    const violationUpdate = null;
     if (status === "DECIDED" && decision) {
       // Determine if appeal is upheld or overturned based on decision
       // For now, require explicit decision in the update
@@ -100,7 +100,7 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id: appealId } = await params
+    const { id: appealId } = await params;
     const session = await auth();
 
     if (!session) {

@@ -1,13 +1,13 @@
-import { auth } from "@/lib/auth"
-import { redirect } from "next/navigation"
-import { BoardMemberCalendarForm } from "@/components/forms/board-member/BoardMemberCalendarForm"
-import { DemoFilesPanel } from "@/components/DemoFilesPanel"
+import { auth } from "@/lib/auth";
+import { redirect } from "next/navigation";
+import { BoardMemberCalendarForm } from "@/components/forms/board-member/BoardMemberCalendarForm";
+import { DemoFilesPanel } from "@/components/DemoFilesPanel";
 
 export default async function BoardMemberCalendarPage() {
-  const session = await auth()
+  const session = await auth();
 
   if (!session || !session.user?.id) {
-    redirect("/auth/signin")
+    redirect("/auth/signin");
   }
 
   return (
@@ -29,5 +29,5 @@ export default async function BoardMemberCalendarPage() {
         <BoardMemberCalendarForm userId={session.user.id} />
       </main>
     </div>
-  )
+  );
 }

@@ -1,18 +1,18 @@
-import { auth } from "@/lib/auth"
-import { redirect } from "next/navigation"
-import { prisma } from "@/lib/db"
-import { LobbyistExpenseReportForm } from "@/components/forms/expense-report/LobbyistExpenseReportForm"
-import { DemoFilesPanel } from "@/components/DemoFilesPanel"
+import { auth } from "@/lib/auth";
+import { redirect } from "next/navigation";
+import { prisma } from "@/lib/db";
+import { LobbyistExpenseReportForm } from "@/components/forms/expense-report/LobbyistExpenseReportForm";
+import { DemoFilesPanel } from "@/components/DemoFilesPanel";
 
 async function getReport(userId: string, reportId: string) {
   try {
     // Get lobbyist record
     const lobbyist = await prisma.lobbyist.findUnique({
       where: { userId },
-    })
+    });
 
     if (!lobbyist) {
-      return null
+      return null;
     }
 
     // Fetch the specific report
@@ -21,41 +21,41 @@ async function getReport(userId: string, reportId: string) {
       include: {
         lineItems: true,
       },
-    })
+    });
 
     // Verify this report belongs to this lobbyist
     if (report && report.lobbyistId !== lobbyist.id) {
-      return null
+      return null;
     }
 
-    return report
+    return report;
   } catch (error) {
-    console.error("Error fetching report:", error)
-    return null
+    console.error("Error fetching report:", error);
+    return null;
   }
 }
 
 export default async function EditLobbyistReportPage({
   params,
 }: {
-  params: Promise<{ id: string }>
+  params: Promise<{ id: string }>;
 }) {
-  const { id } = await params
-  const session = await auth()
+  const { id } = await params;
+  const session = await auth();
 
   if (!session) {
-    redirect("/auth/signin")
+    redirect("/auth/signin");
   }
 
-  const report = await getReport(session.user.id, id)
+  const report = await getReport(session.user.id, id);
 
   if (!report) {
-    redirect("/reports/lobbyist")
+    redirect("/reports/lobbyist");
   }
 
   // Can only edit drafts
   if (report.status !== "DRAFT") {
-    redirect("/reports/lobbyist")
+    redirect("/reports/lobbyist");
   }
 
   return (
@@ -79,5 +79,5 @@ export default async function EditLobbyistReportPage({
         />
       </main>
     </div>
-  )
+  );
 }

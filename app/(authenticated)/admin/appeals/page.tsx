@@ -1,13 +1,13 @@
-import { auth } from "@/lib/auth"
-import { redirect } from "next/navigation"
-import { AppealsClient } from "./AppealsClient"
+import { auth } from "@/lib/auth";
+import { redirect } from "next/navigation";
+import { AppealsClient } from "./AppealsClient";
 
 export default async function AppealsPage() {
-  const session = await auth()
+  const session = await auth();
 
   if (!session || session.user?.role !== "ADMIN") {
-    redirect("/dashboard")
+    redirect("/dashboard");
   }
 
-  return <AppealsClient />
+  return <AppealsClient />;
 }

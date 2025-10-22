@@ -1,16 +1,19 @@
-import { SkipLink } from "@/components/SkipLink"
-import { PublicNavigation } from "@/components/PublicNavigation"
-import { auth } from "@/lib/auth"
+import { SkipLink } from "@/components/SkipLink";
+import { PublicNavigation } from "@/components/PublicNavigation";
+import { auth } from "@/lib/auth";
 
 export default async function Home() {
-  const session = await auth()
+  const session = await auth();
 
   return (
     <div className="min-h-screen bg-gray-50">
       <SkipLink />
       <PublicNavigation user={session?.user} />
 
-      <main id="main-content" className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+      <main
+        id="main-content"
+        className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8"
+      >
         <div className="text-center">
           <h2 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">
             Multnomah County
@@ -26,10 +29,10 @@ export default async function Home() {
           {/* Exemption Checker */}
           <a
             href="/exemption-checker"
-            className="group relative rounded-lg border border-gray-200 bg-white p-6 shadow-sm transition-all hover:border-green-500 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
+            className="group relative rounded-lg border border-gray-200 bg-white p-6 shadow-sm transition-all hover:border-green-500 hover:shadow-md focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:outline-none"
             aria-label="Check if you need to register as a lobbyist"
           >
-            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-green-100 text-green-600 group-hover:bg-green-600 group-hover:text-white transition-colors">
+            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-green-100 text-green-600 transition-colors group-hover:bg-green-600 group-hover:text-white">
               <svg
                 className="h-6 w-6"
                 fill="none"
@@ -52,7 +55,10 @@ export default async function Home() {
               Use our exemption checker tool to determine if you are required to
               register as a lobbyist
             </p>
-            <div className="mt-4 flex items-center text-sm font-medium text-green-600 group-hover:text-green-700" aria-hidden="true">
+            <div
+              className="mt-4 flex items-center text-sm font-medium text-green-600 group-hover:text-green-700"
+              aria-hidden="true"
+            >
               Check now
               <svg
                 className="ml-2 h-4 w-4"
@@ -73,10 +79,10 @@ export default async function Home() {
           {/* Search Lobbyists */}
           <a
             href="/search"
-            className="group relative rounded-lg border border-gray-200 bg-white p-6 shadow-sm transition-all hover:border-blue-500 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+            className="group relative rounded-lg border border-gray-200 bg-white p-6 shadow-sm transition-all hover:border-blue-500 hover:shadow-md focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none"
             aria-label="Search the lobbyist registry"
           >
-            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-blue-100 text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-colors">
+            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-blue-100 text-blue-600 transition-colors group-hover:bg-blue-600 group-hover:text-white">
               <svg
                 className="h-6 w-6"
                 fill="none"
@@ -99,7 +105,10 @@ export default async function Home() {
               Search the public database of registered lobbyists and view their
               expense reports
             </p>
-            <div className="mt-4 flex items-center text-sm font-medium text-blue-600 group-hover:text-blue-700" aria-hidden="true">
+            <div
+              className="mt-4 flex items-center text-sm font-medium text-blue-600 group-hover:text-blue-700"
+              aria-hidden="true"
+            >
               Search now
               <svg
                 className="ml-2 h-4 w-4"
@@ -120,10 +129,10 @@ export default async function Home() {
           {/* View Board Calendars */}
           <a
             href="/board-calendars"
-            className="group relative rounded-lg border border-gray-200 bg-white p-6 shadow-sm transition-all hover:border-purple-500 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2"
+            className="group relative rounded-lg border border-gray-200 bg-white p-6 shadow-sm transition-all hover:border-purple-500 hover:shadow-md focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:outline-none"
             aria-label="View board member calendars and lobbying receipts"
           >
-            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-purple-100 text-purple-600 group-hover:bg-purple-600 group-hover:text-white transition-colors">
+            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-purple-100 text-purple-600 transition-colors group-hover:bg-purple-600 group-hover:text-white">
               <svg
                 className="h-6 w-6"
                 fill="none"
@@ -146,7 +155,10 @@ export default async function Home() {
               View quarterly calendars and lobbying receipts for county board
               members
             </p>
-            <div className="mt-4 flex items-center text-sm font-medium text-purple-600 group-hover:text-purple-700" aria-hidden="true">
+            <div
+              className="mt-4 flex items-center text-sm font-medium text-purple-600 group-hover:text-purple-700"
+              aria-hidden="true"
+            >
               View calendars
               <svg
                 className="ml-2 h-4 w-4"
@@ -167,7 +179,7 @@ export default async function Home() {
 
         {/* Information Section */}
         <div className="mt-16 rounded-lg border bg-white p-8 shadow-sm">
-          <h3 className="text-xl font-semibold text-gray-900 mb-4">
+          <h3 className="mb-4 text-xl font-semibold text-gray-900">
             About This System
           </h3>
           <div className="prose prose-gray max-w-none">
@@ -180,20 +192,23 @@ export default async function Home() {
             </p>
             <div className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2">
               <div>
-                <h4 className="font-semibold text-gray-900 mb-2">
+                <h4 className="mb-2 font-semibold text-gray-900">
                   For Lobbyists
                 </h4>
-                <ul className="text-sm text-gray-600 space-y-1">
-                  <li>• Register within 3 working days after exceeding 10 hours/quarter</li>
+                <ul className="space-y-1 text-sm text-gray-600">
+                  <li>
+                    • Register within 3 working days after exceeding 10
+                    hours/quarter
+                  </li>
                   <li>• Submit quarterly expense reports</li>
                   <li>• Update registration when information changes</li>
                 </ul>
               </div>
               <div>
-                <h4 className="font-semibold text-gray-900 mb-2">
+                <h4 className="mb-2 font-semibold text-gray-900">
                   For the Public
                 </h4>
-                <ul className="text-sm text-gray-600 space-y-1">
+                <ul className="space-y-1 text-sm text-gray-600">
                   <li>• Search registered lobbyists</li>
                   <li>• View expense reports</li>
                   <li>• Access board member calendars</li>
@@ -206,9 +221,7 @@ export default async function Home() {
 
         {/* Contact Section */}
         <div className="mt-8 rounded-lg border border-blue-200 bg-blue-50 p-6">
-          <h3 className="font-semibold text-blue-900 mb-2">
-            Questions?
-          </h3>
+          <h3 className="mb-2 font-semibold text-blue-900">Questions?</h3>
           <p className="text-sm text-blue-700">
             Contact Multnomah County staff at{" "}
             <a
@@ -216,13 +229,13 @@ export default async function Home() {
               className="font-medium underline hover:text-blue-800"
             >
               lobbying@multco.us
-            </a>
-            {" "}or call (503) 988-3308
+            </a>{" "}
+            or call (503) 988-3308
           </p>
         </div>
       </main>
 
-      <footer className="border-t bg-white py-8 mt-16" role="contentinfo">
+      <footer className="mt-16 border-t bg-white py-8" role="contentinfo">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <p className="text-center text-sm text-gray-500">
             © 2025 Multnomah County. All rights reserved.
@@ -230,5 +243,5 @@ export default async function Home() {
         </div>
       </footer>
     </div>
-  )
+  );
 }

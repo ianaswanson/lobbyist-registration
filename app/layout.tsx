@@ -15,7 +15,8 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Lobbyist Registration System - Multnomah County",
-  description: "Government accountability and transparency through lobbyist registration and reporting",
+  description:
+    "Government accountability and transparency through lobbyist registration and reporting",
 };
 
 export default function RootLayout({

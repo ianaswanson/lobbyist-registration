@@ -1,14 +1,14 @@
-import { NextRequest, NextResponse } from "next/server"
-import { auth } from "@/lib/auth"
-import { prisma } from "@/lib/db"
+import { NextRequest, NextResponse } from "next/server";
+import { auth } from "@/lib/auth";
+import { prisma } from "@/lib/db";
 
 // GET /api/lobbyist - Get current user's lobbyist profile
 export async function GET() {
   try {
-    const session = await auth()
+    const session = await auth();
 
     if (!session || session.user?.role !== "LOBBYIST") {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const lobbyist = await prisma.lobbyist.findUnique({
@@ -22,32 +22,35 @@ export async function GET() {
           },
         },
       },
-    })
+    });
 
     if (!lobbyist) {
-      return NextResponse.json({ error: "Lobbyist profile not found" }, { status: 404 })
+      return NextResponse.json(
+        { error: "Lobbyist profile not found" },
+        { status: 404 }
+      );
     }
 
-    return NextResponse.json(lobbyist)
+    return NextResponse.json(lobbyist);
   } catch (error) {
-    console.error("Error fetching lobbyist:", error)
+    console.error("Error fetching lobbyist:", error);
     return NextResponse.json(
       { error: "Failed to fetch lobbyist profile" },
       { status: 500 }
-    )
+    );
   }
 }
 
 // POST /api/lobbyist - Create or update lobbyist registration
 export async function POST(request: NextRequest) {
   try {
-    const session = await auth()
+    const session = await auth();
 
     if (!session || session.user?.role !== "LOBBYIST") {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const body = await request.json()
+    const body = await request.json();
     const {
       name,
       email,
@@ -61,37 +64,34 @@ export async function POST(request: NextRequest) {
       employerBusinessDescription,
       subjectsOfInterest,
       authorizationDocuments,
-    } = body
+    } = body;
 
     // Validate required fields
     if (!name || !email || !phone || !address) {
       return NextResponse.json(
         { error: "Missing required lobbyist information" },
         { status: 400 }
-      )
+      );
     }
 
     if (!employerName || !employerEmail) {
       return NextResponse.json(
         { error: "Missing required employer information" },
         { status: 400 }
-      )
+      );
     }
 
     // Check if lobbyist already exists
     const existingLobbyist = await prisma.lobbyist.findUnique({
       where: { userId: session.user.id },
-    })
+    });
 
     // Find or create employer
     let employer = await prisma.employer.findFirst({
       where: {
-        OR: [
-          { email: employerEmail },
-          { name: employerName },
-        ],
+        OR: [{ email: employerEmail }, { name: employerName }],
       },
-    })
+    });
 
     if (!employer) {
       employer = await prisma.employer.create({
@@ -102,16 +102,16 @@ export async function POST(request: NextRequest) {
           address: employerAddress || "",
           businessDescription: employerBusinessDescription || "",
         },
-      })
+      });
     }
 
     // Calculate threshold date and deadline if hours >= 10
-    const thresholdExceededDate = hoursCurrentQuarter >= 10 ? new Date() : null
+    const thresholdExceededDate = hoursCurrentQuarter >= 10 ? new Date() : null;
     const registrationDeadline = thresholdExceededDate
       ? new Date(thresholdExceededDate.getTime() + 3 * 24 * 60 * 60 * 1000) // 3 days
-      : null
+      : null;
 
-    let lobbyist
+    let lobbyist;
 
     if (existingLobbyist) {
       // Update existing registration
@@ -130,7 +130,7 @@ export async function POST(request: NextRequest) {
           reviewedAt: null,
           rejectionReason: null,
         },
-      })
+      });
 
       // Update employer relationship
       const existingRelationship = await prisma.lobbyistEmployer.findFirst({
@@ -139,7 +139,7 @@ export async function POST(request: NextRequest) {
           employerId: employer.id,
           endDate: null, // Only active relationships
         },
-      })
+      });
 
       if (!existingRelationship) {
         await prisma.lobbyistEmployer.create({
@@ -150,7 +150,7 @@ export async function POST(request: NextRequest) {
             authorizationDate: new Date(),
             // TODO: Add authorizationDocumentUrl from file upload
           },
-        })
+        });
       } else {
         await prisma.lobbyistEmployer.update({
           where: { id: existingRelationship.id },
@@ -158,7 +158,7 @@ export async function POST(request: NextRequest) {
             subjectsOfInterest,
             authorizationDate: new Date(),
           },
-        })
+        });
       }
     } else {
       // Create new registration
@@ -182,7 +182,7 @@ export async function POST(request: NextRequest) {
             },
           },
         },
-      })
+      });
     }
 
     // TODO: Send email notification to admin about new registration
@@ -196,12 +196,12 @@ export async function POST(request: NextRequest) {
         lobbyist,
       },
       { status: 200 }
-    )
+    );
   } catch (error) {
-    console.error("Error creating/updating lobbyist:", error)
+    console.error("Error creating/updating lobbyist:", error);
     return NextResponse.json(
       { error: "Failed to submit registration" },
       { status: 500 }
-    )
+    );
   }
 }

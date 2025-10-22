@@ -2,7 +2,13 @@
 
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
@@ -32,7 +38,14 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { AlertCircle, Plus, Eye, FileText, DollarSign, Gavel } from "lucide-react";
+import {
+  AlertCircle,
+  Plus,
+  Eye,
+  FileText,
+  DollarSign,
+  Gavel,
+} from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 const violationTypeLabels = {
@@ -63,7 +76,10 @@ export function ViolationsClient() {
   const [summary, setSummary] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
+  const [message, setMessage] = useState<{
+    type: "success" | "error";
+    text: string;
+  } | null>(null);
 
   // Form state for new violation
   const [newViolation, setNewViolation] = useState({
@@ -121,7 +137,9 @@ export function ViolationsClient() {
           entityId: newViolation.entityId,
           violationType: newViolation.violationType,
           description: newViolation.description,
-          fineAmount: newViolation.fineAmount ? parseFloat(newViolation.fineAmount) : 0,
+          fineAmount: newViolation.fineAmount
+            ? parseFloat(newViolation.fineAmount)
+            : 0,
           sendEducationalLetter: newViolation.sendEducationalLetter,
         }),
       });
@@ -145,11 +163,17 @@ export function ViolationsClient() {
         setTimeout(() => setMessage(null), 5000);
       } else {
         const error = await response.json();
-        setMessage({ type: "error", text: error.error || "Failed to issue violation" });
+        setMessage({
+          type: "error",
+          text: error.error || "Failed to issue violation",
+        });
       }
     } catch (error) {
       console.error("Error issuing violation:", error);
-      setMessage({ type: "error", text: "Error issuing violation. Please try again." });
+      setMessage({
+        type: "error",
+        text: "Error issuing violation. Please try again.",
+      });
     } finally {
       setIsSubmitting(false);
     }
@@ -167,21 +191,22 @@ export function ViolationsClient() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
+      <div className="flex min-h-screen items-center justify-center">
         <div className="text-lg">Loading violations...</div>
       </div>
     );
   }
 
   return (
-    <div className="container mx-auto py-8 max-w-7xl">
-      <div className="flex justify-between items-start mb-8">
+    <div className="container mx-auto max-w-7xl py-8">
+      <div className="mb-8 flex items-start justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight mb-2">
+          <h1 className="mb-2 text-3xl font-bold tracking-tight">
             Violation Tracking & Enforcement
           </h1>
           <p className="text-muted-foreground">
-            Monitor compliance violations, issue fines, and track appeals per §3.808
+            Monitor compliance violations, issue fines, and track appeals per
+            §3.808
           </p>
         </div>
       </div>
@@ -217,7 +242,7 @@ export function ViolationsClient() {
         </Alert>
       )}
 
-      <div className="flex justify-end mb-8">
+      <div className="mb-8 flex justify-end">
         <Dialog open={isIssueDialogOpen} onOpenChange={setIsIssueDialogOpen}>
           <DialogTrigger asChild>
             <Button size="lg">
@@ -229,7 +254,8 @@ export function ViolationsClient() {
             <DialogHeader>
               <DialogTitle>Issue New Violation</DialogTitle>
               <DialogDescription>
-                Record a violation and optionally issue a fine (up to $500) or send an educational letter.
+                Record a violation and optionally issue a fine (up to $500) or
+                send an educational letter.
               </DialogDescription>
             </DialogHeader>
 
@@ -249,8 +275,12 @@ export function ViolationsClient() {
                     <SelectContent>
                       <SelectItem value="LOBBYIST">Lobbyist</SelectItem>
                       <SelectItem value="EMPLOYER">Employer</SelectItem>
-                      <SelectItem value="LOBBYIST_REPORT">Lobbyist Report</SelectItem>
-                      <SelectItem value="EMPLOYER_REPORT">Employer Report</SelectItem>
+                      <SelectItem value="LOBBYIST_REPORT">
+                        Lobbyist Report
+                      </SelectItem>
+                      <SelectItem value="EMPLOYER_REPORT">
+                        Employer Report
+                      </SelectItem>
                       <SelectItem value="BOARD_MEMBER">Board Member</SelectItem>
                     </SelectContent>
                   </Select>
@@ -262,7 +292,10 @@ export function ViolationsClient() {
                     id="entity-id"
                     value={newViolation.entityId}
                     onChange={(e) =>
-                      setNewViolation({ ...newViolation, entityId: e.target.value })
+                      setNewViolation({
+                        ...newViolation,
+                        entityId: e.target.value,
+                      })
                     }
                     placeholder="Enter entity ID"
                   />
@@ -281,12 +314,24 @@ export function ViolationsClient() {
                     <SelectValue placeholder="Select violation type" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="LATE_REGISTRATION">Late Registration (more than 3 days)</SelectItem>
-                    <SelectItem value="LATE_REPORT">Late Report Submission</SelectItem>
-                    <SelectItem value="MISSING_REPORT">Missing Report</SelectItem>
-                    <SelectItem value="FALSE_STATEMENT">False Statement</SelectItem>
-                    <SelectItem value="PROHIBITED_CONDUCT">Prohibited Conduct</SelectItem>
-                    <SelectItem value="MISSING_AUTHORIZATION">Missing Authorization</SelectItem>
+                    <SelectItem value="LATE_REGISTRATION">
+                      Late Registration (more than 3 days)
+                    </SelectItem>
+                    <SelectItem value="LATE_REPORT">
+                      Late Report Submission
+                    </SelectItem>
+                    <SelectItem value="MISSING_REPORT">
+                      Missing Report
+                    </SelectItem>
+                    <SelectItem value="FALSE_STATEMENT">
+                      False Statement
+                    </SelectItem>
+                    <SelectItem value="PROHIBITED_CONDUCT">
+                      Prohibited Conduct
+                    </SelectItem>
+                    <SelectItem value="MISSING_AUTHORIZATION">
+                      Missing Authorization
+                    </SelectItem>
                     <SelectItem value="OTHER">Other</SelectItem>
                   </SelectContent>
                 </Select>
@@ -298,7 +343,10 @@ export function ViolationsClient() {
                   id="description"
                   value={newViolation.description}
                   onChange={(e) =>
-                    setNewViolation({ ...newViolation, description: e.target.value })
+                    setNewViolation({
+                      ...newViolation,
+                      description: e.target.value,
+                    })
                   }
                   placeholder="Describe the violation in detail..."
                   rows={4}
@@ -308,7 +356,7 @@ export function ViolationsClient() {
               <div className="space-y-2">
                 <Label htmlFor="fine-amount">Fine Amount (up to $500)</Label>
                 <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
+                  <span className="text-muted-foreground absolute top-1/2 left-3 -translate-y-1/2">
                     $
                   </span>
                   <Input
@@ -319,13 +367,16 @@ export function ViolationsClient() {
                     step="25"
                     value={newViolation.fineAmount}
                     onChange={(e) =>
-                      setNewViolation({ ...newViolation, fineAmount: e.target.value })
+                      setNewViolation({
+                        ...newViolation,
+                        fineAmount: e.target.value,
+                      })
                     }
                     className="pl-7"
                     placeholder="0"
                   />
                 </div>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-muted-foreground text-sm">
                   Leave at $0 to issue warning/educational letter only
                 </p>
               </div>
@@ -343,8 +394,12 @@ export function ViolationsClient() {
                   }
                   className="h-4 w-4 rounded border-gray-300"
                 />
-                <Label htmlFor="educational-letter" className="text-sm font-normal cursor-pointer">
-                  Send educational letter instead of fine (first-time violations)
+                <Label
+                  htmlFor="educational-letter"
+                  className="cursor-pointer text-sm font-normal"
+                >
+                  Send educational letter instead of fine (first-time
+                  violations)
                 </Label>
               </div>
 
@@ -352,14 +407,17 @@ export function ViolationsClient() {
                 <AlertCircle className="h-4 w-4" />
                 <AlertTitle>Ordinance Compliance</AlertTitle>
                 <AlertDescription>
-                  Per §3.808, fines may not exceed $500. Initial implementation supports educational
-                  letters for first-time violations.
+                  Per §3.808, fines may not exceed $500. Initial implementation
+                  supports educational letters for first-time violations.
                 </AlertDescription>
               </Alert>
             </div>
 
             <DialogFooter>
-              <Button variant="outline" onClick={() => setIsIssueDialogOpen(false)}>
+              <Button
+                variant="outline"
+                onClick={() => setIsIssueDialogOpen(false)}
+              >
                 Cancel
               </Button>
               <Button
@@ -379,28 +437,34 @@ export function ViolationsClient() {
       </div>
 
       {/* Summary Cards */}
-      <div className="grid gap-4 md:grid-cols-4 mb-8">
+      <div className="mb-8 grid gap-4 md:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Violations</CardTitle>
-            <AlertCircle className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium">
+              Total Violations
+            </CardTitle>
+            <AlertCircle className="text-muted-foreground h-4 w-4" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{summary?.totalViolations || 0}</div>
-            <p className="text-xs text-muted-foreground">All time</p>
+            <div className="text-2xl font-bold">
+              {summary?.totalViolations || 0}
+            </div>
+            <p className="text-muted-foreground text-xs">All time</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Active Violations</CardTitle>
-            <DollarSign className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium">
+              Active Violations
+            </CardTitle>
+            <DollarSign className="text-muted-foreground h-4 w-4" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
               {summary?.activeViolations || 0}
             </div>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-muted-foreground text-xs">
               ${summary?.totalFines || 0} total fines
             </p>
           </CardContent>
@@ -408,27 +472,31 @@ export function ViolationsClient() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Pending Appeals</CardTitle>
-            <Gavel className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium">
+              Pending Appeals
+            </CardTitle>
+            <Gavel className="text-muted-foreground h-4 w-4" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
               {summary?.pendingAppeals || 0}
             </div>
-            <p className="text-xs text-muted-foreground">Awaiting decision</p>
+            <p className="text-muted-foreground text-xs">Awaiting decision</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Fines Collected</CardTitle>
-            <FileText className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium">
+              Fines Collected
+            </CardTitle>
+            <FileText className="text-muted-foreground h-4 w-4" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
-              ${summary?.paidFines || 0}
-            </div>
-            <p className="text-xs text-muted-foreground">Average: ${summary?.averageFine || 0}</p>
+            <div className="text-2xl font-bold">${summary?.paidFines || 0}</div>
+            <p className="text-muted-foreground text-xs">
+              Average: ${summary?.averageFine || 0}
+            </p>
           </CardContent>
         </Card>
       </div>
@@ -468,7 +536,10 @@ export function ViolationsClient() {
                   <TableBody>
                     {filterViolationsByStatus(tab).length === 0 ? (
                       <TableRow>
-                        <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
+                        <TableCell
+                          colSpan={7}
+                          className="text-muted-foreground py-8 text-center"
+                        >
                           No violations found
                         </TableCell>
                       </TableRow>
@@ -477,15 +548,21 @@ export function ViolationsClient() {
                         <TableRow key={violation.id}>
                           <TableCell>
                             <div>
-                              <div className="font-medium">{violation.entityType}</div>
-                              <div className="text-sm text-muted-foreground">
+                              <div className="font-medium">
+                                {violation.entityType}
+                              </div>
+                              <div className="text-muted-foreground text-sm">
                                 ID: {violation.entityId.substring(0, 8)}...
                               </div>
                             </div>
                           </TableCell>
                           <TableCell>
                             <Badge variant="outline">
-                              {violationTypeLabels[violation.violationType as keyof typeof violationTypeLabels]}
+                              {
+                                violationTypeLabels[
+                                  violation.violationType as keyof typeof violationTypeLabels
+                                ]
+                              }
                             </Badge>
                           </TableCell>
                           <TableCell className="max-w-xs truncate">
@@ -493,20 +570,32 @@ export function ViolationsClient() {
                           </TableCell>
                           <TableCell>
                             {violation.fineAmount > 0 ? (
-                              <span className="font-semibold">${violation.fineAmount}</span>
+                              <span className="font-semibold">
+                                ${violation.fineAmount}
+                              </span>
                             ) : (
-                              <span className="text-muted-foreground">$0 (Warning)</span>
+                              <span className="text-muted-foreground">
+                                $0 (Warning)
+                              </span>
                             )}
                           </TableCell>
                           <TableCell>
                             <Badge
-                              className={statusColors[violation.status as keyof typeof statusColors]}
+                              className={
+                                statusColors[
+                                  violation.status as keyof typeof statusColors
+                                ]
+                              }
                             >
                               {violation.status}
                             </Badge>
                           </TableCell>
-                          <TableCell className="text-sm text-muted-foreground">
-                            {violation.issuedDate ? new Date(violation.issuedDate).toLocaleDateString() : 'N/A'}
+                          <TableCell className="text-muted-foreground text-sm">
+                            {violation.issuedDate
+                              ? new Date(
+                                  violation.issuedDate
+                                ).toLocaleDateString()
+                              : "N/A"}
                           </TableCell>
                           <TableCell className="text-right">
                             <Button
@@ -542,77 +631,124 @@ export function ViolationsClient() {
             <div className="grid gap-4 py-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label className="text-sm text-muted-foreground">Entity</Label>
+                  <Label className="text-muted-foreground text-sm">
+                    Entity
+                  </Label>
                   <p className="font-medium">{selectedViolation.entityType}</p>
-                  <p className="text-sm text-muted-foreground">ID: {selectedViolation.entityId}</p>
+                  <p className="text-muted-foreground text-sm">
+                    ID: {selectedViolation.entityId}
+                  </p>
                 </div>
                 <div>
-                  <Label className="text-sm text-muted-foreground">Violation Type</Label>
+                  <Label className="text-muted-foreground text-sm">
+                    Violation Type
+                  </Label>
                   <p className="font-medium">
-                    {violationTypeLabels[selectedViolation.violationType as keyof typeof violationTypeLabels]}
+                    {
+                      violationTypeLabels[
+                        selectedViolation.violationType as keyof typeof violationTypeLabels
+                      ]
+                    }
                   </p>
                 </div>
               </div>
 
               <div>
-                <Label className="text-sm text-muted-foreground">Description</Label>
+                <Label className="text-muted-foreground text-sm">
+                  Description
+                </Label>
                 <p className="mt-1">{selectedViolation.description}</p>
               </div>
 
               <div className="grid grid-cols-3 gap-4">
                 <div>
-                  <Label className="text-sm text-muted-foreground">Fine Amount</Label>
-                  <p className="font-semibold text-lg">
+                  <Label className="text-muted-foreground text-sm">
+                    Fine Amount
+                  </Label>
+                  <p className="text-lg font-semibold">
                     ${selectedViolation.fineAmount}
                   </p>
                 </div>
                 <div>
-                  <Label className="text-sm text-muted-foreground">Status</Label>
-                  <Badge className={`mt-1 ${statusColors[selectedViolation.status as keyof typeof statusColors]}`}>
+                  <Label className="text-muted-foreground text-sm">
+                    Status
+                  </Label>
+                  <Badge
+                    className={`mt-1 ${statusColors[selectedViolation.status as keyof typeof statusColors]}`}
+                  >
                     {selectedViolation.status}
                   </Badge>
                 </div>
                 <div>
-                  <Label className="text-sm text-muted-foreground">Issued Date</Label>
-                  <p>{selectedViolation.issuedDate ? new Date(selectedViolation.issuedDate).toLocaleDateString() : 'N/A'}</p>
+                  <Label className="text-muted-foreground text-sm">
+                    Issued Date
+                  </Label>
+                  <p>
+                    {selectedViolation.issuedDate
+                      ? new Date(
+                          selectedViolation.issuedDate
+                        ).toLocaleDateString()
+                      : "N/A"}
+                  </p>
                 </div>
               </div>
 
-              {selectedViolation.appeals && selectedViolation.appeals.length > 0 && (
-                <Alert>
-                  <Gavel className="h-4 w-4" />
-                  <AlertTitle>Appeal Active</AlertTitle>
-                  <AlertDescription>
-                    <div className="space-y-2">
-                      <p>This violation has {selectedViolation.appeals.length} appeal(s).</p>
-                      {selectedViolation.appeals.map((appeal: any) => (
-                        <div key={appeal.id} className="text-sm border-t pt-2 mt-2">
-                          <div><strong>Status:</strong> {appeal.status}</div>
-                          <div><strong>Submitted:</strong> {new Date(appeal.submittedDate).toLocaleDateString()}</div>
-                          <div><strong>Deadline:</strong> {new Date(appeal.appealDeadline).toLocaleDateString()}</div>
-                          {appeal.decision && (
-                            <div className="mt-2">
-                              <strong>Decision:</strong> {appeal.decision}
+              {selectedViolation.appeals &&
+                selectedViolation.appeals.length > 0 && (
+                  <Alert>
+                    <Gavel className="h-4 w-4" />
+                    <AlertTitle>Appeal Active</AlertTitle>
+                    <AlertDescription>
+                      <div className="space-y-2">
+                        <p>
+                          This violation has {selectedViolation.appeals.length}{" "}
+                          appeal(s).
+                        </p>
+                        {selectedViolation.appeals.map((appeal: any) => (
+                          <div
+                            key={appeal.id}
+                            className="mt-2 border-t pt-2 text-sm"
+                          >
+                            <div>
+                              <strong>Status:</strong> {appeal.status}
                             </div>
-                          )}
-                        </div>
-                      ))}
-                      <a
-                        href="/admin/appeals"
-                        className="text-blue-600 hover:underline text-sm font-medium inline-block mt-2"
-                      >
-                        View in Appeals Dashboard →
-                      </a>
-                    </div>
-                  </AlertDescription>
-                </Alert>
-              )}
+                            <div>
+                              <strong>Submitted:</strong>{" "}
+                              {new Date(
+                                appeal.submittedDate
+                              ).toLocaleDateString()}
+                            </div>
+                            <div>
+                              <strong>Deadline:</strong>{" "}
+                              {new Date(
+                                appeal.appealDeadline
+                              ).toLocaleDateString()}
+                            </div>
+                            {appeal.decision && (
+                              <div className="mt-2">
+                                <strong>Decision:</strong> {appeal.decision}
+                              </div>
+                            )}
+                          </div>
+                        ))}
+                        <a
+                          href="/admin/appeals"
+                          className="mt-2 inline-block text-sm font-medium text-blue-600 hover:underline"
+                        >
+                          View in Appeals Dashboard →
+                        </a>
+                      </div>
+                    </AlertDescription>
+                  </Alert>
+                )}
 
               {selectedViolation.isFirstTimeViolation && (
                 <Alert>
                   <FileText className="h-4 w-4" />
                   <AlertTitle>First-Time Violation</AlertTitle>
-                  <AlertDescription>Educational letter sent instead of fine</AlertDescription>
+                  <AlertDescription>
+                    Educational letter sent instead of fine
+                  </AlertDescription>
                 </Alert>
               )}
 
@@ -620,14 +756,19 @@ export function ViolationsClient() {
                 <Alert>
                   <FileText className="h-4 w-4" />
                   <AlertTitle>Resolution Notes</AlertTitle>
-                  <AlertDescription>{selectedViolation.resolutionNotes}</AlertDescription>
+                  <AlertDescription>
+                    {selectedViolation.resolutionNotes}
+                  </AlertDescription>
                 </Alert>
               )}
             </div>
           )}
 
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsDetailsDialogOpen(false)}>
+            <Button
+              variant="outline"
+              onClick={() => setIsDetailsDialogOpen(false)}
+            >
               Close
             </Button>
           </DialogFooter>

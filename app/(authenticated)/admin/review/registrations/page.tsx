@@ -1,8 +1,8 @@
-import { auth } from "@/lib/auth"
-import { redirect } from "next/navigation"
-import { ReviewRegistrationsList } from "@/components/admin/ReviewRegistrationsList"
-import { prisma } from "@/lib/db"
-import { RegistrationStatus } from "@prisma/client"
+import { auth } from "@/lib/auth";
+import { redirect } from "next/navigation";
+import { ReviewRegistrationsList } from "@/components/admin/ReviewRegistrationsList";
+import { prisma } from "@/lib/db";
+import { RegistrationStatus } from "@prisma/client";
 
 async function getPendingRegistrations() {
   try {
@@ -30,23 +30,23 @@ async function getPendingRegistrations() {
       orderBy: {
         createdAt: "asc", // Oldest first
       },
-    })
+    });
 
-    return registrations
+    return registrations;
   } catch (error) {
-    console.error("Error fetching pending registrations:", error)
-    return []
+    console.error("Error fetching pending registrations:", error);
+    return [];
   }
 }
 
 export default async function AdminReviewRegistrationsPage() {
-  const session = await auth()
+  const session = await auth();
 
   if (!session || session.user?.role !== "ADMIN") {
-    redirect("/auth/signin")
+    redirect("/auth/signin");
   }
 
-  const registrations = await getPendingRegistrations()
+  const registrations = await getPendingRegistrations();
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -73,5 +73,5 @@ export default async function AdminReviewRegistrationsPage() {
         <ReviewRegistrationsList registrations={registrations} />
       </main>
     </div>
-  )
+  );
 }

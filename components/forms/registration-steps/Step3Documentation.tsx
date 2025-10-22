@@ -1,15 +1,15 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import FileUpload, { UploadedFile } from "@/components/FileUpload"
+import { useState } from "react";
+import FileUpload, { UploadedFile } from "@/components/FileUpload";
 
 interface Step3Props {
   data: {
-    authorizationDocuments?: UploadedFile[]
-  }
-  updateData: (data: any) => void
-  onNext: () => void
-  onBack: () => void
+    authorizationDocuments?: UploadedFile[];
+  };
+  updateData: (data: any) => void;
+  onNext: () => void;
+  onBack: () => void;
 }
 
 export function Step3Documentation({
@@ -20,27 +20,27 @@ export function Step3Documentation({
 }: Step3Props) {
   const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>(
     data.authorizationDocuments || []
-  )
-  const [error, setError] = useState<string | null>(null)
+  );
+  const [error, setError] = useState<string | null>(null);
 
   const handleFilesChange = (files: UploadedFile[]) => {
-    setUploadedFiles(files)
-    updateData({ authorizationDocuments: files })
+    setUploadedFiles(files);
+    updateData({ authorizationDocuments: files });
     // Clear error when files are added
     if (files.length > 0) {
-      setError(null)
+      setError(null);
     }
-  }
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
     if (uploadedFiles.length === 0) {
-      setError("Please upload at least one authorization document")
-      return
+      setError("Please upload at least one authorization document");
+      return;
     }
-    setError(null)
-    onNext()
-  }
+    setError(null);
+    onNext();
+  };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
@@ -81,7 +81,9 @@ export function Step3Documentation({
               <ul className="mt-2 list-inside list-disc space-y-1">
                 <li>Employer's name and contact information</li>
                 <li>Lobbyist's name</li>
-                <li>Statement of authorization to lobby on behalf of employer</li>
+                <li>
+                  Statement of authorization to lobby on behalf of employer
+                </li>
                 <li>Signature and title of employer officer</li>
                 <li>Date of authorization</li>
               </ul>
@@ -92,7 +94,7 @@ export function Step3Documentation({
 
       {/* Error Message */}
       {error && (
-        <div className="rounded-md bg-red-50 p-4 border border-red-200">
+        <div className="rounded-md border border-red-200 bg-red-50 p-4">
           <div className="flex">
             <div className="flex-shrink-0">
               <svg
@@ -163,17 +165,17 @@ export function Step3Documentation({
         <button
           type="button"
           onClick={onBack}
-          className="rounded-md border border-gray-300 bg-white px-6 py-2 text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+          className="rounded-md border border-gray-300 bg-white px-6 py-2 text-gray-700 hover:bg-gray-50 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none"
         >
           Back
         </button>
         <button
           type="submit"
-          className="rounded-md bg-blue-600 px-6 py-2 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+          className="rounded-md bg-blue-600 px-6 py-2 text-white hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none"
         >
           Next: Review & Submit
         </button>
       </div>
     </form>
-  )
+  );
 }

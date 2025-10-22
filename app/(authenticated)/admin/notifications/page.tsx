@@ -1,63 +1,69 @@
-"use client"
+"use client";
 
-import { useState } from "react"
+import { useState } from "react";
 
 export default function AdminNotificationsPage() {
-  const [testEmail, setTestEmail] = useState("test@example.com")
-  const [testName, setTestName] = useState("Test User")
-  const [sending, setSending] = useState(false)
-  const [result, setResult] = useState<string | null>(null)
+  const [testEmail, setTestEmail] = useState("test@example.com");
+  const [testName, setTestName] = useState("Test User");
+  const [sending, setSending] = useState(false);
+  const [result, setResult] = useState<string | null>(null);
 
   const sendTestReminder = async () => {
-    setSending(true)
-    setResult(null)
+    setSending(true);
+    setResult(null);
 
     try {
       // Simulate sending
-      await new Promise((resolve) => setTimeout(resolve, 1000))
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      console.log("📧 Test deadline reminder sent to:", testEmail)
-      setResult(`✅ Test deadline reminder sent to ${testEmail}. Check browser console for details.`)
+      console.log("📧 Test deadline reminder sent to:", testEmail);
+      setResult(
+        `✅ Test deadline reminder sent to ${testEmail}. Check browser console for details.`
+      );
     } catch (error) {
-      setResult(`❌ Failed to send: ${error}`)
+      setResult(`❌ Failed to send: ${error}`);
     } finally {
-      setSending(false)
+      setSending(false);
     }
-  }
+  };
 
   const sendTestOverdue = async () => {
-    setSending(true)
-    setResult(null)
+    setSending(true);
+    setResult(null);
 
     try {
       // Simulate sending
-      await new Promise((resolve) => setTimeout(resolve, 1000))
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      console.log("📧 Test overdue notice sent to:", testEmail)
-      setResult(`✅ Test overdue notice sent to ${testEmail}. Check browser console for details.`)
+      console.log("📧 Test overdue notice sent to:", testEmail);
+      setResult(
+        `✅ Test overdue notice sent to ${testEmail}. Check browser console for details.`
+      );
     } catch (error) {
-      setResult(`❌ Failed to send: ${error}`)
+      setResult(`❌ Failed to send: ${error}`);
     } finally {
-      setSending(false)
+      setSending(false);
     }
-  }
+  };
 
   const sendTestApproval = async () => {
-    setSending(true)
-    setResult(null)
+    setSending(true);
+    setResult(null);
 
     try {
       // Simulate sending
-      await new Promise((resolve) => setTimeout(resolve, 1000))
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      console.log("📧 Test approval notification sent to:", testEmail)
-      setResult(`✅ Test approval notification sent to ${testEmail}. Check browser console for details.`)
+      console.log("📧 Test approval notification sent to:", testEmail);
+      setResult(
+        `✅ Test approval notification sent to ${testEmail}. Check browser console for details.`
+      );
     } catch (error) {
-      setResult(`❌ Failed to send: ${error}`)
+      setResult(`❌ Failed to send: ${error}`);
     } finally {
-      setSending(false)
+      setSending(false);
     }
-  }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -82,8 +88,8 @@ export default function AdminNotificationsPage() {
         </div>
 
         {/* Notification Schedule */}
-        <div className="rounded-lg border bg-white p-6 shadow-sm mb-8">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">
+        <div className="mb-8 rounded-lg border bg-white p-6 shadow-sm">
+          <h2 className="mb-4 text-lg font-semibold text-gray-900">
             Automated Notification Schedule
           </h2>
           <div className="space-y-4">
@@ -91,20 +97,21 @@ export default function AdminNotificationsPage() {
               <h3 className="font-semibold text-blue-900">
                 Deadline Reminders
               </h3>
-              <p className="text-sm text-blue-700 mt-1">
-                Sent automatically 14 days, 7 days, 1 day, and on the day of quarterly report deadlines
+              <p className="mt-1 text-sm text-blue-700">
+                Sent automatically 14 days, 7 days, 1 day, and on the day of
+                quarterly report deadlines
               </p>
-              <p className="text-xs text-blue-600 mt-2">
+              <p className="mt-2 text-xs text-blue-600">
                 Recipients: All active lobbyists and employers
               </p>
             </div>
 
             <div className="border-l-4 border-red-500 bg-red-50 p-4">
               <h3 className="font-semibold text-red-900">Overdue Notices</h3>
-              <p className="text-sm text-red-700 mt-1">
+              <p className="mt-1 text-sm text-red-700">
                 Sent daily to lobbyists/employers with overdue reports
               </p>
-              <p className="text-xs text-red-600 mt-2">
+              <p className="mt-2 text-xs text-red-600">
                 Recipients: Those with reports past the quarterly deadline
               </p>
             </div>
@@ -113,10 +120,10 @@ export default function AdminNotificationsPage() {
               <h3 className="font-semibold text-green-900">
                 Registration Approvals
               </h3>
-              <p className="text-sm text-green-700 mt-1">
+              <p className="mt-1 text-sm text-green-700">
                 Sent immediately when admin approves a lobbyist registration
               </p>
-              <p className="text-xs text-green-600 mt-2">
+              <p className="mt-2 text-xs text-green-600">
                 Trigger: Manual approval action
               </p>
             </div>
@@ -124,12 +131,12 @@ export default function AdminNotificationsPage() {
         </div>
 
         {/* Upcoming Deadlines */}
-        <div className="rounded-lg border bg-white p-6 shadow-sm mb-8">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">
+        <div className="mb-8 rounded-lg border bg-white p-6 shadow-sm">
+          <h2 className="mb-4 text-lg font-semibold text-gray-900">
             Upcoming Quarterly Deadlines
           </h2>
           <div className="space-y-3">
-            <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+            <div className="flex items-center justify-between rounded-lg bg-gray-50 p-3">
               <div>
                 <span className="font-semibold">Q1 2025 Reports</span>
                 <span className="ml-3 text-sm text-gray-600">
@@ -140,7 +147,7 @@ export default function AdminNotificationsPage() {
                 12 days remaining
               </span>
             </div>
-            <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+            <div className="flex items-center justify-between rounded-lg bg-gray-50 p-3">
               <div>
                 <span className="font-semibold">Q2 2025 Reports</span>
                 <span className="ml-3 text-sm text-gray-600">
@@ -156,19 +163,19 @@ export default function AdminNotificationsPage() {
 
         {/* Test Notifications */}
         <div className="rounded-lg border bg-white p-6 shadow-sm">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">
+          <h2 className="mb-4 text-lg font-semibold text-gray-900">
             Test Email Notifications
           </h2>
-          <p className="text-sm text-gray-600 mb-6">
+          <p className="mb-6 text-sm text-gray-600">
             Send test emails to verify templates and delivery. Emails are logged
             to the browser console in prototype mode.
           </p>
 
-          <div className="grid grid-cols-2 gap-4 mb-6">
+          <div className="mb-6 grid grid-cols-2 gap-4">
             <div>
               <label
                 htmlFor="testEmail"
-                className="block text-sm font-medium text-gray-700 mb-1"
+                className="mb-1 block text-sm font-medium text-gray-700"
               >
                 Test Email Address
               </label>
@@ -177,14 +184,14 @@ export default function AdminNotificationsPage() {
                 id="testEmail"
                 value={testEmail}
                 onChange={(e) => setTestEmail(e.target.value)}
-                className="block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-blue-500"
+                className="block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
                 placeholder="test@example.com"
               />
             </div>
             <div>
               <label
                 htmlFor="testName"
-                className="block text-sm font-medium text-gray-700 mb-1"
+                className="mb-1 block text-sm font-medium text-gray-700"
               >
                 Test Recipient Name
               </label>
@@ -193,7 +200,7 @@ export default function AdminNotificationsPage() {
                 id="testName"
                 value={testName}
                 onChange={(e) => setTestName(e.target.value)}
-                className="block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-blue-500"
+                className="block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
                 placeholder="Test User"
               />
             </div>
@@ -238,12 +245,12 @@ export default function AdminNotificationsPage() {
           <div className="mt-6 rounded-md bg-yellow-50 p-4">
             <p className="text-sm text-yellow-800">
               <strong>Note:</strong> In prototype mode, emails are logged to the
-              browser console instead of being sent. In production, integrate with
-              an email service like SendGrid, AWS SES, or similar.
+              browser console instead of being sent. In production, integrate
+              with an email service like SendGrid, AWS SES, or similar.
             </p>
           </div>
         </div>
       </main>
     </div>
-  )
+  );
 }

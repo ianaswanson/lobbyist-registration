@@ -1,28 +1,28 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { useRouter } from "next/navigation"
-import { ManualEntryMode } from "./ManualEntryMode"
-import { CSVUploadMode } from "./CSVUploadMode"
-import { BulkPasteMode } from "./BulkPasteMode"
-import FileUpload, { UploadedFile } from "@/components/FileUpload"
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { ManualEntryMode } from "./ManualEntryMode";
+import { CSVUploadMode } from "./CSVUploadMode";
+import { BulkPasteMode } from "./BulkPasteMode";
+import FileUpload, { UploadedFile } from "@/components/FileUpload";
 
 export type ExpenseLineItem = {
-  id: string
-  officialName: string
-  date: string
-  payee: string
-  purpose: string
-  amount: number
-  isEstimate: boolean
-}
+  id: string;
+  officialName: string;
+  date: string;
+  payee: string;
+  purpose: string;
+  amount: number;
+  isEstimate: boolean;
+};
 
-type InputMode = "manual" | "csv" | "paste"
+type InputMode = "manual" | "csv" | "paste";
 
 interface LobbyistExpenseReportFormProps {
-  userId: string
-  initialQuarter?: string
-  initialYear?: number
+  userId: string;
+  initialQuarter?: string;
+  initialYear?: number;
 }
 
 export function LobbyistExpenseReportForm({
@@ -30,134 +30,142 @@ export function LobbyistExpenseReportForm({
   initialQuarter,
   initialYear,
 }: LobbyistExpenseReportFormProps) {
-  const router = useRouter()
-  const [mode, setMode] = useState<InputMode>("manual")
-  const [expenses, setExpenses] = useState<ExpenseLineItem[]>([])
-  const [quarter, setQuarter] = useState(initialQuarter || "Q1")
-  const [year, setYear] = useState(initialYear || new Date().getFullYear())
-  const [uploadedDocuments, setUploadedDocuments] = useState<UploadedFile[]>([])
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [isLoading, setIsLoading] = useState(true)
-  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false)
-  const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null)
+  const router = useRouter();
+  const [mode, setMode] = useState<InputMode>("manual");
+  const [expenses, setExpenses] = useState<ExpenseLineItem[]>([]);
+  const [quarter, setQuarter] = useState(initialQuarter || "Q1");
+  const [year, setYear] = useState(initialYear || new Date().getFullYear());
+  const [uploadedDocuments, setUploadedDocuments] = useState<UploadedFile[]>(
+    []
+  );
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const [message, setMessage] = useState<{
+    type: "success" | "error";
+    text: string;
+  } | null>(null);
 
   // Fetch existing report data when quarter or year changes
   useEffect(() => {
     async function fetchExistingReport() {
-      setIsLoading(true)
+      setIsLoading(true);
       try {
-        const response = await fetch(`/api/reports/lobbyist?quarter=${quarter}&year=${year}`)
+        const response = await fetch(
+          `/api/reports/lobbyist?quarter=${quarter}&year=${year}`
+        );
 
         if (response.ok) {
-          const data = await response.json()
+          const data = await response.json();
 
           // Check if we have reports for this quarter/year
           if (data.reports && data.reports.length > 0) {
-            const report = data.reports[0] // Get the first (and should be only) report
+            const report = data.reports[0]; // Get the first (and should be only) report
 
             // Transform line items to match our ExpenseLineItem type
             if (report.lineItems && report.lineItems.length > 0) {
               const transformedExpenses = report.lineItems.map((item: any) => ({
                 id: item.id,
                 officialName: item.officialName,
-                date: new Date(item.date).toISOString().split('T')[0], // Format as YYYY-MM-DD
+                date: new Date(item.date).toISOString().split("T")[0], // Format as YYYY-MM-DD
                 payee: item.payee,
                 purpose: item.purpose,
                 amount: item.amount,
                 isEstimate: item.isEstimate,
-              }))
+              }));
 
-              setExpenses(transformedExpenses)
-              setHasUnsavedChanges(false) // Data is loaded from DB, no unsaved changes
+              setExpenses(transformedExpenses);
+              setHasUnsavedChanges(false); // Data is loaded from DB, no unsaved changes
             } else {
               // No line items for this report
-              setExpenses([])
-              setHasUnsavedChanges(false)
+              setExpenses([]);
+              setHasUnsavedChanges(false);
             }
           } else {
             // No report found for this quarter/year - start fresh
-            setExpenses([])
-            setHasUnsavedChanges(false)
+            setExpenses([]);
+            setHasUnsavedChanges(false);
           }
         } else {
           // API error - start fresh
-          console.error('Failed to load existing report')
-          setExpenses([])
-          setHasUnsavedChanges(false)
+          console.error("Failed to load existing report");
+          setExpenses([]);
+          setHasUnsavedChanges(false);
         }
       } catch (error) {
-        console.error('Error fetching existing report:', error)
-        setExpenses([])
-        setHasUnsavedChanges(false)
+        console.error("Error fetching existing report:", error);
+        setExpenses([]);
+        setHasUnsavedChanges(false);
       } finally {
-        setIsLoading(false)
+        setIsLoading(false);
       }
     }
 
-    fetchExistingReport()
-  }, [quarter, year])
+    fetchExistingReport();
+  }, [quarter, year]);
 
   // Warn before leaving page with unsaved changes (page refresh/close)
   useEffect(() => {
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
       if (hasUnsavedChanges) {
-        e.preventDefault()
-        e.returnValue = '' // Chrome requires returnValue to be set
+        e.preventDefault();
+        e.returnValue = ""; // Chrome requires returnValue to be set
       }
-    }
+    };
 
-    window.addEventListener('beforeunload', handleBeforeUnload)
-    return () => window.removeEventListener('beforeunload', handleBeforeUnload)
-  }, [hasUnsavedChanges])
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, [hasUnsavedChanges]);
 
   // Warn before client-side navigation (clicking Next.js Links)
   useEffect(() => {
     const handleClick = (e: MouseEvent) => {
-      if (!hasUnsavedChanges) return
+      if (!hasUnsavedChanges) return;
 
       // Find the closest anchor tag (Next.js Link renders as <a>)
-      const target = e.target as HTMLElement
-      const anchor = target.closest('a[href]')
+      const target = e.target as HTMLElement;
+      const anchor = target.closest("a[href]");
 
       if (anchor) {
-        const href = anchor.getAttribute('href')
-        const currentPath = window.location.pathname
+        const href = anchor.getAttribute("href");
+        const currentPath = window.location.pathname;
 
         // Check if it's navigating to a different page
-        if (href && href !== currentPath && !href.startsWith('#')) {
+        if (href && href !== currentPath && !href.startsWith("#")) {
           const confirmed = window.confirm(
-            'You have unsaved changes. Are you sure you want to leave this page? Your changes will be lost.'
-          )
+            "You have unsaved changes. Are you sure you want to leave this page? Your changes will be lost."
+          );
 
           if (!confirmed) {
-            e.preventDefault()
-            e.stopPropagation()
-            e.stopImmediatePropagation()
+            e.preventDefault();
+            e.stopPropagation();
+            e.stopImmediatePropagation();
           }
         }
       }
-    }
+    };
 
     // Use capture phase to intercept before Next.js Link handler
-    document.addEventListener('click', handleClick, { capture: true })
-    return () => document.removeEventListener('click', handleClick, { capture: true })
-  }, [hasUnsavedChanges])
+    document.addEventListener("click", handleClick, { capture: true });
+    return () =>
+      document.removeEventListener("click", handleClick, { capture: true });
+  }, [hasUnsavedChanges]);
 
-  const totalAmount = expenses.reduce((sum, exp) => sum + exp.amount, 0)
+  const totalAmount = expenses.reduce((sum, exp) => sum + exp.amount, 0);
 
   const handleAddExpenses = (newExpenses: ExpenseLineItem[]) => {
-    setExpenses([...expenses, ...newExpenses])
-    setHasUnsavedChanges(true)
-  }
+    setExpenses([...expenses, ...newExpenses]);
+    setHasUnsavedChanges(true);
+  };
 
   const handleRemoveExpense = (id: string) => {
-    setExpenses(expenses.filter((exp) => exp.id !== id))
-    setHasUnsavedChanges(true)
-  }
+    setExpenses(expenses.filter((exp) => exp.id !== id));
+    setHasUnsavedChanges(true);
+  };
 
   const submitReport = async (isDraft: boolean) => {
-    setIsSubmitting(true)
-    setMessage(null)
+    setIsSubmitting(true);
+    setMessage(null);
 
     try {
       const response = await fetch("/api/reports/lobbyist", {
@@ -171,51 +179,51 @@ export function LobbyistExpenseReportForm({
           expenses,
           isDraft,
         }),
-      })
+      });
 
-      const data = await response.json()
+      const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || "Failed to save report")
+        throw new Error(data.error || "Failed to save report");
       }
 
       // Show success message
       setMessage({
         type: "success",
         text: data.message,
-      })
+      });
 
       // Clear unsaved changes flag
-      setHasUnsavedChanges(false)
+      setHasUnsavedChanges(false);
 
       // If submitting final report (not draft), redirect to reports list after brief delay
       if (!isDraft) {
         setTimeout(() => {
-          router.push('/reports/lobbyist')
-        }, 1500)
+          router.push("/reports/lobbyist");
+        }, 1500);
       } else {
         // For drafts, just clear message after 3 seconds
         setTimeout(() => {
-          setMessage(null)
-        }, 3000)
+          setMessage(null);
+        }, 3000);
       }
     } catch (error) {
       setMessage({
         type: "error",
         text: error instanceof Error ? error.message : "Failed to save report",
-      })
+      });
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
-  }
+  };
 
   const handleSaveDraft = () => {
-    submitReport(true)
-  }
+    submitReport(true);
+  };
 
   const handleSubmit = async () => {
-    submitReport(false)
-  }
+    submitReport(false);
+  };
 
   return (
     <div className="space-y-6">
@@ -224,7 +232,7 @@ export function LobbyistExpenseReportForm({
         <div className="rounded-md border border-blue-200 bg-blue-50 p-4">
           <div className="flex items-center">
             <svg
-              className="animate-spin h-5 w-5 text-blue-600"
+              className="h-5 w-5 animate-spin text-blue-600"
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"
@@ -270,7 +278,8 @@ export function LobbyistExpenseReportForm({
                 You have unsaved changes
               </p>
               <p className="mt-1 text-xs text-yellow-700">
-                Click "Save as Draft" or "Submit Report" to save your work. If you leave this page, your changes will be lost.
+                Click "Save as Draft" or "Submit Report" to save your work. If
+                you leave this page, your changes will be lost.
               </p>
             </div>
           </div>
@@ -282,8 +291,8 @@ export function LobbyistExpenseReportForm({
         <div
           className={`rounded-md p-4 ${
             message.type === "success"
-              ? "bg-green-50 text-green-800 border border-green-200"
-              : "bg-red-50 text-red-800 border border-red-200"
+              ? "border border-green-200 bg-green-50 text-green-800"
+              : "border border-red-200 bg-red-50 text-red-800"
           }`}
         >
           <div className="flex">
@@ -320,10 +329,14 @@ export function LobbyistExpenseReportForm({
             <div className="ml-auto pl-3">
               <button
                 onClick={() => setMessage(null)}
-                className="inline-flex rounded-md p-1.5 hover:bg-black hover:bg-opacity-10 focus:outline-none"
+                className="hover:bg-opacity-10 inline-flex rounded-md p-1.5 hover:bg-black focus:outline-none"
               >
                 <span className="sr-only">Dismiss</span>
-                <svg className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                <svg
+                  className="h-4 w-4"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
                   <path
                     fillRule="evenodd"
                     d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
@@ -338,14 +351,14 @@ export function LobbyistExpenseReportForm({
 
       {/* Quarter and Year Selection */}
       <div className="rounded-lg border bg-white p-6 shadow-sm">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">
+        <h3 className="mb-4 text-lg font-semibold text-gray-900">
           Reporting Period
         </h3>
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label
               htmlFor="quarter"
-              className="block text-sm font-medium text-gray-700 mb-1"
+              className="mb-1 block text-sm font-medium text-gray-700"
             >
               Quarter
             </label>
@@ -353,7 +366,7 @@ export function LobbyistExpenseReportForm({
               id="quarter"
               value={quarter}
               onChange={(e) => setQuarter(e.target.value)}
-              className="block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-blue-500"
+              className="block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
             >
               <option value="Q1">Q1 (Jan-Mar) - Due April 15</option>
               <option value="Q2">Q2 (Apr-Jun) - Due July 15</option>
@@ -364,7 +377,7 @@ export function LobbyistExpenseReportForm({
           <div>
             <label
               htmlFor="year"
-              className="block text-sm font-medium text-gray-700 mb-1"
+              className="mb-1 block text-sm font-medium text-gray-700"
             >
               Year
             </label>
@@ -373,7 +386,7 @@ export function LobbyistExpenseReportForm({
               id="year"
               value={year}
               onChange={(e) => setYear(parseInt(e.target.value))}
-              className="block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-blue-500"
+              className="block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
             />
           </div>
         </div>
@@ -381,19 +394,19 @@ export function LobbyistExpenseReportForm({
 
       {/* Input Method Selector */}
       <div className="rounded-lg border bg-white p-6 shadow-sm">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">
+        <h3 className="mb-4 text-lg font-semibold text-gray-900">
           Add Expenses
         </h3>
 
         <div className="mb-6">
-          <label className="block text-sm font-semibold text-gray-700 mb-3">
+          <label className="mb-3 block text-sm font-semibold text-gray-700">
             Choose Input Method:
           </label>
           <div className="flex space-x-2">
             <button
               type="button"
               onClick={() => setMode("manual")}
-              className={`px-4 py-2 rounded-md font-medium text-sm transition-colors ${
+              className={`rounded-md px-4 py-2 text-sm font-medium transition-colors ${
                 mode === "manual"
                   ? "bg-blue-600 text-white"
                   : "bg-gray-100 text-gray-700 hover:bg-gray-200"
@@ -404,7 +417,7 @@ export function LobbyistExpenseReportForm({
             <button
               type="button"
               onClick={() => setMode("csv")}
-              className={`px-4 py-2 rounded-md font-medium text-sm transition-colors ${
+              className={`rounded-md px-4 py-2 text-sm font-medium transition-colors ${
                 mode === "csv"
                   ? "bg-blue-600 text-white"
                   : "bg-gray-100 text-gray-700 hover:bg-gray-200"
@@ -415,7 +428,7 @@ export function LobbyistExpenseReportForm({
             <button
               type="button"
               onClick={() => setMode("paste")}
-              className={`px-4 py-2 rounded-md font-medium text-sm transition-colors ${
+              className={`rounded-md px-4 py-2 text-sm font-medium transition-colors ${
                 mode === "paste"
                   ? "bg-blue-600 text-white"
                   : "bg-gray-100 text-gray-700 hover:bg-gray-200"
@@ -435,7 +448,7 @@ export function LobbyistExpenseReportForm({
       {/* Expenses List */}
       {expenses.length > 0 && (
         <div className="rounded-lg border bg-white p-6 shadow-sm">
-          <div className="flex items-center justify-between mb-4">
+          <div className="mb-4 flex items-center justify-between">
             <h3 className="text-lg font-semibold text-gray-900">
               Expense Items ({expenses.length})
             </h3>
@@ -451,19 +464,19 @@ export function LobbyistExpenseReportForm({
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="px-3 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                  <th className="px-3 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
                     Official Name
                   </th>
-                  <th className="px-3 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                  <th className="px-3 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
                     Date
                   </th>
-                  <th className="px-3 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                  <th className="px-3 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
                     Payee
                   </th>
-                  <th className="px-3 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                  <th className="px-3 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
                     Purpose
                   </th>
-                  <th className="px-3 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                  <th className="px-3 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
                     Amount
                   </th>
                   <th className="px-3 py-3"></th>
@@ -472,7 +485,7 @@ export function LobbyistExpenseReportForm({
               <tbody className="divide-y divide-gray-200 bg-white">
                 {expenses.map((expense) => (
                   <tr key={expense.id} className="hover:bg-gray-50">
-                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-900">
+                    <td className="px-3 py-4 text-sm whitespace-nowrap text-gray-900">
                       {expense.officialName}
                       {expense.isEstimate && (
                         <span className="ml-2 text-xs text-yellow-600">
@@ -480,19 +493,19 @@ export function LobbyistExpenseReportForm({
                         </span>
                       )}
                     </td>
-                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                    <td className="px-3 py-4 text-sm whitespace-nowrap text-gray-500">
                       {expense.date}
                     </td>
-                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                    <td className="px-3 py-4 text-sm whitespace-nowrap text-gray-500">
                       {expense.payee}
                     </td>
                     <td className="px-3 py-4 text-sm text-gray-500">
                       {expense.purpose}
                     </td>
-                    <td className="whitespace-nowrap px-3 py-4 text-sm font-medium text-gray-900">
+                    <td className="px-3 py-4 text-sm font-medium whitespace-nowrap text-gray-900">
                       ${expense.amount.toFixed(2)}
                     </td>
-                    <td className="whitespace-nowrap px-3 py-4 text-right text-sm">
+                    <td className="px-3 py-4 text-right text-sm whitespace-nowrap">
                       <button
                         onClick={() => handleRemoveExpense(expense.id)}
                         className="text-red-600 hover:text-red-900"
@@ -518,7 +531,7 @@ export function LobbyistExpenseReportForm({
 
       {/* Supporting Documents */}
       <div className="rounded-lg border bg-white p-6 shadow-sm">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">
+        <h3 className="mb-4 text-lg font-semibold text-gray-900">
           Supporting Documents (Optional)
         </h3>
         <FileUpload
@@ -538,12 +551,12 @@ export function LobbyistExpenseReportForm({
           type="button"
           onClick={handleSaveDraft}
           disabled={isSubmitting || expenses.length === 0}
-          className="rounded-md border border-gray-300 bg-white px-6 py-2 text-gray-700 hover:bg-gray-50 disabled:bg-gray-100 disabled:cursor-not-allowed disabled:text-gray-400 flex items-center space-x-2"
+          className="flex items-center space-x-2 rounded-md border border-gray-300 bg-white px-6 py-2 text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-400"
         >
           {isSubmitting ? (
             <>
               <svg
-                className="animate-spin h-4 w-4 text-gray-600"
+                className="h-4 w-4 animate-spin text-gray-600"
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
                 viewBox="0 0 24 24"
@@ -572,12 +585,12 @@ export function LobbyistExpenseReportForm({
           type="button"
           onClick={handleSubmit}
           disabled={isSubmitting || expenses.length === 0}
-          className="rounded-md bg-green-600 px-6 py-2 text-white hover:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed flex items-center space-x-2"
+          className="flex items-center space-x-2 rounded-md bg-green-600 px-6 py-2 text-white hover:bg-green-700 disabled:cursor-not-allowed disabled:bg-gray-300"
         >
           {isSubmitting ? (
             <>
               <svg
-                className="animate-spin h-4 w-4 text-white"
+                className="h-4 w-4 animate-spin text-white"
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
                 viewBox="0 0 24 24"
@@ -604,5 +617,5 @@ export function LobbyistExpenseReportForm({
         </button>
       </div>
     </div>
-  )
+  );
 }

@@ -1,36 +1,36 @@
-import { signIn } from "@/lib/auth"
-import { AuthError } from "next-auth"
-import { redirect } from "next/navigation"
-import { DemoCredentialsPanel } from "@/components/DemoCredentialsPanel"
-import Link from "next/link"
+import { signIn } from "@/lib/auth";
+import { AuthError } from "next-auth";
+import { redirect } from "next/navigation";
+import { DemoCredentialsPanel } from "@/components/DemoCredentialsPanel";
+import Link from "next/link";
 
 export default async function SignInPage({
   searchParams,
 }: {
-  searchParams: Promise<{ callbackUrl?: string; error?: string }>
+  searchParams: Promise<{ callbackUrl?: string; error?: string }>;
 }) {
-  const params = await searchParams
+  const params = await searchParams;
 
   async function handleSignIn(formData: FormData) {
-    "use server"
+    "use server";
 
-    const email = formData.get("email") as string
-    const password = formData.get("password") as string
+    const email = formData.get("email") as string;
+    const password = formData.get("password") as string;
 
     try {
       await signIn("credentials", {
         email,
         password,
         redirect: false,
-      })
+      });
       // If successful, redirect manually
-      redirect(params.callbackUrl || "/dashboard")
+      redirect(params.callbackUrl || "/dashboard");
     } catch (error) {
       if (error instanceof AuthError) {
         // Redirect back to signin with error
-        redirect(`/auth/signin?error=CredentialsSignin`)
+        redirect(`/auth/signin?error=CredentialsSignin`);
       }
-      throw error
+      throw error;
     }
   }
 
@@ -43,10 +43,10 @@ export default async function SignInPage({
         <div className="text-center">
           <Link
             href="/"
-            className="inline-flex items-center text-sm text-blue-600 hover:text-blue-800 mb-4"
+            className="mb-4 inline-flex items-center text-sm text-blue-600 hover:text-blue-800"
           >
             <svg
-              className="w-4 h-4 mr-1"
+              className="mr-1 h-4 w-4"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -63,9 +63,7 @@ export default async function SignInPage({
           <h2 className="text-3xl font-bold tracking-tight">
             Lobbyist Registration System
           </h2>
-          <p className="mt-2 text-sm text-gray-600">
-            Sign in to your account
-          </p>
+          <p className="mt-2 text-sm text-gray-600">Sign in to your account</p>
         </div>
 
         {params.error && (
@@ -91,7 +89,7 @@ export default async function SignInPage({
                 type="email"
                 autoComplete="email"
                 required
-                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500"
+                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
               />
             </div>
 
@@ -108,14 +106,14 @@ export default async function SignInPage({
                 type="password"
                 autoComplete="current-password"
                 required
-                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500"
+                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
               />
             </div>
           </div>
 
           <button
             type="submit"
-            className="w-full rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+            className="w-full rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none"
           >
             Sign in
           </button>
@@ -129,5 +127,5 @@ export default async function SignInPage({
         </div>
       </div>
     </div>
-  )
+  );
 }

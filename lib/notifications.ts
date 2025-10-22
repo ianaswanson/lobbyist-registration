@@ -13,17 +13,17 @@ import {
   QUARTERLY_DEADLINES,
   daysUntilDeadline,
   EmailRecipient,
-} from "./email"
+} from "./email";
 
 export interface NotificationLog {
-  id: string
-  recipientEmail: string
-  recipientName: string
-  type: "deadline_reminder" | "overdue_notice" | "registration_approval"
-  sentAt: Date
-  status: "sent" | "failed"
-  quarter?: string
-  year?: number
+  id: string;
+  recipientEmail: string;
+  recipientName: string;
+  type: "deadline_reminder" | "overdue_notice" | "registration_approval";
+  sentAt: Date;
+  status: "sent" | "failed";
+  quarter?: string;
+  year?: number;
 }
 
 /**
@@ -35,29 +35,30 @@ export async function sendDeadlineReminders(
   year: number,
   daysBeforeDeadline: number
 ): Promise<NotificationLog[]> {
-  const logs: NotificationLog[] = []
+  const logs: NotificationLog[] = [];
 
   // Mock data - in production, query database for active lobbyists/employers
   const recipients: EmailRecipient[] = [
     { email: "lobbyist@multco.us", name: "Test Lobbyist" },
     { email: "employer@multco.us", name: "Test Employer" },
-  ]
+  ];
 
   // Calculate deadline date
-  const deadline = QUARTERLY_DEADLINES[quarter as keyof typeof QUARTERLY_DEADLINES]
-  const deadlineYear = quarter === "Q4" ? year + 1 : year
-  const deadlineDate = new Date(deadlineYear, deadline.month - 1, deadline.day)
-  const daysRemaining = daysUntilDeadline(deadlineDate)
+  const deadline =
+    QUARTERLY_DEADLINES[quarter as keyof typeof QUARTERLY_DEADLINES];
+  const deadlineYear = quarter === "Q4" ? year + 1 : year;
+  const deadlineDate = new Date(deadlineYear, deadline.month - 1, deadline.day);
+  const daysRemaining = daysUntilDeadline(deadlineDate);
 
   // Only send if we're at the right number of days before deadline
   if (daysRemaining !== daysBeforeDeadline) {
     console.log(
       `Not time to send ${daysBeforeDeadline}-day reminders yet (${daysRemaining} days until deadline)`
-    )
-    return logs
+    );
+    return logs;
   }
 
-  console.log(`Sending ${daysBeforeDeadline}-day deadline reminders...`)
+  console.log(`Sending ${daysBeforeDeadline}-day deadline reminders...`);
 
   for (const recipient of recipients) {
     try {
@@ -67,7 +68,7 @@ export async function sendDeadlineReminders(
         year,
         deadline.label,
         daysRemaining
-      )
+      );
 
       logs.push({
         id: `notif-${Date.now()}-${Math.random()}`,
@@ -78,9 +79,9 @@ export async function sendDeadlineReminders(
         status: success ? "sent" : "failed",
         quarter,
         year,
-      })
+      });
     } catch (error) {
-      console.error(`Failed to send reminder to ${recipient.email}:`, error)
+      console.error(`Failed to send reminder to ${recipient.email}:`, error);
       logs.push({
         id: `notif-${Date.now()}-${Math.random()}`,
         recipientEmail: recipient.email,
@@ -90,12 +91,12 @@ export async function sendDeadlineReminders(
         status: "failed",
         quarter,
         year,
-      })
+      });
     }
   }
 
-  console.log(`Sent ${logs.length} deadline reminders`)
-  return logs
+  console.log(`Sent ${logs.length} deadline reminders`);
+  return logs;
 }
 
 /**
@@ -105,7 +106,7 @@ export async function sendOverdueNotifications(
   quarter: string,
   year: number
 ): Promise<NotificationLog[]> {
-  const logs: NotificationLog[] = []
+  const logs: NotificationLog[] = [];
 
   // Mock data - in production, query database for overdue reports
   const overdueRecipients: Array<EmailRecipient & { daysOverdue: number }> = [
@@ -114,11 +115,12 @@ export async function sendOverdueNotifications(
       name: "Late Lobbyist",
       daysOverdue: 15,
     },
-  ]
+  ];
 
-  const deadline = QUARTERLY_DEADLINES[quarter as keyof typeof QUARTERLY_DEADLINES]
+  const deadline =
+    QUARTERLY_DEADLINES[quarter as keyof typeof QUARTERLY_DEADLINES];
 
-  console.log(`Sending overdue notifications for ${quarter} ${year}...`)
+  console.log(`Sending overdue notifications for ${quarter} ${year}...`);
 
   for (const recipient of overdueRecipients) {
     try {
@@ -128,7 +130,7 @@ export async function sendOverdueNotifications(
         year,
         deadline.label,
         recipient.daysOverdue
-      )
+      );
 
       logs.push({
         id: `notif-${Date.now()}-${Math.random()}`,
@@ -139,9 +141,12 @@ export async function sendOverdueNotifications(
         status: success ? "sent" : "failed",
         quarter,
         year,
-      })
+      });
     } catch (error) {
-      console.error(`Failed to send overdue notice to ${recipient.email}:`, error)
+      console.error(
+        `Failed to send overdue notice to ${recipient.email}:`,
+        error
+      );
       logs.push({
         id: `notif-${Date.now()}-${Math.random()}`,
         recipientEmail: recipient.email,
@@ -151,12 +156,12 @@ export async function sendOverdueNotifications(
         status: "failed",
         quarter,
         year,
-      })
+      });
     }
   }
 
-  console.log(`Sent ${logs.length} overdue notifications`)
-  return logs
+  console.log(`Sent ${logs.length} overdue notifications`);
+  return logs;
 }
 
 /**
@@ -166,7 +171,7 @@ export async function sendApprovalNotification(
   recipient: EmailRecipient
 ): Promise<NotificationLog> {
   try {
-    const success = await sendRegistrationApproval(recipient)
+    const success = await sendRegistrationApproval(recipient);
 
     return {
       id: `notif-${Date.now()}-${Math.random()}`,
@@ -175,9 +180,9 @@ export async function sendApprovalNotification(
       type: "registration_approval",
       sentAt: new Date(),
       status: success ? "sent" : "failed",
-    }
+    };
   } catch (error) {
-    console.error(`Failed to send approval to ${recipient.email}:`, error)
+    console.error(`Failed to send approval to ${recipient.email}:`, error);
     return {
       id: `notif-${Date.now()}-${Math.random()}`,
       recipientEmail: recipient.email,
@@ -185,7 +190,7 @@ export async function sendApprovalNotification(
       type: "registration_approval",
       sentAt: new Date(),
       status: "failed",
-    }
+    };
   }
 }
 
@@ -193,31 +198,31 @@ export async function sendApprovalNotification(
  * Get upcoming quarterly deadlines
  */
 export function getUpcomingDeadlines(): Array<{
-  quarter: string
-  year: number
-  date: Date
-  daysUntil: number
+  quarter: string;
+  year: number;
+  date: Date;
+  daysUntil: number;
 }> {
-  const now = new Date()
-  const currentYear = now.getFullYear()
+  const now = new Date();
+  const currentYear = now.getFullYear();
   const deadlines: Array<{
-    quarter: string
-    year: number
-    date: Date
-    daysUntil: number
-  }> = []
+    quarter: string;
+    year: number;
+    date: Date;
+    daysUntil: number;
+  }> = [];
 
   // Check all quarters for next 2 years
   for (let yearOffset = 0; yearOffset < 2; yearOffset++) {
-    const year = currentYear + yearOffset
+    const year = currentYear + yearOffset;
 
     for (const [quarter, deadline] of Object.entries(QUARTERLY_DEADLINES)) {
-      const deadlineYear = quarter === "Q4" ? year + 1 : year
+      const deadlineYear = quarter === "Q4" ? year + 1 : year;
       const deadlineDate = new Date(
         deadlineYear,
         deadline.month - 1,
         deadline.day
-      )
+      );
 
       if (deadlineDate > now) {
         deadlines.push({
@@ -225,12 +230,12 @@ export function getUpcomingDeadlines(): Array<{
           year,
           date: deadlineDate,
           daysUntil: daysUntilDeadline(deadlineDate),
-        })
+        });
       }
     }
   }
 
-  return deadlines.sort((a, b) => a.daysUntil - b.daysUntil).slice(0, 4)
+  return deadlines.sort((a, b) => a.daysUntil - b.daysUntil).slice(0, 4);
 }
 
 /**
@@ -240,14 +245,14 @@ export function getUpcomingDeadlines(): Array<{
  * - Triggered on registration approval: Send approval email
  */
 export async function runDailyNotificationCheck(): Promise<{
-  deadlineReminders: NotificationLog[]
-  overdueNotices: NotificationLog[]
+  deadlineReminders: NotificationLog[];
+  overdueNotices: NotificationLog[];
 }> {
-  console.log("Running daily notification check...")
+  console.log("Running daily notification check...");
 
-  const upcomingDeadlines = getUpcomingDeadlines()
-  const deadlineReminders: NotificationLog[] = []
-  const overdueNotices: NotificationLog[] = []
+  const upcomingDeadlines = getUpcomingDeadlines();
+  const deadlineReminders: NotificationLog[] = [];
+  const overdueNotices: NotificationLog[] = [];
 
   // Check each upcoming deadline for reminder triggers
   for (const deadline of upcomingDeadlines) {
@@ -257,20 +262,23 @@ export async function runDailyNotificationCheck(): Promise<{
         deadline.quarter,
         deadline.year,
         deadline.daysUntil
-      )
-      deadlineReminders.push(...logs)
+      );
+      deadlineReminders.push(...logs);
     }
 
     // Check for overdue reports (deadline has passed)
     if (deadline.daysUntil < 0) {
-      const logs = await sendOverdueNotifications(deadline.quarter, deadline.year)
-      overdueNotices.push(...logs)
+      const logs = await sendOverdueNotifications(
+        deadline.quarter,
+        deadline.year
+      );
+      overdueNotices.push(...logs);
     }
   }
 
   console.log(
     `Daily check complete: ${deadlineReminders.length} reminders, ${overdueNotices.length} overdue notices`
-  )
+  );
 
-  return { deadlineReminders, overdueNotices }
+  return { deadlineReminders, overdueNotices };
 }

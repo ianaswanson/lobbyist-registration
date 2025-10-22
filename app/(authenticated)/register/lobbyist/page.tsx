@@ -1,12 +1,12 @@
-import { auth } from "@/lib/auth"
-import { redirect } from "next/navigation"
-import { LobbyistRegistrationWizard } from "@/components/forms/LobbyistRegistrationWizard"
+import { auth } from "@/lib/auth";
+import { redirect } from "next/navigation";
+import { LobbyistRegistrationWizard } from "@/components/forms/LobbyistRegistrationWizard";
 
 export default async function LobbyistRegistrationPage() {
-  const session = await auth()
+  const session = await auth();
 
   if (!session) {
-    redirect("/auth/signin")
+    redirect("/auth/signin");
   }
 
   // Check if user already has a lobbyist profile
@@ -29,5 +29,5 @@ export default async function LobbyistRegistrationPage() {
         <LobbyistRegistrationWizard userId={session.user.id} />
       </main>
     </div>
-  )
+  );
 }

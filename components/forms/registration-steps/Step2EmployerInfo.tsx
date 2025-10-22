@@ -1,17 +1,17 @@
-"use client"
+"use client";
 
 interface Step2Props {
   data: {
-    employerName: string
-    employerEmail: string
-    employerPhone: string
-    employerAddress: string
-    employerBusinessDescription: string
-    subjectsOfInterest: string
-  }
-  updateData: (data: any) => void
-  onNext: () => void
-  onBack: () => void
+    employerName: string;
+    employerEmail: string;
+    employerPhone: string;
+    employerAddress: string;
+    employerBusinessDescription: string;
+    subjectsOfInterest: string;
+  };
+  updateData: (data: any) => void;
+  onNext: () => void;
+  onBack: () => void;
 }
 
 export function Step2EmployerInfo({
@@ -21,9 +21,9 @@ export function Step2EmployerInfo({
   onBack,
 }: Step2Props) {
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    onNext()
-  }
+    e.preventDefault();
+    onNext();
+  };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
@@ -50,7 +50,7 @@ export function Step2EmployerInfo({
             required
             value={data.employerName}
             onChange={(e) => updateData({ employerName: e.target.value })}
-            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500"
+            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
             placeholder="TechCorp Industries"
           />
         </div>
@@ -68,7 +68,7 @@ export function Step2EmployerInfo({
             required
             value={data.employerEmail}
             onChange={(e) => updateData({ employerEmail: e.target.value })}
-            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500"
+            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
             placeholder="contact@techcorp.com"
           />
         </div>
@@ -86,7 +86,7 @@ export function Step2EmployerInfo({
             required
             value={data.employerPhone}
             onChange={(e) => updateData({ employerPhone: e.target.value })}
-            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500"
+            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
             placeholder="(503) 555-0200"
           />
         </div>
@@ -104,7 +104,7 @@ export function Step2EmployerInfo({
             rows={3}
             value={data.employerAddress}
             onChange={(e) => updateData({ employerAddress: e.target.value })}
-            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500"
+            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
             placeholder="456 Business Parkway&#10;Portland, OR 97203"
           />
         </div>
@@ -124,7 +124,7 @@ export function Step2EmployerInfo({
             onChange={(e) =>
               updateData({ employerBusinessDescription: e.target.value })
             }
-            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500"
+            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
             placeholder="Describe the employer's trade, business, or profession"
           />
         </div>
@@ -134,7 +134,8 @@ export function Step2EmployerInfo({
             htmlFor="subjectsOfInterest"
             className="block text-sm font-medium text-gray-700"
           >
-            Subjects of Legislative Interest <span className="text-red-600">*</span>
+            Subjects of Legislative Interest{" "}
+            <span className="text-red-600">*</span>
           </label>
           <textarea
             id="subjectsOfInterest"
@@ -142,7 +143,7 @@ export function Step2EmployerInfo({
             rows={4}
             value={data.subjectsOfInterest}
             onChange={(e) => updateData({ subjectsOfInterest: e.target.value })}
-            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500"
+            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
             placeholder="List the general subjects of legislative or administrative action that are of interest to the employer"
           />
           <p className="mt-1 text-xs text-gray-500">
@@ -156,17 +157,17 @@ export function Step2EmployerInfo({
         <button
           type="button"
           onClick={onBack}
-          className="rounded-md border border-gray-300 bg-white px-6 py-2 text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+          className="rounded-md border border-gray-300 bg-white px-6 py-2 text-gray-700 hover:bg-gray-50 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none"
         >
           Back
         </button>
         <button
           type="submit"
-          className="rounded-md bg-blue-600 px-6 py-2 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+          className="rounded-md bg-blue-600 px-6 py-2 text-white hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none"
         >
           Next: Upload Documents
         </button>
       </div>
     </form>
-  )
+  );
 }

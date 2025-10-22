@@ -1,17 +1,17 @@
-import { auth } from "@/lib/auth"
-import { redirect } from "next/navigation"
-import { prisma } from "@/lib/db"
-import { BoardMemberReportsClient } from "@/components/reports/BoardMemberReportsClient"
-import { Quarter } from "@prisma/client"
+import { auth } from "@/lib/auth";
+import { redirect } from "next/navigation";
+import { prisma } from "@/lib/db";
+import { BoardMemberReportsClient } from "@/components/reports/BoardMemberReportsClient";
+import { Quarter } from "@prisma/client";
 
 // Aggregate data by quarter/year for board member submissions
 interface QuarterlySubmission {
-  quarter: Quarter
-  year: number
-  calendarEntries: number
-  lobbyingReceipts: number
-  totalReceiptAmount: number
-  hasData: boolean
+  quarter: Quarter;
+  year: number;
+  calendarEntries: number;
+  lobbyingReceipts: number;
+  totalReceiptAmount: number;
+  hasData: boolean;
 }
 
 async function getSubmissions(userId: string): Promise<QuarterlySubmission[]> {
@@ -21,30 +21,24 @@ async function getSubmissions(userId: string): Promise<QuarterlySubmission[]> {
       where: { userId },
       include: {
         calendarEntries: {
-          orderBy: [
-            { year: "desc" },
-            { quarter: "desc" },
-          ],
+          orderBy: [{ year: "desc" }, { quarter: "desc" }],
         },
         lobbyingReceipts: {
-          orderBy: [
-            { year: "desc" },
-            { quarter: "desc" },
-          ],
+          orderBy: [{ year: "desc" }, { quarter: "desc" }],
         },
       },
-    })
+    });
 
     if (!boardMember) {
-      return []
+      return [];
     }
 
     // Aggregate by quarter/year
-    const submissionsByQuarter = new Map<string, QuarterlySubmission>()
+    const submissionsByQuarter = new Map<string, QuarterlySubmission>();
 
     // Process calendar entries
     boardMember.calendarEntries.forEach((entry) => {
-      const key = `${entry.year}-Q${entry.quarter}`
+      const key = `${entry.year}-Q${entry.quarter}`;
       if (!submissionsByQuarter.has(key)) {
         submissionsByQuarter.set(key, {
           quarter: entry.quarter,
@@ -53,16 +47,16 @@ async function getSubmissions(userId: string): Promise<QuarterlySubmission[]> {
           lobbyingReceipts: 0,
           totalReceiptAmount: 0,
           hasData: false,
-        })
+        });
       }
-      const submission = submissionsByQuarter.get(key)!
-      submission.calendarEntries++
-      submission.hasData = true
-    })
+      const submission = submissionsByQuarter.get(key)!;
+      submission.calendarEntries++;
+      submission.hasData = true;
+    });
 
     // Process lobbying receipts
     boardMember.lobbyingReceipts.forEach((receipt) => {
-      const key = `${receipt.year}-Q${receipt.quarter}`
+      const key = `${receipt.year}-Q${receipt.quarter}`;
       if (!submissionsByQuarter.has(key)) {
         submissionsByQuarter.set(key, {
           quarter: receipt.quarter,
@@ -71,38 +65,38 @@ async function getSubmissions(userId: string): Promise<QuarterlySubmission[]> {
           lobbyingReceipts: 0,
           totalReceiptAmount: 0,
           hasData: false,
-        })
+        });
       }
-      const submission = submissionsByQuarter.get(key)!
-      submission.lobbyingReceipts++
-      submission.totalReceiptAmount += receipt.amount
-      submission.hasData = true
-    })
+      const submission = submissionsByQuarter.get(key)!;
+      submission.lobbyingReceipts++;
+      submission.totalReceiptAmount += receipt.amount;
+      submission.hasData = true;
+    });
 
     // Convert to array and sort by year/quarter descending
-    const quarterOrder = { Q1: 1, Q2: 2, Q3: 3, Q4: 4 }
+    const quarterOrder = { Q1: 1, Q2: 2, Q3: 3, Q4: 4 };
     const submissions = Array.from(submissionsByQuarter.values())
-      .filter(s => s.hasData)
+      .filter((s) => s.hasData)
       .sort((a, b) => {
-        if (a.year !== b.year) return b.year - a.year
-        return quarterOrder[b.quarter] - quarterOrder[a.quarter]
-      })
+        if (a.year !== b.year) return b.year - a.year;
+        return quarterOrder[b.quarter] - quarterOrder[a.quarter];
+      });
 
-    return submissions
+    return submissions;
   } catch (error) {
-    console.error("Error fetching board member submissions:", error)
-    return []
+    console.error("Error fetching board member submissions:", error);
+    return [];
   }
 }
 
 export default async function BoardMemberReportsPage() {
-  const session = await auth()
+  const session = await auth();
 
   if (!session || session.user?.role !== "BOARD_MEMBER") {
-    redirect("/auth/signin")
+    redirect("/auth/signin");
   }
 
-  const submissions = await getSubmissions(session.user.id)
+  const submissions = await getSubmissions(session.user.id);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -137,5 +131,5 @@ export default async function BoardMemberReportsPage() {
         <BoardMemberReportsClient submissions={submissions} />
       </main>
     </div>
-  )
+  );
 }

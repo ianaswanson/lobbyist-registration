@@ -1,18 +1,18 @@
-import { auth } from "@/lib/auth"
-import { redirect } from "next/navigation"
-import { prisma } from "@/lib/db"
-import { RegistrationStatus, ReportStatus } from "@prisma/client"
+import { auth } from "@/lib/auth";
+import { redirect } from "next/navigation";
+import { prisma } from "@/lib/db";
+import { RegistrationStatus, ReportStatus } from "@prisma/client";
 
 async function getComplianceData() {
   try {
-    const today = new Date()
+    const today = new Date();
 
     // Get counts
-    const totalLobbyists = await prisma.lobbyist.count()
-    const totalEmployers = await prisma.employer.count()
+    const totalLobbyists = await prisma.lobbyist.count();
+    const totalEmployers = await prisma.employer.count();
     const totalBoardMembers = await prisma.user.count({
-      where: { role: "BOARD_MEMBER" }
-    })
+      where: { role: "BOARD_MEMBER" },
+    });
 
     // Get pending registrations (for review section)
     const pendingRegistrations = await prisma.lobbyist.findMany({
@@ -40,7 +40,7 @@ async function getComplianceData() {
         createdAt: "desc",
       },
       take: 5, // Show up to 5 recent ones
-    })
+    });
 
     // Get pending reports (submitted but not yet approved)
     const pendingLobbyistReports = await prisma.lobbyistExpenseReport.count({
@@ -49,7 +49,7 @@ async function getComplianceData() {
           in: [ReportStatus.SUBMITTED, ReportStatus.LATE],
         },
       },
-    })
+    });
 
     const pendingEmployerReports = await prisma.employerExpenseReport.count({
       where: {
@@ -57,9 +57,9 @@ async function getComplianceData() {
           in: [ReportStatus.SUBMITTED, ReportStatus.LATE],
         },
       },
-    })
+    });
 
-    const totalPendingReports = pendingLobbyistReports + pendingEmployerReports
+    const totalPendingReports = pendingLobbyistReports + pendingEmployerReports;
 
     // Get overdue reports (reports where today > dueDate and status is not APPROVED)
     const overdueLobbyistReports = await prisma.lobbyistExpenseReport.findMany({
@@ -81,7 +81,7 @@ async function getComplianceData() {
       orderBy: {
         dueDate: "asc",
       },
-    })
+    });
 
     const overdueEmployerReports = await prisma.employerExpenseReport.findMany({
       where: {
@@ -102,7 +102,7 @@ async function getComplianceData() {
       orderBy: {
         dueDate: "asc",
       },
-    })
+    });
 
     // Combine overdue reports
     const overdueReports = [
@@ -111,49 +111,64 @@ async function getComplianceData() {
         entity: r.lobbyist.name,
         type: "Lobbyist Expense",
         quarter: `Q${r.quarter} ${r.year}`,
-        dueDate: r.dueDate.toISOString().split('T')[0],
-        daysOverdue: Math.floor((today.getTime() - r.dueDate.getTime()) / (1000 * 60 * 60 * 24)),
+        dueDate: r.dueDate.toISOString().split("T")[0],
+        daysOverdue: Math.floor(
+          (today.getTime() - r.dueDate.getTime()) / (1000 * 60 * 60 * 24)
+        ),
       })),
       ...overdueEmployerReports.map((r) => ({
         id: r.id,
         entity: r.employer.name,
         type: "Employer Expense",
         quarter: `Q${r.quarter} ${r.year}`,
-        dueDate: r.dueDate.toISOString().split('T')[0],
-        daysOverdue: Math.floor((today.getTime() - r.dueDate.getTime()) / (1000 * 60 * 60 * 24)),
+        dueDate: r.dueDate.toISOString().split("T")[0],
+        daysOverdue: Math.floor(
+          (today.getTime() - r.dueDate.getTime()) / (1000 * 60 * 60 * 24)
+        ),
       })),
-    ]
+    ];
 
     // Calculate upcoming deadline (next quarterly deadline)
-    const currentMonth = today.getMonth() + 1 // 1-12
-    const currentYear = today.getFullYear()
+    const currentMonth = today.getMonth() + 1; // 1-12
+    const currentYear = today.getFullYear();
 
-    let nextDeadline = new Date()
-    let quarterType = ""
+    let nextDeadline = new Date();
+    let quarterType = "";
 
     if (currentMonth <= 1 || (currentMonth === 1 && today.getDate() <= 15)) {
       // Q4 previous year deadline (Jan 15)
-      nextDeadline = new Date(currentYear, 0, 15)
-      quarterType = `Q4 ${currentYear - 1} Reports`
-    } else if (currentMonth <= 4 || (currentMonth === 4 && today.getDate() <= 15)) {
+      nextDeadline = new Date(currentYear, 0, 15);
+      quarterType = `Q4 ${currentYear - 1} Reports`;
+    } else if (
+      currentMonth <= 4 ||
+      (currentMonth === 4 && today.getDate() <= 15)
+    ) {
       // Q1 deadline (Apr 15)
-      nextDeadline = new Date(currentYear, 3, 15)
-      quarterType = `Q1 ${currentYear} Reports`
-    } else if (currentMonth <= 7 || (currentMonth === 7 && today.getDate() <= 15)) {
+      nextDeadline = new Date(currentYear, 3, 15);
+      quarterType = `Q1 ${currentYear} Reports`;
+    } else if (
+      currentMonth <= 7 ||
+      (currentMonth === 7 && today.getDate() <= 15)
+    ) {
       // Q2 deadline (Jul 15)
-      nextDeadline = new Date(currentYear, 6, 15)
-      quarterType = `Q2 ${currentYear} Reports`
-    } else if (currentMonth <= 10 || (currentMonth === 10 && today.getDate() <= 15)) {
+      nextDeadline = new Date(currentYear, 6, 15);
+      quarterType = `Q2 ${currentYear} Reports`;
+    } else if (
+      currentMonth <= 10 ||
+      (currentMonth === 10 && today.getDate() <= 15)
+    ) {
       // Q3 deadline (Oct 15)
-      nextDeadline = new Date(currentYear, 9, 15)
-      quarterType = `Q3 ${currentYear} Reports`
+      nextDeadline = new Date(currentYear, 9, 15);
+      quarterType = `Q3 ${currentYear} Reports`;
     } else {
       // Q4 deadline (Jan 15 next year)
-      nextDeadline = new Date(currentYear + 1, 0, 15)
-      quarterType = `Q4 ${currentYear} Reports`
+      nextDeadline = new Date(currentYear + 1, 0, 15);
+      quarterType = `Q4 ${currentYear} Reports`;
     }
 
-    const daysUntil = Math.ceil((nextDeadline.getTime() - today.getTime()) / (1000 * 60 * 60 * 24))
+    const daysUntil = Math.ceil(
+      (nextDeadline.getTime() - today.getTime()) / (1000 * 60 * 60 * 24)
+    );
 
     // Get recent violations
     const recentViolations = await prisma.violation.findMany({
@@ -161,7 +176,7 @@ async function getComplianceData() {
         issuedDate: "desc",
       },
       take: 5,
-    })
+    });
 
     return {
       totalLobbyists,
@@ -171,27 +186,27 @@ async function getComplianceData() {
         id: reg.id,
         lobbyistName: reg.name,
         employer: reg.employers[0]?.employer.name || "N/A",
-        date: reg.createdAt.toISOString().split('T')[0],
+        date: reg.createdAt.toISOString().split("T")[0],
         status: reg.status,
       })),
       pendingReportsCount: totalPendingReports,
       overdueReports,
       upcomingDeadline: {
         type: quarterType,
-        date: nextDeadline.toISOString().split('T')[0],
+        date: nextDeadline.toISOString().split("T")[0],
         daysUntil,
       },
       violations: recentViolations.map((v) => ({
         id: v.id,
         entity: v.entityName,
         type: v.violationType,
-        date: v.issuedDate.toISOString().split('T')[0],
+        date: v.issuedDate.toISOString().split("T")[0],
         fineAmount: v.fineAmount,
         status: v.status,
       })),
-    }
+    };
   } catch (error) {
-    console.error("Error fetching compliance data:", error)
+    console.error("Error fetching compliance data:", error);
     return {
       totalLobbyists: 0,
       totalEmployers: 0,
@@ -201,25 +216,25 @@ async function getComplianceData() {
       overdueReports: [],
       upcomingDeadline: {
         type: "No upcoming deadline",
-        date: new Date().toISOString().split('T')[0],
+        date: new Date().toISOString().split("T")[0],
         daysUntil: 0,
       },
       violations: [],
-    }
+    };
   }
 }
 
 export default async function AdminComplianceDashboardPage() {
-  const session = await auth()
+  const session = await auth();
 
   if (!session || session.user?.role !== "ADMIN") {
-    redirect("/auth/signin")
+    redirect("/auth/signin");
   }
 
-  const complianceData = await getComplianceData()
+  const complianceData = await getComplianceData();
   const upcomingDate = complianceData.upcomingDeadline
     ? new Date(complianceData.upcomingDeadline.date)
-    : new Date()
+    : new Date();
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -234,7 +249,7 @@ export default async function AdminComplianceDashboardPage() {
         </div>
 
         {/* Key Metrics */}
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4 mb-8">
+        <div className="mb-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
           <div className="rounded-lg border bg-white p-6 shadow-sm">
             <div className="flex items-center justify-between">
               <div>
@@ -345,7 +360,7 @@ export default async function AdminComplianceDashboardPage() {
         </div>
 
         {/* Alert Cards */}
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2 mb-8">
+        <div className="mb-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
           {/* Upcoming Deadline */}
           <div className="rounded-lg border-2 border-yellow-200 bg-yellow-50 p-6 shadow-sm">
             <div className="flex items-start">
@@ -371,8 +386,8 @@ export default async function AdminComplianceDashboardPage() {
                 {complianceData.upcomingDeadline ? (
                   <div className="mt-2 text-sm text-yellow-700">
                     <p>
-                      <strong>{complianceData.upcomingDeadline.type}</strong> due{" "}
-                      {upcomingDate.toLocaleDateString()}
+                      <strong>{complianceData.upcomingDeadline.type}</strong>{" "}
+                      due {upcomingDate.toLocaleDateString()}
                     </p>
                     <p className="mt-1">
                       {complianceData.upcomingDeadline.daysUntil} days remaining
@@ -422,10 +437,11 @@ export default async function AdminComplianceDashboardPage() {
         </div>
 
         {/* Pending Registrations */}
-        <div className="rounded-lg border bg-white shadow-sm mb-8">
-          <div className="border-b p-4 flex items-center justify-between">
+        <div className="mb-8 rounded-lg border bg-white shadow-sm">
+          <div className="flex items-center justify-between border-b p-4">
             <h2 className="text-lg font-semibold text-gray-900">
-              Pending Registrations ({complianceData.recentRegistrations.length})
+              Pending Registrations ({complianceData.recentRegistrations.length}
+              )
             </h2>
             <a
               href="/admin/review/registrations"
@@ -438,7 +454,7 @@ export default async function AdminComplianceDashboardPage() {
             {complianceData.recentRegistrations.map((registration) => (
               <div
                 key={registration.id}
-                className="p-4 hover:bg-gray-50 transition-colors flex items-center justify-between"
+                className="flex items-center justify-between p-4 transition-colors hover:bg-gray-50"
               >
                 <div className="flex-1">
                   <h3 className="font-medium text-gray-900">
@@ -447,8 +463,9 @@ export default async function AdminComplianceDashboardPage() {
                   <p className="text-sm text-gray-600">
                     Employer: {registration.employer}
                   </p>
-                  <p className="text-xs text-gray-500 mt-1">
-                    Submitted: {new Date(registration.date).toLocaleDateString()}
+                  <p className="mt-1 text-xs text-gray-500">
+                    Submitted:{" "}
+                    {new Date(registration.date).toLocaleDateString()}
                   </p>
                 </div>
                 <div className="flex items-center space-x-2">
@@ -468,8 +485,8 @@ export default async function AdminComplianceDashboardPage() {
         </div>
 
         {/* Pending Reports for Review */}
-        <div className="rounded-lg border bg-white shadow-sm mb-8">
-          <div className="border-b p-4 flex items-center justify-between">
+        <div className="mb-8 rounded-lg border bg-white shadow-sm">
+          <div className="flex items-center justify-between border-b p-4">
             <h2 className="text-lg font-semibold text-gray-900">
               Pending Reports for Review
             </h2>
@@ -500,7 +517,7 @@ export default async function AdminComplianceDashboardPage() {
         </div>
 
         {/* Overdue Reports Table */}
-        <div className="rounded-lg border bg-white shadow-sm mb-8">
+        <div className="mb-8 rounded-lg border bg-white shadow-sm">
           <div className="border-b p-4">
             <h2 className="text-lg font-semibold text-gray-900">
               Overdue Reports
@@ -510,19 +527,19 @@ export default async function AdminComplianceDashboardPage() {
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                  <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
                     Entity
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                  <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
                     Report Type
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                  <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
                     Period
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                  <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
                     Due Date
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                  <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
                     Days Overdue
                   </th>
                   <th className="px-6 py-3"></th>
@@ -531,24 +548,24 @@ export default async function AdminComplianceDashboardPage() {
               <tbody className="divide-y divide-gray-200 bg-white">
                 {complianceData.overdueReports.map((report) => (
                   <tr key={report.id} className="hover:bg-gray-50">
-                    <td className="whitespace-nowrap px-6 py-4 text-sm font-medium text-gray-900">
+                    <td className="px-6 py-4 text-sm font-medium whitespace-nowrap text-gray-900">
                       {report.entity}
                     </td>
-                    <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
+                    <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-500">
                       {report.type}
                     </td>
-                    <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
+                    <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-500">
                       {report.quarter}
                     </td>
-                    <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
+                    <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-500">
                       {new Date(report.dueDate).toLocaleDateString()}
                     </td>
-                    <td className="whitespace-nowrap px-6 py-4">
+                    <td className="px-6 py-4 whitespace-nowrap">
                       <span className="rounded-full bg-red-100 px-2 py-1 text-xs font-medium text-red-800">
                         {report.daysOverdue} days
                       </span>
                     </td>
-                    <td className="whitespace-nowrap px-6 py-4 text-right text-sm">
+                    <td className="px-6 py-4 text-right text-sm whitespace-nowrap">
                       <button
                         className="text-blue-600 hover:text-blue-900"
                         disabled
@@ -575,14 +592,14 @@ export default async function AdminComplianceDashboardPage() {
             {complianceData.violations.map((violation) => (
               <div
                 key={violation.id}
-                className="p-4 hover:bg-gray-50 transition-colors flex items-center justify-between"
+                className="flex items-center justify-between p-4 transition-colors hover:bg-gray-50"
               >
                 <div className="flex-1">
                   <h3 className="font-medium text-gray-900">
                     {violation.entity}
                   </h3>
                   <p className="text-sm text-gray-600">{violation.type}</p>
-                  <p className="text-xs text-gray-500 mt-1">
+                  <p className="mt-1 text-xs text-gray-500">
                     Issued: {new Date(violation.date).toLocaleDateString()}
                   </p>
                 </div>
@@ -602,5 +619,5 @@ export default async function AdminComplianceDashboardPage() {
         </div>
       </main>
     </div>
-  )
+  );
 }

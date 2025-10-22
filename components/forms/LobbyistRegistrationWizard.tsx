@@ -1,46 +1,49 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { useRouter } from "next/navigation"
-import { Step1PersonalInfo } from "./registration-steps/Step1PersonalInfo"
-import { Step2EmployerInfo } from "./registration-steps/Step2EmployerInfo"
-import { Step3Documentation } from "./registration-steps/Step3Documentation"
-import { Step4Review } from "./registration-steps/Step4Review"
-import { UploadedFile } from "@/components/FileUpload"
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
-import { AlertCircle, Loader2 } from "lucide-react"
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { Step1PersonalInfo } from "./registration-steps/Step1PersonalInfo";
+import { Step2EmployerInfo } from "./registration-steps/Step2EmployerInfo";
+import { Step3Documentation } from "./registration-steps/Step3Documentation";
+import { Step4Review } from "./registration-steps/Step4Review";
+import { UploadedFile } from "@/components/FileUpload";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { AlertCircle, Loader2 } from "lucide-react";
 
 type RegistrationData = {
   // Step 1: Personal Information
-  name: string
-  email: string
-  phone: string
-  address: string
-  hoursCurrentQuarter: number
+  name: string;
+  email: string;
+  phone: string;
+  address: string;
+  hoursCurrentQuarter: number;
 
   // Step 2: Employer Information
-  employerName: string
-  employerEmail: string
-  employerPhone: string
-  employerAddress: string
-  employerBusinessDescription: string
-  subjectsOfInterest: string
+  employerName: string;
+  employerEmail: string;
+  employerPhone: string;
+  employerAddress: string;
+  employerBusinessDescription: string;
+  subjectsOfInterest: string;
 
   // Step 3: Documentation
-  authorizationDocuments?: UploadedFile[]
-}
+  authorizationDocuments?: UploadedFile[];
+};
 
 interface LobbyistRegistrationWizardProps {
-  userId: string
+  userId: string;
 }
 
 export function LobbyistRegistrationWizard({
   userId,
 }: LobbyistRegistrationWizardProps) {
-  const router = useRouter()
-  const [currentStep, setCurrentStep] = useState(1)
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null)
+  const router = useRouter();
+  const [currentStep, setCurrentStep] = useState(1);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [message, setMessage] = useState<{
+    type: "success" | "error";
+    text: string;
+  } | null>(null);
   const [formData, setFormData] = useState<RegistrationData>({
     name: "",
     email: "",
@@ -53,29 +56,29 @@ export function LobbyistRegistrationWizard({
     employerAddress: "",
     employerBusinessDescription: "",
     subjectsOfInterest: "",
-  })
+  });
 
-  const totalSteps = 4
+  const totalSteps = 4;
 
   const updateFormData = (data: Partial<RegistrationData>) => {
-    setFormData((prev) => ({ ...prev, ...data }))
-  }
+    setFormData((prev) => ({ ...prev, ...data }));
+  };
 
   const nextStep = () => {
     if (currentStep < totalSteps) {
-      setCurrentStep((prev) => prev + 1)
+      setCurrentStep((prev) => prev + 1);
     }
-  }
+  };
 
   const prevStep = () => {
     if (currentStep > 1) {
-      setCurrentStep((prev) => prev - 1)
+      setCurrentStep((prev) => prev - 1);
     }
-  }
+  };
 
   const handleSubmit = async () => {
-    setIsSubmitting(true)
-    setMessage(null)
+    setIsSubmitting(true);
+    setMessage(null);
 
     try {
       const response = await fetch("/api/lobbyist", {
@@ -84,33 +87,36 @@ export function LobbyistRegistrationWizard({
           "Content-Type": "application/json",
         },
         body: JSON.stringify(formData),
-      })
+      });
 
-      const data = await response.json()
+      const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || "Failed to submit registration")
+        throw new Error(data.error || "Failed to submit registration");
       }
 
       setMessage({
         type: "success",
         text: data.message || "Registration submitted successfully!",
-      })
+      });
 
       // Redirect to dashboard after 2 seconds
       setTimeout(() => {
-        router.push("/dashboard")
-      }, 2000)
+        router.push("/dashboard");
+      }, 2000);
     } catch (error) {
-      console.error("Error submitting registration:", error)
+      console.error("Error submitting registration:", error);
       setMessage({
         type: "error",
-        text: error instanceof Error ? error.message : "Failed to submit registration. Please try again.",
-      })
+        text:
+          error instanceof Error
+            ? error.message
+            : "Failed to submit registration. Please try again.",
+      });
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
-  }
+  };
 
   return (
     <div className="rounded-lg border bg-white shadow-sm">
@@ -124,8 +130,8 @@ export function LobbyistRegistrationWizard({
                   step === currentStep
                     ? "border-blue-600 bg-blue-600 text-white"
                     : step < currentStep
-                    ? "border-green-600 bg-green-600 text-white"
-                    : "border-gray-300 bg-white text-gray-500"
+                      ? "border-green-600 bg-green-600 text-white"
+                      : "border-gray-300 bg-white text-gray-500"
                 }`}
               >
                 {step < currentStep ? (
@@ -157,16 +163,24 @@ export function LobbyistRegistrationWizard({
           ))}
         </div>
         <div className="mt-4 flex justify-between text-xs text-gray-600">
-          <span className={currentStep === 1 ? "font-semibold text-blue-600" : ""}>
+          <span
+            className={currentStep === 1 ? "font-semibold text-blue-600" : ""}
+          >
             Personal Info
           </span>
-          <span className={currentStep === 2 ? "font-semibold text-blue-600" : ""}>
+          <span
+            className={currentStep === 2 ? "font-semibold text-blue-600" : ""}
+          >
             Employer
           </span>
-          <span className={currentStep === 3 ? "font-semibold text-blue-600" : ""}>
+          <span
+            className={currentStep === 3 ? "font-semibold text-blue-600" : ""}
+          >
             Documents
           </span>
-          <span className={currentStep === 4 ? "font-semibold text-blue-600" : ""}>
+          <span
+            className={currentStep === 4 ? "font-semibold text-blue-600" : ""}
+          >
             Review
           </span>
         </div>
@@ -188,12 +202,16 @@ export function LobbyistRegistrationWizard({
               }`}
             />
             <AlertTitle
-              className={message.type === "success" ? "text-green-800" : "text-red-800"}
+              className={
+                message.type === "success" ? "text-green-800" : "text-red-800"
+              }
             >
               {message.type === "success" ? "Success" : "Error"}
             </AlertTitle>
             <AlertDescription
-              className={message.type === "success" ? "text-green-700" : "text-red-700"}
+              className={
+                message.type === "success" ? "text-green-700" : "text-red-700"
+              }
             >
               {message.text}
               {message.type === "success" && (
@@ -249,5 +267,5 @@ export function LobbyistRegistrationWizard({
         </p>
       </div>
     </div>
-  )
+  );
 }

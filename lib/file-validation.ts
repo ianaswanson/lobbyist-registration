@@ -23,14 +23,14 @@ const ALLOWED_FILE_TYPES = {
   "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": [
     ".xlsx",
   ],
-} as const
+} as const;
 
 // Maximum file sizes by type (in bytes)
 const MAX_FILE_SIZE = {
   document: 10 * 1024 * 1024, // 10MB
   image: 5 * 1024 * 1024, // 5MB
   spreadsheet: 2 * 1024 * 1024, // 2MB
-} as const
+} as const;
 
 /**
  * Dangerous file extensions that should NEVER be allowed
@@ -53,7 +53,7 @@ const DANGEROUS_EXTENSIONS = [
   ".scr",
   ".com",
   ".pif",
-]
+];
 
 /**
  * Dangerous content patterns in filenames
@@ -63,12 +63,12 @@ const DANGEROUS_FILENAME_PATTERNS = [
   /[<>:"|?*]/g, // Invalid Windows characters
   /[\x00-\x1f\x80-\x9f]/g, // Control characters
   /^(con|prn|aux|nul|com[0-9]|lpt[0-9])(\..*)?$/i, // Windows reserved names
-]
+];
 
 export interface FileValidationResult {
-  valid: boolean
-  error?: string
-  sanitizedFilename?: string
+  valid: boolean;
+  error?: string;
+  sanitizedFilename?: string;
 }
 
 /**
@@ -81,43 +81,44 @@ export async function validateUploadedFile(
 ): Promise<FileValidationResult> {
   // 1. Check if file exists
   if (!file) {
-    return { valid: false, error: "No file provided" }
+    return { valid: false, error: "No file provided" };
   }
 
   // 2. Validate filename
-  const filenameValidation = validateFilename(file.name)
+  const filenameValidation = validateFilename(file.name);
   if (!filenameValidation.valid) {
-    return filenameValidation
+    return filenameValidation;
   }
 
   // 3. Validate file size
-  const maxSize = MAX_FILE_SIZE[category]
+  const maxSize = MAX_FILE_SIZE[category];
   if (file.size === 0) {
-    return { valid: false, error: "File is empty" }
+    return { valid: false, error: "File is empty" };
   }
   if (file.size > maxSize) {
-    const maxMB = (maxSize / (1024 * 1024)).toFixed(1)
+    const maxMB = (maxSize / (1024 * 1024)).toFixed(1);
     return {
       valid: false,
       error: `File size (${formatFileSize(file.size)}) exceeds maximum allowed size of ${maxMB}MB`,
-    }
+    };
   }
 
   // 4. Validate MIME type
-  const mimeValidation = validateMimeType(file.type, file.name)
+  const mimeValidation = validateMimeType(file.type, file.name);
   if (!mimeValidation.valid) {
-    return mimeValidation
+    return mimeValidation;
   }
 
   // 5. Check file extension matches MIME type
-  const extension = getFileExtension(file.name)
-  const allowedExtensions = ALLOWED_FILE_TYPES[file.type as keyof typeof ALLOWED_FILE_TYPES]
+  const extension = getFileExtension(file.name);
+  const allowedExtensions =
+    ALLOWED_FILE_TYPES[file.type as keyof typeof ALLOWED_FILE_TYPES];
 
   if (!allowedExtensions || !allowedExtensions.includes(extension)) {
     return {
       valid: false,
       error: `File type mismatch: ${extension} does not match MIME type ${file.type}`,
-    }
+    };
   }
 
   // 6. Additional security checks for specific file types
@@ -130,7 +131,7 @@ export async function validateUploadedFile(
   return {
     valid: true,
     sanitizedFilename: filenameValidation.sanitizedFilename,
-  }
+  };
 }
 
 /**
@@ -139,20 +140,20 @@ export async function validateUploadedFile(
 function validateFilename(filename: string): FileValidationResult {
   // Check filename length
   if (!filename || filename.length === 0) {
-    return { valid: false, error: "Filename is empty" }
+    return { valid: false, error: "Filename is empty" };
   }
 
   if (filename.length > 255) {
-    return { valid: false, error: "Filename is too long (max 255 characters)" }
+    return { valid: false, error: "Filename is too long (max 255 characters)" };
   }
 
   // Check for dangerous extensions
-  const extension = getFileExtension(filename)
+  const extension = getFileExtension(filename);
   if (DANGEROUS_EXTENSIONS.includes(extension)) {
     return {
       valid: false,
       error: `File type ${extension} is not allowed for security reasons`,
-    }
+    };
   }
 
   // Check for dangerous patterns
@@ -161,17 +162,17 @@ function validateFilename(filename: string): FileValidationResult {
       return {
         valid: false,
         error: "Filename contains invalid characters",
-      }
+      };
     }
   }
 
   // Sanitize filename
-  const sanitized = sanitizeFilename(filename)
+  const sanitized = sanitizeFilename(filename);
 
   return {
     valid: true,
     sanitizedFilename: sanitized,
-  }
+  };
 }
 
 /**
@@ -182,7 +183,7 @@ function validateMimeType(
   filename: string
 ): FileValidationResult {
   if (!mimeType) {
-    return { valid: false, error: "File type is unknown" }
+    return { valid: false, error: "File type is unknown" };
   }
 
   // Check if MIME type is in allowed list
@@ -190,10 +191,10 @@ function validateMimeType(
     return {
       valid: false,
       error: `File type ${mimeType} is not allowed. Allowed types: PDF, DOC, DOCX, JPG, PNG, CSV`,
-    }
+    };
   }
 
-  return { valid: true }
+  return { valid: true };
 }
 
 /**
@@ -201,46 +202,47 @@ function validateMimeType(
  */
 function sanitizeFilename(filename: string): string {
   // Get filename without extension
-  const lastDotIndex = filename.lastIndexOf(".")
-  const name = lastDotIndex > 0 ? filename.substring(0, lastDotIndex) : filename
-  const extension = lastDotIndex > 0 ? filename.substring(lastDotIndex) : ""
+  const lastDotIndex = filename.lastIndexOf(".");
+  const name =
+    lastDotIndex > 0 ? filename.substring(0, lastDotIndex) : filename;
+  const extension = lastDotIndex > 0 ? filename.substring(lastDotIndex) : "";
 
   // Remove dangerous characters
   let sanitized = name
     .replace(/[^a-zA-Z0-9._-]/g, "_") // Replace special chars with underscore
     .replace(/_{2,}/g, "_") // Replace multiple underscores with single
-    .replace(/^_+|_+$/g, "") // Remove leading/trailing underscores
+    .replace(/^_+|_+$/g, ""); // Remove leading/trailing underscores
 
   // Ensure filename is not empty after sanitization
   if (sanitized.length === 0) {
-    sanitized = "file"
+    sanitized = "file";
   }
 
   // Add timestamp to ensure uniqueness
-  const timestamp = Date.now()
-  return `${sanitized}_${timestamp}${extension}`
+  const timestamp = Date.now();
+  return `${sanitized}_${timestamp}${extension}`;
 }
 
 /**
  * Get file extension including the dot
  */
 function getFileExtension(filename: string): string {
-  const lastDotIndex = filename.lastIndexOf(".")
+  const lastDotIndex = filename.lastIndexOf(".");
   if (lastDotIndex === -1 || lastDotIndex === filename.length - 1) {
-    return ""
+    return "";
   }
-  return filename.substring(lastDotIndex).toLowerCase()
+  return filename.substring(lastDotIndex).toLowerCase();
 }
 
 /**
  * Format file size for human readability
  */
 function formatFileSize(bytes: number): string {
-  if (bytes === 0) return "0 Bytes"
-  const k = 1024
-  const sizes = ["Bytes", "KB", "MB", "GB"]
-  const i = Math.floor(Math.log(bytes) / Math.log(k))
-  return `${Math.round((bytes / Math.pow(k, i)) * 100) / 100} ${sizes[i]}`
+  if (bytes === 0) return "0 Bytes";
+  const k = 1024;
+  const sizes = ["Bytes", "KB", "MB", "GB"];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return `${Math.round((bytes / Math.pow(k, i)) * 100) / 100} ${sizes[i]}`;
 }
 
 /**
@@ -252,38 +254,37 @@ export async function validateFileSignature(
   file: File
 ): Promise<FileValidationResult> {
   // Read first few bytes of file
-  const buffer = await file.slice(0, 8).arrayBuffer()
-  const bytes = new Uint8Array(buffer)
+  const buffer = await file.slice(0, 8).arrayBuffer();
+  const bytes = new Uint8Array(buffer);
 
   // Check magic bytes for common file types
   const signatures: Record<string, number[][]> = {
     "application/pdf": [[0x25, 0x50, 0x44, 0x46]], // %PDF
-    "image/jpeg": [
-      [0xff, 0xd8, 0xff],
-    ], // JPEG
+    "image/jpeg": [[0xff, 0xd8, 0xff]], // JPEG
     "image/png": [[0x89, 0x50, 0x4e, 0x47]], // PNG
     "application/zip": [[0x50, 0x4b, 0x03, 0x04]], // ZIP (used by DOCX, XLSX)
-  }
+  };
 
-  const expectedSignatures = signatures[file.type]
+  const expectedSignatures = signatures[file.type];
   if (!expectedSignatures) {
     // If we don't have signature for this type, skip check
-    return { valid: true }
+    return { valid: true };
   }
 
   // Check if file matches any expected signature
   const matches = expectedSignatures.some((signature) =>
     signature.every((byte, index) => bytes[index] === byte)
-  )
+  );
 
   if (!matches) {
     return {
       valid: false,
-      error: "File content does not match declared file type. File may be corrupted or mislabeled.",
-    }
+      error:
+        "File content does not match declared file type. File may be corrupted or mislabeled.",
+    };
   }
 
-  return { valid: true }
+  return { valid: true };
 }
 
 /**
@@ -291,10 +292,10 @@ export async function validateFileSignature(
  * Use this when you don't want to preserve original filename
  */
 export function generateSecureFilename(originalFilename: string): string {
-  const extension = getFileExtension(originalFilename)
+  const extension = getFileExtension(originalFilename);
   const randomString = Array.from(crypto.getRandomValues(new Uint8Array(16)))
     .map((b) => b.toString(16).padStart(2, "0"))
-    .join("")
-  const timestamp = Date.now()
-  return `${timestamp}_${randomString}${extension}`
+    .join("");
+  const timestamp = Date.now();
+  return `${timestamp}_${randomString}${extension}`;
 }

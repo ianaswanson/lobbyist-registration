@@ -1,6 +1,6 @@
-import { NextRequest, NextResponse } from "next/server"
-import { auth } from "@/lib/auth"
-import { prisma } from "@/lib/db"
+import { NextRequest, NextResponse } from "next/server";
+import { auth } from "@/lib/auth";
+import { prisma } from "@/lib/db";
 
 /**
  * GET /api/board-member-calendars
@@ -10,8 +10,8 @@ import { prisma } from "@/lib/db"
 export async function GET() {
   try {
     // Calculate 1-year retention cutoff date
-    const oneYearAgo = new Date()
-    oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1)
+    const oneYearAgo = new Date();
+    oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
 
     // Fetch all active board members with their calendars and receipts
     const boardMembers = await prisma.boardMember.findMany({
@@ -58,7 +58,7 @@ export async function GET() {
       orderBy: {
         name: "asc",
       },
-    })
+    });
 
     // Format the response
     const formattedData = boardMembers.map((member) => ({
@@ -92,20 +92,20 @@ export async function GET() {
         (sum, r) => sum + r.amount,
         0
       ),
-    }))
+    }));
 
     return NextResponse.json({
       boardMembers: formattedData,
       retentionPeriod: "1 year",
       cutoffDate: oneYearAgo.toISOString(),
       count: formattedData.length,
-    })
+    });
   } catch (error) {
-    console.error("Error fetching board member calendars:", error)
+    console.error("Error fetching board member calendars:", error);
     return NextResponse.json(
       { error: "Failed to fetch board member data" },
       { status: 500 }
-    )
+    );
   }
 }
 
@@ -121,33 +121,39 @@ export async function GET() {
  */
 export async function POST(request: NextRequest) {
   try {
-    const session = await auth()
+    const session = await auth();
 
     if (!session || session.user?.role !== "BOARD_MEMBER") {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     // Get board member record for this user
     const boardMember = await prisma.boardMember.findUnique({
       where: { userId: session.user.id },
-    })
+    });
 
     if (!boardMember) {
       return NextResponse.json(
         { error: "Board member profile not found" },
         { status: 404 }
-      )
+      );
     }
 
-    const body = await request.json()
-    const { quarter, year, calendarEntries = [], receipts = [], isDraft = false } = body
+    const body = await request.json();
+    const {
+      quarter,
+      year,
+      calendarEntries = [],
+      receipts = [],
+      isDraft = false,
+    } = body;
 
     // Validate required fields
     if (!quarter || !year) {
       return NextResponse.json(
         { error: "Missing required fields: quarter, year" },
         { status: 400 }
-      )
+      );
     }
 
     // Delete existing entries for this quarter/year
@@ -157,7 +163,7 @@ export async function POST(request: NextRequest) {
         quarter,
         year,
       },
-    })
+    });
 
     await prisma.boardLobbyingReceipt.deleteMany({
       where: {
@@ -165,7 +171,7 @@ export async function POST(request: NextRequest) {
         quarter,
         year,
       },
-    })
+    });
 
     // Create new calendar entries
     const createdCalendarEntries = await Promise.all(
@@ -182,7 +188,7 @@ export async function POST(request: NextRequest) {
           },
         })
       )
-    )
+    );
 
     // Create new lobbying receipts
     // Need to find lobbyist by name for linking
@@ -196,10 +202,10 @@ export async function POST(request: NextRequest) {
               mode: "insensitive",
             },
           },
-        })
+        });
 
         if (!lobbyist) {
-          console.warn(`Lobbyist not found: ${receipt.lobbyistName}`)
+          console.warn(`Lobbyist not found: ${receipt.lobbyistName}`);
           // Still create the receipt, but without lobbyist link
         }
 
@@ -215,14 +221,14 @@ export async function POST(request: NextRequest) {
             quarter,
             year,
           },
-        })
+        });
       })
-    )
+    );
 
     const totalReceiptAmount = receipts.reduce(
       (sum: number, r: any) => sum + r.amount,
       0
-    )
+    );
 
     // TODO: Send email notification to admin about submission
     // TODO: If not draft, trigger public posting
@@ -239,12 +245,12 @@ export async function POST(request: NextRequest) {
         year,
       },
       { status: 201 }
-    )
+    );
   } catch (error) {
-    console.error("Error creating board member calendar:", error)
+    console.error("Error creating board member calendar:", error);
     return NextResponse.json(
       { error: "Failed to submit calendar and receipts" },
       { status: 500 }
-    )
+    );
   }
 }

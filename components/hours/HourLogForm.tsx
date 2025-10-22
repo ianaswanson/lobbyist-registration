@@ -1,26 +1,26 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
-import { AlertCircle, AlertTriangle } from "lucide-react"
+import { useState } from "react";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { AlertCircle, AlertTriangle } from "lucide-react";
 
 interface Props {
-  onSuccess: () => void
+  onSuccess: () => void;
 }
 
 export function HourLogForm({ onSuccess }: Props) {
-  const [activityDate, setActivityDate] = useState("")
-  const [hours, setHours] = useState("")
-  const [description, setDescription] = useState("")
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [thresholdWarning, setThresholdWarning] = useState<string | null>(null)
+  const [activityDate, setActivityDate] = useState("");
+  const [hours, setHours] = useState("");
+  const [description, setDescription] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [thresholdWarning, setThresholdWarning] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setLoading(true)
-    setError(null)
-    setThresholdWarning(null)
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+    setThresholdWarning(null);
 
     try {
       const response = await fetch("/api/hours", {
@@ -33,35 +33,39 @@ export function HourLogForm({ onSuccess }: Props) {
           hours: parseFloat(hours),
           description,
         }),
-      })
+      });
 
       if (!response.ok) {
-        const data = await response.json()
-        throw new Error(data.error || "Failed to add hour log")
+        const data = await response.json();
+        throw new Error(data.error || "Failed to add hour log");
       }
 
-      const data = await response.json()
+      const data = await response.json();
 
       // Show warning if threshold was just exceeded
-      if (data.thresholdExceeded && data.totalHours >= 10 && data.totalHours - parseFloat(hours) < 10) {
+      if (
+        data.thresholdExceeded &&
+        data.totalHours >= 10 &&
+        data.totalHours - parseFloat(hours) < 10
+      ) {
         setThresholdWarning(
           "You have exceeded 10 hours this quarter! Registration is now required within 3 working days."
-        )
+        );
       }
 
       // Reset form
-      setActivityDate("")
-      setHours("")
-      setDescription("")
+      setActivityDate("");
+      setHours("");
+      setDescription("");
 
       // Call success callback to refresh data
-      onSuccess()
+      onSuccess();
     } catch (err: any) {
-      setError(err.message)
+      setError(err.message);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
@@ -76,7 +80,9 @@ export function HourLogForm({ onSuccess }: Props) {
       {thresholdWarning && (
         <Alert className="border-yellow-200 bg-yellow-50">
           <AlertTriangle className="h-4 w-4 text-yellow-600" />
-          <AlertTitle className="text-yellow-800">Registration Required</AlertTitle>
+          <AlertTitle className="text-yellow-800">
+            Registration Required
+          </AlertTitle>
           <AlertDescription className="text-yellow-700">
             {thresholdWarning}
           </AlertDescription>
@@ -86,7 +92,10 @@ export function HourLogForm({ onSuccess }: Props) {
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         {/* Activity Date */}
         <div>
-          <label htmlFor="activityDate" className="block text-sm font-medium text-gray-700">
+          <label
+            htmlFor="activityDate"
+            className="block text-sm font-medium text-gray-700"
+          >
             Activity Date <span className="text-red-600">*</span>
           </label>
           <input
@@ -94,7 +103,7 @@ export function HourLogForm({ onSuccess }: Props) {
             id="activityDate"
             value={activityDate}
             onChange={(e) => setActivityDate(e.target.value)}
-            max={new Date().toISOString().split('T')[0]} // Can't log future dates
+            max={new Date().toISOString().split("T")[0]} // Can't log future dates
             required
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
           />
@@ -105,7 +114,10 @@ export function HourLogForm({ onSuccess }: Props) {
 
         {/* Hours */}
         <div>
-          <label htmlFor="hours" className="block text-sm font-medium text-gray-700">
+          <label
+            htmlFor="hours"
+            className="block text-sm font-medium text-gray-700"
+          >
             Hours <span className="text-red-600">*</span>
           </label>
           <input
@@ -128,7 +140,10 @@ export function HourLogForm({ onSuccess }: Props) {
 
       {/* Description */}
       <div>
-        <label htmlFor="description" className="block text-sm font-medium text-gray-700">
+        <label
+          htmlFor="description"
+          className="block text-sm font-medium text-gray-700"
+        >
           Activity Description <span className="text-red-600">*</span>
         </label>
         <textarea
@@ -150,11 +165,11 @@ export function HourLogForm({ onSuccess }: Props) {
         <button
           type="submit"
           disabled={loading}
-          className="inline-flex justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="inline-flex justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
         >
           {loading ? "Adding..." : "Add Hours"}
         </button>
       </div>
     </form>
-  )
+  );
 }

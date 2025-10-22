@@ -43,13 +43,13 @@ export const FEATURE_FLAGS = {
    * Set to false to disable all email notification logic.
    */
   EMAIL_NOTIFICATIONS: false,
-} as const
+} as const;
 
-export type FeatureFlag = keyof typeof FEATURE_FLAGS
+export type FeatureFlag = keyof typeof FEATURE_FLAGS;
 
 /**
  * Check if a feature is enabled
  */
 export function isFeatureEnabled(feature: FeatureFlag): boolean {
-  return FEATURE_FLAGS[feature] === true
+  return FEATURE_FLAGS[feature] === true;
 }

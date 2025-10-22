@@ -1,10 +1,10 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import type { ExpenseLineItem } from "./LobbyistExpenseReportForm"
+import { useState } from "react";
+import type { ExpenseLineItem } from "./LobbyistExpenseReportForm";
 
 interface ManualEntryModeProps {
-  onAdd: (expenses: ExpenseLineItem[]) => void
+  onAdd: (expenses: ExpenseLineItem[]) => void;
 }
 
 export function ManualEntryMode({ onAdd }: ManualEntryModeProps) {
@@ -15,10 +15,10 @@ export function ManualEntryMode({ onAdd }: ManualEntryModeProps) {
     purpose: "",
     amount: "",
     isEstimate: false,
-  })
+  });
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
 
     const newExpense: ExpenseLineItem = {
       id: crypto.randomUUID(),
@@ -28,9 +28,9 @@ export function ManualEntryMode({ onAdd }: ManualEntryModeProps) {
       purpose: formData.purpose,
       amount: parseFloat(formData.amount),
       isEstimate: formData.isEstimate,
-    }
+    };
 
-    onAdd([newExpense])
+    onAdd([newExpense]);
 
     // Reset form
     setFormData({
@@ -40,8 +40,8 @@ export function ManualEntryMode({ onAdd }: ManualEntryModeProps) {
       purpose: "",
       amount: "",
       isEstimate: false,
-    })
-  }
+    });
+  };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
@@ -68,7 +68,7 @@ export function ManualEntryMode({ onAdd }: ManualEntryModeProps) {
             onChange={(e) =>
               setFormData({ ...formData, officialName: e.target.value })
             }
-            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-blue-500"
+            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
             placeholder="Commissioner Williams"
           />
         </div>
@@ -85,10 +85,8 @@ export function ManualEntryMode({ onAdd }: ManualEntryModeProps) {
             id="date"
             required
             value={formData.date}
-            onChange={(e) =>
-              setFormData({ ...formData, date: e.target.value })
-            }
-            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-blue-500"
+            onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
           />
         </div>
       </div>
@@ -105,10 +103,8 @@ export function ManualEntryMode({ onAdd }: ManualEntryModeProps) {
           id="payee"
           required
           value={formData.payee}
-          onChange={(e) =>
-            setFormData({ ...formData, payee: e.target.value })
-          }
-          className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-blue-500"
+          onChange={(e) => setFormData({ ...formData, payee: e.target.value })}
+          className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
           placeholder="Portland City Grill"
         />
         <p className="mt-1 text-xs text-gray-500">
@@ -131,7 +127,7 @@ export function ManualEntryMode({ onAdd }: ManualEntryModeProps) {
           onChange={(e) =>
             setFormData({ ...formData, purpose: e.target.value })
           }
-          className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-blue-500"
+          className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
           placeholder="Lunch meeting to discuss technology infrastructure policy"
         />
       </div>
@@ -158,7 +154,7 @@ export function ManualEntryMode({ onAdd }: ManualEntryModeProps) {
               onChange={(e) =>
                 setFormData({ ...formData, amount: e.target.value })
               }
-              className="block w-full rounded-md border border-gray-300 py-2 pl-7 pr-3 focus:border-blue-500 focus:outline-none focus:ring-blue-500"
+              className="block w-full rounded-md border border-gray-300 py-2 pr-3 pl-7 focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
               placeholder="125.00"
             />
           </div>
@@ -190,5 +186,5 @@ export function ManualEntryMode({ onAdd }: ManualEntryModeProps) {
         </button>
       </div>
     </form>
-  )
+  );
 }

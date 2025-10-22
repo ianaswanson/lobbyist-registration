@@ -1,9 +1,9 @@
-import { ExemptionChecker } from "@/components/ExemptionChecker"
-import { PublicNavigation } from "@/components/PublicNavigation"
-import { auth } from "@/lib/auth"
+import { ExemptionChecker } from "@/components/ExemptionChecker";
+import { PublicNavigation } from "@/components/PublicNavigation";
+import { auth } from "@/lib/auth";
 
 export default async function ExemptionCheckerPage() {
-  const session = await auth()
+  const session = await auth();
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -23,5 +23,5 @@ export default async function ExemptionCheckerPage() {
         <ExemptionChecker />
       </main>
     </div>
-  )
+  );
 }

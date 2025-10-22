@@ -1,38 +1,38 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { useRouter } from "next/navigation"
-import { ReviewActions } from "./ReviewActions"
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { ReviewActions } from "./ReviewActions";
 
 interface Report {
-  id: string
-  type: string
-  reportType: "lobbyist" | "employer"
-  submitterName: string
-  submitterEmail: string
-  quarter: string
-  year: number
-  totalAmount: number
-  expenseCount: number
-  submittedDate: Date | null
-  status: string
-  dueDate: Date
+  id: string;
+  type: string;
+  reportType: "lobbyist" | "employer";
+  submitterName: string;
+  submitterEmail: string;
+  quarter: string;
+  year: number;
+  totalAmount: number;
+  expenseCount: number;
+  submittedDate: Date | null;
+  status: string;
+  dueDate: Date;
 }
 
 interface ReviewReportsListProps {
-  reports: Report[]
+  reports: Report[];
 }
 
 export function ReviewReportsList({
   reports: initialReports,
 }: ReviewReportsListProps) {
-  const router = useRouter()
-  const [reports, setReports] = useState(initialReports)
-  const [loadingId, setLoadingId] = useState<string | null>(null)
+  const router = useRouter();
+  const [reports, setReports] = useState(initialReports);
+  const [loadingId, setLoadingId] = useState<string | null>(null);
   const [message, setMessage] = useState<{
-    type: "success" | "error"
-    text: string
-  } | null>(null)
+    type: "success" | "error";
+    text: string;
+  } | null>(null);
 
   const handleReview = async (
     reportId: string,
@@ -40,8 +40,8 @@ export function ReviewReportsList({
     action: "approve" | "reject" | "request_clarification",
     notes?: string
   ) => {
-    setLoadingId(reportId)
-    setMessage(null)
+    setLoadingId(reportId);
+    setMessage(null);
 
     try {
       const response = await fetch(`/api/admin/reports/${reportId}`, {
@@ -50,38 +50,38 @@ export function ReviewReportsList({
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ action, reportType, notes }),
-      })
+      });
 
-      const data = await response.json()
+      const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || "Failed to process review")
+        throw new Error(data.error || "Failed to process review");
       }
 
       // Show success message
       setMessage({
         type: "success",
         text: data.message,
-      })
+      });
 
       // Remove the reviewed report from the list
-      setReports((prev) => prev.filter((r) => r.id !== reportId))
+      setReports((prev) => prev.filter((r) => r.id !== reportId));
 
       // Refresh the page data after a short delay
       setTimeout(() => {
-        router.refresh()
-      }, 2000)
+        router.refresh();
+      }, 2000);
     } catch (error) {
-      console.error("Error reviewing report:", error)
+      console.error("Error reviewing report:", error);
       setMessage({
         type: "error",
         text:
           error instanceof Error ? error.message : "Failed to process review",
-      })
+      });
     } finally {
-      setLoadingId(null)
+      setLoadingId(null);
     }
-  }
+  };
 
   if (reports.length === 0) {
     return (
@@ -106,7 +106,7 @@ export function ReviewReportsList({
           All expense reports have been reviewed
         </p>
       </div>
-    )
+    );
   }
 
   return (
@@ -116,8 +116,8 @@ export function ReviewReportsList({
         <div
           className={`rounded-lg p-4 ${
             message.type === "success"
-              ? "bg-green-50 text-green-800 border border-green-200"
-              : "bg-red-50 text-red-800 border border-red-200"
+              ? "border border-green-200 bg-green-50 text-green-800"
+              : "border border-red-200 bg-red-50 text-red-800"
           }`}
         >
           <div className="flex items-center justify-between">
@@ -133,16 +133,16 @@ export function ReviewReportsList({
       )}
 
       {reports.map((report) => {
-        const isLoading = loadingId === report.id
+        const isLoading = loadingId === report.id;
         const submittedDate = report.submittedDate
           ? new Date(report.submittedDate).toLocaleDateString()
-          : "N/A"
+          : "N/A";
 
         return (
           <div
             key={report.id}
             className={`rounded-lg border bg-white p-6 shadow-sm ${
-              isLoading ? "opacity-50 pointer-events-none" : ""
+              isLoading ? "pointer-events-none opacity-50" : ""
             }`}
           >
             <div className="flex items-start justify-between">
@@ -175,7 +175,7 @@ export function ReviewReportsList({
 
             <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-3">
               <div>
-                <label className="text-xs font-medium uppercase tracking-wider text-gray-500">
+                <label className="text-xs font-medium tracking-wider text-gray-500 uppercase">
                   Reporting Period
                 </label>
                 <p className="mt-1 text-sm text-gray-900">
@@ -183,7 +183,7 @@ export function ReviewReportsList({
                 </p>
               </div>
               <div>
-                <label className="text-xs font-medium uppercase tracking-wider text-gray-500">
+                <label className="text-xs font-medium tracking-wider text-gray-500 uppercase">
                   Total Amount
                 </label>
                 <p className="mt-1 text-lg font-semibold text-gray-900">
@@ -191,7 +191,7 @@ export function ReviewReportsList({
                 </p>
               </div>
               <div>
-                <label className="text-xs font-medium uppercase tracking-wider text-gray-500">
+                <label className="text-xs font-medium tracking-wider text-gray-500 uppercase">
                   Expense Items
                 </label>
                 <p className="mt-1 text-sm text-gray-900">
@@ -204,7 +204,7 @@ export function ReviewReportsList({
               <button
                 type="button"
                 disabled
-                className="text-sm font-medium text-gray-400 cursor-not-allowed"
+                className="cursor-not-allowed text-sm font-medium text-gray-400"
                 title="Detailed report view coming soon"
               >
                 View Full Report → (Coming Soon)
@@ -240,8 +240,8 @@ export function ReviewReportsList({
               />
             </div>
           </div>
-        )
+        );
       })}
     </div>
-  )
+  );
 }

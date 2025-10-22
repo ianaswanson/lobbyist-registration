@@ -9,39 +9,39 @@ spec:
     metadata:
       annotations:
         # Scale to zero when idle (FREE tier optimization)
-        autoscaling.knative.dev/minScale: '0'
-        autoscaling.knative.dev/maxScale: '3'
+        autoscaling.knative.dev/minScale: "0"
+        autoscaling.knative.dev/maxScale: "3"
         # Allow up to 30 seconds for database seeding on cold start
-        run.googleapis.com/startup-cpu-boost: 'true'
+        run.googleapis.com/startup-cpu-boost: "true"
     spec:
       containerConcurrency: 80
       timeoutSeconds: 300
       containers:
-      - image: gcr.io/PROJECT_ID/lobbyist-registration
-        ports:
-        - name: http1
-          containerPort: 8080
-        env:
-        - name: NODE_ENV
-          value: "production"
-        - name: DATABASE_URL
-          value: "file:./prisma/prod.db"
-        - name: NEXTAUTH_SECRET
-          valueFrom:
-            secretKeyRef:
-              name: nextauth-secret
-              key: secret
-        - name: NEXTAUTH_URL
-          value: "https://lobbyist-registration-PROJECT_ID.run.app"
-        resources:
-          limits:
-            cpu: '1'
-            memory: 512Mi
-        startupProbe:
-          httpGet:
-            path: /
-            port: 8080
-          initialDelaySeconds: 10
-          timeoutSeconds: 3
-          periodSeconds: 5
-          failureThreshold: 6
+        - image: gcr.io/PROJECT_ID/lobbyist-registration
+          ports:
+            - name: http1
+              containerPort: 8080
+          env:
+            - name: NODE_ENV
+              value: "production"
+            - name: DATABASE_URL
+              value: "file:./prisma/prod.db"
+            - name: NEXTAUTH_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: nextauth-secret
+                  key: secret
+            - name: NEXTAUTH_URL
+              value: "https://lobbyist-registration-PROJECT_ID.run.app"
+          resources:
+            limits:
+              cpu: "1"
+              memory: 512Mi
+          startupProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 10
+            timeoutSeconds: 3
+            periodSeconds: 5
+            failureThreshold: 6

@@ -13,7 +13,7 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = await params
+    const { id } = await params;
     const session = await auth();
 
     if (!session) {
@@ -66,7 +66,7 @@ export async function PATCH(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = await params
+    const { id } = await params;
     const session = await auth();
 
     if (!session) {
@@ -116,7 +116,9 @@ export async function PATCH(
     // If status is being set to PAID, WAIVED, or APPEALED_GRANTED, set resolution date
     if (
       status &&
-      (status === "PAID" || status === "WAIVED" || status === "APPEALED_GRANTED")
+      (status === "PAID" ||
+        status === "WAIVED" ||
+        status === "APPEALED_GRANTED")
     ) {
       updateData.resolutionDate = updateData.resolutionDate || new Date();
     }
@@ -152,7 +154,7 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = await params
+    const { id } = await params;
     const session = await auth();
 
     if (!session) {

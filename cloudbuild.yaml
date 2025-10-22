@@ -1,29 +1,29 @@
 steps:
   # Build the container image
-  - name: 'gcr.io/cloud-builders/docker'
+  - name: "gcr.io/cloud-builders/docker"
     args:
-      - 'build'
-      - '-f'
-      - 'Dockerfile.cloudsql'
-      - '-t'
-      - 'gcr.io/$PROJECT_ID/lobbyist-registration-dev:latest'
-      - '-t'
-      - 'gcr.io/$PROJECT_ID/lobbyist-registration-dev:$BUILD_ID'
-      - '.'
+      - "build"
+      - "-f"
+      - "Dockerfile.cloudsql"
+      - "-t"
+      - "gcr.io/$PROJECT_ID/lobbyist-registration-dev:latest"
+      - "-t"
+      - "gcr.io/$PROJECT_ID/lobbyist-registration-dev:$BUILD_ID"
+      - "."
 
   # Push the container image to Container Registry
-  - name: 'gcr.io/cloud-builders/docker'
+  - name: "gcr.io/cloud-builders/docker"
     args:
-      - 'push'
-      - '--all-tags'
-      - 'gcr.io/$PROJECT_ID/lobbyist-registration-dev'
+      - "push"
+      - "--all-tags"
+      - "gcr.io/$PROJECT_ID/lobbyist-registration-dev"
 
 images:
-  - 'gcr.io/$PROJECT_ID/lobbyist-registration-dev:latest'
-  - 'gcr.io/$PROJECT_ID/lobbyist-registration-dev:$BUILD_ID'
+  - "gcr.io/$PROJECT_ID/lobbyist-registration-dev:latest"
+  - "gcr.io/$PROJECT_ID/lobbyist-registration-dev:$BUILD_ID"
 
 options:
-  machineType: 'E2_HIGHCPU_8'
+  machineType: "E2_HIGHCPU_8"
   logging: CLOUD_LOGGING_ONLY
 
-timeout: '1200s'
+timeout: "1200s"

@@ -1,15 +1,15 @@
-import { BoardCalendarsClient } from "./BoardCalendarsClient"
-import { PublicNavigation } from "@/components/PublicNavigation"
-import { auth } from "@/lib/auth"
+import { BoardCalendarsClient } from "./BoardCalendarsClient";
+import { PublicNavigation } from "@/components/PublicNavigation";
+import { auth } from "@/lib/auth";
 
 export const metadata = {
   title: "Board Member Calendars | Lobbyist Registry",
   description:
     "View quarterly calendars and lobbying receipts for Multnomah County Board Members (§3.001)",
-}
+};
 
 export default async function BoardCalendarsPage() {
-  const session = await auth()
+  const session = await auth();
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -37,5 +37,5 @@ export default async function BoardCalendarsPage() {
         <BoardCalendarsClient />
       </main>
     </div>
-  )
+  );
 }

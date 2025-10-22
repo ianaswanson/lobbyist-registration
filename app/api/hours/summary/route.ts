@@ -1,7 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
-import { getCurrentQuarter, getCurrentYear, getQuarterStartDate, getQuarterEndDate } from "@/lib/utils";
+import {
+  getCurrentQuarter,
+  getCurrentYear,
+  getQuarterStartDate,
+  getQuarterEndDate,
+} from "@/lib/utils";
 import { FEATURE_FLAGS } from "@/lib/feature-flags";
 
 /**
@@ -12,7 +17,10 @@ import { FEATURE_FLAGS } from "@/lib/feature-flags";
 export async function GET(request: NextRequest) {
   // Check if feature is enabled
   if (!FEATURE_FLAGS.HOUR_TRACKING) {
-    return NextResponse.json({ error: "Feature not available" }, { status: 404 });
+    return NextResponse.json(
+      { error: "Feature not available" },
+      { status: 404 }
+    );
   }
 
   try {
@@ -49,7 +57,10 @@ export async function GET(request: NextRequest) {
       },
     });
 
-    const totalHours = currentQuarterLogs.reduce((sum, log) => sum + log.hours, 0);
+    const totalHours = currentQuarterLogs.reduce(
+      (sum, log) => sum + log.hours,
+      0
+    );
 
     // Get quarter boundaries
     const quarterStart = getQuarterStartDate(currentQuarter, currentYear);
@@ -57,7 +68,9 @@ export async function GET(request: NextRequest) {
 
     // Calculate days remaining in quarter
     const now = new Date();
-    const daysRemaining = Math.ceil((quarterEnd.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+    const daysRemaining = Math.ceil(
+      (quarterEnd.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)
+    );
 
     return NextResponse.json({
       quarter: currentQuarter,

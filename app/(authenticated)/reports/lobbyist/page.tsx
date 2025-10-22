@@ -1,17 +1,17 @@
-import { auth } from "@/lib/auth"
-import { redirect } from "next/navigation"
-import { prisma } from "@/lib/db"
-import { LobbyistReportsClient } from "@/components/reports/LobbyistReportsClient"
+import { auth } from "@/lib/auth";
+import { redirect } from "next/navigation";
+import { prisma } from "@/lib/db";
+import { LobbyistReportsClient } from "@/components/reports/LobbyistReportsClient";
 
 async function getReports(userId: string) {
   try {
     // Get lobbyist record
     const lobbyist = await prisma.lobbyist.findUnique({
       where: { userId },
-    })
+    });
 
     if (!lobbyist) {
-      return []
+      return [];
     }
 
     // Fetch all reports
@@ -26,27 +26,24 @@ async function getReports(userId: string) {
           },
         },
       },
-      orderBy: [
-        { year: "desc" },
-        { quarter: "desc" },
-      ],
-    })
+      orderBy: [{ year: "desc" }, { quarter: "desc" }],
+    });
 
-    return reports
+    return reports;
   } catch (error) {
-    console.error("Error fetching lobbyist expense reports:", error)
-    return []
+    console.error("Error fetching lobbyist expense reports:", error);
+    return [];
   }
 }
 
 export default async function LobbyistReportsPage() {
-  const session = await auth()
+  const session = await auth();
 
   if (!session || session.user?.role !== "LOBBYIST") {
-    redirect("/auth/signin")
+    redirect("/auth/signin");
   }
 
-  const reports = await getReports(session.user.id)
+  const reports = await getReports(session.user.id);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -81,5 +78,5 @@ export default async function LobbyistReportsPage() {
         <LobbyistReportsClient reports={reports} />
       </main>
     </div>
-  )
+  );
 }

@@ -1,9 +1,15 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
+import { useState, useEffect } from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   Table,
   TableBody,
@@ -11,7 +17,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
+} from "@/components/ui/table";
 import {
   Dialog,
   DialogContent,
@@ -19,37 +25,50 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import { Label } from "@/components/ui/label"
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
-import { CheckCircle2, XCircle, FileCheck, Plus, Eye, Edit, Trash2, AlertCircle } from "lucide-react"
-import { Checkbox } from "@/components/ui/checkbox"
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import {
+  CheckCircle2,
+  XCircle,
+  FileCheck,
+  Plus,
+  Eye,
+  Edit,
+  Trash2,
+  AlertCircle,
+} from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
 
 interface ContractException {
-  id: string
-  formerOfficialId: string
-  formerOfficialName: string
-  contractDescription: string
-  justification: string
-  approvedBy: string
-  approvedDate: string
-  publiclyPostedDate: string | null
-  createdAt: string
-  updatedAt: string
+  id: string;
+  formerOfficialId: string;
+  formerOfficialName: string;
+  contractDescription: string;
+  justification: string;
+  approvedBy: string;
+  approvedDate: string;
+  publiclyPostedDate: string | null;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export function ContractExceptionsClient() {
-  const [exceptions, setExceptions] = useState<ContractException[]>([])
-  const [loading, setLoading] = useState(true)
-  const [dialogOpen, setDialogOpen] = useState(false)
-  const [viewDialogOpen, setViewDialogOpen] = useState(false)
-  const [editMode, setEditMode] = useState(false)
-  const [selectedException, setSelectedException] = useState<ContractException | null>(null)
-  const [submitting, setSubmitting] = useState(false)
-  const [showUnposted, setShowUnposted] = useState(true)
-  const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null)
+  const [exceptions, setExceptions] = useState<ContractException[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [viewDialogOpen, setViewDialogOpen] = useState(false);
+  const [editMode, setEditMode] = useState(false);
+  const [selectedException, setSelectedException] =
+    useState<ContractException | null>(null);
+  const [submitting, setSubmitting] = useState(false);
+  const [showUnposted, setShowUnposted] = useState(true);
+  const [message, setMessage] = useState<{
+    type: "success" | "error";
+    text: string;
+  } | null>(null);
 
   // Form state
   const [formData, setFormData] = useState({
@@ -60,34 +79,34 @@ export function ContractExceptionsClient() {
     approvedBy: "",
     approvedDate: "",
     publiclyPosted: false,
-  })
+  });
 
   useEffect(() => {
-    fetchExceptions()
-  }, [showUnposted])
+    fetchExceptions();
+  }, [showUnposted]);
 
   const fetchExceptions = async () => {
     try {
-      setLoading(true)
+      setLoading(true);
       const url = showUnposted
         ? "/api/contract-exceptions?includeUnposted=true"
-        : "/api/contract-exceptions"
-      const response = await fetch(url)
+        : "/api/contract-exceptions";
+      const response = await fetch(url);
 
       if (response.ok) {
-        const data = await response.json()
-        setExceptions(data)
+        const data = await response.json();
+        setExceptions(data);
       }
     } catch (error) {
-      console.error("Error fetching exceptions:", error)
+      console.error("Error fetching exceptions:", error);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const openCreateDialog = () => {
-    setEditMode(false)
-    setSelectedException(null)
+    setEditMode(false);
+    setSelectedException(null);
     setFormData({
       formerOfficialId: "",
       formerOfficialName: "",
@@ -96,13 +115,13 @@ export function ContractExceptionsClient() {
       approvedBy: "",
       approvedDate: new Date().toISOString().split("T")[0],
       publiclyPosted: false,
-    })
-    setDialogOpen(true)
-  }
+    });
+    setDialogOpen(true);
+  };
 
   const openEditDialog = (exception: ContractException) => {
-    setEditMode(true)
-    setSelectedException(exception)
+    setEditMode(true);
+    setSelectedException(exception);
     setFormData({
       formerOfficialId: exception.formerOfficialId,
       formerOfficialName: exception.formerOfficialName,
@@ -111,14 +130,14 @@ export function ContractExceptionsClient() {
       approvedBy: exception.approvedBy,
       approvedDate: exception.approvedDate.split("T")[0],
       publiclyPosted: !!exception.publiclyPostedDate,
-    })
-    setDialogOpen(true)
-  }
+    });
+    setDialogOpen(true);
+  };
 
   const openViewDialog = (exception: ContractException) => {
-    setSelectedException(exception)
-    setViewDialogOpen(true)
-  }
+    setSelectedException(exception);
+    setViewDialogOpen(true);
+  };
 
   const handleSubmit = async () => {
     if (
@@ -129,18 +148,19 @@ export function ContractExceptionsClient() {
       !formData.approvedBy ||
       !formData.approvedDate
     ) {
-      setMessage({ type: "error", text: "Please fill in all required fields" })
-      return
+      setMessage({ type: "error", text: "Please fill in all required fields" });
+      return;
     }
 
-    setSubmitting(true)
-    setMessage(null)
+    setSubmitting(true);
+    setMessage(null);
     try {
-      const url = editMode && selectedException
-        ? `/api/contract-exceptions/${selectedException.id}`
-        : "/api/contract-exceptions"
+      const url =
+        editMode && selectedException
+          ? `/api/contract-exceptions/${selectedException.id}`
+          : "/api/contract-exceptions";
 
-      const method = editMode ? "PATCH" : "POST"
+      const method = editMode ? "PATCH" : "POST";
 
       const response = await fetch(url, {
         method,
@@ -148,58 +168,76 @@ export function ContractExceptionsClient() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(formData),
-      })
+      });
 
       if (response.ok) {
         setMessage({
           type: "success",
-          text: editMode ? "Exception updated successfully!" : "Exception created successfully!",
-        })
-        setDialogOpen(false)
-        fetchExceptions()
+          text: editMode
+            ? "Exception updated successfully!"
+            : "Exception created successfully!",
+        });
+        setDialogOpen(false);
+        fetchExceptions();
 
         // Clear message after 5 seconds
-        setTimeout(() => setMessage(null), 5000)
+        setTimeout(() => setMessage(null), 5000);
       } else {
-        const error = await response.json()
-        setMessage({ type: "error", text: error.error || "Failed to save exception" })
+        const error = await response.json();
+        setMessage({
+          type: "error",
+          text: error.error || "Failed to save exception",
+        });
       }
     } catch (error) {
-      console.error("Error saving exception:", error)
-      setMessage({ type: "error", text: "Error saving exception. Please try again." })
+      console.error("Error saving exception:", error);
+      setMessage({
+        type: "error",
+        text: "Error saving exception. Please try again.",
+      });
     } finally {
-      setSubmitting(false)
+      setSubmitting(false);
     }
-  }
+  };
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this exception? This action cannot be undone.")) {
-      return
+    if (
+      !confirm(
+        "Are you sure you want to delete this exception? This action cannot be undone."
+      )
+    ) {
+      return;
     }
 
-    setMessage(null)
+    setMessage(null);
     try {
       const response = await fetch(`/api/contract-exceptions/${id}`, {
         method: "DELETE",
-      })
+      });
 
       if (response.ok) {
-        setMessage({ type: "success", text: "Exception deleted successfully!" })
-        fetchExceptions()
+        setMessage({
+          type: "success",
+          text: "Exception deleted successfully!",
+        });
+        fetchExceptions();
 
         // Clear message after 5 seconds
-        setTimeout(() => setMessage(null), 5000)
+        setTimeout(() => setMessage(null), 5000);
       } else {
-        setMessage({ type: "error", text: "Failed to delete exception" })
+        setMessage({ type: "error", text: "Failed to delete exception" });
       }
     } catch (error) {
-      console.error("Error deleting exception:", error)
-      setMessage({ type: "error", text: "Error deleting exception. Please try again." })
+      console.error("Error deleting exception:", error);
+      setMessage({
+        type: "error",
+        text: "Error deleting exception. Please try again.",
+      });
     }
-  }
+  };
 
   const handleTogglePosted = async (exception: ContractException) => {
-    setMessage(null)
+    setMessage(null);
     try {
       const response = await fetch(`/api/contract-exceptions/${exception.id}`, {
         method: "PATCH",
@@ -209,7 +247,7 @@ export function ContractExceptionsClient() {
         body: JSON.stringify({
           publiclyPosted: !exception.publiclyPostedDate,
         }),
-      })
+      });
 
       if (response.ok) {
         setMessage({
@@ -217,34 +255,35 @@ export function ContractExceptionsClient() {
           text: exception.publiclyPostedDate
             ? "Exception removed from public posting"
             : "Exception publicly posted!",
-        })
-        fetchExceptions()
+        });
+        fetchExceptions();
 
         // Clear message after 5 seconds
-        setTimeout(() => setMessage(null), 5000)
+        setTimeout(() => setMessage(null), 5000);
       }
     } catch (error) {
-      console.error("Error toggling posted status:", error)
-      setMessage({ type: "error", text: "Error updating posted status" })
+      console.error("Error toggling posted status:", error);
+      setMessage({ type: "error", text: "Error updating posted status" });
     }
-  }
+  };
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
+      <div className="flex min-h-screen items-center justify-center">
         <div className="text-lg">Loading contract exceptions...</div>
       </div>
-    )
+    );
   }
 
   return (
-    <div className="container mx-auto py-8 max-w-7xl">
+    <div className="container mx-auto max-w-7xl py-8">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold tracking-tight mb-2">
+        <h1 className="mb-2 text-3xl font-bold tracking-tight">
           Contract Exception Management
         </h1>
         <p className="text-muted-foreground">
-          Manage exceptions to §9.230(C) 1-year cooling-off period for former County officials
+          Manage exceptions to §9.230(C) 1-year cooling-off period for former
+          County officials
         </p>
       </div>
 
@@ -282,16 +321,18 @@ export function ContractExceptionsClient() {
       {/* Info Alert */}
       <Alert className="mb-6 border-blue-200 bg-blue-50">
         <FileCheck className="h-4 w-4 text-blue-600" />
-        <AlertTitle className="text-blue-800">Contract Regulation (§9.230)</AlertTitle>
+        <AlertTitle className="text-blue-800">
+          Contract Regulation (§9.230)
+        </AlertTitle>
         <AlertDescription className="text-blue-700">
-          County cannot contract with former officials who influenced contract authorization during or
-          within 1 year after County service. Chair may grant exceptions with written findings that
-          must be publicly posted.
+          County cannot contract with former officials who influenced contract
+          authorization during or within 1 year after County service. Chair may
+          grant exceptions with written findings that must be publicly posted.
         </AlertDescription>
       </Alert>
 
       {/* Actions */}
-      <div className="flex justify-between items-center mb-6">
+      <div className="mb-6 flex items-center justify-between">
         <div className="flex items-center space-x-2">
           <Checkbox
             id="show-unposted"
@@ -300,13 +341,13 @@ export function ContractExceptionsClient() {
           />
           <label
             htmlFor="show-unposted"
-            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            className="text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
           >
             Show unposted exceptions
           </label>
         </div>
         <Button onClick={openCreateDialog}>
-          <Plus className="h-4 w-4 mr-2" />
+          <Plus className="mr-2 h-4 w-4" />
           Create Exception
         </Button>
       </div>
@@ -316,13 +357,14 @@ export function ContractExceptionsClient() {
         <CardHeader>
           <CardTitle>Contract Exceptions</CardTitle>
           <CardDescription>
-            {exceptions.length} exception{exceptions.length !== 1 ? "s" : ""} on record
+            {exceptions.length} exception{exceptions.length !== 1 ? "s" : ""} on
+            record
           </CardDescription>
         </CardHeader>
         <CardContent>
           {exceptions.length === 0 ? (
-            <div className="text-center py-12 text-muted-foreground">
-              <FileCheck className="h-12 w-12 mx-auto mb-4 text-gray-400" />
+            <div className="text-muted-foreground py-12 text-center">
+              <FileCheck className="mx-auto mb-4 h-12 w-12 text-gray-400" />
               <p>No contract exceptions recorded</p>
             </div>
           ) : (
@@ -341,13 +383,17 @@ export function ContractExceptionsClient() {
                 {exceptions.map((exception) => (
                   <TableRow key={exception.id}>
                     <TableCell>
-                      <div className="font-medium">{exception.formerOfficialName}</div>
-                      <div className="text-xs text-muted-foreground">
+                      <div className="font-medium">
+                        {exception.formerOfficialName}
+                      </div>
+                      <div className="text-muted-foreground text-xs">
                         ID: {exception.formerOfficialId}
                       </div>
                     </TableCell>
                     <TableCell className="max-w-xs">
-                      <div className="truncate">{exception.contractDescription}</div>
+                      <div className="truncate">
+                        {exception.contractDescription}
+                      </div>
                     </TableCell>
                     <TableCell>{exception.approvedBy}</TableCell>
                     <TableCell className="text-sm">
@@ -356,12 +402,12 @@ export function ContractExceptionsClient() {
                     <TableCell>
                       {exception.publiclyPostedDate ? (
                         <Badge className="bg-green-100 text-green-800">
-                          <CheckCircle2 className="h-3 w-3 mr-1" />
+                          <CheckCircle2 className="mr-1 h-3 w-3" />
                           Posted
                         </Badge>
                       ) : (
                         <Badge className="bg-yellow-100 text-yellow-800">
-                          <XCircle className="h-3 w-3 mr-1" />
+                          <XCircle className="mr-1 h-3 w-3" />
                           Not Posted
                         </Badge>
                       )}
@@ -412,10 +458,12 @@ export function ContractExceptionsClient() {
 
       {/* Create/Edit Dialog */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-h-[90vh] max-w-3xl overflow-y-auto">
           <DialogHeader>
             <DialogTitle>
-              {editMode ? "Edit Contract Exception" : "Create Contract Exception"}
+              {editMode
+                ? "Edit Contract Exception"
+                : "Create Contract Exception"}
             </DialogTitle>
             <DialogDescription>
               Grant an exception to the 1-year cooling-off period per §9.230(C)
@@ -426,10 +474,13 @@ export function ContractExceptionsClient() {
             {/* Alert about requirements */}
             <Alert className="border-orange-200 bg-orange-50">
               <AlertCircle className="h-4 w-4 text-orange-600" />
-              <AlertTitle className="text-orange-800">Legal Requirements</AlertTitle>
+              <AlertTitle className="text-orange-800">
+                Legal Requirements
+              </AlertTitle>
               <AlertDescription className="text-orange-700">
-                Justification must show either: (1) Best interests of County favor the contract, OR
-                (2) Person's influence was minimal. Exception must be publicly posted.
+                Justification must show either: (1) Best interests of County
+                favor the contract, OR (2) Person&apos;s influence was minimal.
+                Exception must be publicly posted.
               </AlertDescription>
             </Alert>
 
@@ -440,7 +491,10 @@ export function ContractExceptionsClient() {
                   id="official-id"
                   value={formData.formerOfficialId}
                   onChange={(e) =>
-                    setFormData({ ...formData, formerOfficialId: e.target.value })
+                    setFormData({
+                      ...formData,
+                      formerOfficialId: e.target.value,
+                    })
                   }
                   placeholder="e.g., EMP-12345"
                   disabled={editMode}
@@ -453,7 +507,10 @@ export function ContractExceptionsClient() {
                   id="official-name"
                   value={formData.formerOfficialName}
                   onChange={(e) =>
-                    setFormData({ ...formData, formerOfficialName: e.target.value })
+                    setFormData({
+                      ...formData,
+                      formerOfficialName: e.target.value,
+                    })
                   }
                   placeholder="Full name"
                 />
@@ -466,7 +523,10 @@ export function ContractExceptionsClient() {
                 id="contract-desc"
                 value={formData.contractDescription}
                 onChange={(e) =>
-                  setFormData({ ...formData, contractDescription: e.target.value })
+                  setFormData({
+                    ...formData,
+                    contractDescription: e.target.value,
+                  })
                 }
                 placeholder="Describe the contract in question..."
                 rows={3}
@@ -474,7 +534,9 @@ export function ContractExceptionsClient() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="justification">Justification for Exception *</Label>
+              <Label htmlFor="justification">
+                Justification for Exception *
+              </Label>
               <Textarea
                 id="justification"
                 value={formData.justification}
@@ -484,7 +546,7 @@ export function ContractExceptionsClient() {
                 placeholder="Explain why this exception is warranted. Must show best interests of County or minimal influence..."
                 rows={4}
               />
-              <p className="text-xs text-muted-foreground">
+              <p className="text-muted-foreground text-xs">
                 Must clearly articulate findings per §9.230(C)
               </p>
             </div>
@@ -525,7 +587,7 @@ export function ContractExceptionsClient() {
               />
               <label
                 htmlFor="publicly-posted"
-                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                className="text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
               >
                 Mark as publicly posted immediately
               </label>
@@ -558,9 +620,13 @@ export function ContractExceptionsClient() {
             <div className="space-y-4">
               <div className="grid gap-4 md:grid-cols-2">
                 <div>
-                  <Label className="text-muted-foreground">Former Official</Label>
-                  <p className="font-medium">{selectedException.formerOfficialName}</p>
-                  <p className="text-sm text-muted-foreground">
+                  <Label className="text-muted-foreground">
+                    Former Official
+                  </Label>
+                  <p className="font-medium">
+                    {selectedException.formerOfficialName}
+                  </p>
+                  <p className="text-muted-foreground text-sm">
                     ID: {selectedException.formerOfficialId}
                   </p>
                 </div>
@@ -570,12 +636,12 @@ export function ContractExceptionsClient() {
                   <div className="mt-1">
                     {selectedException.publiclyPostedDate ? (
                       <Badge className="bg-green-100 text-green-800">
-                        <CheckCircle2 className="h-3 w-3 mr-1" />
+                        <CheckCircle2 className="mr-1 h-3 w-3" />
                         Publicly Posted
                       </Badge>
                     ) : (
                       <Badge className="bg-yellow-100 text-yellow-800">
-                        <XCircle className="h-3 w-3 mr-1" />
+                        <XCircle className="mr-1 h-3 w-3" />
                         Not Posted
                       </Badge>
                     )}
@@ -584,13 +650,17 @@ export function ContractExceptionsClient() {
               </div>
 
               <div>
-                <Label className="text-muted-foreground">Contract Description</Label>
+                <Label className="text-muted-foreground">
+                  Contract Description
+                </Label>
                 <p className="mt-1">{selectedException.contractDescription}</p>
               </div>
 
               <div>
                 <Label className="text-muted-foreground">Justification</Label>
-                <p className="mt-1 whitespace-pre-wrap">{selectedException.justification}</p>
+                <p className="mt-1 whitespace-pre-wrap">
+                  {selectedException.justification}
+                </p>
               </div>
 
               <div className="grid gap-4 md:grid-cols-2">
@@ -601,14 +671,24 @@ export function ContractExceptionsClient() {
 
                 <div>
                   <Label className="text-muted-foreground">Approval Date</Label>
-                  <p>{new Date(selectedException.approvedDate).toLocaleDateString()}</p>
+                  <p>
+                    {new Date(
+                      selectedException.approvedDate
+                    ).toLocaleDateString()}
+                  </p>
                 </div>
               </div>
 
               {selectedException.publiclyPostedDate && (
                 <div>
-                  <Label className="text-muted-foreground">Publicly Posted Date</Label>
-                  <p>{new Date(selectedException.publiclyPostedDate).toLocaleDateString()}</p>
+                  <Label className="text-muted-foreground">
+                    Publicly Posted Date
+                  </Label>
+                  <p>
+                    {new Date(
+                      selectedException.publiclyPostedDate
+                    ).toLocaleDateString()}
+                  </p>
                 </div>
               )}
             </div>
@@ -620,5 +700,5 @@ export function ContractExceptionsClient() {
         </DialogContent>
       </Dialog>
     </div>
-  )
+  );
 }

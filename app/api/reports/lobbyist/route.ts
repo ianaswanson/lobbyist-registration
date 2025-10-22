@@ -1,7 +1,7 @@
-import { auth } from "@/lib/auth"
-import { prisma } from "@/lib/db"
-import { NextResponse } from "next/server"
-import { ExpenseReportType, Quarter, ReportStatus } from "@prisma/client"
+import { auth } from "@/lib/auth";
+import { prisma } from "@/lib/db";
+import { NextResponse } from "next/server";
+import { ExpenseReportType, Quarter, ReportStatus } from "@prisma/client";
 
 /**
  * Calculate due date for a given quarter
@@ -16,8 +16,8 @@ function calculateDueDate(quarter: Quarter, year: number): Date {
     Q2: new Date(year, 6, 15), // July 15
     Q3: new Date(year, 9, 15), // October 15
     Q4: new Date(year + 1, 0, 15), // January 15 next year
-  }
-  return dueDates[quarter]
+  };
+  return dueDates[quarter];
 }
 
 /**
@@ -28,19 +28,19 @@ function determineStatus(
   dueDate: Date,
   submittedAt: Date | null
 ): ReportStatus {
-  if (isDraft) return ReportStatus.DRAFT
+  if (isDraft) return ReportStatus.DRAFT;
 
-  const now = new Date()
+  const now = new Date();
 
   // If submitting now
   if (!submittedAt) {
-    submittedAt = now
+    submittedAt = now;
   }
 
   if (submittedAt <= dueDate) {
-    return ReportStatus.SUBMITTED
+    return ReportStatus.SUBMITTED;
   } else {
-    return ReportStatus.LATE
+    return ReportStatus.LATE;
   }
 }
 
@@ -51,57 +51,57 @@ function determineStatus(
 export async function POST(req: Request) {
   try {
     // 1. Check authentication
-    const session = await auth()
+    const session = await auth();
     if (!session?.user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     // 2. Parse request body
-    const body = await req.json()
-    const { quarter, year, expenses, isDraft = false } = body
+    const body = await req.json();
+    const { quarter, year, expenses, isDraft = false } = body;
 
     // 3. Validation
     if (!quarter || !year) {
       return NextResponse.json(
         { error: "Quarter and year are required" },
         { status: 400 }
-      )
+      );
     }
 
     if (!["Q1", "Q2", "Q3", "Q4"].includes(quarter)) {
       return NextResponse.json(
         { error: "Invalid quarter. Must be Q1, Q2, Q3, or Q4" },
         { status: 400 }
-      )
+      );
     }
 
     if (!Array.isArray(expenses)) {
       return NextResponse.json(
         { error: "Expenses must be an array" },
         { status: 400 }
-      )
+      );
     }
 
     // 4. Find the lobbyist record for this user
     const lobbyist = await prisma.lobbyist.findUnique({
       where: { userId: session.user.id },
-    })
+    });
 
     if (!lobbyist) {
       return NextResponse.json(
         { error: "Lobbyist record not found. Please register first." },
         { status: 404 }
-      )
+      );
     }
 
     // 5. Calculate totals and dates
     const totalFoodEntertainment = expenses.reduce(
       (sum: number, exp: any) => sum + (exp.amount || 0),
       0
-    )
-    const dueDate = calculateDueDate(quarter as Quarter, year)
-    const submittedAt = isDraft ? null : new Date()
-    const status = determineStatus(isDraft, dueDate, submittedAt)
+    );
+    const dueDate = calculateDueDate(quarter as Quarter, year);
+    const submittedAt = isDraft ? null : new Date();
+    const status = determineStatus(isDraft, dueDate, submittedAt);
 
     // 6. Database transaction - create/update report and line items
     const result = await prisma.$transaction(async (tx) => {
@@ -130,7 +130,7 @@ export async function POST(req: Request) {
           submittedAt,
           dueDate,
         },
-      })
+      });
 
       // Delete existing line items for this report (we'll recreate them)
       await tx.expenseLineItem.deleteMany({
@@ -138,7 +138,7 @@ export async function POST(req: Request) {
           reportId: report.id,
           reportType: ExpenseReportType.LOBBYIST,
         },
-      })
+      });
 
       // Create new line items
       if (expenses.length > 0) {
@@ -153,11 +153,11 @@ export async function POST(req: Request) {
             amount: expense.amount,
             isEstimate: expense.isEstimate || false,
           })),
-        })
+        });
       }
 
-      return report
-    })
+      return report;
+    });
 
     // 7. TODO: Handle file uploads if present
     // This would integrate with the file storage system
@@ -190,13 +190,13 @@ export async function POST(req: Request) {
         dueDate: result.dueDate,
         lineItemCount: expenses.length,
       },
-    })
+    });
   } catch (error) {
-    console.error("Error saving lobbyist expense report:", error)
+    console.error("Error saving lobbyist expense report:", error);
     return NextResponse.json(
       { error: "Failed to save expense report" },
       { status: 500 }
-    )
+    );
   }
 }
 
@@ -207,62 +207,74 @@ export async function POST(req: Request) {
 export async function GET(req: Request) {
   try {
     // 1. Check authentication
-    const session = await auth()
+    const session = await auth();
     if (!session?.user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     // 2. Get query parameters
-    const { searchParams } = new URL(req.url)
-    const year = searchParams.get("year")
-    const quarter = searchParams.get("quarter")
+    const { searchParams } = new URL(req.url);
+    const year = searchParams.get("year");
+    const quarter = searchParams.get("quarter");
 
     // 3. Find the lobbyist record for this user
     const lobbyist = await prisma.lobbyist.findUnique({
       where: { userId: session.user.id },
-    })
+    });
 
     if (!lobbyist) {
       return NextResponse.json(
         { error: "Lobbyist record not found" },
         { status: 404 }
-      )
+      );
     }
 
     // 4. Build where clause
     const where: any = {
       lobbyistId: lobbyist.id,
-    }
+    };
 
     if (year) {
-      where.year = parseInt(year)
+      where.year = parseInt(year);
     }
 
     if (quarter) {
-      where.quarter = quarter as Quarter
+      where.quarter = quarter as Quarter;
     }
 
-    // 5. Fetch reports with line items
+    // 5. Fetch reports (without lineItems - polymorphic relation)
     const reports = await prisma.lobbyistExpenseReport.findMany({
       where,
-      include: {
-        lineItems: {
-          orderBy: { date: "desc" },
-        },
-      },
       orderBy: [{ year: "desc" }, { quarter: "desc" }],
-    })
+    });
 
-    // 6. Return reports
+    // 6. Fetch line items separately for each report (polymorphic relationship)
+    const reportsWithLineItems = await Promise.all(
+      reports.map(async (report) => {
+        const lineItems = await prisma.expenseLineItem.findMany({
+          where: {
+            reportId: report.id,
+            reportType: ExpenseReportType.LOBBYIST,
+          },
+          orderBy: { date: "desc" },
+        });
+        return {
+          ...report,
+          lineItems,
+        };
+      })
+    );
+
+    // 7. Return reports
     return NextResponse.json({
-      reports,
-      count: reports.length,
-    })
+      reports: reportsWithLineItems,
+      count: reportsWithLineItems.length,
+    });
   } catch (error) {
-    console.error("Error fetching lobbyist expense reports:", error)
+    console.error("Error fetching lobbyist expense reports:", error);
     return NextResponse.json(
       { error: "Failed to fetch expense reports" },
       { status: 500 }
-    )
+    );
   }
 }

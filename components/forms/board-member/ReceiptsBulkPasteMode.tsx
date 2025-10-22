@@ -1,10 +1,14 @@
-"use client"
+"use client";
 
-import { GenericBulkPaste, BulkParseResult, ColumnConfig } from "@/components/bulk-import"
-import type { LobbyingReceipt } from "./BoardMemberCalendarForm"
+import {
+  GenericBulkPaste,
+  BulkParseResult,
+  ColumnConfig,
+} from "@/components/bulk-import";
+import type { LobbyingReceipt } from "./BoardMemberCalendarForm";
 
 interface ReceiptsBulkPasteModeProps {
-  onAdd: (receipts: LobbyingReceipt[]) => void
+  onAdd: (receipts: LobbyingReceipt[]) => void;
 }
 
 const columns: ColumnConfig<LobbyingReceipt>[] = [
@@ -13,35 +17,36 @@ const columns: ColumnConfig<LobbyingReceipt>[] = [
   { key: "payee", label: "Payee" },
   { key: "purpose", label: "Purpose" },
   { key: "amount", label: "Amount" },
-]
+];
 
 function parseReceiptsPaste(text: string): BulkParseResult<LobbyingReceipt> {
-  const lines = text.trim().split("\n")
+  const lines = text.trim().split("\n");
 
   if (lines.length === 0) {
     return {
       data: [],
-      errors: ["No data to parse"]
-    }
+      errors: ["No data to parse"],
+    };
   }
 
-  const parsed: LobbyingReceipt[] = []
-  const parseErrors: string[] = []
+  const parsed: LobbyingReceipt[] = [];
+  const parseErrors: string[] = [];
 
   lines.forEach((line, index) => {
     // Tab-separated or comma-separated
-    const parts = line.includes("\t") ? line.split("\t") : line.split(",")
+    const parts = line.includes("\t") ? line.split("\t") : line.split(",");
 
     if (parts.length < 5) {
-      parseErrors.push(`Row ${index + 1}: Expected at least 5 columns, got ${parts.length}`)
-      return
+      parseErrors.push(
+        `Row ${index + 1}: Expected at least 5 columns, got ${parts.length}`
+      );
+      return;
     }
 
-    const amount = parseFloat(parts[4].trim())
+    const amount = parseFloat(parts[4].trim());
     if (isNaN(amount)) {
-      parseErrors.push(`Row ${index + 1}: Invalid amount "${parts[4]}"`
-)
-      return
+      parseErrors.push(`Row ${index + 1}: Invalid amount "${parts[4]}"`);
+      return;
     }
 
     parsed.push({
@@ -51,13 +56,13 @@ function parseReceiptsPaste(text: string): BulkParseResult<LobbyingReceipt> {
       payee: parts[2].trim(),
       purpose: parts[3].trim(),
       amount: amount,
-    })
-  })
+    });
+  });
 
   return {
     data: parsed,
-    errors: parseErrors
-  }
+    errors: parseErrors,
+  };
 }
 
 export function ReceiptsBulkPasteMode({ onAdd }: ReceiptsBulkPasteModeProps) {
@@ -72,5 +77,5 @@ export function ReceiptsBulkPasteMode({ onAdd }: ReceiptsBulkPasteModeProps) {
       exampleText="Jane Smith, 2025-01-15, Portland City Grill, Lunch meeting to discuss housing policy, 125.00"
       colorScheme="purple"
     />
-  )
+  );
 }

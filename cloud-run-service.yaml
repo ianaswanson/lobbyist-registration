@@ -10,39 +10,39 @@ spec:
   template:
     metadata:
       annotations:
-        autoscaling.knative.dev/minScale: '0'
-        autoscaling.knative.dev/maxScale: '3'
-        run.googleapis.com/startup-cpu-boost: 'true'
+        autoscaling.knative.dev/minScale: "0"
+        autoscaling.knative.dev/maxScale: "3"
+        run.googleapis.com/startup-cpu-boost: "true"
     spec:
       containerConcurrency: 80
       timeoutSeconds: 300
       containers:
-      - name: lobbyist-registration-dev-1
-        image: us-west1-docker.pkg.dev/lobbyist-475218/lobbyist-registry/lobbyist-registration-dev:latest
-        ports:
-        - name: http1
-          containerPort: 8080
-        env:
-        - name: NODE_ENV
-          value: production
-        - name: DATABASE_URL
-          value: file:/app/prisma/dev.db
-        - name: AUTH_SECRET
-          value: pY+pkA/1XsAVlmMfTeNSt1DRmcGDdIiEr/8HPEc1J04=
-        - name: NEXTAUTH_URL
-          value: https://lobbyist-registration-dev-679888289147.us-west1.run.app
-        resources:
-          limits:
-            cpu: '1'
-            memory: 512Mi
-        startupProbe:
-          httpGet:
-            path: /
-            port: 8080
-          initialDelaySeconds: 10
-          periodSeconds: 10
-          failureThreshold: 10
-          timeoutSeconds: 3
+        - name: lobbyist-registration-dev-1
+          image: us-west1-docker.pkg.dev/lobbyist-475218/lobbyist-registry/lobbyist-registration-dev:latest
+          ports:
+            - name: http1
+              containerPort: 8080
+          env:
+            - name: NODE_ENV
+              value: production
+            - name: DATABASE_URL
+              value: file:/app/prisma/dev.db
+            - name: AUTH_SECRET
+              value: pY+pkA/1XsAVlmMfTeNSt1DRmcGDdIiEr/8HPEc1J04=
+            - name: NEXTAUTH_URL
+              value: https://lobbyist-registration-dev-679888289147.us-west1.run.app
+          resources:
+            limits:
+              cpu: "1"
+              memory: 512Mi
+          startupProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            failureThreshold: 10
+            timeoutSeconds: 3
   traffic:
-  - percent: 100
-    latestRevision: true
+    - percent: 100
+      latestRevision: true

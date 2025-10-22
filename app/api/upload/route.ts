@@ -1,7 +1,10 @@
-import { NextRequest, NextResponse } from "next/server"
-import { auth } from "@/lib/auth"
-import { validateUploadedFile, validateFileSignature } from "@/lib/file-validation"
-import { rateLimit, getClientIdentifier } from "@/lib/rate-limit"
+import { NextRequest, NextResponse } from "next/server";
+import { auth } from "@/lib/auth";
+import {
+  validateUploadedFile,
+  validateFileSignature,
+} from "@/lib/file-validation";
+import { rateLimit, getClientIdentifier } from "@/lib/rate-limit";
 
 /**
  * POST /api/upload
@@ -19,20 +22,20 @@ import { rateLimit, getClientIdentifier } from "@/lib/rate-limit"
 export async function POST(req: NextRequest) {
   try {
     // 1. SECURITY: Check authentication
-    const session = await auth()
+    const session = await auth();
     if (!session?.user) {
       return NextResponse.json(
         { error: "Authentication required" },
         { status: 401 }
-      )
+      );
     }
 
     // 2. SECURITY: Rate limiting - 10 uploads per minute
-    const identifier = `upload_${session.user.id}`
+    const identifier = `upload_${session.user.id}`;
     const limitResult = rateLimit(identifier, {
       interval: 60 * 1000,
       uniqueTokenPerInterval: 10,
-    })
+    });
 
     if (!limitResult.success) {
       return NextResponse.json(
@@ -45,28 +48,25 @@ export async function POST(req: NextRequest) {
             ).toString(),
           },
         }
-      )
+      );
     }
 
     // 3. Parse form data
-    const formData = await req.formData()
-    const file = formData.get("file") as File | null
-    const category = (formData.get("category") as string) || "document"
-    const entityType = formData.get("entityType") as string
-    const entityId = formData.get("entityId") as string
+    const formData = await req.formData();
+    const file = formData.get("file") as File | null;
+    const category = (formData.get("category") as string) || "document";
+    const entityType = formData.get("entityType") as string;
+    const entityId = formData.get("entityId") as string;
 
     if (!file) {
-      return NextResponse.json(
-        { error: "No file provided" },
-        { status: 400 }
-      )
+      return NextResponse.json({ error: "No file provided" }, { status: 400 });
     }
 
     if (!entityType || !entityId) {
       return NextResponse.json(
         { error: "Missing entity information" },
         { status: 400 }
-      )
+      );
     }
 
     // 4. SECURITY: Validate category
@@ -74,29 +74,26 @@ export async function POST(req: NextRequest) {
       return NextResponse.json(
         { error: "Invalid file category" },
         { status: 400 }
-      )
+      );
     }
 
     // 5. SECURITY: Validate file (type, size, filename)
     const validation = await validateUploadedFile(
       file,
       category as "document" | "image" | "spreadsheet"
-    )
+    );
 
     if (!validation.valid) {
-      return NextResponse.json(
-        { error: validation.error },
-        { status: 400 }
-      )
+      return NextResponse.json({ error: validation.error }, { status: 400 });
     }
 
     // 6. SECURITY: Validate file signature (magic bytes)
-    const signatureValidation = await validateFileSignature(file)
+    const signatureValidation = await validateFileSignature(file);
     if (!signatureValidation.valid) {
       return NextResponse.json(
         { error: signatureValidation.error },
         { status: 400 }
-      )
+      );
     }
 
     // 7. Process upload
@@ -111,7 +108,7 @@ export async function POST(req: NextRequest) {
       uploadedBy: session.user.id,
       uploadedAt: new Date().toISOString(),
       url: `/api/files/${entityType}/${entityId}/${validation.sanitizedFilename}`,
-    }
+    };
 
     // 8. TODO: For production, implement actual file storage
     // - Upload to cloud storage with virus scanning
@@ -126,21 +123,20 @@ export async function POST(req: NextRequest) {
       type: file.type,
       entityType,
       entityId,
-    })
+    });
 
     return NextResponse.json({
       success: true,
       file: uploadedFile,
-    })
-
+    });
   } catch (error) {
-    console.error("Upload error:", error)
+    console.error("Upload error:", error);
 
     // Don't expose internal errors to client
     return NextResponse.json(
       { error: "File upload failed. Please try again." },
       { status: 500 }
-    )
+    );
   }
 }
 
@@ -164,5 +160,5 @@ export async function GET() {
       uploads: 10,
       interval: "1 minute",
     },
-  })
+  });
 }

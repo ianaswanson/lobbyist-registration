@@ -1,22 +1,22 @@
-"use client"
+"use client";
 
 interface Step1Props {
   data: {
-    name: string
-    email: string
-    phone: string
-    address: string
-    hoursCurrentQuarter: number
-  }
-  updateData: (data: any) => void
-  onNext: () => void
+    name: string;
+    email: string;
+    phone: string;
+    address: string;
+    hoursCurrentQuarter: number;
+  };
+  updateData: (data: any) => void;
+  onNext: () => void;
 }
 
 export function Step1PersonalInfo({ data, updateData, onNext }: Step1Props) {
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    onNext()
-  }
+    e.preventDefault();
+    onNext();
+  };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
@@ -31,7 +31,10 @@ export function Step1PersonalInfo({ data, updateData, onNext }: Step1Props) {
 
       <div className="space-y-4">
         <div>
-          <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+          <label
+            htmlFor="name"
+            className="block text-sm font-medium text-gray-700"
+          >
             Full Name <span className="text-red-600">*</span>
           </label>
           <input
@@ -40,13 +43,16 @@ export function Step1PersonalInfo({ data, updateData, onNext }: Step1Props) {
             required
             value={data.name}
             onChange={(e) => updateData({ name: e.target.value })}
-            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500"
+            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
             placeholder="John Doe"
           />
         </div>
 
         <div>
-          <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+          <label
+            htmlFor="email"
+            className="block text-sm font-medium text-gray-700"
+          >
             Email Address <span className="text-red-600">*</span>
           </label>
           <input
@@ -55,13 +61,16 @@ export function Step1PersonalInfo({ data, updateData, onNext }: Step1Props) {
             required
             value={data.email}
             onChange={(e) => updateData({ email: e.target.value })}
-            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500"
+            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
             placeholder="john.doe@example.com"
           />
         </div>
 
         <div>
-          <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
+          <label
+            htmlFor="phone"
+            className="block text-sm font-medium text-gray-700"
+          >
             Phone Number <span className="text-red-600">*</span>
           </label>
           <input
@@ -70,13 +79,16 @@ export function Step1PersonalInfo({ data, updateData, onNext }: Step1Props) {
             required
             value={data.phone}
             onChange={(e) => updateData({ phone: e.target.value })}
-            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500"
+            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
             placeholder="(503) 555-0100"
           />
         </div>
 
         <div>
-          <label htmlFor="address" className="block text-sm font-medium text-gray-700">
+          <label
+            htmlFor="address"
+            className="block text-sm font-medium text-gray-700"
+          >
             Mailing Address <span className="text-red-600">*</span>
           </label>
           <textarea
@@ -85,7 +97,7 @@ export function Step1PersonalInfo({ data, updateData, onNext }: Step1Props) {
             rows={3}
             value={data.address}
             onChange={(e) => updateData({ address: e.target.value })}
-            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500"
+            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
             placeholder="123 Main Street&#10;Portland, OR 97201"
           />
         </div>
@@ -108,7 +120,7 @@ export function Step1PersonalInfo({ data, updateData, onNext }: Step1Props) {
             onChange={(e) =>
               updateData({ hoursCurrentQuarter: parseFloat(e.target.value) })
             }
-            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500"
+            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
           />
           <p className="mt-1 text-xs text-gray-500">
             Note: Registration is required if you exceed 10 hours per quarter
@@ -120,11 +132,11 @@ export function Step1PersonalInfo({ data, updateData, onNext }: Step1Props) {
       <div className="flex justify-end">
         <button
           type="submit"
-          className="rounded-md bg-blue-600 px-6 py-2 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+          className="rounded-md bg-blue-600 px-6 py-2 text-white hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none"
         >
           Next: Employer Information
         </button>
       </div>
     </form>
-  )
+  );
 }
