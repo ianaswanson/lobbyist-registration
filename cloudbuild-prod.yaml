@@ -135,7 +135,7 @@ steps:
       - 'managed'
       - '--allow-unauthenticated'
       - '--set-env-vars'
-      - 'NODE_ENV=production,ENVIRONMENT=${_ENVIRONMENT},NEXTAUTH_URL=https://${_SERVICE_NAME}-zzp44w3snq-uw.a.run.app'
+      - 'NODE_ENV=production,ENVIRONMENT=${_ENVIRONMENT}'
       - '--min-instances'
       - '1'
       - '--max-instances'
