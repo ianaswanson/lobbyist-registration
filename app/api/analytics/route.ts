@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
-import { Quarter } from "@prisma/client";
+import { Quarter, ReportStatus } from "@prisma/client";
 import { FEATURE_FLAGS } from "@/lib/feature-flags";
 
 export async function GET() {
@@ -202,7 +202,7 @@ export async function GET() {
       });
     });
 
-    employerReports.forEach((report) => {
+    employerReportsWithItems.forEach((report) => {
       report.lineItems.forEach((item) => {
         if (!officialSpending[item.officialName]) {
           officialSpending[item.officialName] = 0;

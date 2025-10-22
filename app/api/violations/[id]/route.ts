@@ -30,7 +30,7 @@ export async function GET(
         id,
       },
       include: {
-        appeal: true,
+        appeals: true,
       },
     });
 
@@ -129,7 +129,7 @@ export async function PATCH(
       },
       data: updateData,
       include: {
-        appeal: true,
+        appeals: true,
       },
     });
 

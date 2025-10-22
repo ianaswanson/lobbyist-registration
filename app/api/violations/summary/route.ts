@@ -31,10 +31,10 @@ export async function GET(request: NextRequest) {
     // Count total violations
     const totalViolations = await prisma.violation.count();
 
-    // Count active violations
+    // Count active violations (issued but not yet resolved)
     const activeViolations = await prisma.violation.count({
       where: {
-        status: "ACTIVE",
+        status: { in: ["PENDING", "ISSUED", "APPEALED"] },
       },
     });
 

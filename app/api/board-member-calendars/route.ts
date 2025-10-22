@@ -212,7 +212,7 @@ export async function POST(request: NextRequest) {
         return prisma.boardLobbyingReceipt.create({
           data: {
             boardMemberId: boardMember.id,
-            lobbyistId: lobbyist?.id || null,
+            lobbyistId: lobbyist?.id || undefined,
             lobbyistName: receipt.lobbyistName, // Store name even if lobbyist not found
             amount: receipt.amount,
             date: new Date(receipt.date),

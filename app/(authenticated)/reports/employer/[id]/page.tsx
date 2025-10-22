@@ -249,10 +249,10 @@ export default async function EmployerReportDetailPage({ params }: PageProps) {
                           {new Date(item.date).toLocaleDateString()}
                         </td>
                         <td className="px-6 py-4 text-sm text-gray-900">
-                          {item.description}
+                          {item.purpose}
                         </td>
                         <td className="px-6 py-4 text-sm text-gray-500">
-                          {item.vendor || "N/A"}
+                          {item.payee || "N/A"}
                         </td>
                         <td className="px-6 py-4 text-right text-sm font-medium whitespace-nowrap text-gray-900">
                           {formatCurrency(item.amount)}
@@ -323,7 +323,7 @@ export default async function EmployerReportDetailPage({ params }: PageProps) {
                           {payment.lobbyist?.email || "N/A"}
                         </td>
                         <td className="px-6 py-4 text-sm text-gray-500">
-                          {payment.description || "Lobbying services"}
+                          Lobbying services
                         </td>
                         <td className="px-6 py-4 text-right text-sm font-medium whitespace-nowrap text-gray-900">
                           {formatCurrency(payment.amountPaid)}

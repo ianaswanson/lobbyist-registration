@@ -228,7 +228,6 @@ export async function GET(
               email: true,
             },
           },
-          lineItems: true,
         },
       });
     } else {
@@ -241,7 +240,6 @@ export async function GET(
               email: true,
             },
           },
-          lineItems: true,
           lobbyistPayments: {
             include: {
               lobbyist: {
@@ -261,6 +259,17 @@ export async function GET(
         { status: 404 }
       );
     }
+
+    // Fetch lineItems separately
+    const lineItems = await prisma.expenseLineItem.findMany({
+      where: {
+        reportId: id,
+        reportType: reportType === "lobbyist" ? "LOBBYIST" : "EMPLOYER",
+      },
+    });
+
+    // Attach lineItems to report
+    report.lineItems = lineItems;
 
     // 4. Return report details
     return NextResponse.json({

@@ -73,7 +73,9 @@ export async function POST(request: NextRequest) {
     const now = new Date();
 
     // Determine status
-    let status = isDraft ? ReportStatus.DRAFT : ReportStatus.SUBMITTED;
+    let status: ReportStatus = isDraft
+      ? ReportStatus.DRAFT
+      : ReportStatus.SUBMITTED;
     if (!isDraft && now > dueDate) {
       status = ReportStatus.LATE;
     }
