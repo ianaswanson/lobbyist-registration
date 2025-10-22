@@ -90,11 +90,11 @@ steps:
     args:
       - '-c'
       - |
-        TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+        TIMESTAMP=$$(date +%Y%m%d-%H%M%S)
         docker tag gcr.io/$PROJECT_ID/${_SERVICE_NAME}:$SHORT_SHA \
-                   gcr.io/$PROJECT_ID/${_SERVICE_NAME}:production-$TIMESTAMP
-        docker push gcr.io/$PROJECT_ID/${_SERVICE_NAME}:production-$TIMESTAMP
-        echo "Production image tagged: production-$TIMESTAMP"
+                   gcr.io/$PROJECT_ID/${_SERVICE_NAME}:production-$$TIMESTAMP
+        docker push gcr.io/$PROJECT_ID/${_SERVICE_NAME}:production-$$TIMESTAMP
+        echo "Production image tagged: production-$$TIMESTAMP"
     waitFor: ['push-image']
 
   # ===========================================================================
@@ -159,31 +159,31 @@ steps:
         echo "Performing health check on new revision..."
 
         # Get the latest revision URL
-        REVISION=$(gcloud run revisions list \
+        REVISION=$$(gcloud run revisions list \
           --service ${_SERVICE_NAME} \
           --region ${_REGION} \
           --format='value(name)' \
           --limit=1)
 
-        echo "Latest revision: $REVISION"
+        echo "Latest revision: $$REVISION"
 
         # Get revision URL
-        REVISION_URL=$(gcloud run revisions describe $REVISION \
+        REVISION_URL=$$(gcloud run revisions describe $$REVISION \
           --region ${_REGION} \
           --format='value(status.url)')
 
-        echo "Testing revision at: $REVISION_URL"
+        echo "Testing revision at: $$REVISION_URL"
 
         # Wait for revision to be ready
         sleep 15
 
         # Perform health check (allow retry)
         for i in {1..5}; do
-          if curl -f -s -o /dev/null "$REVISION_URL"; then
+          if curl -f -s -o /dev/null "$$REVISION_URL"; then
             echo "✅ Health check passed!"
             exit 0
           else
-            echo "Health check attempt $i failed, retrying..."
+            echo "Health check attempt $$i failed, retrying..."
             sleep 5
           fi
         done
@@ -213,21 +213,21 @@ steps:
     args:
       - '-c'
       - |
-        SERVICE_URL=$(gcloud run services describe ${_SERVICE_NAME} \
+        SERVICE_URL=$$(gcloud run services describe ${_SERVICE_NAME} \
           --region ${_REGION} \
           --format 'value(status.url)')
 
         echo "================================================"
         echo "✅ PRODUCTION DEPLOYMENT SUCCESSFUL"
         echo "================================================"
-        echo "Service URL: $SERVICE_URL"
+        echo "Service URL: $$SERVICE_URL"
         echo "Build ID: $BUILD_ID"
         echo "Commit SHA: $SHORT_SHA"
-        echo "Deployed: $(date)"
+        echo "Deployed: $$(date)"
         echo "================================================"
         echo ""
         echo "Post-deployment verification:"
-        echo "1. Check service health: curl $SERVICE_URL"
+        echo "1. Check service health: curl $$SERVICE_URL"
         echo "2. Monitor logs: gcloud logging read \"resource.type=cloud_run_revision\" --limit=50"
         echo "3. View metrics: https://console.cloud.google.com/run/detail/${_REGION}/${_SERVICE_NAME}/metrics"
         echo ""

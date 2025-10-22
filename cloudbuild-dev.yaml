@@ -95,21 +95,21 @@ steps:
     args:
       - '-c'
       - |
-        SERVICE_URL=$(gcloud run services describe ${_SERVICE_NAME} \
+        SERVICE_URL=$$(gcloud run services describe ${_SERVICE_NAME} \
           --region ${_REGION} \
           --format 'value(status.url)')
 
-        echo "Deployment URL: $SERVICE_URL"
+        echo "Deployment URL: $$SERVICE_URL"
         echo "Checking health endpoint..."
 
         # Wait 10 seconds for service to be ready
         sleep 10
 
         # Check if service responds (allow failure in dev)
-        curl -f -s -o /dev/null "$SERVICE_URL" || echo "Warning: Service health check failed"
+        curl -f -s -o /dev/null "$$SERVICE_URL" || echo "Warning: Service health check failed"
 
         echo "✅ Development deployment complete!"
-        echo "View service at: $SERVICE_URL"
+        echo "View service at: $$SERVICE_URL"
     waitFor: ['deploy-service']
 
 # Build configuration
