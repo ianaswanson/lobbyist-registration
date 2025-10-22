@@ -66,6 +66,12 @@ gcloud projects add-iam-policy-binding $PROJECT_ID \
   --condition=None \
   --no-user-output-enabled
 
+gcloud projects add-iam-policy-binding $PROJECT_ID \
+  --member="serviceAccount:${BUILD_SA}" \
+  --role="roles/logging.logWriter" \
+  --condition=None \
+  --no-user-output-enabled
+
 echo "✅ Permissions configured"
 
 # Create Development Trigger (Auto-deploy)

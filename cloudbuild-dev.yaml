@@ -40,23 +40,23 @@ steps:
       - '-f'
       - 'Dockerfile'
       - '-t'
-      - 'gcr.io/$PROJECT_ID/${_SERVICE_NAME}:$SHORT_SHA'
+      - '${_REGION}-docker.pkg.dev/$PROJECT_ID/lobbyist-registry/${_SERVICE_NAME}:$SHORT_SHA'
       - '-t'
-      - 'gcr.io/$PROJECT_ID/${_SERVICE_NAME}:latest'
+      - '${_REGION}-docker.pkg.dev/$PROJECT_ID/lobbyist-registry/${_SERVICE_NAME}:latest'
       - '-t'
-      - 'gcr.io/$PROJECT_ID/${_SERVICE_NAME}:build-$BUILD_ID'
+      - '${_REGION}-docker.pkg.dev/$PROJECT_ID/lobbyist-registry/${_SERVICE_NAME}:build-$BUILD_ID'
       - '--build-arg'
       - 'NODE_ENV=production'
       - '.'
     waitFor: ['type-check', 'security-scan']
 
-  # Step 5: Push image to Container Registry
+  # Step 5: Push image to Artifact Registry
   - name: 'gcr.io/cloud-builders/docker'
     id: 'push-image'
     args:
       - 'push'
       - '--all-tags'
-      - 'gcr.io/$PROJECT_ID/${_SERVICE_NAME}'
+      - '${_REGION}-docker.pkg.dev/$PROJECT_ID/lobbyist-registry/${_SERVICE_NAME}'
     waitFor: ['build-image']
 
   # Step 6: Deploy to Cloud Run (development)
@@ -68,7 +68,7 @@ steps:
       - 'deploy'
       - '${_SERVICE_NAME}'
       - '--image'
-      - 'gcr.io/$PROJECT_ID/${_SERVICE_NAME}:$SHORT_SHA'
+      - '${_REGION}-docker.pkg.dev/$PROJECT_ID/lobbyist-registry/${_SERVICE_NAME}:$SHORT_SHA'
       - '--region'
       - '${_REGION}'
       - '--platform'
@@ -120,9 +120,9 @@ options:
 
 # Store images
 images:
-  - 'gcr.io/$PROJECT_ID/${_SERVICE_NAME}:$SHORT_SHA'
-  - 'gcr.io/$PROJECT_ID/${_SERVICE_NAME}:latest'
-  - 'gcr.io/$PROJECT_ID/${_SERVICE_NAME}:build-$BUILD_ID'
+  - '${_REGION}-docker.pkg.dev/$PROJECT_ID/lobbyist-registry/${_SERVICE_NAME}:$SHORT_SHA'
+  - '${_REGION}-docker.pkg.dev/$PROJECT_ID/lobbyist-registry/${_SERVICE_NAME}:latest'
+  - '${_REGION}-docker.pkg.dev/$PROJECT_ID/lobbyist-registry/${_SERVICE_NAME}:build-$BUILD_ID'
 
 # Timeout after 20 minutes
 timeout: '1200s'

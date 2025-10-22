@@ -53,11 +53,11 @@ steps:
       - '-f'
       - 'Dockerfile'
       - '-t'
-      - 'gcr.io/$PROJECT_ID/${_SERVICE_NAME}:$SHORT_SHA'
+      - '${_REGION}-docker.pkg.dev/$PROJECT_ID/lobbyist-registry/${_SERVICE_NAME}:$SHORT_SHA'
       - '-t'
-      - 'gcr.io/$PROJECT_ID/${_SERVICE_NAME}:latest'
+      - '${_REGION}-docker.pkg.dev/$PROJECT_ID/lobbyist-registry/${_SERVICE_NAME}:latest'
       - '-t'
-      - 'gcr.io/$PROJECT_ID/${_SERVICE_NAME}:production-$SHORT_SHA'
+      - '${_REGION}-docker.pkg.dev/$PROJECT_ID/lobbyist-registry/${_SERVICE_NAME}:production-$SHORT_SHA'
       - '--build-arg'
       - 'NODE_ENV=production'
       - '.'
@@ -70,17 +70,17 @@ steps:
     args:
       - '-c'
       - |
-        echo "Docker image vulnerability scanning happens automatically in Container Registry"
-        echo "View scan results: https://console.cloud.google.com/gcr/images/$PROJECT_ID"
+        echo "Docker image vulnerability scanning happens automatically in Artifact Registry"
+        echo "View scan results: https://console.cloud.google.com/artifacts/docker/$PROJECT_ID/${_REGION}/lobbyist-registry"
     waitFor: ['build-image']
 
-  # Step 8: Push image to Container Registry
+  # Step 8: Push image to Artifact Registry
   - name: 'gcr.io/cloud-builders/docker'
     id: 'push-image'
     args:
       - 'push'
       - '--all-tags'
-      - 'gcr.io/$PROJECT_ID/${_SERVICE_NAME}'
+      - '${_REGION}-docker.pkg.dev/$PROJECT_ID/lobbyist-registry/${_SERVICE_NAME}'
     waitFor: ['build-image', 'scan-image']
 
   # Step 9: Tag production image with timestamp
@@ -91,9 +91,9 @@ steps:
       - '-c'
       - |
         TIMESTAMP=$$(date +%Y%m%d-%H%M%S)
-        docker tag gcr.io/$PROJECT_ID/${_SERVICE_NAME}:$SHORT_SHA \
-                   gcr.io/$PROJECT_ID/${_SERVICE_NAME}:production-$$TIMESTAMP
-        docker push gcr.io/$PROJECT_ID/${_SERVICE_NAME}:production-$$TIMESTAMP
+        docker tag ${_REGION}-docker.pkg.dev/$PROJECT_ID/lobbyist-registry/${_SERVICE_NAME}:$SHORT_SHA \
+                   ${_REGION}-docker.pkg.dev/$PROJECT_ID/lobbyist-registry/${_SERVICE_NAME}:production-$$TIMESTAMP
+        docker push ${_REGION}-docker.pkg.dev/$PROJECT_ID/lobbyist-registry/${_SERVICE_NAME}:production-$$TIMESTAMP
         echo "Production image tagged: production-$$TIMESTAMP"
     waitFor: ['push-image']
 
@@ -128,7 +128,7 @@ steps:
       - 'deploy'
       - '${_SERVICE_NAME}'
       - '--image'
-      - 'gcr.io/$PROJECT_ID/${_SERVICE_NAME}:$SHORT_SHA'
+      - '${_REGION}-docker.pkg.dev/$PROJECT_ID/lobbyist-registry/${_SERVICE_NAME}:$SHORT_SHA'
       - '--region'
       - '${_REGION}'
       - '--platform'
@@ -244,9 +244,9 @@ options:
 
 # Store all images for audit trail
 images:
-  - 'gcr.io/$PROJECT_ID/${_SERVICE_NAME}:$SHORT_SHA'
-  - 'gcr.io/$PROJECT_ID/${_SERVICE_NAME}:latest'
-  - 'gcr.io/$PROJECT_ID/${_SERVICE_NAME}:production-$SHORT_SHA'
+  - '${_REGION}-docker.pkg.dev/$PROJECT_ID/lobbyist-registry/${_SERVICE_NAME}:$SHORT_SHA'
+  - '${_REGION}-docker.pkg.dev/$PROJECT_ID/lobbyist-registry/${_SERVICE_NAME}:latest'
+  - '${_REGION}-docker.pkg.dev/$PROJECT_ID/lobbyist-registry/${_SERVICE_NAME}:production-$SHORT_SHA'
 
 # Longer timeout for production (includes approval wait time)
 timeout: '3600s'  # 1 hour
