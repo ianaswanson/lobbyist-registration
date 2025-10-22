@@ -28,11 +28,6 @@ async function getReport(reportId: string, userId: string) {
         lobbyistId: lobbyist.id,
       },
       include: {
-        lineItems: {
-          orderBy: {
-            date: "desc",
-          },
-        },
         lobbyist: {
           select: {
             name: true,
@@ -42,7 +37,20 @@ async function getReport(reportId: string, userId: string) {
       },
     });
 
-    return report;
+    if (!report) return null;
+
+    // Fetch lineItems separately (polymorphic relation)
+    const lineItems = await prisma.expenseLineItem.findMany({
+      where: {
+        reportId: report.id,
+        reportType: "LOBBYIST",
+      },
+      orderBy: {
+        date: "desc",
+      },
+    });
+
+    return { ...report, lineItems };
   } catch (error) {
     console.error("Error fetching lobbyist expense report:", error);
     return null;

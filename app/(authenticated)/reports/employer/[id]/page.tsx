@@ -28,11 +28,6 @@ async function getReport(reportId: string, userId: string) {
         employerId: employer.id,
       },
       include: {
-        lineItems: {
-          orderBy: {
-            date: "desc",
-          },
-        },
         lobbyistPayments: {
           include: {
             lobbyist: {
@@ -54,7 +49,20 @@ async function getReport(reportId: string, userId: string) {
       },
     });
 
-    return report;
+    if (!report) return null;
+
+    // Fetch lineItems separately (polymorphic relation)
+    const lineItems = await prisma.expenseLineItem.findMany({
+      where: {
+        reportId: report.id,
+        reportType: "EMPLOYER",
+      },
+      orderBy: {
+        date: "desc",
+      },
+    });
+
+    return { ...report, lineItems };
   } catch (error) {
     console.error("Error fetching employer expense report:", error);
     return null;

@@ -18,17 +18,22 @@ async function getReport(userId: string, reportId: string) {
     // Fetch the specific report
     const report = await prisma.lobbyistExpenseReport.findUnique({
       where: { id: reportId },
-      include: {
-        lineItems: true,
-      },
     });
 
     // Verify this report belongs to this lobbyist
-    if (report && report.lobbyistId !== lobbyist.id) {
+    if (!report || report.lobbyistId !== lobbyist.id) {
       return null;
     }
 
-    return report;
+    // Fetch lineItems separately
+    const lineItems = await prisma.expenseLineItem.findMany({
+      where: {
+        reportId: report.id,
+        reportType: "LOBBYIST",
+      },
+    });
+
+    return { ...report, lineItems };
   } catch (error) {
     console.error("Error fetching report:", error);
     return null;

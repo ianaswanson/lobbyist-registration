@@ -20,11 +20,6 @@ async function getPendingReports() {
             email: true,
           },
         },
-        lineItems: {
-          select: {
-            id: true,
-          },
-        },
       },
       orderBy: {
         submittedAt: "asc", // Oldest first
@@ -45,16 +40,38 @@ async function getPendingReports() {
             email: true,
           },
         },
-        lineItems: {
-          select: {
-            id: true,
-          },
-        },
       },
       orderBy: {
         submittedAt: "asc", // Oldest first
       },
     });
+
+    // Fetch lineItem counts for all reports
+    const lobbyistReportIds = lobbyistReports.map((r) => r.id);
+    const employerReportIds = employerReports.map((r) => r.id);
+
+    const lobbyistCounts = await prisma.expenseLineItem.groupBy({
+      by: ["reportId"],
+      where: {
+        reportId: { in: lobbyistReportIds },
+        reportType: "LOBBYIST",
+      },
+      _count: true,
+    });
+
+    const employerCounts = await prisma.expenseLineItem.groupBy({
+      by: ["reportId"],
+      where: {
+        reportId: { in: employerReportIds },
+        reportType: "EMPLOYER",
+      },
+      _count: true,
+    });
+
+    const countByReportId = new Map([
+      ...lobbyistCounts.map((c) => [c.reportId, c._count]),
+      ...employerCounts.map((c) => [c.reportId, c._count]),
+    ]);
 
     // Combine and format reports
     const allReports = [
@@ -67,7 +84,7 @@ async function getPendingReports() {
         quarter: report.quarter,
         year: report.year,
         totalAmount: report.totalFoodEntertainment,
-        expenseCount: report.lineItems.length,
+        expenseCount: countByReportId.get(report.id) || 0,
         submittedDate: report.submittedAt,
         status: report.status,
         dueDate: report.dueDate,
@@ -81,7 +98,7 @@ async function getPendingReports() {
         quarter: report.quarter,
         year: report.year,
         totalAmount: report.totalLobbyingSpend,
-        expenseCount: report.lineItems.length,
+        expenseCount: countByReportId.get(report.id) || 0,
         submittedDate: report.submittedAt,
         status: report.status,
         dueDate: report.dueDate,

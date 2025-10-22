@@ -17,27 +17,56 @@ export async function GET() {
     const lobbyistReports = await prisma.lobbyistExpenseReport.findMany({
       where: {
         status: {
-          in: ["SUBMITTED", "LATE", "REVIEWED"],
+          in: [
+            ReportStatus.SUBMITTED,
+            ReportStatus.LATE,
+            ReportStatus.APPROVED,
+          ],
         },
       },
       include: {
         lobbyist: true,
-        lineItems: true,
       },
       orderBy: {
         year: "desc",
       },
     });
 
+    // Fetch lineItems for lobbyist reports
+    const lobbyistReportIds = lobbyistReports.map((r) => r.id);
+    const lobbyistLineItems = await prisma.expenseLineItem.findMany({
+      where: {
+        reportId: { in: lobbyistReportIds },
+        reportType: "LOBBYIST",
+      },
+    });
+
+    const lobbyistLineItemsByReport = lobbyistLineItems.reduce(
+      (acc, item) => {
+        if (!acc[item.reportId]) acc[item.reportId] = [];
+        acc[item.reportId].push(item);
+        return acc;
+      },
+      {} as Record<string, typeof lobbyistLineItems>
+    );
+
+    const lobbyistReportsWithItems = lobbyistReports.map((r) => ({
+      ...r,
+      lineItems: lobbyistLineItemsByReport[r.id] || [],
+    }));
+
     const employerReports = await prisma.employerExpenseReport.findMany({
       where: {
         status: {
-          in: ["SUBMITTED", "LATE", "REVIEWED"],
+          in: [
+            ReportStatus.SUBMITTED,
+            ReportStatus.LATE,
+            ReportStatus.APPROVED,
+          ],
         },
       },
       include: {
         employer: true,
-        lineItems: true,
         lobbyistPayments: {
           include: {
             lobbyist: true,
@@ -48,6 +77,29 @@ export async function GET() {
         year: "desc",
       },
     });
+
+    // Fetch lineItems for employer reports
+    const employerReportIds = employerReports.map((r) => r.id);
+    const employerLineItems = await prisma.expenseLineItem.findMany({
+      where: {
+        reportId: { in: employerReportIds },
+        reportType: "EMPLOYER",
+      },
+    });
+
+    const employerLineItemsByReport = employerLineItems.reduce(
+      (acc, item) => {
+        if (!acc[item.reportId]) acc[item.reportId] = [];
+        acc[item.reportId].push(item);
+        return acc;
+      },
+      {} as Record<string, typeof employerLineItems>
+    );
+
+    const employerReportsWithItems = employerReports.map((r) => ({
+      ...r,
+      lineItems: employerLineItemsByReport[r.id] || [],
+    }));
 
     // Calculate quarterly totals
     const quarterlyData: Record<
@@ -62,7 +114,7 @@ export async function GET() {
       }
     > = {};
 
-    lobbyistReports.forEach((report) => {
+    lobbyistReportsWithItems.forEach((report) => {
       const key = `${report.year}-${report.quarter}`;
       if (!quarterlyData[key]) {
         quarterlyData[key] = {
@@ -79,7 +131,7 @@ export async function GET() {
       quarterlyData[key].reportCount++;
     });
 
-    employerReports.forEach((report) => {
+    employerReportsWithItems.forEach((report) => {
       const key = `${report.year}-${report.quarter}`;
       if (!quarterlyData[key]) {
         quarterlyData[key] = {
@@ -106,7 +158,7 @@ export async function GET() {
     // Calculate top spenders - lobbyists
     const lobbyistSpending: Record<string, { name: string; total: number }> =
       {};
-    lobbyistReports.forEach((report) => {
+    lobbyistReportsWithItems.forEach((report) => {
       const id = report.lobbyist.id;
       if (!lobbyistSpending[id]) {
         lobbyistSpending[id] = {
@@ -141,7 +193,7 @@ export async function GET() {
 
     // Calculate spending by official (from line items)
     const officialSpending: Record<string, number> = {};
-    lobbyistReports.forEach((report) => {
+    lobbyistReportsWithItems.forEach((report) => {
       report.lineItems.forEach((item) => {
         if (!officialSpending[item.officialName]) {
           officialSpending[item.officialName] = 0;

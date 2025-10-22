@@ -20,11 +20,6 @@ async function getReports(userId: string) {
         employerId: employer.id,
       },
       include: {
-        lineItems: {
-          orderBy: {
-            date: "desc",
-          },
-        },
         lobbyistPayments: {
           include: {
             lobbyist: {
@@ -38,7 +33,35 @@ async function getReports(userId: string) {
       orderBy: [{ year: "desc" }, { quarter: "desc" }],
     });
 
-    return reports;
+    // Fetch all lineItems for these reports
+    const reportIds = reports.map((r) => r.id);
+    const allLineItems = await prisma.expenseLineItem.findMany({
+      where: {
+        reportId: { in: reportIds },
+        reportType: "EMPLOYER",
+      },
+      orderBy: {
+        date: "desc",
+      },
+    });
+
+    // Group lineItems by reportId
+    const lineItemsByReport = allLineItems.reduce(
+      (acc, item) => {
+        if (!acc[item.reportId]) acc[item.reportId] = [];
+        acc[item.reportId].push(item);
+        return acc;
+      },
+      {} as Record<string, typeof allLineItems>
+    );
+
+    // Attach lineItems to each report
+    const reportsWithDetails = reports.map((report) => ({
+      ...report,
+      lineItems: lineItemsByReport[report.id] || [],
+    }));
+
+    return reportsWithDetails;
   } catch (error) {
     console.error("Error fetching employer expense reports:", error);
     return [];

@@ -19,17 +19,38 @@ async function getReports(userId: string) {
       where: {
         lobbyistId: lobbyist.id,
       },
-      include: {
-        lineItems: {
-          orderBy: {
-            date: "desc",
-          },
-        },
-      },
       orderBy: [{ year: "desc" }, { quarter: "desc" }],
     });
 
-    return reports;
+    // Fetch all lineItems for these reports
+    const reportIds = reports.map((r) => r.id);
+    const allLineItems = await prisma.expenseLineItem.findMany({
+      where: {
+        reportId: { in: reportIds },
+        reportType: "LOBBYIST",
+      },
+      orderBy: {
+        date: "desc",
+      },
+    });
+
+    // Group lineItems by reportId
+    const lineItemsByReport = allLineItems.reduce(
+      (acc, item) => {
+        if (!acc[item.reportId]) acc[item.reportId] = [];
+        acc[item.reportId].push(item);
+        return acc;
+      },
+      {} as Record<string, typeof allLineItems>
+    );
+
+    // Attach lineItems to each report
+    const reportsWithLineItems = reports.map((report) => ({
+      ...report,
+      lineItems: lineItemsByReport[report.id] || [],
+    }));
+
+    return reportsWithLineItems;
   } catch (error) {
     console.error("Error fetching lobbyist expense reports:", error);
     return [];

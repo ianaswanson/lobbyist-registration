@@ -19,7 +19,6 @@ async function getReport(userId: string, reportId: string) {
     const report = await prisma.employerExpenseReport.findUnique({
       where: { id: reportId },
       include: {
-        lineItems: true,
         lobbyistPayments: {
           include: {
             lobbyist: {
@@ -32,12 +31,22 @@ async function getReport(userId: string, reportId: string) {
       },
     });
 
+    if (!report) return null;
+
+    // Fetch lineItems separately
+    const lineItems = await prisma.expenseLineItem.findMany({
+      where: {
+        reportId: report.id,
+        reportType: "EMPLOYER",
+      },
+    });
+
     // Verify this report belongs to this employer
-    if (report && report.employerId !== employer.id) {
+    if (report.employerId !== employer.id) {
       return null;
     }
 
-    return report;
+    return { ...report, lineItems };
   } catch (error) {
     console.error("Error fetching report:", error);
     return null;
