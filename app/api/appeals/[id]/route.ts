@@ -12,9 +12,10 @@ import { prisma } from "@/lib/db";
  */
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id: appealId } = await params
     const session = await auth();
 
     if (!session) {
@@ -26,7 +27,6 @@ export async function PATCH(
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
-    const appealId = params.id;
     const body = await request.json();
     const { status, hearingDate, decision } = body;
 
@@ -97,9 +97,10 @@ export async function PATCH(
  */
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id: appealId } = await params
     const session = await auth();
 
     if (!session) {
@@ -111,7 +112,6 @@ export async function POST(
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
-    const appealId = params.id;
     const body = await request.json();
     const { outcome, decision } = body;
 

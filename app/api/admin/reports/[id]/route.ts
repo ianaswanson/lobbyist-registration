@@ -9,9 +9,11 @@ import { ReportStatus } from "@prisma/client"
  */
 export async function POST(
   req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
+
     // 1. Check authentication and admin role
     const session = await auth()
     if (!session?.user || session.user.role !== "ADMIN") {
@@ -56,7 +58,7 @@ export async function POST(
     let report: any
     if (reportType === "lobbyist") {
       report = await prisma.lobbyistExpenseReport.findUnique({
-        where: { id: params.id },
+        where: { id },
         include: {
           lobbyist: {
             select: {
@@ -68,7 +70,7 @@ export async function POST(
       })
     } else {
       report = await prisma.employerExpenseReport.findUnique({
-        where: { id: params.id },
+        where: { id },
         include: {
           employer: {
             select: {
@@ -117,7 +119,7 @@ export async function POST(
     let updatedReport: any
     if (reportType === "lobbyist") {
       updatedReport = await prisma.lobbyistExpenseReport.update({
-        where: { id: params.id },
+        where: { id },
         data: {
           status: newStatus,
           reviewedBy: session.user.id,
@@ -127,7 +129,7 @@ export async function POST(
       })
     } else {
       updatedReport = await prisma.employerExpenseReport.update({
-        where: { id: params.id },
+        where: { id },
         data: {
           status: newStatus,
           reviewedBy: session.user.id,
@@ -199,9 +201,11 @@ export async function POST(
  */
 export async function GET(
   req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
+
     // 1. Check authentication and admin role
     const session = await auth()
     if (!session?.user || session.user.role !== "ADMIN") {
@@ -216,7 +220,7 @@ export async function GET(
     let report: any
     if (reportType === "lobbyist") {
       report = await prisma.lobbyistExpenseReport.findUnique({
-        where: { id: params.id },
+        where: { id },
         include: {
           lobbyist: {
             select: {
@@ -229,7 +233,7 @@ export async function GET(
       })
     } else {
       report = await prisma.employerExpenseReport.findUnique({
-        where: { id: params.id },
+        where: { id },
         include: {
           employer: {
             select: {

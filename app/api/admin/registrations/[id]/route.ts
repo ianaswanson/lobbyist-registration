@@ -9,9 +9,11 @@ import { RegistrationStatus } from "@prisma/client"
  */
 export async function POST(
   req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
+
     // 1. Check authentication and admin role
     const session = await auth()
     if (!session?.user || session.user.role !== "ADMIN") {
@@ -39,7 +41,7 @@ export async function POST(
 
     // 4. Find the lobbyist registration
     const lobbyist = await prisma.lobbyist.findUnique({
-      where: { id: params.id },
+      where: { id },
       include: {
         user: {
           select: {
@@ -74,7 +76,7 @@ export async function POST(
         : RegistrationStatus.REJECTED
 
     const updatedLobbyist = await prisma.lobbyist.update({
-      where: { id: params.id },
+      where: { id },
       data: {
         status: newStatus,
         reviewedBy: session.user.id,
@@ -132,9 +134,11 @@ export async function POST(
  */
 export async function GET(
   req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
+
     // 1. Check authentication and admin role
     const session = await auth()
     if (!session?.user || session.user.role !== "ADMIN") {
@@ -143,7 +147,7 @@ export async function GET(
 
     // 2. Fetch registration with related data
     const lobbyist = await prisma.lobbyist.findUnique({
-      where: { id: params.id },
+      where: { id },
       include: {
         user: {
           select: {

@@ -9,9 +9,11 @@ import { ReportStatus, ExpenseReportType } from "@prisma/client"
  */
 export async function GET(
   req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
+
     // 1. Check authentication
     const session = await auth()
     if (!session?.user) {
@@ -33,7 +35,7 @@ export async function GET(
     // 3. Fetch the specific report
     const report = await prisma.employerExpenseReport.findUnique({
       where: {
-        id: params.id,
+        id,
       },
       include: {
         lineItems: {
@@ -83,9 +85,11 @@ export async function GET(
  */
 export async function DELETE(
   req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
+
     // 1. Check authentication
     const session = await auth()
     if (!session?.user) {
@@ -107,7 +111,7 @@ export async function DELETE(
     // 3. Find the report
     const report = await prisma.employerExpenseReport.findUnique({
       where: {
-        id: params.id,
+        id,
       },
     })
 
@@ -139,7 +143,7 @@ export async function DELETE(
       // Delete line items
       await tx.expenseLineItem.deleteMany({
         where: {
-          reportId: params.id,
+          reportId: id,
           reportType: ExpenseReportType.EMPLOYER,
         },
       })
@@ -147,14 +151,14 @@ export async function DELETE(
       // Delete lobbyist payments
       await tx.employerLobbyistPayment.deleteMany({
         where: {
-          employerReportId: params.id,
+          employerReportId: id,
         },
       })
 
       // Delete the report
       await tx.employerExpenseReport.delete({
         where: {
-          id: params.id,
+          id,
         },
       })
     })

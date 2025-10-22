@@ -9,9 +9,11 @@ import { ReportStatus, ExpenseReportType } from "@prisma/client"
  */
 export async function GET(
   req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
+
     // 1. Check authentication
     const session = await auth()
     if (!session?.user) {
@@ -33,7 +35,7 @@ export async function GET(
     // 3. Fetch the specific report
     const report = await prisma.lobbyistExpenseReport.findUnique({
       where: {
-        id: params.id,
+        id,
       },
       include: {
         lineItems: {
@@ -74,9 +76,11 @@ export async function GET(
  */
 export async function DELETE(
   req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
+
     // 1. Check authentication
     const session = await auth()
     if (!session?.user) {
@@ -98,7 +102,7 @@ export async function DELETE(
     // 3. Find the report
     const report = await prisma.lobbyistExpenseReport.findUnique({
       where: {
-        id: params.id,
+        id,
       },
     })
 
@@ -130,7 +134,7 @@ export async function DELETE(
       // Delete line items first
       await tx.expenseLineItem.deleteMany({
         where: {
-          reportId: params.id,
+          reportId: id,
           reportType: ExpenseReportType.LOBBYIST,
         },
       })
@@ -138,7 +142,7 @@ export async function DELETE(
       // Delete the report
       await tx.lobbyistExpenseReport.delete({
         where: {
-          id: params.id,
+          id,
         },
       })
     })

@@ -10,9 +10,10 @@ const prisma = new PrismaClient();
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
     const session = await auth();
 
     if (!session) {
@@ -26,7 +27,7 @@ export async function GET(
 
     const violation = await prisma.violation.findUnique({
       where: {
-        id: params.id,
+        id,
       },
       include: {
         appeal: true,
@@ -62,9 +63,10 @@ export async function GET(
  */
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
     const session = await auth();
 
     if (!session) {
@@ -121,7 +123,7 @@ export async function PATCH(
 
     const violation = await prisma.violation.update({
       where: {
-        id: params.id,
+        id,
       },
       data: updateData,
       include: {
@@ -147,9 +149,10 @@ export async function PATCH(
  */
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
     const session = await auth();
 
     if (!session) {
@@ -165,7 +168,7 @@ export async function DELETE(
     // We don't hard-delete for audit trail purposes
     const violation = await prisma.violation.update({
       where: {
-        id: params.id,
+        id,
       },
       data: {
         status: "WAIVED",

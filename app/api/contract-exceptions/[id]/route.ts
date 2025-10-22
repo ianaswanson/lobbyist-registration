@@ -5,14 +5,15 @@ import { prisma } from "@/lib/db"
 // GET /api/contract-exceptions/[id] - Get single exception
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
     const session = await auth()
     const isAdmin = session?.user?.role === "ADMIN"
 
     const exception = await prisma.contractException.findUnique({
-      where: { id: params.id },
+      where: { id },
     })
 
     if (!exception) {
@@ -40,9 +41,10 @@ export async function GET(
 // PATCH /api/contract-exceptions/[id] - Update exception (Admin only)
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
     const session = await auth()
 
     if (!session || session.user?.role !== "ADMIN") {
@@ -75,7 +77,7 @@ export async function PATCH(
     }
 
     const exception = await prisma.contractException.update({
-      where: { id: params.id },
+      where: { id },
       data: updateData,
     })
 
@@ -92,9 +94,10 @@ export async function PATCH(
 // DELETE /api/contract-exceptions/[id] - Delete exception (Admin only)
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
     const session = await auth()
 
     if (!session || session.user?.role !== "ADMIN") {
@@ -102,7 +105,7 @@ export async function DELETE(
     }
 
     await prisma.contractException.delete({
-      where: { id: params.id },
+      where: { id },
     })
 
     return NextResponse.json({ success: true })
