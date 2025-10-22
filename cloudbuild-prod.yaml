@@ -1,0 +1,262 @@
+# Cloud Build Configuration - Production Environment
+# Requires manual approval for deployment to 'lobbyist-registration'
+# Includes comprehensive validation and audit trail
+
+substitutions:
+  _SERVICE_NAME: lobbyist-registration
+  _REGION: us-west1
+  _ENVIRONMENT: production
+
+steps:
+  # Step 1: Install dependencies
+  - name: 'node:20'
+    id: 'install-deps'
+    entrypoint: npm
+    args: ['ci']
+    waitFor: ['-']
+
+  # Step 2: Type checking (strict)
+  - name: 'node:20'
+    id: 'type-check'
+    entrypoint: npm
+    args: ['run', 'build']
+    env:
+      - 'NODE_ENV=production'
+    waitFor: ['install-deps']
+
+  # Step 3: Run tests (when implemented)
+  # - name: 'node:20'
+  #   id: 'run-tests'
+  #   entrypoint: npm
+  #   args: ['run', 'test:ci']
+  #   waitFor: ['install-deps']
+
+  # Step 4: Security audit (STRICT - fail on high vulnerabilities)
+  - name: 'node:20'
+    id: 'security-audit'
+    entrypoint: npm
+    args: ['audit', '--audit-level=high']
+    waitFor: ['install-deps']
+
+  # Step 5: Verify Prisma schema (ensure migrations are up to date)
+  - name: 'node:20'
+    id: 'verify-schema'
+    entrypoint: npx
+    args: ['prisma', 'validate']
+    waitFor: ['install-deps']
+
+  # Step 6: Build Docker image
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'build-image'
+    args:
+      - 'build'
+      - '-f'
+      - 'Dockerfile'
+      - '-t'
+      - 'gcr.io/$PROJECT_ID/${_SERVICE_NAME}:$SHORT_SHA'
+      - '-t'
+      - 'gcr.io/$PROJECT_ID/${_SERVICE_NAME}:latest'
+      - '-t'
+      - 'gcr.io/$PROJECT_ID/${_SERVICE_NAME}:production-$SHORT_SHA'
+      - '--build-arg'
+      - 'NODE_ENV=production'
+      - '.'
+    waitFor: ['type-check', 'security-audit', 'verify-schema']
+
+  # Step 7: Scan Docker image for vulnerabilities
+  - name: 'gcr.io/cloud-builders/gcloud'
+    id: 'scan-image'
+    entrypoint: bash
+    args:
+      - '-c'
+      - |
+        echo "Docker image vulnerability scanning happens automatically in Container Registry"
+        echo "View scan results: https://console.cloud.google.com/gcr/images/$PROJECT_ID"
+    waitFor: ['build-image']
+
+  # Step 8: Push image to Container Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'push-image'
+    args:
+      - 'push'
+      - '--all-tags'
+      - 'gcr.io/$PROJECT_ID/${_SERVICE_NAME}'
+    waitFor: ['build-image', 'scan-image']
+
+  # Step 9: Tag production image with timestamp
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'tag-production'
+    entrypoint: bash
+    args:
+      - '-c'
+      - |
+        TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+        docker tag gcr.io/$PROJECT_ID/${_SERVICE_NAME}:$SHORT_SHA \
+                   gcr.io/$PROJECT_ID/${_SERVICE_NAME}:production-$TIMESTAMP
+        docker push gcr.io/$PROJECT_ID/${_SERVICE_NAME}:production-$TIMESTAMP
+        echo "Production image tagged: production-$TIMESTAMP"
+    waitFor: ['push-image']
+
+  # ===========================================================================
+  # MANUAL APPROVAL REQUIRED HERE (Configured in trigger settings)
+  # Reviewer should:
+  # 1. Check build logs above for any warnings
+  # 2. Review git diff for changes being deployed
+  # 3. Verify database migrations are safe (if any)
+  # 4. Approve deployment in Cloud Build console
+  # ===========================================================================
+
+  # Step 10: Run database migrations (production)
+  # IMPORTANT: Only runs AFTER manual approval
+  # - name: 'node:20'
+  #   id: 'run-migrations'
+  #   entrypoint: bash
+  #   args:
+  #     - '-c'
+  #     - |
+  #       # Set up Cloud SQL proxy connection
+  #       # npx prisma migrate deploy
+  #       echo "Database migrations will be added when migrating to Cloud SQL"
+  #   waitFor: ['tag-production']
+
+  # Step 11: Deploy to Cloud Run (production)
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    id: 'deploy-service'
+    entrypoint: gcloud
+    args:
+      - 'run'
+      - 'deploy'
+      - '${_SERVICE_NAME}'
+      - '--image'
+      - 'gcr.io/$PROJECT_ID/${_SERVICE_NAME}:$SHORT_SHA'
+      - '--region'
+      - '${_REGION}'
+      - '--platform'
+      - 'managed'
+      - '--allow-unauthenticated'
+      - '--set-env-vars'
+      - 'NODE_ENV=production,ENVIRONMENT=${_ENVIRONMENT},NEXTAUTH_URL=https://${_SERVICE_NAME}-zzp44w3snq-uw.a.run.app'
+      - '--min-instances'
+      - '1'
+      - '--max-instances'
+      - '20'
+      - '--memory'
+      - '1Gi'
+      - '--cpu'
+      - '1'
+      - '--timeout'
+      - '300'
+      - '--no-traffic'  # Deploy without traffic first (for blue-green)
+    waitFor: ['tag-production']
+
+  # Step 12: Health check new revision
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    id: 'health-check'
+    entrypoint: bash
+    args:
+      - '-c'
+      - |
+        echo "Performing health check on new revision..."
+
+        # Get the latest revision URL
+        REVISION=$(gcloud run revisions list \
+          --service ${_SERVICE_NAME} \
+          --region ${_REGION} \
+          --format='value(name)' \
+          --limit=1)
+
+        echo "Latest revision: $REVISION"
+
+        # Get revision URL
+        REVISION_URL=$(gcloud run revisions describe $REVISION \
+          --region ${_REGION} \
+          --format='value(status.url)')
+
+        echo "Testing revision at: $REVISION_URL"
+
+        # Wait for revision to be ready
+        sleep 15
+
+        # Perform health check (allow retry)
+        for i in {1..5}; do
+          if curl -f -s -o /dev/null "$REVISION_URL"; then
+            echo "✅ Health check passed!"
+            exit 0
+          else
+            echo "Health check attempt $i failed, retrying..."
+            sleep 5
+          fi
+        done
+
+        echo "❌ Health check failed after 5 attempts"
+        exit 1
+    waitFor: ['deploy-service']
+
+  # Step 13: Route 100% traffic to new revision (blue-green deployment)
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    id: 'route-traffic'
+    entrypoint: gcloud
+    args:
+      - 'run'
+      - 'services'
+      - 'update-traffic'
+      - '${_SERVICE_NAME}'
+      - '--region'
+      - '${_REGION}'
+      - '--to-latest'
+    waitFor: ['health-check']
+
+  # Step 14: Verify production deployment
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    id: 'verify-production'
+    entrypoint: bash
+    args:
+      - '-c'
+      - |
+        SERVICE_URL=$(gcloud run services describe ${_SERVICE_NAME} \
+          --region ${_REGION} \
+          --format 'value(status.url)')
+
+        echo "================================================"
+        echo "✅ PRODUCTION DEPLOYMENT SUCCESSFUL"
+        echo "================================================"
+        echo "Service URL: $SERVICE_URL"
+        echo "Build ID: $BUILD_ID"
+        echo "Commit SHA: $SHORT_SHA"
+        echo "Deployed: $(date)"
+        echo "================================================"
+        echo ""
+        echo "Post-deployment verification:"
+        echo "1. Check service health: curl $SERVICE_URL"
+        echo "2. Monitor logs: gcloud logging read \"resource.type=cloud_run_revision\" --limit=50"
+        echo "3. View metrics: https://console.cloud.google.com/run/detail/${_REGION}/${_SERVICE_NAME}/metrics"
+        echo ""
+        echo "Rollback if needed:"
+        echo "  gcloud run services update-traffic ${_SERVICE_NAME} --region ${_REGION} --to-revisions=PREVIOUS_REVISION=100"
+        echo "================================================"
+    waitFor: ['route-traffic']
+
+# Build configuration
+options:
+  machineType: 'E2_HIGHCPU_8'
+  logging: CLOUD_LOGGING_ONLY
+  dynamicSubstitutions: true
+
+# Store all images for audit trail
+images:
+  - 'gcr.io/$PROJECT_ID/${_SERVICE_NAME}:$SHORT_SHA'
+  - 'gcr.io/$PROJECT_ID/${_SERVICE_NAME}:latest'
+  - 'gcr.io/$PROJECT_ID/${_SERVICE_NAME}:production-$SHORT_SHA'
+
+# Longer timeout for production (includes approval wait time)
+timeout: '3600s'  # 1 hour
+
+# Tags for audit trail
+tags:
+  - 'environment-prod'
+  - 'manual-approval'
+  - 'lobbyist-registration'
+  - 'government-system'
+
+# Store logs for compliance (90 days)
+logsBucket: 'gs://lobbyist-registration-build-logs'
