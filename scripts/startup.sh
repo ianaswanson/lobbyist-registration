@@ -4,44 +4,74 @@ set -e
 echo "🚀 Starting Lobbyist Registration System..."
 echo ""
 
-# Database path (relative to /app in container)
-DB_PATH="/app/prisma/dev.db"
-
 # Function to check if database has data
-check_database() {
-  if [ ! -f "$DB_PATH" ]; then
-    echo "📊 Database file does not exist"
-    return 1
-  fi
+check_database_data() {
+  echo "📊 Checking database for existing data..."
 
-  # Check if User table has any records
-  # Using a simple query that works with sqlite3
-  USER_COUNT=$(sqlite3 "$DB_PATH" "SELECT COUNT(*) FROM User;" 2>/dev/null || echo "0")
+  # Try to count users using Prisma
+  # This approach works whether schema exists or not
+  USER_COUNT=$(node -e "
+    const { PrismaClient } = require('@prisma/client');
+    const prisma = new PrismaClient();
 
-  if [ "$USER_COUNT" = "0" ]; then
-    echo "📊 Database exists but is empty (User count: 0)"
-    return 1
-  else
-    echo "✅ Database has data (User count: $USER_COUNT)"
-    return 0
-  fi
+    prisma.\$connect()
+      .then(() => prisma.user.count())
+      .then(count => {
+        console.log(count);
+        process.exit(0);
+      })
+      .catch(err => {
+        // If table doesn't exist or connection fails, return 0
+        console.log('0');
+        process.exit(0);
+      })
+      .finally(() => prisma.\$disconnect());
+  " 2>/dev/null || echo "0")
+
+  echo "$USER_COUNT"
 }
 
-# Check and seed database if needed
-if ! check_database; then
-  echo ""
-  echo "🌱 Database is empty or missing - initializing..."
+# Check if database has data
+USER_COUNT=$(check_database_data)
+
+if [ "$USER_COUNT" = "0" ]; then
+  echo "📊 Database is empty (User count: 0)"
   echo ""
 
-  # Ensure prisma directory exists
-  mkdir -p /app/prisma
+  # Check if migrations table exists to determine if we need migrations
+  MIGRATIONS_EXIST=$(node -e "
+    const { PrismaClient } = require('@prisma/client');
+    const prisma = new PrismaClient();
 
-  # Run migrations to create tables
-  echo "📦 Running database migrations..."
-  npx prisma migrate deploy
+    prisma.\$connect()
+      .then(() => prisma.\$queryRaw\`
+        SELECT COUNT(*) as count
+        FROM information_schema.tables
+        WHERE table_schema = 'public'
+        AND table_name = '_prisma_migrations'
+      \`)
+      .then(result => {
+        console.log(result[0].count > 0 ? 'yes' : 'no');
+        process.exit(0);
+      })
+      .catch(err => {
+        console.log('no');
+        process.exit(0);
+      })
+      .finally(() => prisma.\$disconnect());
+  " 2>/dev/null || echo "no")
+
+  if [ "$MIGRATIONS_EXIST" = "no" ]; then
+    # Fresh database - run migrations first
+    echo "🔧 Running database migrations..."
+    npx prisma migrate deploy
+    echo ""
+  else
+    echo "✅ Database schema already exists (managed outside migrations)"
+    echo ""
+  fi
 
   # Seed the database with test data
-  echo ""
   echo "🌱 Seeding database with test data..."
   npm run db:seed
 
@@ -49,7 +79,8 @@ if ! check_database; then
   echo "✅ Database initialization complete!"
   echo ""
 else
-  echo "✅ Database already initialized - skipping seed"
+  echo "✅ Database already has data (User count: $USER_COUNT)"
+  echo "✅ Skipping migrations and seed"
   echo ""
 fi
 

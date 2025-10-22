@@ -24,8 +24,8 @@ FROM node:20-alpine AS runner
 
 WORKDIR /app
 
-# Install sqlite3 for database operations (needed for startup script)
-RUN apk add --no-cache sqlite
+# Install postgresql-client for database operations (needed for startup script)
+RUN apk add --no-cache postgresql-client
 
 # Copy necessary files from builder
 COPY --from=builder /app/next.config.ts ./
@@ -58,7 +58,7 @@ RUN chmod +x /app/startup.sh
 # Set environment
 ENV NODE_ENV=production
 ENV PORT=8080
-ENV DATABASE_URL="file:/app/prisma/dev.db"
+# DATABASE_URL will be provided by Cloud Run from Secret Manager
 
 # Use startup script for runtime seeding
 CMD ["/app/startup.sh"]
