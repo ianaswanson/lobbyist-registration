@@ -28,8 +28,10 @@ https://console.cloud.google.com/cloud-build/builds?project=lobbyist-475218
 - ✅ roles/iam.serviceAccountUser - Act as service account
 
 ## Test History
-1. **Build e97c1d9e** - Failed (permissions not yet granted)
-2. **Current build** - Testing with all permissions in place
+1. **Build e97c1d9e** - Failed (Cloud Run admin permission missing)
+2. **Build 962d3699** - Failed (NEXTAUTH_URL environment variable conflict)
+3. **Build d98ff6ab** - Failed (serviceAccountUser permission missing)
+4. **Current build** - Testing with serviceAccountUser permission granted
 
 ---
 
