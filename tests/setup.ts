@@ -40,3 +40,18 @@ vi.mock("@/lib/auth", () => ({
 // Set test environment variables
 process.env.NODE_ENV = "test";
 process.env.DATABASE_URL = "file:./test.db";
+process.env.NEXTAUTH_URL = "http://localhost:3000";
+process.env.NEXTAUTH_SECRET = "test-secret-key-for-testing-only";
+
+// Mock Next.js server modules
+vi.mock("next/server", () => ({
+  NextRequest: class NextRequest {
+    constructor(public url: string) {}
+  },
+  NextResponse: {
+    json: (data: unknown, init?: { status?: number }) => ({
+      json: async () => data,
+      status: init?.status || 200,
+    }),
+  },
+}));

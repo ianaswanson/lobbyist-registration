@@ -15,6 +15,11 @@ export default defineConfig({
       "tests/e2e/**",
       "**/*.e2e.{test,spec}.{js,ts,jsx,tsx}",
     ],
+    environmentOptions: {
+      jsdom: {
+        resources: "usable",
+      },
+    },
     coverage: {
       provider: "v8",
       reporter: ["text", "json", "html"],
