@@ -22,6 +22,15 @@ This file tests the Cloud Build auto-deployment workflow for the development env
 ## Monitor Build Progress
 https://console.cloud.google.com/cloud-build/builds?project=lobbyist-475218
 
+## Permissions Granted
+- ✅ roles/logging.logWriter - Write logs to Cloud Logging
+- ✅ roles/run.admin - Deploy Cloud Run services
+- ✅ roles/iam.serviceAccountUser - Act as service account
+
+## Test History
+1. **Build e97c1d9e** - Failed (permissions not yet granted)
+2. **Current build** - Testing with all permissions in place
+
 ---
 
-This is a test commit to verify the Cloud Build Triggers setup is working correctly.
+This is a test commit to verify the Cloud Build Triggers setup is working correctly with all required permissions.
