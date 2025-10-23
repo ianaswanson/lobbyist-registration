@@ -83,12 +83,17 @@ async function createBaseUsers() {
   console.log("   ✓ Created 1 admin user");
 
   // 3 APPROVED lobbyist users
+  const lobbyistData = [
+    { email: "john.doe@lobbying.com", name: "John Doe" },
+    { email: "jane.smith@advocacy.com", name: "Jane Smith" },
+    { email: "michael.chen@greenlobby.org", name: "Michael Chen" },
+  ];
   const lobbyistUsers = [];
-  for (let i = 1; i <= 3; i++) {
+  for (const data of lobbyistData) {
     const user = await prisma.user.create({
       data: {
-        email: `lobbyist${i}@example.com`,
-        name: `Lobbyist ${i}`,
+        email: data.email,
+        name: data.name,
         role: UserRole.LOBBYIST,
         password: await hashPassword("lobbyist123"),
       },
@@ -98,12 +103,23 @@ async function createBaseUsers() {
   console.log("   ✓ Created 3 approved lobbyist users");
 
   // 3 PENDING lobbyist users (for admin review)
+  const pendingLobbyistData = [
+    {
+      email: "sarah.martinez@portlandadvocates.com",
+      name: "Sarah Martinez",
+    },
+    {
+      email: "robert.johnson@transportationalliance.org",
+      name: "Robert Johnson",
+    },
+    { email: "emily.wong@housingfirst.org", name: "Emily Wong" },
+  ];
   const pendingLobbyistUsers = [];
-  for (let i = 1; i <= 3; i++) {
+  for (const data of pendingLobbyistData) {
     const user = await prisma.user.create({
       data: {
-        email: `pending${i}@example.com`,
-        name: `Pending Lobbyist ${i}`,
+        email: data.email,
+        name: data.name,
         role: UserRole.LOBBYIST,
         password: await hashPassword("lobbyist123"),
       },
@@ -113,12 +129,17 @@ async function createBaseUsers() {
   console.log("   ✓ Created 3 pending lobbyist users");
 
   // 3 employer users
+  const employerData = [
+    { email: "contact@techcorp.com", name: "Sarah Johnson" },
+    { email: "info@healthadvocates.org", name: "David Kim" },
+    { email: "contact@greenenergy.org", name: "Maria Rodriguez" },
+  ];
   const employerUsers = [];
-  for (let i = 1; i <= 3; i++) {
+  for (const data of employerData) {
     const user = await prisma.user.create({
       data: {
-        email: `employer${i}@example.com`,
-        name: `Employer Contact ${i}`,
+        email: data.email,
+        name: data.name,
         role: UserRole.EMPLOYER,
         password: await hashPassword("employer123"),
       },
@@ -128,12 +149,17 @@ async function createBaseUsers() {
   console.log("   ✓ Created 3 employer users");
 
   // 3 board member users
+  const boardMemberData = [
+    { email: "commissioner@multnomah.gov", name: "Commissioner Williams" },
+    { email: "commissioner.chen@multnomah.gov", name: "Commissioner Chen" },
+    { email: "commissioner.garcia@multnomah.gov", name: "Commissioner Garcia" },
+  ];
   const boardMemberUsers = [];
-  for (let i = 1; i <= 3; i++) {
+  for (const data of boardMemberData) {
     const user = await prisma.user.create({
       data: {
-        email: `commissioner${i}@multnomah.gov`,
-        name: `Commissioner ${i}`,
+        email: data.email,
+        name: data.name,
         role: UserRole.BOARD_MEMBER,
         password: await hashPassword("board123"),
       },
@@ -175,20 +201,48 @@ async function createApprovedData(
   // ──────────────────────────────────────────────────────────────────────
   // 3 APPROVED LOBBYISTS
   // ──────────────────────────────────────────────────────────────────────
+  const approvedLobbyistData = [
+    {
+      name: "John Doe",
+      email: "john.doe@lobbying.com",
+      phone: "503-555-0101",
+      address: "123 Main St, Portland, OR 97201",
+      hours: 25.5,
+      regDate: "2025-01-15",
+    },
+    {
+      name: "Jane Smith",
+      email: "jane.smith@advocacy.com",
+      phone: "503-555-0102",
+      address: "456 Oak Ave, Portland, OR 97202",
+      hours: 18.0,
+      regDate: "2025-02-01",
+    },
+    {
+      name: "Michael Chen",
+      email: "michael.chen@greenlobby.org",
+      phone: "503-555-0103",
+      address: "789 Elm St, Portland, OR 97203",
+      hours: 22.5,
+      regDate: "2025-02-15",
+    },
+  ];
+
   const lobbyists = [];
   for (let i = 0; i < 3; i++) {
+    const data = approvedLobbyistData[i];
     const lobbyist = await prisma.lobbyist.create({
       data: {
         userId: users.lobbyistUsers[i].id,
-        name: `Lobbyist ${i + 1}`,
-        email: `lobbyist${i + 1}@example.com`,
-        phone: `503-555-010${i + 1}`,
-        address: `${100 + i * 100} Main St, Portland, OR 9720${i + 1}`,
+        name: data.name,
+        email: data.email,
+        phone: data.phone,
+        address: data.address,
         status: RegistrationStatus.APPROVED,
-        hoursCurrentQuarter: 25.5,
-        registrationDate: new Date(`2025-0${i + 1}-15`),
+        hoursCurrentQuarter: data.hours,
+        registrationDate: new Date(data.regDate),
         reviewedBy: users.adminUser.id,
-        reviewedAt: new Date(`2025-0${i + 1}-16`),
+        reviewedAt: new Date(data.regDate.replace(/-15$/, "-16")),
       },
     });
     lobbyists.push(lobbyist);
@@ -198,27 +252,44 @@ async function createApprovedData(
   // ──────────────────────────────────────────────────────────────────────
   // 3 EMPLOYERS
   // ──────────────────────────────────────────────────────────────────────
-  const employers = [];
-  const employerNames = [
-    "TechCorp Industries",
-    "Healthcare Advocates Group",
-    "Green Energy Coalition",
-  ];
-  const employerDescriptions = [
-    "Technology consulting and software development firm specializing in government solutions",
-    "Non-profit organization advocating for healthcare policy reform",
-    "Environmental advocacy organization promoting renewable energy and climate action",
+  const employersData = [
+    {
+      name: "TechCorp Industries",
+      email: "contact@techcorp.com",
+      phone: "503-555-0201",
+      address: "789 Business Pkwy, Portland, OR 97207",
+      description:
+        "Technology consulting and software development firm specializing in government solutions",
+    },
+    {
+      name: "Healthcare Advocates Group",
+      email: "info@healthadvocates.org",
+      phone: "503-555-0202",
+      address: "321 Medical Plaza, Portland, OR 97208",
+      description:
+        "Non-profit organization advocating for healthcare policy reform",
+    },
+    {
+      name: "Green Energy Coalition",
+      email: "contact@greenenergy.org",
+      phone: "503-555-0203",
+      address: "444 Renewable Way, Portland, OR 97209",
+      description:
+        "Environmental advocacy organization promoting renewable energy and climate action",
+    },
   ];
 
+  const employers = [];
   for (let i = 0; i < 3; i++) {
+    const data = employersData[i];
     const employer = await prisma.employer.create({
       data: {
         userId: users.employerUsers[i].id,
-        name: employerNames[i],
-        email: `employer${i + 1}@example.com`,
-        phone: `503-555-020${i + 1}`,
-        address: `${200 + i * 100} Business Pkwy, Portland, OR 9720${i + 3}`,
-        businessDescription: employerDescriptions[i],
+        name: data.name,
+        email: data.email,
+        phone: data.phone,
+        address: data.address,
+        businessDescription: data.description,
       },
     });
     employers.push(employer);
@@ -232,7 +303,7 @@ async function createApprovedData(
   const subjectsOfInterest = [
     "Technology policy, data privacy, government IT contracts",
     "Healthcare funding, Medicaid expansion, mental health services",
-    "Climate action, renewable energy, environmental regulations",
+    "Renewable energy policy, climate action, carbon reduction",
   ];
 
   for (let i = 0; i < 3; i++) {
@@ -240,7 +311,7 @@ async function createApprovedData(
       data: {
         lobbyistId: lobbyists[i].id,
         employerId: employers[i].id,
-        authorizationDocumentUrl: `/uploads/auth-lobbyist${i + 1}-employer${i + 1}.pdf`,
+        authorizationDocumentUrl: `/uploads/auth-${lobbyists[i].name.toLowerCase().replace(/ /g, "-")}-${employers[i].name.toLowerCase().replace(/ /g, "-")}.pdf`,
         authorizationDate: new Date(`2025-0${i + 1}-10`),
         subjectsOfInterest: subjectsOfInterest[i],
       },
@@ -252,14 +323,33 @@ async function createApprovedData(
   // ──────────────────────────────────────────────────────────────────────
   // 3 BOARD MEMBERS
   // ──────────────────────────────────────────────────────────────────────
+  const boardMembersData = [
+    {
+      name: "Commissioner Williams",
+      district: "District 3",
+      termStart: "2023-01-01",
+    },
+    {
+      name: "Commissioner Chen",
+      district: "District 1",
+      termStart: "2022-01-01",
+    },
+    {
+      name: "Commissioner Garcia",
+      district: "District 2",
+      termStart: "2024-01-01",
+    },
+  ];
+
   const boardMembers = [];
   for (let i = 0; i < 3; i++) {
+    const data = boardMembersData[i];
     const boardMember = await prisma.boardMember.create({
       data: {
         userId: users.boardMemberUsers[i].id,
-        name: `Commissioner ${i + 1}`,
-        district: `District ${i + 1}`,
-        termStart: new Date(`202${2 + i}-01-01`),
+        name: data.name,
+        district: data.district,
+        termStart: new Date(data.termStart),
         isActive: true,
       },
     });
@@ -273,34 +363,335 @@ async function createApprovedData(
   const quarters: Quarter[] = ["Q1", "Q2", "Q3"];
   const lobbyistReports = [];
 
-  for (const lobbyist of lobbyists) {
-    for (const quarter of quarters) {
+  // Expense data organized by lobbyist and quarter (storytelling approach)
+  const expenseData = [
+    // John Doe (Technology Policy) - meets with Commissioner Williams
+    [
+      // Q1
+      {
+        expenses: [
+          {
+            date: "2025-01-22",
+            payee: "Jake's Famous Crawfish",
+            purpose:
+              "Lunch meeting to discuss technology infrastructure budget priorities",
+            amount: 125.5,
+            official: "Commissioner Williams",
+          },
+          {
+            date: "2025-02-15",
+            payee: "Portland City Grill",
+            purpose:
+              "Dinner meeting re: IT modernization roadmap for county services",
+            amount: 142.75,
+            official: "Commissioner Williams",
+          },
+          {
+            date: "2025-03-08",
+            payee: "Starbucks Reserve",
+            purpose: "Coffee meeting about data privacy ordinance amendments",
+            amount: 67.0,
+            official: "Commissioner Williams",
+          },
+        ],
+        total: 335.25,
+        submitted: "2025-04-10",
+      },
+      // Q2
+      {
+        expenses: [
+          {
+            date: "2025-04-18",
+            payee: "Imperial Restaurant",
+            purpose:
+              "Lunch discussion on cybersecurity funding for county systems",
+            amount: 138.25,
+            official: "Commissioner Williams",
+          },
+          {
+            date: "2025-05-22",
+            payee: "Le Pigeon",
+            purpose:
+              "Dinner meeting about cloud migration strategy for public records",
+            amount: 185.0,
+            official: "Commissioner Williams",
+          },
+          {
+            date: "2025-06-10",
+            payee: "Blue Star Donuts",
+            purpose: "Coffee meeting re: open data portal development",
+            amount: 89.25,
+            official: "Commissioner Williams",
+          },
+        ],
+        total: 412.5,
+        submitted: "2025-07-12",
+      },
+      // Q3
+      {
+        expenses: [
+          {
+            date: "2025-07-19",
+            payee: "Screen Door",
+            purpose:
+              "Lunch meeting about digital accessibility compliance requirements",
+            amount: 115.5,
+            official: "Commissioner Williams",
+          },
+          {
+            date: "2025-08-25",
+            payee: "Departure Restaurant",
+            purpose:
+              "Dinner discussion on AI ethics policy for government technology",
+            amount: 172.5,
+            official: "Commissioner Williams",
+          },
+          {
+            date: "2025-09-14",
+            payee: "Coava Coffee",
+            purpose:
+              "Coffee meeting re: broadband expansion in underserved areas",
+            amount: 90.0,
+            official: "Commissioner Williams",
+          },
+        ],
+        total: 378.0,
+        submitted: "2025-10-11",
+      },
+    ],
+    // Jane Smith (Healthcare Policy) - meets with Commissioner Chen
+    [
+      // Q1
+      {
+        expenses: [
+          {
+            date: "2025-01-28",
+            payee: "Andina Restaurant",
+            purpose:
+              "Lunch meeting to discuss Medicaid expansion funding priorities",
+            amount: 152.25,
+            official: "Commissioner Chen",
+          },
+          {
+            date: "2025-02-19",
+            payee: "Higgins Restaurant",
+            purpose:
+              "Dinner meeting re: mental health crisis intervention programs",
+            amount: 198.5,
+            official: "Commissioner Chen",
+          },
+          {
+            date: "2025-03-15",
+            payee: "Heart Coffee",
+            purpose:
+              "Coffee meeting about community health worker certification",
+            amount: 78.0,
+            official: "Commissioner Chen",
+          },
+        ],
+        total: 428.75,
+        submitted: "2025-04-13",
+      },
+      // Q2
+      {
+        expenses: [
+          {
+            date: "2025-04-22",
+            payee: "Ataula",
+            purpose:
+              "Lunch discussion on behavioral health services integration",
+            amount: 142.0,
+            official: "Commissioner Chen",
+          },
+          {
+            date: "2025-05-18",
+            payee: "Nostrana",
+            purpose:
+              "Dinner meeting about healthcare navigator program expansion",
+            amount: 178.0,
+            official: "Commissioner Chen",
+          },
+          {
+            date: "2025-06-12",
+            payee: "Stumptown Coffee",
+            purpose: "Coffee meeting re: maternal health outcome improvements",
+            amount: 75.0,
+            official: "Commissioner Chen",
+          },
+        ],
+        total: 395.0,
+        submitted: "2025-07-14",
+      },
+      // Q3
+      {
+        expenses: [
+          {
+            date: "2025-07-25",
+            payee: "Canard",
+            purpose:
+              "Lunch meeting about substance abuse treatment facility funding",
+            amount: 165.5,
+            official: "Commissioner Chen",
+          },
+          {
+            date: "2025-08-20",
+            payee: "Castagna",
+            purpose:
+              "Dinner discussion on health equity initiatives in rural areas",
+            amount: 205.0,
+            official: "Commissioner Chen",
+          },
+          {
+            date: "2025-09-18",
+            payee: "Courier Coffee",
+            purpose: "Coffee meeting re: prescription drug assistance programs",
+            amount: 75.0,
+            official: "Commissioner Chen",
+          },
+        ],
+        total: 445.5,
+        submitted: "2025-10-10",
+      },
+    ],
+    // Michael Chen (Environmental Policy) - meets with Commissioner Garcia
+    [
+      // Q1
+      {
+        expenses: [
+          {
+            date: "2025-01-30",
+            payee: "Bamboo Sushi",
+            purpose:
+              "Lunch meeting to discuss renewable energy incentive programs",
+            amount: 128.5,
+            official: "Commissioner Garcia",
+          },
+          {
+            date: "2025-02-25",
+            payee: "Beast Restaurant",
+            purpose:
+              "Dinner meeting re: electric vehicle charging infrastructure",
+            amount: 168.0,
+            official: "Commissioner Garcia",
+          },
+          {
+            date: "2025-03-20",
+            payee: "Barista",
+            purpose: "Coffee meeting about solar panel permitting streamlining",
+            amount: 66.0,
+            official: "Commissioner Garcia",
+          },
+        ],
+        total: 362.5,
+        submitted: "2025-04-14",
+      },
+      // Q2
+      {
+        expenses: [
+          {
+            date: "2025-04-24",
+            payee: "Oven and Shaker",
+            purpose:
+              "Lunch discussion on carbon reduction goals for county operations",
+            amount: 135.25,
+            official: "Commissioner Garcia",
+          },
+          {
+            date: "2025-05-28",
+            payee: "Paley's Place",
+            purpose:
+              "Dinner meeting about green building standards for new construction",
+            amount: 195.0,
+            official: "Commissioner Garcia",
+          },
+          {
+            date: "2025-06-16",
+            payee: "Water Avenue Coffee",
+            purpose:
+              "Coffee meeting re: climate action plan implementation timeline",
+            amount: 88.0,
+            official: "Commissioner Garcia",
+          },
+        ],
+        total: 418.25,
+        submitted: "2025-07-13",
+      },
+      // Q3
+      {
+        expenses: [
+          {
+            date: "2025-07-22",
+            payee: "Ox Restaurant",
+            purpose:
+              "Lunch meeting about urban forestry expansion and tree preservation",
+            amount: 145.0,
+            official: "Commissioner Garcia",
+          },
+          {
+            date: "2025-08-28",
+            payee: "Ned Ludd",
+            purpose:
+              "Dinner discussion on composting infrastructure and food waste reduction",
+            amount: 175.0,
+            official: "Commissioner Garcia",
+          },
+          {
+            date: "2025-09-20",
+            payee: "Sterling Coffee",
+            purpose:
+              "Coffee meeting re: watershed protection and stormwater management",
+            amount: 65.0,
+            official: "Commissioner Garcia",
+          },
+        ],
+        total: 385.0,
+        submitted: "2025-10-12",
+      },
+    ],
+  ];
+
+  // Due dates for each quarter
+  const dueDates = {
+    Q1: "2025-04-15",
+    Q2: "2025-07-15",
+    Q3: "2025-10-15",
+  };
+
+  // Create reports and expenses for each lobbyist
+  for (let lobbyistIdx = 0; lobbyistIdx < lobbyists.length; lobbyistIdx++) {
+    const lobbyist = lobbyists[lobbyistIdx];
+    const lobbyistExpenses = expenseData[lobbyistIdx];
+
+    for (let quarterIdx = 0; quarterIdx < quarters.length; quarterIdx++) {
+      const quarter = quarters[quarterIdx];
+      const quarterData = lobbyistExpenses[quarterIdx];
+
       const report = await prisma.lobbyistExpenseReport.create({
         data: {
           lobbyistId: lobbyist.id,
           quarter,
           year: 2025,
           status: ReportStatus.APPROVED,
-          totalFoodEntertainment: 450.75,
-          submittedAt: new Date("2025-04-09"),
-          dueDate: new Date("2025-04-15"),
+          totalFoodEntertainment: quarterData.total,
+          submittedAt: new Date(quarterData.submitted),
+          dueDate: new Date(dueDates[quarter]),
           reviewedBy: users.adminUser.id,
-          reviewedAt: new Date("2025-04-10"),
+          reviewedAt: new Date(quarterData.submitted.replace(/-\d{2}$/, "-13")),
         },
       });
       lobbyistReports.push(report);
 
-      // 3 EXPENSE LINE ITEMS PER REPORT
-      for (let i = 1; i <= 3; i++) {
+      // Create 3 expense line items per report
+      for (const expense of quarterData.expenses) {
         await prisma.expenseLineItem.create({
           data: {
             reportId: report.id,
             reportType: ExpenseReportType.LOBBYIST,
-            officialName: `Commissioner ${i}`,
-            date: new Date(`2025-0${quarters.indexOf(quarter) + 1}-0${i}`),
-            payee: `Restaurant ${i}`,
-            purpose: `Meeting ${i} discussion regarding policy topics`,
-            amount: 150.25,
+            officialName: expense.official,
+            date: new Date(expense.date),
+            payee: expense.payee,
+            purpose: expense.purpose,
+            amount: expense.amount,
             isEstimate: false,
           },
         });
@@ -317,46 +708,73 @@ async function createApprovedData(
   // ──────────────────────────────────────────────────────────────────────
   const employerReports = [];
 
-  for (const employer of employers) {
+  // Monthly retainers for each employer (each employer pays only their lobbyist)
+  const employerPaymentData = [
+    // TechCorp → John Doe
+    { monthlyRetainer: 15000.0, lobbyistIdx: 0 },
+    // Healthcare Advocates → Jane Smith
+    { monthlyRetainer: 12666.67, lobbyistIdx: 1 },
+    // Green Energy Coalition → Michael Chen
+    { monthlyRetainer: 14000.0, lobbyistIdx: 2 },
+  ];
+
+  // Submit/due dates for each quarter
+  const employerSubmitDates = {
+    Q1: { submitted: "2025-04-11", due: "2025-04-15" },
+    Q2: { submitted: "2025-07-12", due: "2025-07-15" },
+    Q3: { submitted: "2025-10-10", due: "2025-10-15" },
+  };
+
+  // Month-end dates for each quarter
+  const monthEndDates = {
+    Q1: ["2025-01-31", "2025-02-28", "2025-03-31"],
+    Q2: ["2025-04-30", "2025-05-31", "2025-06-30"],
+    Q3: ["2025-07-31", "2025-08-31", "2025-09-30"],
+  };
+
+  for (let empIdx = 0; empIdx < employers.length; empIdx++) {
+    const employer = employers[empIdx];
+    const paymentInfo = employerPaymentData[empIdx];
+    const lobbyistName = lobbyists[paymentInfo.lobbyistIdx].name;
+
     for (const quarter of quarters) {
+      const dates = employerSubmitDates[quarter];
+      const months = monthEndDates[quarter];
+
+      // Calculate quarterly total (3 months × monthly retainer)
+      const quarterlyTotal = paymentInfo.monthlyRetainer * 3;
+
       const report = await prisma.employerExpenseReport.create({
         data: {
           employerId: employer.id,
           quarter,
           year: 2025,
           status: ReportStatus.APPROVED,
-          totalLobbyingSpend: 16235.5,
-          submittedAt: new Date("2025-04-12"),
-          dueDate: new Date("2025-04-15"),
+          totalLobbyingSpend: quarterlyTotal,
+          submittedAt: new Date(dates.submitted),
+          dueDate: new Date(dates.due),
           reviewedBy: users.adminUser.id,
-          reviewedAt: new Date("2025-04-13"),
+          reviewedAt: new Date(dates.submitted.replace(/-\d{2}$/, "-13")),
         },
       });
       employerReports.push(report);
 
-      // 3 EXPENSE LINE ITEMS PER REPORT
-      for (let i = 1; i <= 3; i++) {
+      // 3 MONTHLY RETAINER PAYMENTS (one per month in quarter)
+      for (let monthIdx = 0; monthIdx < 3; monthIdx++) {
         await prisma.expenseLineItem.create({
           data: {
             reportId: report.id,
             reportType: ExpenseReportType.EMPLOYER,
-            officialName: `Commissioner ${i}`,
-            date: new Date(`2025-0${quarters.indexOf(quarter) + 1}-0${i + 5}`),
-            payee: `Vendor ${i}`,
-            purpose: `Event ${i} for stakeholder engagement`,
-            amount: 300.5,
+            officialName: lobbyistName,
+            date: new Date(months[monthIdx]),
+            payee: lobbyistName,
+            purpose:
+              "Monthly retainer - " + subjectsOfInterest[empIdx].split(",")[0],
+            amount:
+              monthIdx === 2 && paymentInfo.monthlyRetainer === 12666.67
+                ? 12666.66 // Adjust last month to avoid rounding errors
+                : paymentInfo.monthlyRetainer,
             isEstimate: false,
-          },
-        });
-      }
-
-      // 3 LOBBYIST PAYMENTS PER REPORT (linking to our 3 lobbyists)
-      for (let i = 0; i < 3; i++) {
-        await prisma.employerLobbyistPayment.create({
-          data: {
-            employerReportId: report.id,
-            lobbyistId: lobbyists[i].id,
-            amountPaid: 5000.0,
           },
         });
       }
@@ -366,10 +784,7 @@ async function createApprovedData(
     "   ✓ Created 9 employer expense reports (3 employers × 3 quarters)"
   );
   console.log(
-    "   ✓ Created 27 employer expense line items (9 reports × 3 items)"
-  );
-  console.log(
-    "   ✓ Created 27 lobbyist payment records (9 reports × 3 payments)"
+    "   ✓ Created 27 employer payment line items (9 reports × 3 months)"
   );
 
   // ──────────────────────────────────────────────────────────────────────
@@ -697,7 +1112,6 @@ async function validateSeedData() {
     employerLineItems: await prisma.expenseLineItem.count({
       where: { reportType: ExpenseReportType.EMPLOYER },
     }),
-    lobbyistPayments: await prisma.employerLobbyistPayment.count(),
 
     calendarEntries: await prisma.boardCalendarEntry.count(),
     lobbyingReceipts: await prisma.boardLobbyingReceipt.count(),
@@ -728,8 +1142,7 @@ async function validateSeedData() {
     employerReports: 9, // 3 employers × 3 quarters
 
     lobbyistLineItems: 27, // 9 reports × 3 items
-    employerLineItems: 27, // 9 reports × 3 items
-    lobbyistPayments: 27, // 9 reports × 3 payments
+    employerLineItems: 27, // 9 reports × 3 monthly payments
 
     calendarEntries: 9, // 3 members × 3 entries
     lobbyingReceipts: 27, // 3 members × 3 quarters × 3 receipts
@@ -797,25 +1210,37 @@ async function main() {
   console.log("\n🔑 ADMIN:");
   console.log("   Email:    admin@multnomah.gov");
   console.log("   Password: Demo2025!Admin");
-  console.log("\n🎯 APPROVED LOBBYISTS (3):");
-  console.log("   Email:    lobbyist1@example.com");
-  console.log("   Email:    lobbyist2@example.com");
-  console.log("   Email:    lobbyist3@example.com");
+  console.log(
+    "\n🎯 APPROVED LOBBYISTS (3) - Technology, Healthcare, Environment:"
+  );
+  console.log("   Email:    john.doe@lobbying.com (Technology)");
+  console.log("   Email:    jane.smith@advocacy.com (Healthcare)");
+  console.log("   Email:    michael.chen@greenlobby.org (Environment)");
   console.log("   Password: lobbyist123");
-  console.log("\n⏳ PENDING LOBBYISTS (3):");
-  console.log("   Email:    pending1@example.com");
-  console.log("   Email:    pending2@example.com");
-  console.log("   Email:    pending3@example.com");
+  console.log(
+    "\n⏳ PENDING LOBBYISTS (3) - Education, Transportation, Housing:"
+  );
+  console.log("   Email:    sarah.martinez@portlandadvocates.com");
+  console.log("   Email:    robert.johnson@transportationalliance.org");
+  console.log("   Email:    emily.wong@housingfirst.org");
   console.log("   Password: lobbyist123");
   console.log("\n🏢 EMPLOYERS (3):");
-  console.log("   Email:    employer1@example.com");
-  console.log("   Email:    employer2@example.com");
-  console.log("   Email:    employer3@example.com");
+  console.log("   Email:    contact@techcorp.com (TechCorp Industries)");
+  console.log(
+    "   Email:    info@healthadvocates.org (Healthcare Advocates Group)"
+  );
+  console.log("   Email:    contact@greenenergy.org (Green Energy Coalition)");
   console.log("   Password: employer123");
   console.log("\n🏛️  BOARD MEMBERS (3):");
-  console.log("   Email:    commissioner1@multnomah.gov");
-  console.log("   Email:    commissioner2@multnomah.gov");
-  console.log("   Email:    commissioner3@multnomah.gov");
+  console.log(
+    "   Email:    commissioner@multnomah.gov (Commissioner Williams)"
+  );
+  console.log(
+    "   Email:    commissioner.chen@multnomah.gov (Commissioner Chen)"
+  );
+  console.log(
+    "   Email:    commissioner.garcia@multnomah.gov (Commissioner Garcia)"
+  );
   console.log("   Password: board123");
   console.log("\n👥 PUBLIC USER:");
   console.log("   Email:    public@example.com");
