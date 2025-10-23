@@ -136,6 +136,8 @@ steps:
       - "--platform"
       - "managed"
       - "--allow-unauthenticated"
+      - "--add-cloudsql-instances"
+      - "lobbyist-475218:us-west1:lobbyist-registration-db"
       - "--set-env-vars"
       - "NODE_ENV=production,ENVIRONMENT=${_ENVIRONMENT},NEXTAUTH_URL=https://lobbyist-registration-zzp44w3snq-uw.a.run.app"
       - "--update-secrets"
