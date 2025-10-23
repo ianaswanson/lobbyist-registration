@@ -5,28 +5,35 @@ Web application to satisfy Multnomah County's Government Accountability Ordinanc
 
 ## Current Project Status
 - ✅ **Planning Complete:** User story map, wireframes, and technical architecture defined
-- ✅ **UI/UX Complete:** Navigation redesign, dashboard improvements, role-based separation (Oct 19, 2025)
+- ✅ **UI/UX Complete:** Navigation redesign, dashboard improvements, role-based separation
 - ✅ **Board Member Calendar:** §3.001 compliance feature complete
-- ✅ **Dev Deployment:** Live on Google Cloud Run dev environment
-- 🔄 **In Progress:** API implementation to replace placeholder alerts (see NEXT-STEPS.md)
-- ❌ **Not Started:** Production deployment, stakeholder demos
+- ✅ **Dev Deployment:** Live on Google Cloud Run with Cloud SQL PostgreSQL
+- ✅ **Production Deployment:** Live on Google Cloud Run with Cloud SQL PostgreSQL
+- ✅ **Modernization Complete:** Phases 1-4 complete (testing, CI/CD, PostgreSQL, security/monitoring)
+- ✅ **Security & Monitoring:** Sentry error tracking, Secret Manager, Dependabot, SECURITY.md, MONITORING.md
 - 📅 **Target Launch:** June 2026 (before July 1, 2026 ordinance effective date)
+- 🔄 **Next:** Fix E2E tests, stakeholder demos
 
 ## Deployment Status
 
-### Dev Environment ✅ (Latest)
+### Dev Environment ✅
 - **URL:** https://lobbyist-registration-dev-zzp44w3snq-uw.a.run.app
-- **Status:** Deployed Oct 19, 2025 (revision 00014-trf)
-- **Features:** Latest UX improvements, board calendar feature
-- **Database:** SQLite with seed data (runtime seeding on startup)
+- **Status:** Active (auto-deploy from `develop` branch via Cloud Build)
+- **Database:** Cloud SQL PostgreSQL (`lobbyist_dev` database)
+- **Features:** All features including latest improvements
+- **Seed Data:** Rule of 3 pattern (3 lobbyists, 3 employers, 3 board members, realistic Portland data)
 - **Purpose:** Testing and iteration
+- **Min Instances:** 1 (always-on for consistent demo data)
 
-### Production Environment 🔄 (Older Version)
+### Production Environment ✅
 - **URL:** https://lobbyist-registration-zzp44w3snq-uw.a.run.app
-- **Status:** Previous version (before UX improvements)
-- **Database:** SQLite with seed data
-- **Purpose:** Stakeholder demos (when ready)
-- **Note:** Will update after API work completes
+- **Status:** Active (manual approval deploys from `main` branch via Cloud Build)
+- **Database:** Cloud SQL PostgreSQL (`lobbyist_prod` database)
+- **Features:** Production-ready with all modernization phases complete
+- **Seed Data:** Rule of 3 pattern (same as dev)
+- **Purpose:** Stakeholder demos and production use
+- **Min Instances:** 0 (scales to zero when not in use)
+- **Monitoring:** Sentry error tracking, Cloud Run metrics, Cloud SQL monitoring
 
 ## Project Artifacts
 
@@ -42,8 +49,10 @@ Web application to satisfy Multnomah County's Government Accountability Ordinanc
 ### Documentation
 - `CLAUDE.md` - This file - project overview and development guidelines
 - `PROJECT.md` - Comprehensive requirements and roadmap
-- `NEXT-STEPS.md` - **START HERE** - What to do next for API implementation
-- `API-IMPLEMENTATION-ROADMAP.md` - Detailed API work breakdown (40+ placeholders to fix)
+- `SECURITY.md` - Security vulnerability disclosure policy and measures
+- `MONITORING.md` - Monitoring and alerting setup guide
+- `MODERNIZATION-ROADMAP.md` - 8-week modernization plan (Phases 1-4 complete)
+- `ARCHITECTURE-DECISIONS.md` - Architectural framework and design patterns
 
 ### Session Summaries
 - `SESSION-SUMMARY-2025-10-19-UX-Improvements.md` - Navigation & dashboard redesign
@@ -73,23 +82,34 @@ This is a **civic technology project** focused on government transparency and ac
 
 ## Development Approach
 
-### Phase 1: Rapid Prototype (Current)
+### Current Production Stack ✅
 **Tech Stack:**
 - **Frontend:** Next.js 15 + React 19 + TypeScript + Tailwind CSS + shadcn/ui
 - **Backend:** Next.js API routes (monolithic)
-- **Database:** SQLite with Prisma ORM
-- **Auth:** NextAuth.js (simple implementation)
-- **Files:** Local filesystem storage
+- **Database:** PostgreSQL (Cloud SQL) with Prisma ORM
+- **Auth:** NextAuth.js with secure session management
+- **Secrets:** Google Cloud Secret Manager
+- **Deployment:** Google Cloud Run (containerized with Docker)
+- **CI/CD:** GitHub Actions + Cloud Build Triggers
+- **Error Tracking:** Sentry (with PII filtering)
+- **Security:** Dependabot automated dependency updates
+- **Infrastructure:** GCP (Cloud Run, Cloud SQL, Secret Manager, Cloud Build)
 
-**Philosophy:** Move fast, validate requirements with stakeholders, get feedback early
+**Philosophy:** Production-ready government application with security, monitoring, and scalability
 
-### Phase 2: Production Hardening (Future)
-**Planned Migration:**
-- Database: SQLite → PostgreSQL (Cloud SQL)
+### Completed Modernization Phases (Oct 2025)
+- **Phase 1:** Code Quality Foundation - Prettier, Husky, pre-commit hooks, build quality gates
+- **Phase 2:** Testing Infrastructure - Vitest unit tests, 80% code coverage, component tests
+- **Phase 3:** Production Infrastructure - PostgreSQL migration, GitHub Actions CI/CD, Dependabot
+- **Phase 4:** Security & Monitoring - Sentry error tracking, Secret Manager, security documentation
+
+### Future Enhancements (Phase 5+)
+**Planned for Post-Launch:**
 - Auth: NextAuth → Government SSO (Azure AD or Google Identity)
-- Storage: Local files → Cloud Storage (GCS or Azure Blob)
-- Deployment: Local → Google Cloud Run or Azure App Service
-- Infrastructure: Docker + Terraform
+- Storage: Local files → Cloud Storage (GCS for document uploads)
+- Infrastructure: Terraform for infrastructure-as-code
+- Monitoring: Custom dashboards, advanced alerting
+- Performance: CDN, caching strategies, query optimization
 
 ## Critical Development Rules
 
@@ -160,27 +180,39 @@ npm run prisma:migrate dev --name descriptive_name
 ```
 /
 ├── .beads/              # Beads issue tracking database
+├── .github/             # GitHub Actions workflows and Dependabot config
 ├── wireframes/          # Interactive HTML wireframes
 │   ├── index.html                    # Wireframe index
 │   ├── 01-lobbyist-registration.html
 │   ├── 02-quarterly-expense-report.html
 │   ├── 03-admin-compliance-dashboard.html
 │   └── 04-public-search-interface.html
-├── src/ (future)
-│   ├── app/              # Next.js 15 app router
-│   ├── components/       # React components
-│   ├── lib/             # Utilities, db client
-│   └── types/           # TypeScript definitions
-├── prisma/ (future)
+├── app/                 # Next.js 15 app router
+│   ├── (authenticated)/ # Protected routes
+│   ├── (public)/        # Public routes (no auth required)
+│   ├── api/             # API routes
+│   └── auth/            # Authentication pages
+├── components/          # React components
+│   ├── ui/              # shadcn/ui components
+│   ├── forms/           # Form components
+│   └── ...              # Feature-specific components
+├── lib/                 # Utilities, db client, helpers
+├── types/               # TypeScript type definitions
+├── prisma/              # Database layer
 │   ├── schema.prisma    # Database schema (source of truth)
 │   ├── migrations/      # Version-controlled schema changes
-│   └── seed.ts          # Test data generation
-├── public/ (future)     # Static assets
-├── docs/                # Documentation
+│   └── seed.ts          # Rule of 3 demo data generation
+├── public/              # Static assets
+├── tests/               # Test suites
+│   ├── e2e/             # Playwright end-to-end tests
+│   └── unit/            # Vitest unit tests
+├── docs/                # Session summaries and guides
 ├── scripts/             # Utility scripts
 ├── user-story-map.html  # Visual user story map
 ├── CLAUDE.md            # This file - development guide
 ├── PROJECT.md           # Project requirements and roadmap
+├── SECURITY.md          # Security vulnerability disclosure policy
+├── MONITORING.md        # Monitoring and alerting setup guide
 └── Government_Accountably_Ordinance_4.2.25_-_CA_Approved.pdf
 ```
 
@@ -360,25 +392,49 @@ Key sections:
 ## Deployment Path
 
 ### Local Development
+
+**Prerequisites:** Cloud SQL Proxy for PostgreSQL database access
+
 ```bash
-npm run dev              # Start Next.js dev server
-npm run prisma:studio    # View database
-npm run prisma:seed      # Load test data
+# 1. Start Cloud SQL Proxy (in separate terminal)
+cloud-sql-proxy lobbyist-475218:us-west1:lobbyist-registration-db --port=5432
+
+# 2. Set DATABASE_URL for local development
+export DATABASE_URL="postgresql://lobbyist_user:PASSWORD@127.0.0.1:5432/lobbyist_dev"
+
+# 3. Start Next.js dev server
+npm run dev
+
+# Other useful commands:
+npm run prisma:studio    # View database with Prisma Studio
+npm run prisma:seed      # Reseed database with Rule of 3 demo data
+npm run db:reset         # Drop, recreate, migrate, and seed database
 ```
 
-### Staging (Future)
+**Note:** Get the database password from Secret Manager:
 ```bash
-docker build -t lobbyist-registry .
-gcloud run deploy --source .
+gcloud secrets versions access latest --secret="lobbyist-db-url-dev"
 ```
 
-### Production (Future)
-- Government security review
-- Accessibility audit
-- Penetration testing
-- Training materials
-- User documentation
-- Authority to Operate (ATO)
+### Development Environment (Cloud Run)
+- **Auto-deploys** from `develop` branch via Cloud Build Triggers
+- **URL:** https://lobbyist-registration-dev-zzp44w3snq-uw.a.run.app
+- **Database:** Cloud SQL PostgreSQL (`lobbyist_dev`)
+- **Purpose:** Testing and iteration
+
+### Production Environment (Cloud Run)
+- **Manual approval deploys** from `main` branch via Cloud Build Triggers
+- **URL:** https://lobbyist-registration-zzp44w3snq-uw.a.run.app
+- **Database:** Cloud SQL PostgreSQL (`lobbyist_prod`)
+- **Purpose:** Live application for stakeholders
+
+### Pre-Launch Checklist (Future)
+- [ ] Government security review
+- [ ] Accessibility audit (WCAG 2.1 AA)
+- [ ] Penetration testing
+- [ ] Training materials for users
+- [ ] User documentation and help guides
+- [ ] Authority to Operate (ATO) certification
 
 ## Contact & Governance
 - **Developer:** Ian Swanson
