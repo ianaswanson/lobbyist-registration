@@ -15,13 +15,14 @@ steps:
     args: ["ci"]
     waitFor: ["-"]
 
-  # Step 2: Type checking (strict)
+  # Step 2: Type checking and build (with Sentry source maps)
   - name: "node:20"
     id: "type-check"
     entrypoint: npm
     args: ["run", "build"]
     env:
       - "NODE_ENV=production"
+    secretEnv: ["SENTRY_AUTH_TOKEN"]
     waitFor: ["install-deps"]
 
   # Step 3: Run tests (when implemented)
@@ -136,6 +137,8 @@ steps:
       - "--allow-unauthenticated"
       - "--set-env-vars"
       - "NODE_ENV=production,ENVIRONMENT=${_ENVIRONMENT}"
+      - "--update-secrets"
+      - "DATABASE_URL=lobbyist-db-url:latest,SENTRY_DSN=sentry-dsn:latest,NEXT_PUBLIC_SENTRY_DSN=sentry-dsn:latest"
       - "--min-instances"
       - "1"
       - "--max-instances"
@@ -250,6 +253,12 @@ images:
 
 # Longer timeout for production (includes approval wait time)
 timeout: "3600s" # 1 hour
+
+# Available secrets from Secret Manager
+availableSecrets:
+  secretManager:
+    - versionName: projects/lobbyist-475218/secrets/sentry-auth-token/versions/latest
+      env: "SENTRY_AUTH_TOKEN"
 
 # Tags for audit trail
 tags:
