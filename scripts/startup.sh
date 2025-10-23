@@ -69,10 +69,38 @@ if [ "$USER_COUNT" = "0" ]; then
   " 2>/dev/null || echo "no")
 
   if [ "$MIGRATIONS_EXIST" = "no" ]; then
-    # Fresh database - run migrations first
-    echo "🔧 Running database migrations..."
-    npx prisma migrate deploy
-    echo ""
+    # Check if schema exists but migrations don't (manual setup case)
+    TABLES_EXIST=$(node -e "
+      const { PrismaClient } = require('@prisma/client');
+      const prisma = new PrismaClient();
+
+      prisma.\$connect()
+        .then(() => prisma.\$queryRaw\`
+          SELECT COUNT(*) as count
+          FROM information_schema.tables
+          WHERE table_schema = 'public'
+          AND table_name = 'User'
+        \`)
+        .then(result => {
+          console.log(result[0].count > 0 ? 'yes' : 'no');
+          process.exit(0);
+        })
+        .catch(err => {
+          console.log('no');
+          process.exit(0);
+        })
+        .finally(() => prisma.\$disconnect());
+    " 2>/dev/null || echo "no")
+
+    if [ "$TABLES_EXIST" = "yes" ]; then
+      echo "✅ Database schema already exists (managed outside migrations)"
+      echo ""
+    else
+      # Fresh database - run migrations first
+      echo "🔧 Running database migrations..."
+      npx prisma migrate deploy
+      echo ""
+    fi
   else
     echo "✅ Database schema already exists (managed outside migrations)"
     echo ""
