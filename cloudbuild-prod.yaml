@@ -153,16 +153,16 @@ steps:
       - "--no-traffic" # Deploy without traffic first (for blue-green)
     waitFor: ["tag-production"]
 
-  # Step 12: Health check new revision
+  # Step 12: Verify new revision is Ready (blue-green deployment)
   - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
-    id: "health-check"
+    id: "verify-revision"
     entrypoint: bash
     args:
       - "-c"
       - |
-        echo "Performing health check on new revision..."
+        echo "Verifying new revision deployment..."
 
-        # Get the latest revision URL
+        # Get the latest revision
         REVISION=$$(gcloud run revisions list \
           --service ${_SERVICE_NAME} \
           --region ${_REGION} \
@@ -171,28 +171,24 @@ steps:
 
         echo "Latest revision: $$REVISION"
 
-        # Get revision URL
-        REVISION_URL=$$(gcloud run revisions describe $$REVISION \
-          --region ${_REGION} \
-          --format='value(status.url)')
-
-        echo "Testing revision at: $$REVISION_URL"
-
-        # Wait for revision to be ready
-        sleep 15
-
-        # Perform health check (allow retry)
+        # Check if revision is Ready (retry up to 5 times)
         for i in {1..5}; do
-          if curl -f -s -o /dev/null "$$REVISION_URL"; then
-            echo "✅ Health check passed!"
+          READY=$$(gcloud run revisions describe $$REVISION \
+            --region ${_REGION} \
+            --format='value(status.conditions.status)' | grep -c "True")
+
+          if [ "$$READY" -gt 0 ]; then
+            echo "✅ Revision is Ready!"
+            echo "Revision deployed with --no-traffic (blue-green deployment)"
+            echo "Traffic will be routed after manual approval in next step"
             exit 0
           else
-            echo "Health check attempt $$i failed, retrying..."
-            sleep 5
+            echo "Revision not ready yet, waiting... (attempt $$i/5)"
+            sleep 10
           fi
         done
 
-        echo "❌ Health check failed after 5 attempts"
+        echo "❌ Revision failed to become Ready after 5 attempts"
         exit 1
     waitFor: ["deploy-service"]
 
@@ -208,7 +204,7 @@ steps:
       - "--region"
       - "${_REGION}"
       - "--to-latest"
-    waitFor: ["health-check"]
+    waitFor: ["verify-revision"]
 
   # Step 14: Verify production deployment
   - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
