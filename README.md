@@ -64,10 +64,13 @@ This civic technology project provides a transparent, accessible platform for:
 
 - **Frontend**: Next.js 15, React 19, TypeScript, Tailwind CSS, shadcn/ui
 - **Backend**: Next.js API routes
-- **Database**: SQLite (dev/prototype) → PostgreSQL (production)
-- **ORM**: Prisma
+- **Database**: PostgreSQL (Cloud SQL) with Prisma ORM
+- **Secrets**: Google Cloud Secret Manager
 - **Auth**: NextAuth.js (planned: Government SSO)
-- **Deployment**: Docker, Google Cloud Run
+- **Deployment**: Docker, Google Cloud Run with Cloud Build Triggers
+- **CI/CD**: GitHub Actions (PR checks) + Cloud Build (deployments)
+- **Monitoring**: Sentry error tracking, Cloud Run metrics, Cloud SQL monitoring
+- **Security**: Dependabot automated dependency updates
 - **Testing**: Playwright (E2E), Vitest (Unit)
 
 ## Getting Started
@@ -77,6 +80,8 @@ This civic technology project provides a transparent, accessible platform for:
 - Node.js 20+ and npm
 - Git
 - OpenSSL (for generating secrets)
+- **Google Cloud SDK** (`gcloud` CLI) for database access
+- **Cloud SQL Proxy** for local development with PostgreSQL
 
 ### Quick Start
 
@@ -90,8 +95,13 @@ npm install
 
 # Set up environment variables
 cp .env.example .env
-# Generate secure secret: openssl rand -base64 32
-# Edit .env and paste the secret into AUTH_SECRET
+# Get database password from Secret Manager:
+# gcloud secrets versions access latest --secret="lobbyist-db-url-dev"
+# Generate auth secret: openssl rand -base64 32
+# Edit .env and configure DATABASE_URL and NEXTAUTH_SECRET
+
+# Start Cloud SQL Proxy (in separate terminal)
+cloud-sql-proxy lobbyist-475218:us-west1:lobbyist-registration-db --port=5432
 
 # Set up database
 npx prisma migrate dev
@@ -103,7 +113,7 @@ npm run dev
 
 Visit [http://localhost:3000](http://localhost:3000)
 
-**For detailed setup instructions, see [docs/DEVELOPER-SETUP.md](docs/DEVELOPER-SETUP.md)**
+**For detailed setup instructions, see [CLAUDE.md](CLAUDE.md#local-development)**
 
 ### Development Commands
 
@@ -120,35 +130,49 @@ npm run prisma:seed      # Load test data
 ## Project Structure
 
 ```
-├── wireframes/          # Interactive HTML wireframes
-├── src/                 # Application source (future)
-│   ├── app/            # Next.js 15 app router
-│   ├── components/     # React components
-│   └── lib/            # Utilities, database client
-├── prisma/             # Database schema and migrations
-├── public/             # Static assets
-├── docs/               # Documentation
 ├── .beads/             # Issue tracking (Beads)
+├── .github/            # GitHub Actions workflows and Dependabot
+├── wireframes/         # Interactive HTML wireframes
+├── app/                # Next.js 15 app router
+│   ├── (authenticated)/ # Protected routes (dashboard, reports, etc.)
+│   ├── (public)/       # Public routes (search, calendars)
+│   ├── api/            # API routes
+│   └── auth/           # Authentication pages
+├── components/         # React components
+│   ├── ui/             # shadcn/ui components
+│   └── forms/          # Form components
+├── lib/                # Utilities, database client, helpers
+├── prisma/             # Database schema and migrations (PostgreSQL)
+├── tests/              # Test suites (Playwright E2E, Vitest unit)
+├── public/             # Static assets
+├── docs/               # Session summaries and guides
 ├── CLAUDE.md           # Development guide
-└── PROJECT.md          # Comprehensive project documentation
+├── PROJECT.md          # Comprehensive project documentation
+├── SECURITY.md         # Security vulnerability disclosure policy
+└── MONITORING.md       # Monitoring and alerting setup guide
 ```
 
 ## Documentation
 
 ### Getting Started
-- **[docs/DEVELOPER-SETUP.md](docs/DEVELOPER-SETUP.md)** - Complete developer setup guide
+- **[CLAUDE.md](CLAUDE.md)** - Developer guide with local development instructions
 - **[.env.example](.env.example)** - Environment variable template
 
 ### Project Documentation
 - **[PROJECT.md](PROJECT.md)** - Complete project requirements and roadmap
-- **[CLAUDE.md](CLAUDE.md)** - Developer guide and working instructions
 - **[Wireframes](wireframes/)** - Interactive design specifications
 - **[User Story Map](user-story-map.html)** - Visual feature mapping
 
-### Deployment & Operations
+### Security & Operations
+- **[SECURITY.md](SECURITY.md)** - Security vulnerability disclosure policy and measures
+- **[MONITORING.md](MONITORING.md)** - Monitoring, alerting, and observability setup
+- **[MODERNIZATION-ROADMAP.md](MODERNIZATION-ROADMAP.md)** - 8-week modernization plan (Phases 1-4 complete)
+- **[ARCHITECTURE-DECISIONS.md](ARCHITECTURE-DECISIONS.md)** - Architectural framework and design patterns
+
+### Deployment
 - **[DEPLOYMENT-PLAN.md](DEPLOYMENT-PLAN.md)** - Google Cloud deployment guide
 - **[QUICKSTART-DEPLOY.md](QUICKSTART-DEPLOY.md)** - Fast-track deployment
-- **[docs/SECRET-ROTATION-PROCESS.md](docs/SECRET-ROTATION-PROCESS.md)** - Secret management and rotation procedures
+- **[README-DEPLOYMENT.md](README-DEPLOYMENT.md)** - Deployment quick reference
 
 ## Compliance
 
@@ -214,8 +238,14 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 - ✅ **Planning Complete**: User story map, wireframes, technical architecture
 - ✅ **MVP Development Complete**: All Phase 1 features implemented
-- ✅ **Production Deployment**: Live on Google Cloud Run
-- 🔄 **Current**: Gathering stakeholder feedback, planning Phase 2
+- ✅ **Production Deployment**: Live on Google Cloud Run with PostgreSQL
+- ✅ **Modernization Complete**: Phases 1-4 complete (testing, CI/CD, PostgreSQL, security/monitoring)
+  - Phase 1: Code quality foundation (Prettier, Husky, build quality gates)
+  - Phase 2: Testing infrastructure (Vitest, 80% coverage)
+  - Phase 3: Production infrastructure (PostgreSQL migration, GitHub Actions, Dependabot)
+  - Phase 4: Security & monitoring (Sentry, Secret Manager, security documentation)
+- ✅ **Security & Monitoring**: Sentry error tracking, Secret Manager, SECURITY.md, MONITORING.md
+- 🔄 **Current**: Gathering stakeholder feedback, planning Phase 5+ enhancements
 - 📅 **Target Launch**: June 2026 (before July 1, 2026 ordinance effective date)
 
 ## Contact
