@@ -77,3 +77,6 @@ test-*.json
 *.tfvars.json
 .terraformrc
 terraform.rc
+
+# Sentry Config File
+.env.sentry-build-plugin
