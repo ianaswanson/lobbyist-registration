@@ -13,7 +13,7 @@ test.describe("Admin Review - Lobbyist Registrations", () => {
     // Login as admin
     await page.goto("http://localhost:3000/auth/signin");
     await page.fill('input[name="email"]', "admin@multnomah.gov");
-    await page.fill('input[name="password"]', "admin123");
+    await page.fill('input[name="password"]', "Demo2025!Admin");
     await page.click('button[type="submit"]');
 
     // Wait for redirect to dashboard
@@ -129,7 +129,7 @@ test.describe("Admin Review - Expense Reports", () => {
     // Login as admin
     await page.goto("http://localhost:3000/auth/signin");
     await page.fill('input[name="email"]', "admin@multnomah.gov");
-    await page.fill('input[name="password"]', "admin123");
+    await page.fill('input[name="password"]', "Demo2025!Admin");
     await page.click('button[type="submit"]');
 
     // Wait for redirect to dashboard
@@ -307,7 +307,7 @@ test.describe("Admin Review - Navigation", () => {
     // Login as admin
     await page.goto("http://localhost:3000/auth/signin");
     await page.fill('input[name="email"]', "admin@multnomah.gov");
-    await page.fill('input[name="password"]', "admin123");
+    await page.fill('input[name="password"]', "Demo2025!Admin");
     await page.click('button[type="submit"]');
     await page.waitForURL("**/dashboard");
   });

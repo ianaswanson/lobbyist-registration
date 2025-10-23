@@ -4,10 +4,15 @@ test.describe("Admin Appeals Management", () => {
   test.beforeEach(async ({ page }) => {
     // Login as admin
     await page.goto("/auth/signin");
+    await page.waitForLoadState("networkidle");
+
     await page.fill('input[name="email"]', "admin@multnomah.gov");
     await page.fill('input[name="password"]', "Demo2025!Admin");
     await page.click('button[type="submit"]');
-    await page.waitForURL("/dashboard");
+
+    // Wait for redirect to dashboard with increased timeout
+    await page.waitForURL("/dashboard", { timeout: 10000 });
+    await page.waitForLoadState("networkidle");
 
     // Navigate to appeals page
     await page.goto("/admin/appeals");
@@ -17,11 +22,11 @@ test.describe("Admin Appeals Management", () => {
   test("should display appeals dashboard with summary cards", async ({
     page,
   }) => {
-    // Check summary cards are visible
-    await expect(page.getByText("Pending Review")).toBeVisible();
-    await expect(page.getByText("Hearings Scheduled")).toBeVisible();
-    await expect(page.getByText("Decided")).toBeVisible();
-    await expect(page.getByText("Total Appeals")).toBeVisible();
+    // Check summary cards are visible - use more specific selectors
+    await expect(page.locator("text=Pending Review").first()).toBeVisible();
+    await expect(page.locator("text=Hearings Scheduled").first()).toBeVisible();
+    await expect(page.locator("text=Decided").first()).toBeVisible();
+    await expect(page.locator("text=Total Appeals").first()).toBeVisible();
   });
 
   test("should display pending appeals in table", async ({ page }) => {

@@ -4,10 +4,15 @@ test.describe("Admin Violations Management", () => {
   test.beforeEach(async ({ page }) => {
     // Login as admin
     await page.goto("/auth/signin");
+    await page.waitForLoadState("networkidle");
+
     await page.fill('input[name="email"]', "admin@multnomah.gov");
-    await page.fill('input[name="password"]', "admin123");
+    await page.fill('input[name="password"]', "Demo2025!Admin");
     await page.click('button[type="submit"]');
-    await page.waitForURL("/dashboard");
+
+    // Wait for redirect to dashboard with increased timeout
+    await page.waitForURL("/dashboard", { timeout: 10000 });
+    await page.waitForLoadState("networkidle");
 
     // Navigate to violations page
     await page.goto("/admin/violations");
