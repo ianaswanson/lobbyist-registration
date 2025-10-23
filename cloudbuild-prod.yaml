@@ -267,5 +267,5 @@ tags:
   - "lobbyist-registration"
   - "government-system"
 
-# Store logs for compliance (90 days)
-logsBucket: "gs://lobbyist-registration-build-logs"
+# Logs stored in Cloud Logging (free for 30 days, longer retention requires configuration)
+# Using CLOUD_LOGGING_ONLY option above for centralized log management
