@@ -137,7 +137,7 @@ steps:
       - "managed"
       - "--allow-unauthenticated"
       - "--set-env-vars"
-      - "NODE_ENV=production,ENVIRONMENT=${_ENVIRONMENT}"
+      - "NODE_ENV=production,ENVIRONMENT=${_ENVIRONMENT},NEXTAUTH_URL=https://lobbyist-registration-zzp44w3snq-uw.a.run.app"
       - "--update-secrets"
       - "DATABASE_URL=lobbyist-db-url:latest,SENTRY_DSN=sentry-dsn:latest,NEXT_PUBLIC_SENTRY_DSN=sentry-dsn:latest"
       - "--min-instances"
