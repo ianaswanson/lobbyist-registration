@@ -62,3 +62,28 @@ jobs:
         run: |
           echo "### Build Output Size" >> $GITHUB_STEP_SUMMARY
           du -sh .next >> $GITHUB_STEP_SUMMARY
+
+      - name: Setup test database for E2E
+        run: |
+          npx prisma db push --skip-generate
+          npm run db:seed
+        env:
+          DATABASE_URL: file:./test-e2e.db
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps
+
+      - name: Run E2E tests
+        run: npm run test:e2e
+        env:
+          DATABASE_URL: file:./test-e2e.db
+          NEXTAUTH_URL: http://localhost:3000
+          NEXTAUTH_SECRET: test-secret-for-e2e-only-not-production
+
+      - name: Upload Playwright report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 30
