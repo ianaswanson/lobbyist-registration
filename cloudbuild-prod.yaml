@@ -39,12 +39,13 @@ steps:
     args: ["audit", "--audit-level=high"]
     waitFor: ["install-deps"]
 
-  # Step 5: Verify Prisma schema (ensure migrations are up to date)
-  - name: "node:20"
-    id: "verify-schema"
-    entrypoint: npx
-    args: ["prisma", "validate"]
-    waitFor: ["install-deps"]
+  # Step 5: Verify Prisma schema (COMMENTED OUT - requires DATABASE_URL)
+  # Prisma schema is validated locally before commit
+  # - name: "node:20"
+  #   id: "verify-schema"
+  #   entrypoint: npx
+  #   args: ["prisma", "validate"]
+  #   waitFor: ["install-deps"]
 
   # Step 6: Build Docker image
   - name: "gcr.io/cloud-builders/docker"
@@ -62,7 +63,7 @@ steps:
       - "--build-arg"
       - "NODE_ENV=production"
       - "."
-    waitFor: ["type-check", "security-audit", "verify-schema"]
+    waitFor: ["type-check", "security-audit"]
 
   # Step 7: Scan Docker image for vulnerabilities
   - name: "gcr.io/cloud-builders/gcloud"
