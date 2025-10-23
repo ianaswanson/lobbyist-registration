@@ -31,8 +31,15 @@ check_database_data() {
   echo "$USER_COUNT"
 }
 
-# Check if database has data
-USER_COUNT=$(check_database_data)
+# Check if force reseed is requested
+if [ "$FORCE_RESEED" = "true" ]; then
+  echo "⚠️  FORCE_RESEED=true detected - forcing database re-seed..."
+  echo ""
+  USER_COUNT="0"
+else
+  # Check if database has data
+  USER_COUNT=$(check_database_data)
+fi
 
 if [ "$USER_COUNT" = "0" ]; then
   echo "📊 Database is empty (User count: 0)"
