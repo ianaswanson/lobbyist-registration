@@ -5,7 +5,7 @@
 
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { UserRole, UserStatus } from "@prisma/client";
 import { Button } from "@/components/ui/button";
@@ -14,6 +14,23 @@ import { ResetPasswordDialog } from "@/components/admin/ResetPasswordDialog";
 import { DeactivateUserDialog } from "@/components/admin/DeactivateUserDialog";
 import { UserAuditLogModal } from "@/components/admin/UserAuditLogModal";
 import { Plus } from "lucide-react";
+
+// Debounce helper
+function useDebounce<T>(value: T, delay: number): T {
+  const [debouncedValue, setDebouncedValue] = useState<T>(value);
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedValue(value);
+    }, delay);
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [value, delay]);
+
+  return debouncedValue;
+}
 
 interface User {
   id: string;
@@ -45,10 +62,13 @@ export default function UsersPage() {
   const [deactivateUser, setDeactivateUser] = useState<User | null>(null);
   const [auditLogUser, setAuditLogUser] = useState<User | null>(null);
 
-  // Fetch users
+  // Debounce search query (500ms delay)
+  const debouncedSearchQuery = useDebounce(searchQuery, 500);
+
+  // Fetch users when debounced search or filters change
   useEffect(() => {
     fetchUsers();
-  }, [currentPage, searchQuery, roleFilter, statusFilter]);
+  }, [currentPage, debouncedSearchQuery, roleFilter, statusFilter]);
 
   const fetchUsers = async () => {
     setLoading(true);
@@ -58,7 +78,7 @@ export default function UsersPage() {
       const params = new URLSearchParams({
         page: currentPage.toString(),
         limit: "20",
-        ...(searchQuery && { search: searchQuery }),
+        ...(debouncedSearchQuery && { search: debouncedSearchQuery }),
         ...(roleFilter !== "all" && { role: roleFilter }),
         ...(statusFilter !== "all" && { status: statusFilter }),
       });
@@ -141,13 +161,18 @@ export default function UsersPage() {
         </div>
       )}
 
-      {/* Loading state */}
-      {loading ? (
-        <div className="flex items-center justify-center py-12">
-          <p className="text-gray-500">Loading users...</p>
-        </div>
-      ) : (
-        /* User table */
+      {/* User table - Always visible, with loading overlay */}
+      <div className="relative">
+        {/* Loading overlay */}
+        {loading && (
+          <div className="absolute inset-0 z-10 flex items-center justify-center bg-white/50">
+            <div className="flex items-center gap-2 rounded-md bg-white px-4 py-2 shadow-md">
+              <div className="h-4 w-4 animate-spin rounded-full border-2 border-gray-300 border-t-blue-600"></div>
+              <p className="text-sm text-gray-600">Searching...</p>
+            </div>
+          </div>
+        )}
+
         <UserTable
           users={users}
           totalPages={totalPages}
@@ -164,7 +189,7 @@ export default function UsersPage() {
           statusFilter={statusFilter}
           onStatusFilterChange={setStatusFilter}
         />
-      )}
+      </div>
 
       {/* Reset Password Dialog */}
       <ResetPasswordDialog
