@@ -53,6 +53,15 @@ This application implements multiple security controls:
 ### Application Security
 - **Authentication:** NextAuth.js with secure session management
 - **Authorization:** Role-based access control (Admin, Lobbyist, Employer, Board Member, Public)
+- **User Administration:** Admin-only user management with audit trail
+  - Admin-only access to user CRUD operations
+  - Soft delete (users marked INACTIVE, never hard-deleted)
+  - Self-protection rules (admins cannot modify/delete themselves)
+  - Last admin protection (prevents deactivation of final admin account)
+  - Secure password generation (16-character random passwords)
+  - Forced password reset on first login
+  - Complete audit trail (UserAuditLog tracks all user modifications)
+  - Email immutability (email addresses cannot be changed after creation)
 - **Input Validation:** Server-side validation for all user inputs
 - **SQL Injection Protection:** Parameterized queries via Prisma ORM
 - **XSS Protection:** React automatic escaping + Content Security Policy

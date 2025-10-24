@@ -22,22 +22,34 @@ enum UserRole {
   ADMIN          // Full system access
 }
 
-model User {
-  id        String   @id @default(uuid())
-  email     String   @unique
-  name      String
-  role      UserRole @default(PUBLIC)
-  password  String   // Hashed password
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+enum UserStatus {
+  ACTIVE    // User account is active and can login
+  INACTIVE  // User account is deactivated (soft delete)
+  SUSPENDED // User account is temporarily suspended
+}
 
-  lobbyist    Lobbyist?
-  employer    Employer?
-  boardMember BoardMember?
-  auditLogs   AuditLog[]
+model User {
+  id                    String     @id @default(uuid())
+  email                 String     @unique
+  name                  String
+  role                  UserRole   @default(PUBLIC)
+  password              String     // Hashed password
+  status                UserStatus @default(ACTIVE) // User account status
+  passwordResetRequired Boolean    @default(false) // Force password change on next login
+  lastLoginAt           DateTime? // Track last successful login
+  createdAt             DateTime   @default(now())
+  updatedAt             DateTime   @updatedAt
+
+  lobbyist         Lobbyist?
+  employer         Employer?
+  boardMember      BoardMember?
+  auditLogs        AuditLog[]
+  userAuditLogs    UserAuditLog[] @relation("UserAuditLogs")
+  adminActions     UserAuditLog[] @relation("AdminActions")
 
   @@index([email])
   @@index([role])
+  @@index([status])
 }
 
 // ============================================================================
@@ -443,4 +455,22 @@ model AuditLog {
   @@index([userId])
   @@index([timestamp])
   @@index([entityType, entityId])
+}
+
+// User Administration Audit Log - tracks all user management actions
+model UserAuditLog {
+  id        String   @id @default(uuid())
+  userId    String   // User being modified
+  adminId   String   // Admin making the change
+  action    String   // "CREATED", "UPDATED", "DEACTIVATED", "ACTIVATED", "PASSWORD_RESET", "ROLE_CHANGED"
+  changes   Json?    // What changed: { field: { old: "value", new: "value" } }
+  ipAddress String?  // Where change was made from
+  createdAt DateTime @default(now())
+
+  user  User @relation("UserAuditLogs", fields: [userId], references: [id], onDelete: Cascade)
+  admin User @relation("AdminActions", fields: [adminId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([adminId])
+  @@index([createdAt])
 }
