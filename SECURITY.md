@@ -68,13 +68,38 @@ This application implements multiple security controls:
 ### Data Protection
 - **PII Handling:** Sensitive data (email, phone, SSN) filtered from logs and error reports
 - **Data Encryption:** Database encrypted at rest and in transit
-- **Session Security:** Secure, httpOnly cookies with appropriate expiration
+- **Session Security:** 8-hour maximum session lifetime with 1-hour activity-based refresh. Secure, httpOnly cookies with SameSite CSRF protection
 - **Audit Logging:** All administrative actions logged
 
 ### Compliance
 - **WCAG 2.1 AA:** Accessibility compliance
 - **GDPR Ready:** Data protection and privacy controls
 - **Government Standards:** Follows government security best practices
+
+### Session Management Policy
+
+Our session management follows government security standards:
+
+- **Maximum Session Lifetime:** 8 hours (standard government workday)
+  - Users must re-authenticate after 8 hours regardless of activity
+  - Prevents indefinite session persistence
+
+- **Activity-Based Refresh:** 1 hour
+  - Active users receive refreshed tokens every hour
+  - Prevents mid-task logout during form submissions
+  - Suitable for quarterly reporting workflows
+
+- **Automatic Logout:** Users are logged out after 8 hours of inactivity
+  - Protects against session hijacking on shared computers
+  - Meets government security compliance requirements
+
+- **Cookie Security:**
+  - `httpOnly`: Prevents JavaScript access (XSS protection)
+  - `secure`: HTTPS-only transmission in production
+  - `sameSite: lax`: CSRF protection
+  - `__Secure-` prefix: Browser-enforced HTTPS requirement
+
+**User Impact:** Users filling out lengthy forms (expense reports, registrations) will not be interrupted as long as they show activity within 1-hour intervals. After 8 hours total, re-authentication is required.
 
 ## Security Testing
 

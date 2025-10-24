@@ -9,6 +9,19 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   adapter: PrismaAdapter(prisma),
   session: {
     strategy: "jwt",
+    maxAge: 8 * 60 * 60, // 8 hours - standard government workday
+    updateAge: 60 * 60, // 1 hour - refresh token when active
+  },
+  cookies: {
+    sessionToken: {
+      name: `__Secure-next-auth.session-token`,
+      options: {
+        httpOnly: true, // Prevent JavaScript access (XSS protection)
+        sameSite: "lax", // CSRF protection
+        path: "/",
+        secure: process.env.NODE_ENV === "production", // HTTPS only in production
+      },
+    },
   },
   trustHost: true,
   pages: {
