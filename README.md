@@ -125,7 +125,17 @@ npm run lint             # Run ESLint
 npm run prisma:studio    # Open Prisma Studio (database GUI)
 npm run prisma:migrate   # Create database migration
 npm run prisma:seed      # Load test data
+npm run db:reset         # Reset database and reseed (dev only)
 ```
+
+### Database Reseeding
+
+This application uses **environment-aware database reseeding**:
+
+- **Development environment**: Automatically resets and reseeds database on every deploy (zero manual steps)
+- **Production environment**: Preserves data (only reseeds if database is empty)
+
+For complete details on reseeding behavior, force reseeding production for demos, and troubleshooting, see **[RESEEDING-GUIDE.md](RESEEDING-GUIDE.md)**.
 
 ## Project Structure
 
@@ -169,10 +179,11 @@ npm run prisma:seed      # Load test data
 - **[MODERNIZATION-ROADMAP.md](MODERNIZATION-ROADMAP.md)** - 8-week modernization plan (Phases 1-4 complete)
 - **[ARCHITECTURE-DECISIONS.md](ARCHITECTURE-DECISIONS.md)** - Architectural framework and design patterns
 
-### Deployment
+### Deployment & Operations
 - **[DEPLOYMENT-PLAN.md](DEPLOYMENT-PLAN.md)** - Google Cloud deployment guide
 - **[QUICKSTART-DEPLOY.md](QUICKSTART-DEPLOY.md)** - Fast-track deployment
 - **[README-DEPLOYMENT.md](README-DEPLOYMENT.md)** - Deployment quick reference
+- **[RESEEDING-GUIDE.md](RESEEDING-GUIDE.md)** - Database reseeding strategy and procedures
 
 ## Compliance
 
