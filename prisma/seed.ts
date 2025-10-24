@@ -107,12 +107,21 @@ async function createBaseUsers() {
     {
       email: "sarah.martinez@portlandadvocates.com",
       name: "Sarah Martinez",
+      phone: "503-555-0301",
+      address: "300 Education Way, Portland, OR 97206",
     },
     {
       email: "robert.johnson@transportationalliance.org",
       name: "Robert Johnson",
+      phone: "503-555-0302",
+      address: "400 Transit Blvd, Portland, OR 97207",
     },
-    { email: "emily.wong@housingfirst.org", name: "Emily Wong" },
+    {
+      email: "emily.wong@housingfirst.org",
+      name: "Emily Wong",
+      phone: "503-555-0303",
+      address: "500 Housing Ave, Portland, OR 97208",
+    },
   ];
   const pendingLobbyistUsers = [];
   for (const data of pendingLobbyistData) {
@@ -183,6 +192,7 @@ async function createBaseUsers() {
     adminUser,
     lobbyistUsers,
     pendingLobbyistUsers,
+    pendingLobbyistData, // Include raw data with phone/address
     employerUsers,
     boardMemberUsers,
     publicUser,
@@ -877,10 +887,10 @@ async function createPendingData(
     const lobbyist = await prisma.lobbyist.create({
       data: {
         userId: users.pendingLobbyistUsers[i].id,
-        name: `Pending Lobbyist ${i + 1}`,
-        email: `pending${i + 1}@example.com`,
-        phone: `503-555-030${i + 1}`,
-        address: `${300 + i * 100} Pending Ave, Portland, OR 9720${i + 6}`,
+        name: users.pendingLobbyistData[i].name, // ✅ Use realistic name
+        email: users.pendingLobbyistData[i].email, // ✅ Use realistic email
+        phone: users.pendingLobbyistData[i].phone, // ✅ Use realistic phone
+        address: users.pendingLobbyistData[i].address, // ✅ Use realistic address
         status: RegistrationStatus.PENDING,
         hoursCurrentQuarter: 15.0,
         registrationDate: new Date("2025-10-15"),
