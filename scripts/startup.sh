@@ -2,6 +2,7 @@
 set -e
 
 echo "🚀 Starting Lobbyist Registration System..."
+echo "📦 Environment: ${ENVIRONMENT:-unknown}"
 echo ""
 
 # Function to check if database has data
@@ -31,91 +32,81 @@ check_database_data() {
   echo "$USER_COUNT"
 }
 
-# Check if force reseed is requested
+# Determine reseeding strategy based on environment
+SHOULD_RESEED="false"
+
+# Check if force reseed is explicitly requested (takes highest priority)
 if [ "$FORCE_RESEED" = "true" ]; then
-  echo "⚠️  FORCE_RESEED=true detected - forcing database re-seed..."
+  echo "⚠️  FORCE_RESEED=true detected - forcing database reset and re-seed..."
   echo ""
-  USER_COUNT="0"
-else
-  # Check if database has data
+  SHOULD_RESEED="true"
+  FORCE_RESET="true"
+# Development environment: ALWAYS reset and reseed on every deploy
+elif [ "$ENVIRONMENT" = "development" ]; then
+  echo "🔄 Development environment detected - auto-reseeding enabled"
+  echo "   This ensures fresh demo data on every deploy"
+  echo ""
+  SHOULD_RESEED="true"
+  FORCE_RESET="true"
+# Production environment: Only reseed if database is empty
+elif [ "$ENVIRONMENT" = "production" ]; then
+  echo "🔒 Production environment detected - data preservation mode"
+  echo "   Use FORCE_RESEED=true to reset (for demos)"
+  echo ""
   USER_COUNT=$(check_database_data)
+  if [ "$USER_COUNT" = "0" ]; then
+    echo "📊 Database is empty - initial seed will run"
+    SHOULD_RESEED="true"
+    FORCE_RESET="false"
+  else
+    echo "✅ Database has data (User count: $USER_COUNT) - preserving data"
+    SHOULD_RESEED="false"
+    FORCE_RESET="false"
+  fi
+# Unknown environment: Check if database is empty
+else
+  echo "⚠️  Unknown environment - checking database state"
+  echo ""
+  USER_COUNT=$(check_database_data)
+  if [ "$USER_COUNT" = "0" ]; then
+    SHOULD_RESEED="true"
+    FORCE_RESET="false"
+  else
+    SHOULD_RESEED="false"
+    FORCE_RESET="false"
+  fi
 fi
 
-if [ "$USER_COUNT" = "0" ]; then
-  echo "📊 Database is empty (User count: 0)"
+# Handle database migrations and seeding based on reset strategy
+if [ "$FORCE_RESET" = "true" ]; then
+  echo "🔄 Performing database reset (force mode)..."
+  echo ""
+  echo "⚠️  This will DELETE ALL DATA and recreate schema"
   echo ""
 
-  # Check if migrations table exists to determine if we need migrations
-  MIGRATIONS_EXIST=$(node -e "
-    const { PrismaClient } = require('@prisma/client');
-    const prisma = new PrismaClient();
-
-    prisma.\$connect()
-      .then(() => prisma.\$queryRaw\`
-        SELECT COUNT(*) as count
-        FROM information_schema.tables
-        WHERE table_schema = 'public'
-        AND table_name = '_prisma_migrations'
-      \`)
-      .then(result => {
-        console.log(result[0].count > 0 ? 'yes' : 'no');
-        process.exit(0);
-      })
-      .catch(err => {
-        console.log('no');
-        process.exit(0);
-      })
-      .finally(() => prisma.\$disconnect());
-  " 2>/dev/null || echo "no")
-
-  if [ "$MIGRATIONS_EXIST" = "no" ]; then
-    # Check if schema exists but migrations don't (manual setup case)
-    TABLES_EXIST=$(node -e "
-      const { PrismaClient } = require('@prisma/client');
-      const prisma = new PrismaClient();
-
-      prisma.\$connect()
-        .then(() => prisma.\$queryRaw\`
-          SELECT COUNT(*) as count
-          FROM information_schema.tables
-          WHERE table_schema = 'public'
-          AND table_name = 'User'
-        \`)
-        .then(result => {
-          console.log(result[0].count > 0 ? 'yes' : 'no');
-          process.exit(0);
-        })
-        .catch(err => {
-          console.log('no');
-          process.exit(0);
-        })
-        .finally(() => prisma.\$disconnect());
-    " 2>/dev/null || echo "no")
-
-    if [ "$TABLES_EXIST" = "yes" ]; then
-      echo "✅ Database schema already exists (managed outside migrations)"
-      echo ""
-    else
-      # Fresh database - run migrations first
-      echo "🔧 Running database migrations..."
-      npx prisma migrate deploy
-      echo ""
-    fi
-  else
-    echo "✅ Database schema already exists (managed outside migrations)"
-    echo ""
-  fi
-
-  # Seed the database with test data
-  echo "🌱 Seeding database with test data..."
-  npm run db:seed
-
+  # Force reset: drop all tables, recreate, and migrate
+  npx prisma db push --force-reset --accept-data-loss
   echo ""
-  echo "✅ Database initialization complete!"
+  echo "✅ Database reset complete"
   echo ""
 else
-  echo "✅ Database already has data (User count: $USER_COUNT)"
-  echo "✅ Skipping migrations and seed"
+  # Normal mode: just run migrations (idempotent)
+  echo "🔧 Running database migrations..."
+  npx prisma migrate deploy
+  echo ""
+fi
+
+# Seed database if needed
+if [ "$SHOULD_RESEED" = "true" ]; then
+  echo "🌱 Seeding database with demo data..."
+  echo "   Using 'Rule of 3' pattern (3 entities, 3 children each)"
+  echo ""
+  npm run db:seed
+  echo ""
+  echo "✅ Database seeding complete!"
+  echo ""
+else
+  echo "✅ Skipping seed - preserving existing data"
   echo ""
 fi
 

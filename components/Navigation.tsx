@@ -29,6 +29,7 @@ import {
   ChevronDown,
   Clipboard,
   Settings,
+  Users,
 } from "lucide-react";
 
 interface NavigationProps {
@@ -181,6 +182,16 @@ const ADMIN_SECTIONS: NavSection[] = [
             },
           ]
         : []),
+    ],
+  },
+  {
+    label: "System Administration",
+    items: [
+      {
+        label: "User Management",
+        href: "/admin/users",
+        icon: Users,
+      },
     ],
   },
 ];
