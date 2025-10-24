@@ -178,11 +178,19 @@ export async function PATCH(
     });
 
     // 10. Determine audit action
-    let auditAction: "UPDATED" | "DEACTIVATED" | "ACTIVATED" | "SUSPENDED" | "ROLE_CHANGED" = "UPDATED";
+    let auditAction:
+      | "UPDATED"
+      | "DEACTIVATED"
+      | "ACTIVATED"
+      | "SUSPENDED"
+      | "ROLE_CHANGED" = "UPDATED";
     if (changes.status) {
       if (changes.status.new === UserStatus.INACTIVE) {
         auditAction = "DEACTIVATED";
-      } else if (changes.status.new === UserStatus.ACTIVE && changes.status.old === UserStatus.INACTIVE) {
+      } else if (
+        changes.status.new === UserStatus.ACTIVE &&
+        changes.status.old === UserStatus.INACTIVE
+      ) {
         auditAction = "ACTIVATED";
       } else if (changes.status.new === UserStatus.SUSPENDED) {
         auditAction = "SUSPENDED";

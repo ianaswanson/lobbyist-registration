@@ -90,9 +90,7 @@ export function ResetPasswordDialog({
         {!tempPassword ? (
           <>
             <div className="py-4">
-              <p className="text-sm text-gray-600">
-                This will:
-              </p>
+              <p className="text-sm text-gray-600">This will:</p>
               <ul className="mt-2 list-inside list-disc space-y-1 text-sm text-gray-600">
                 <li>Generate a secure temporary password</li>
                 <li>Require password change on next login</li>
@@ -102,7 +100,11 @@ export function ResetPasswordDialog({
             </div>
 
             <DialogFooter>
-              <Button variant="outline" onClick={handleClose} disabled={loading}>
+              <Button
+                variant="outline"
+                onClick={handleClose}
+                disabled={loading}
+              >
                 Cancel
               </Button>
               <Button onClick={handleConfirm} disabled={loading}>
@@ -134,8 +136,8 @@ export function ResetPasswordDialog({
                     </Button>
                   </div>
                   <p className="text-sm text-gray-600">
-                    Share this password with <strong>{user.email}</strong> securely.
-                    They will be required to change it on first login.
+                    Share this password with <strong>{user.email}</strong>{" "}
+                    securely. They will be required to change it on first login.
                   </p>
                   <p className="text-xs text-gray-500">
                     Note: The password has also been logged to the console.

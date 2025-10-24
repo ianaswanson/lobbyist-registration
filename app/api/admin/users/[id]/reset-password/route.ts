@@ -91,7 +91,9 @@ export async function POST(
       `  Please sign in at: ${process.env.NEXTAUTH_URL || "http://localhost:3000"}/auth/signin`
     );
     console.log(``);
-    console.log(`  You will be required to change your password on first login.`);
+    console.log(
+      `  You will be required to change your password on first login.`
+    );
     console.log(``);
     console.log(`  ---`);
     console.log(`  Multnomah County Lobbyist Registration System`);

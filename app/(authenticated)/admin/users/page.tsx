@@ -106,9 +106,12 @@ export default function UsersPage() {
 
   const handleResetPassword = async (userId: string) => {
     try {
-      const response = await fetch(`/api/admin/users/${userId}/reset-password`, {
-        method: "POST",
-      });
+      const response = await fetch(
+        `/api/admin/users/${userId}/reset-password`,
+        {
+          method: "POST",
+        }
+      );
 
       if (!response.ok) {
         throw new Error("Failed to reset password");

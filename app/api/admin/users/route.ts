@@ -129,7 +129,10 @@ export async function POST(request: NextRequest) {
     // 4. Validate email format
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      return NextResponse.json({ error: "Invalid email format" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Invalid email format" },
+        { status: 400 }
+      );
     }
 
     // 5. Validate role
@@ -209,7 +212,9 @@ export async function POST(request: NextRequest) {
       `  Please sign in at: ${process.env.NEXTAUTH_URL || "http://localhost:3000"}/auth/signin`
     );
     console.log(``);
-    console.log(`  You will be required to change your password on first login.`);
+    console.log(
+      `  You will be required to change your password on first login.`
+    );
     console.log(``);
     console.log(`  ---`);
     console.log(`  Multnomah County Lobbyist Registration System`);

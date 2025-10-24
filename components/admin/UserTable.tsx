@@ -112,7 +112,7 @@ export function UserTable({
             Search Users
           </label>
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+            <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-gray-400" />
             <Input
               id="search"
               type="text"
@@ -126,7 +126,10 @@ export function UserTable({
 
         {/* Role Filter */}
         <div className="w-full md:w-48">
-          <label htmlFor="role-filter" className="mb-2 block text-sm font-medium">
+          <label
+            htmlFor="role-filter"
+            className="mb-2 block text-sm font-medium"
+          >
             Role
           </label>
           <Select value={roleFilter} onValueChange={onRoleFilterChange}>
@@ -138,7 +141,9 @@ export function UserTable({
               <SelectItem value={UserRole.ADMIN}>Admin</SelectItem>
               <SelectItem value={UserRole.LOBBYIST}>Lobbyist</SelectItem>
               <SelectItem value={UserRole.EMPLOYER}>Employer</SelectItem>
-              <SelectItem value={UserRole.BOARD_MEMBER}>Board Member</SelectItem>
+              <SelectItem value={UserRole.BOARD_MEMBER}>
+                Board Member
+              </SelectItem>
               <SelectItem value={UserRole.PUBLIC}>Public</SelectItem>
             </SelectContent>
           </Select>
@@ -146,7 +151,10 @@ export function UserTable({
 
         {/* Status Filter */}
         <div className="w-full md:w-48">
-          <label htmlFor="status-filter" className="mb-2 block text-sm font-medium">
+          <label
+            htmlFor="status-filter"
+            className="mb-2 block text-sm font-medium"
+          >
             Status
           </label>
           <Select value={statusFilter} onValueChange={onStatusFilterChange}>
@@ -193,7 +201,10 @@ export function UserTable({
                     </div>
                   </TableCell>
                   <TableCell>
-                    <Badge className={getRoleBadgeColor(user.role)} variant="secondary">
+                    <Badge
+                      className={getRoleBadgeColor(user.role)}
+                      variant="secondary"
+                    >
                       {user.role}
                     </Badge>
                   </TableCell>

@@ -11,7 +11,13 @@ interface UserStatusBadgeProps {
 }
 
 export function UserStatusBadge({ status }: UserStatusBadgeProps) {
-  const variants: Record<UserStatus, { variant: "default" | "secondary" | "destructive" | "outline"; className: string }> = {
+  const variants: Record<
+    UserStatus,
+    {
+      variant: "default" | "secondary" | "destructive" | "outline";
+      className: string;
+    }
+  > = {
     ACTIVE: {
       variant: "default",
       className: "bg-green-100 text-green-800 hover:bg-green-100",

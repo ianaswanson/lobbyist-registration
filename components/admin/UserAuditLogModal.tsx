@@ -151,29 +151,32 @@ export function UserAuditLogModal({
                         )}
                       </div>
 
-                      {entry.changes && Object.keys(entry.changes).length > 0 && (
-                        <div className="mt-3 rounded-md bg-gray-50 p-3">
-                          <p className="text-xs font-medium text-gray-700">
-                            Changes:
-                          </p>
-                          <div className="mt-2 space-y-1">
-                            {Object.entries(entry.changes).map(
-                              ([field, change]) => (
-                                <div key={field} className="text-xs">
-                                  <span className="font-medium">{field}:</span>
-                                  <span className="ml-1 text-red-600">
-                                    {String(change.old || "null")}
-                                  </span>
-                                  <span className="mx-1">→</span>
-                                  <span className="text-green-600">
-                                    {String(change.new || "null")}
-                                  </span>
-                                </div>
-                              )
-                            )}
+                      {entry.changes &&
+                        Object.keys(entry.changes).length > 0 && (
+                          <div className="mt-3 rounded-md bg-gray-50 p-3">
+                            <p className="text-xs font-medium text-gray-700">
+                              Changes:
+                            </p>
+                            <div className="mt-2 space-y-1">
+                              {Object.entries(entry.changes).map(
+                                ([field, change]) => (
+                                  <div key={field} className="text-xs">
+                                    <span className="font-medium">
+                                      {field}:
+                                    </span>
+                                    <span className="ml-1 text-red-600">
+                                      {String(change.old || "null")}
+                                    </span>
+                                    <span className="mx-1">→</span>
+                                    <span className="text-green-600">
+                                      {String(change.new || "null")}
+                                    </span>
+                                  </div>
+                                )
+                              )}
+                            </div>
                           </div>
-                        </div>
-                      )}
+                        )}
                     </div>
                   </div>
                 </div>

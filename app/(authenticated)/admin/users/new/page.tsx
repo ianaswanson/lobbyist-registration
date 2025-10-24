@@ -32,7 +32,9 @@ export default function NewUserPage() {
 
       // Show success message in console (temporary password logged there)
       console.log("✅ User created successfully:", result.user.email);
-      console.log("📧 Check console logs above for welcome email and temp password");
+      console.log(
+        "📧 Check console logs above for welcome email and temp password"
+      );
 
       // Navigate back to users list
       router.push("/admin/users");
@@ -49,11 +51,7 @@ export default function NewUserPage() {
     <div className="container mx-auto max-w-2xl py-8">
       {/* Header */}
       <div className="mb-6">
-        <Button
-          variant="ghost"
-          onClick={handleCancel}
-          className="mb-4"
-        >
+        <Button variant="ghost" onClick={handleCancel} className="mb-4">
           <ArrowLeft className="mr-2 h-4 w-4" />
           Back to Users
         </Button>
@@ -66,9 +64,9 @@ export default function NewUserPage() {
       {/* Info alert */}
       <div className="mb-6 rounded-md border border-blue-200 bg-blue-50 p-4">
         <p className="text-sm text-blue-800">
-          <strong>Note:</strong> A temporary password will be generated and logged to
-          the console. The user will be required to change their password on first
-          login.
+          <strong>Note:</strong> A temporary password will be generated and
+          logged to the console. The user will be required to change their
+          password on first login.
         </p>
       </div>
 

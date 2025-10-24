@@ -189,7 +189,11 @@ export function UserForm({
           Cancel
         </Button>
         <Button type="submit" disabled={loading}>
-          {loading ? "Saving..." : mode === "create" ? "Create User" : "Save Changes"}
+          {loading
+            ? "Saving..."
+            : mode === "create"
+              ? "Create User"
+              : "Save Changes"}
         </Button>
       </div>
     </form>

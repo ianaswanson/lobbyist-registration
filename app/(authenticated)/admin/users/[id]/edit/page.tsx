@@ -136,8 +136,9 @@ export default function EditUserPage() {
       {/* Info alert */}
       <div className="mb-6 rounded-md border border-blue-200 bg-blue-50 p-4">
         <p className="text-sm text-blue-800">
-          <strong>Note:</strong> Email addresses cannot be changed. If you need to
-          change a user's email, create a new account and deactivate this one.
+          <strong>Note:</strong> Email addresses cannot be changed. If you need
+          to change a user's email, create a new account and deactivate this
+          one.
         </p>
       </div>
 
