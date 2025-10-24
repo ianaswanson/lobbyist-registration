@@ -90,9 +90,47 @@ if [ "$FORCE_RESET" = "true" ]; then
   echo "✅ Database reset complete"
   echo ""
 else
-  # Normal mode: just run migrations (idempotent)
+  # Normal mode: run migrations
   echo "🔧 Running database migrations..."
-  npx prisma migrate deploy
+
+  # Capture migration output to check for errors
+  MIGRATION_OUTPUT=$(npx prisma migrate deploy 2>&1) || MIGRATION_FAILED=true
+
+  if [ "$MIGRATION_FAILED" = "true" ]; then
+    # Check if we got the P3005 error (schema exists but not tracked)
+    if echo "$MIGRATION_OUTPUT" | grep -q "P3005"; then
+      echo ""
+      echo "⚠️  Migration history not found - baselining existing migrations..."
+      echo "   The database schema exists but migrations aren't tracked."
+      echo "   Marking all existing migrations as applied..."
+      echo ""
+
+      # Baseline all existing migrations (mark as applied without running)
+      for migration in $(ls -1 prisma/migrations/ | grep -v migration_lock.toml); do
+        echo "  ✅ Marking $migration as applied..."
+        npx prisma migrate resolve --applied "$migration" || true
+      done
+
+      echo ""
+      echo "✅ Migration baseline complete"
+      echo ""
+
+      # Now try migrations again - should only run new ones
+      echo "🔧 Applying any new migrations..."
+      npx prisma migrate deploy
+    else
+      # Some other error - show output and fail
+      echo "❌ Migration failed with error:"
+      echo "$MIGRATION_OUTPUT"
+      exit 1
+    fi
+  else
+    # Success on first try
+    echo "$MIGRATION_OUTPUT"
+  fi
+
+  echo ""
+  echo "✅ Database migrations complete"
   echo ""
 fi
 
