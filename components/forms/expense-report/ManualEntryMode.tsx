@@ -180,6 +180,7 @@ export function ManualEntryMode({ onAdd }: ManualEntryModeProps) {
       <div className="flex justify-end pt-4">
         <button
           type="submit"
+          data-testid="add-expense-button"
           className="rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
         >
           Add Expense Item

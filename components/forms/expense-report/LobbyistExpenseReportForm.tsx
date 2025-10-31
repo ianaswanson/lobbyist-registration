@@ -229,7 +229,10 @@ export function LobbyistExpenseReportForm({
     <div className="space-y-6">
       {/* Loading Indicator */}
       {isLoading && (
-        <div className="rounded-md border border-blue-200 bg-blue-50 p-4">
+        <div
+          className="rounded-md border border-blue-200 bg-blue-50 p-4"
+          data-testid="loading-indicator"
+        >
           <div className="flex items-center">
             <svg
               className="h-5 w-5 animate-spin text-blue-600"
@@ -289,6 +292,9 @@ export function LobbyistExpenseReportForm({
       {/* Success/Error Message */}
       {message && (
         <div
+          data-testid={
+            message.type === "success" ? "success-message" : "error-message"
+          }
           className={`rounded-md p-4 ${
             message.type === "success"
               ? "border border-green-200 bg-green-50 text-green-800"
@@ -551,6 +557,7 @@ export function LobbyistExpenseReportForm({
           type="button"
           onClick={handleSaveDraft}
           disabled={isSubmitting || expenses.length === 0}
+          data-testid="save-draft-button"
           className="flex items-center space-x-2 rounded-md border border-gray-300 bg-white px-6 py-2 text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-400"
         >
           {isSubmitting ? (
@@ -585,6 +592,7 @@ export function LobbyistExpenseReportForm({
           type="button"
           onClick={handleSubmit}
           disabled={isSubmitting || expenses.length === 0}
+          data-testid="submit-report-button"
           className="flex items-center space-x-2 rounded-md bg-green-600 px-6 py-2 text-white hover:bg-green-700 disabled:cursor-not-allowed disabled:bg-gray-300"
         >
           {isSubmitting ? (
