@@ -6,25 +6,57 @@
     <title>Ordinance Compliance Matrix - Lobbyist Registration System</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
+        .status-todo {
+            background-color: #f3f4f6;
+            color: #6b7280;
+            border: 1px dashed #d1d5db;
+        }
         .status-implemented {
             background-color: #d1fae5;
             color: #065f46;
+            font-weight: 600;
         }
         .status-partial {
             background-color: #fef3c7;
             color: #92400e;
+            font-weight: 600;
         }
-        .status-future {
-            background-color: #e0e7ff;
-            color: #3730a3;
-        }
-        .status-na {
-            background-color: #f3f4f6;
-            color: #6b7280;
+        .status-missing {
+            background-color: #fee2e2;
+            color: #991b1b;
+            font-weight: 600;
         }
         .requirement-row:hover {
             background-color: #f9fafb;
         }
+        .tier-section {
+            border-left: 4px solid;
+        }
+        .tier-1 { border-color: #10b981; }
+        .tier-2 { border-color: #f59e0b; }
+        .tier-3 { border-color: #3b82f6; }
+
+        /* Fixed column widths for consistent alignment across all tiers */
+        .tier-section table {
+            table-layout: fixed;
+        }
+        .tier-section th:nth-child(1),
+        .tier-section td:nth-child(1) {
+            width: 130px;
+        }
+        .tier-section th:nth-child(2),
+        .tier-section td:nth-child(2) {
+            width: 28%;
+        }
+        .tier-section th:nth-child(3),
+        .tier-section td:nth-child(3) {
+            width: auto;
+        }
+        .tier-section th:nth-child(4),
+        .tier-section td:nth-child(4) {
+            width: 80px;
+        }
+
         @media print {
             .no-print {
                 display: none;
@@ -41,765 +73,453 @@
     <header class="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-6 shadow-lg no-print">
         <div class="max-w-7xl mx-auto px-6">
             <h1 class="text-3xl font-bold mb-2">Multnomah County Lobbyist Ordinance</h1>
-            <p class="text-xl text-blue-100">Implementation Compliance Matrix</p>
-            <div class="mt-2 text-sm text-blue-100">
-                Effective Date: July 1, 2026 | Ordinance Approved: April 2, 2025
+            <p class="text-xl text-blue-100">Software Requirements & Compliance Matrix</p>
+            <div class="mt-4 text-sm text-blue-100 max-w-4xl">
+                <p class="mb-3">
+                    The Multnomah County Government Accountability Ordinance establishes comprehensive lobbyist registration and transparency requirements. This matrix shows how each ordinance requirement translates into software functionality, organized by three implementation tiers: Direct Enforcement (prevention), Detection & Auditing (flagging), and Attestation & Education (accountability).
+                </p>
             </div>
-            <div class="mt-4 flex gap-3 text-sm">
-                <button onclick="filterStatus('all')" class="px-3 py-1 bg-white/20 rounded hover:bg-white/30 transition">All Requirements</button>
-                <button onclick="filterStatus('implemented')" class="px-3 py-1 bg-green-500/30 rounded hover:bg-green-500/50 transition">✓ Implemented</button>
-                <button onclick="filterStatus('partial')" class="px-3 py-1 bg-yellow-500/30 rounded hover:bg-yellow-500/50 transition">⚠️ Partial</button>
-                <button onclick="window.print()" class="px-3 py-1 bg-white/20 rounded hover:bg-white/30 transition ml-auto">🖨️ Print</button>
+            <div class="mt-4 text-sm text-blue-100">
+                Effective Date: July 1, 2026 | Ordinance Approved: April 2, 2025
             </div>
         </div>
     </header>
 
     <div class="max-w-7xl mx-auto px-6 py-8">
 
-        <!-- Summary Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <div class="bg-white rounded-lg shadow-lg p-6 border-l-4 border-green-500">
-                <div class="text-3xl font-bold text-green-600" id="implemented-count">0</div>
-                <div class="text-gray-600 text-sm">Ordinance Requirements Met</div>
-                <div class="text-xs text-gray-500 mt-1">Fully functional in system</div>
-            </div>
-            <div class="bg-white rounded-lg shadow-lg p-6 border-l-4 border-blue-500">
-                <div class="text-3xl font-bold text-blue-600" id="enhancement-count">0</div>
-                <div class="text-gray-600 text-sm">Value-Add Enhancements</div>
-                <div class="text-xs text-gray-500 mt-1">Beyond ordinance requirements</div>
-            </div>
-            <div class="bg-white rounded-lg shadow-lg p-6 border-l-4 border-purple-500">
-                <div class="text-3xl font-bold text-purple-600" id="compliance-percentage">0%</div>
-                <div class="text-gray-600 text-sm">Overall Compliance</div>
-                <div class="text-xs text-gray-500 mt-1">Requirements satisfied</div>
-            </div>
-        </div>
-
         <!-- Legend -->
-        <div class="bg-white rounded-lg shadow-lg p-6 mb-8 no-print">
-            <h2 class="text-xl font-bold text-gray-900 mb-4">Compliance Categories</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
-                <div>
-                    <h3 class="font-semibold text-gray-900 mb-3">Ordinance Requirements</h3>
-                    <div class="space-y-2">
-                        <div class="flex items-start gap-2">
-                            <div class="w-8 h-6 status-implemented rounded flex items-center justify-center font-bold text-xs">✓</div>
-                            <div class="flex-1">
-                                <div class="font-medium">Implemented</div>
-                                <div class="text-xs text-gray-600">Required by ordinance and fully functional in the system</div>
-                            </div>
-                        </div>
-                        <div class="flex items-start gap-2">
-                            <div class="w-8 h-6 status-partial rounded flex items-center justify-center font-bold text-xs">⚠️</div>
-                            <div class="flex-1">
-                                <div class="font-medium">Partial</div>
-                                <div class="text-xs text-gray-600">Required by ordinance, needs production integration (e.g., Government SSO)</div>
-                            </div>
-                        </div>
-                    </div>
+        <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+            <h2 class="text-xl font-bold text-gray-900 mb-4">Implementation Tiers</h2>
+            <div class="space-y-2 text-sm">
+                <div class="flex items-start gap-3">
+                    <span class="font-semibold text-green-700 min-w-[80px]">Tier 1:</span>
+                    <span class="text-gray-600">Direct Enforcement (27 items) - Form validation, required fields, deadline tracking</span>
                 </div>
-                <div>
-                    <h3 class="font-semibold text-gray-900 mb-3">Value-Add Features</h3>
-                    <div class="space-y-2">
-                        <div class="flex items-start gap-2">
-                            <div class="w-8 h-6 bg-blue-100 text-blue-800 rounded flex items-center justify-center font-bold text-xs">+</div>
-                            <div class="flex-1">
-                                <div class="font-medium">Enhancement</div>
-                                <div class="text-xs text-gray-600">Not required by ordinance, but improves usability and transparency beyond minimum requirements</div>
-                            </div>
-                        </div>
-                    </div>
+                <div class="flex items-start gap-3">
+                    <span class="font-semibold text-amber-700 min-w-[80px]">Tier 2:</span>
+                    <span class="text-gray-600">Detection & Auditing (8 items) - Cross-referencing, pattern detection, anomaly flagging</span>
+                </div>
+                <div class="flex items-start gap-3">
+                    <span class="font-semibold text-blue-700 min-w-[80px]">Tier 3:</span>
+                    <span class="text-gray-600">Attestation & Education (11 items) - Required certifications, help text, tracking</span>
                 </div>
             </div>
         </div>
 
-        <!-- Compliance Table -->
-        <div class="bg-white rounded-lg shadow-lg overflow-hidden">
-            <table class="min-w-full divide-y divide-gray-200">
-                <thead class="bg-gray-50">
-                    <tr>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/5">
-                            Ordinance Section
-                        </th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-2/5">
-                            Requirement
-                        </th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/6">
-                            Status
-                        </th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/4">
-                            Implementation Details
-                        </th>
-                    </tr>
-                </thead>
-                <tbody class="bg-white divide-y divide-gray-200" id="compliance-tbody">
-
-                    <!-- REGISTRATION REQUIREMENTS -->
-                    <tr class="bg-gray-100">
-                        <td colspan="4" class="px-6 py-3 text-sm font-bold text-gray-900">
-                            📋 LOBBYIST REGISTRATION REQUIREMENTS
-                        </td>
-                    </tr>
-
-                    <tr class="requirement-row" data-status="implemented">
-                        <td class="px-6 py-4 text-sm text-gray-900">
-                            Registration Threshold (§3.803(F))
-                        </td>
-                        <td class="px-6 py-4 text-sm text-gray-600">
-                            Must register if spending more than 10 hours per quarter lobbying, excluding travel time
-                        </td>
-                        <td class="px-6 py-4">
-                            <span class="status-implemented px-3 py-1 rounded-full text-xs font-semibold">✓ Implemented</span>
-                        </td>
-                        <td class="px-6 py-4 text-sm text-gray-600">
-                            Exemption checker calculates hours and displays 10-hour threshold requirement per §3.803(F)
-                        </td>
-                    </tr>
-
-                    <tr class="requirement-row" data-status="implemented">
-                        <td class="px-6 py-4 text-sm text-gray-900">
-                            Registration Information
-                        </td>
-                        <td class="px-6 py-4 text-sm text-gray-600">
-                            Collect name, address, phone, email, employer(s), subjects of interest
-                        </td>
-                        <td class="px-6 py-4">
-                            <span class="status-implemented px-3 py-1 rounded-full text-xs font-semibold">✓ Implemented</span>
-                        </td>
-                        <td class="px-6 py-4 text-sm text-gray-600">
-                            4-step registration wizard with validation. All required fields captured.
-                        </td>
-                    </tr>
-
-                    <tr class="requirement-row" data-status="implemented">
-                        <td class="px-6 py-4 text-sm text-gray-900">
-                            Employer Authorization
-                        </td>
-                        <td class="px-6 py-4 text-sm text-gray-600">
-                            Employer must authorize lobbyist in writing
-                        </td>
-                        <td class="px-6 py-4">
-                            <span class="status-implemented px-3 py-1 rounded-full text-xs font-semibold">✓ Implemented</span>
-                        </td>
-                        <td class="px-6 py-4 text-sm text-gray-600">
-                            Document upload during registration. Employer-lobbyist linkage tracked in database.
-                        </td>
-                    </tr>
-
-                    <tr class="requirement-row" data-status="implemented">
-                        <td class="px-6 py-4 text-sm text-gray-900">
-                            Exemptions
-                        </td>
-                        <td class="px-6 py-4 text-sm text-gray-600">
-                            Elected officials, county employees, news media, expert witnesses, and others
-                        </td>
-                        <td class="px-6 py-4">
-                            <span class="status-implemented px-3 py-1 rounded-full text-xs font-semibold">✓ Implemented</span>
-                        </td>
-                        <td class="px-6 py-4 text-sm text-gray-600">
-                            Exemption checker displays all exemption categories with clear explanations
-                        </td>
-                    </tr>
-
-                    <!-- QUARTERLY REPORTING -->
-                    <tr class="bg-gray-100">
-                        <td colspan="4" class="px-6 py-3 text-sm font-bold text-gray-900">
-                            📊 QUARTERLY EXPENSE REPORTING
-                        </td>
-                    </tr>
-
-                    <tr class="requirement-row" data-status="implemented">
-                        <td class="px-6 py-4 text-sm text-gray-900">
-                            Lobbyist Quarterly Report
-                        </td>
-                        <td class="px-6 py-4 text-sm text-gray-600">
-                            Total food, refreshments, entertainment expenses. Itemize >$50 per official.
-                        </td>
-                        <td class="px-6 py-4">
-                            <span class="status-implemented px-3 py-1 rounded-full text-xs font-semibold">✓ Implemented</span>
-                        </td>
-                        <td class="px-6 py-4 text-sm text-gray-600">
-                            Complete form with total amount, itemized expenses, official names. Supports manual, CSV, bulk paste.
-                        </td>
-                    </tr>
-
-                    <tr class="requirement-row" data-status="implemented">
-                        <td class="px-6 py-4 text-sm text-gray-900">
-                            Employer Quarterly Report
-                        </td>
-                        <td class="px-6 py-4 text-sm text-gray-600">
-                            Total lobbying expenditures, payments to lobbyists, itemized expenses to officials >$50
-                        </td>
-                        <td class="px-6 py-4">
-                            <span class="status-implemented px-3 py-1 rounded-full text-xs font-semibold">✓ Implemented</span>
-                        </td>
-                        <td class="px-6 py-4 text-sm text-gray-600">
-                            Complete form with total spend, lobbyist payments, itemized official expenses. Multiple input methods.
-                        </td>
-                    </tr>
-
-                    <tr class="requirement-row" data-status="implemented">
-                        <td class="px-6 py-4 text-sm text-gray-900">
-                            Quarterly Deadlines
-                        </td>
-                        <td class="px-6 py-4 text-sm text-gray-600">
-                            Q1: April 15, Q2: July 15, Q3: October 15, Q4: January 15
-                        </td>
-                        <td class="px-6 py-4">
-                            <span class="status-implemented px-3 py-1 rounded-full text-xs font-semibold">✓ Implemented</span>
-                        </td>
-                        <td class="px-6 py-4 text-sm text-gray-600">
-                            Deadlines displayed in forms, dashboard, and compliance tracking. Automated reminders.
-                        </td>
-                    </tr>
-
-                    <tr class="requirement-row" data-status="implemented">
-                        <td class="px-6 py-4 text-sm text-gray-900">
-                            Estimate Flag
-                        </td>
-                        <td class="px-6 py-4 text-sm text-gray-600">
-                            Mark expenses as estimates if exact amounts unknown
-                        </td>
-                        <td class="px-6 py-4">
-                            <span class="status-implemented px-3 py-1 rounded-full text-xs font-semibold">✓ Implemented</span>
-                        </td>
-                        <td class="px-6 py-4 text-sm text-gray-600">
-                            Checkbox for each expense line item. Tracked in database and displayed publicly.
-                        </td>
-                    </tr>
-
-                    <!-- BOARD MEMBER REQUIREMENTS -->
-                    <tr class="bg-gray-100">
-                        <td colspan="4" class="px-6 py-3 text-sm font-bold text-gray-900">
-                            ⚖️ BOARD MEMBER TRANSPARENCY REQUIREMENTS
-                        </td>
-                    </tr>
-
-                    <tr class="requirement-row" data-status="implemented">
-                        <td class="px-6 py-4 text-sm text-gray-900">
-                            Quarterly Calendar
-                        </td>
-                        <td class="px-6 py-4 text-sm text-gray-600">
-                            Post quarterly calendar within 15 days after quarter ends, publicly available 1+ year
-                        </td>
-                        <td class="px-6 py-4">
-                            <span class="status-implemented px-3 py-1 rounded-full text-xs font-semibold">✓ Implemented</span>
-                        </td>
-                        <td class="px-6 py-4 text-sm text-gray-600">
-                            Calendar form with manual entry, CSV upload, and ICS/iCal import. Automatic public posting.
-                        </td>
-                    </tr>
-
-                    <tr class="requirement-row" data-status="implemented">
-                        <td class="px-6 py-4 text-sm text-gray-900">
-                            Lobbying Receipts
-                        </td>
-                        <td class="px-6 py-4 text-sm text-gray-600">
-                            Report all food, refreshments, entertainment from lobbyists. Itemize >$50 per lobbyist.
-                        </td>
-                        <td class="px-6 py-4">
-                            <span class="status-implemented px-3 py-1 rounded-full text-xs font-semibold">✓ Implemented</span>
-                        </td>
-                        <td class="px-6 py-4 text-sm text-gray-600">
-                            Receipt tracking form with manual, CSV, and bulk paste input. Running total displayed.
-                        </td>
-                    </tr>
-
-                    <tr class="requirement-row" data-status="implemented">
-                        <td class="px-6 py-4 text-sm text-gray-900">
-                            Calendar Event Details
-                        </td>
-                        <td class="px-6 py-4 text-sm text-gray-600">
-                            Include event title, date, time, primary participants
-                        </td>
-                        <td class="px-6 py-4">
-                            <span class="status-implemented px-3 py-1 rounded-full text-xs font-semibold">✓ Implemented</span>
-                        </td>
-                        <td class="px-6 py-4 text-sm text-gray-600">
-                            All fields captured in form. ICS parser extracts attendees automatically from calendar files.
-                        </td>
-                    </tr>
-
-                    <!-- PUBLIC TRANSPARENCY -->
-                    <tr class="bg-gray-100">
-                        <td colspan="4" class="px-6 py-3 text-sm font-bold text-gray-900">
-                            🌐 PUBLIC TRANSPARENCY & ACCESS
-                        </td>
-                    </tr>
-
-                    <tr class="requirement-row" data-status="implemented">
-                        <td class="px-6 py-4 text-sm text-gray-900">
-                            Public Registry
-                        </td>
-                        <td class="px-6 py-4 text-sm text-gray-600">
-                            Searchable database of all registered lobbyists, employers, and reports
-                        </td>
-                        <td class="px-6 py-4">
-                            <span class="status-implemented px-3 py-1 rounded-full text-xs font-semibold">✓ Implemented</span>
-                        </td>
-                        <td class="px-6 py-4 text-sm text-gray-600">
-                            Full-text search with filters (name, employer, subject, date). No login required.
-                        </td>
-                    </tr>
-
-                    <tr class="requirement-row" data-status="implemented">
-                        <td class="px-6 py-4 text-sm text-gray-900">
-                            Search & Filter
-                        </td>
-                        <td class="px-6 py-4 text-sm text-gray-600">
-                            Filter by lobbyist name, employer, subject matter, date range
-                        </td>
-                        <td class="px-6 py-4">
-                            <span class="status-implemented px-3 py-1 rounded-full text-xs font-semibold">✓ Implemented</span>
-                        </td>
-                        <td class="px-6 py-4 text-sm text-gray-600">
-                            Advanced search page with multiple filter options. Real-time results.
-                        </td>
-                    </tr>
-
-                    <tr class="requirement-row" data-status="implemented">
-                        <td class="px-6 py-4 text-sm text-gray-900">
-                            Data Export
-                        </td>
-                        <td class="px-6 py-4 text-sm text-gray-600">
-                            Public can download data for analysis
-                        </td>
-                        <td class="px-6 py-4">
-                            <span class="status-implemented px-3 py-1 rounded-full text-xs font-semibold">✓ Implemented</span>
-                        </td>
-                        <td class="px-6 py-4 text-sm text-gray-600">
-                            CSV export button on search results. Downloads filtered dataset.
-                        </td>
-                    </tr>
-
-                    <tr class="requirement-row" data-status="implemented">
-                        <td class="px-6 py-4 text-sm text-gray-900">
-                            Retention Period
-                        </td>
-                        <td class="px-6 py-4 text-sm text-gray-600">
-                            Data publicly available for at least 1 year
-                        </td>
-                        <td class="px-6 py-4">
-                            <span class="status-implemented px-3 py-1 rounded-full text-xs font-semibold">✓ Implemented</span>
-                        </td>
-                        <td class="px-6 py-4 text-sm text-gray-600">
-                            All data stored in database. Archive/deletion not implemented (keeps data indefinitely).
-                        </td>
-                    </tr>
-
-                    <!-- ADMINISTRATIVE OVERSIGHT -->
-                    <tr class="bg-gray-100">
-                        <td colspan="4" class="px-6 py-3 text-sm font-bold text-gray-900">
-                            🛡️ ADMINISTRATIVE OVERSIGHT & ENFORCEMENT
-                        </td>
-                    </tr>
-
-                    <tr class="requirement-row" data-status="implemented">
-                        <td class="px-6 py-4 text-sm text-gray-900">
-                            Registration Review
-                        </td>
-                        <td class="px-6 py-4 text-sm text-gray-600">
-                            Admin reviews and approves/rejects registrations
-                        </td>
-                        <td class="px-6 py-4">
-                            <span class="status-implemented px-3 py-1 rounded-full text-xs font-semibold">✓ Implemented</span>
-                        </td>
-                        <td class="px-6 py-4 text-sm text-gray-600">
-                            Admin review workflow with approve, reject, request corrections. Document viewer.
-                        </td>
-                    </tr>
-
-                    <tr class="requirement-row" data-status="implemented">
-                        <td class="px-6 py-4 text-sm text-gray-900">
-                            Compliance Monitoring
-                        </td>
-                        <td class="px-6 py-4 text-sm text-gray-600">
-                            Track deadlines, identify late/missing reports
-                        </td>
-                        <td class="px-6 py-4">
-                            <span class="status-implemented px-3 py-1 rounded-full text-xs font-semibold">✓ Implemented</span>
-                        </td>
-                        <td class="px-6 py-4 text-sm text-gray-600">
-                            Compliance dashboard shows upcoming deadlines, overdue reports, summary statistics.
-                        </td>
-                    </tr>
-
-                    <tr class="requirement-row" data-status="implemented">
-                        <td class="px-6 py-4 text-sm text-gray-900">
-                            Email Notifications
-                        </td>
-                        <td class="px-6 py-4 text-sm text-gray-600">
-                            Send deadline reminders and compliance notices
-                        </td>
-                        <td class="px-6 py-4">
-                            <span class="status-implemented px-3 py-1 rounded-full text-xs font-semibold">✓ Implemented</span>
-                        </td>
-                        <td class="px-6 py-4 text-sm text-gray-600">
-                            Notification management UI. Email templates ready. Logs to console in prototype (Resend integration for production).
-                        </td>
-                    </tr>
-
-                    <tr class="requirement-row" data-status="implemented">
-                        <td class="px-6 py-4 text-sm text-gray-900">
-                            Violation Tracking
-                        </td>
-                        <td class="px-6 py-4 text-sm text-gray-600">
-                            Record violations, issue fines, track payments
-                        </td>
-                        <td class="px-6 py-4">
-                            <span class="status-implemented px-3 py-1 rounded-full text-xs font-semibold">✓ Implemented</span>
-                        </td>
-                        <td class="px-6 py-4 text-sm text-gray-600">
-                            Complete violation tracking: /admin/violations for admins, /my-violations for lobbyists/employers. Issue fines, track status (PENDING, ISSUED, PAID, WAIVED). Polymorphic model supports all entity types.
-                        </td>
-                    </tr>
-
-                    <tr class="requirement-row" data-status="implemented">
-                        <td class="px-6 py-4 text-sm text-gray-900">
-                            Appeals Process
-                        </td>
-                        <td class="px-6 py-4 text-sm text-gray-600">
-                            Handle appeals of fines and violations (§3.809 - 30-day window)
-                        </td>
-                        <td class="px-6 py-4">
-                            <span class="status-implemented px-3 py-1 rounded-full text-xs font-semibold">✓ Implemented</span>
-                        </td>
-                        <td class="px-6 py-4 text-sm text-gray-600">
-                            Full appeals workflow: Submit appeal within 30 days, track deadlines, review by admins at /admin/appeals. Appeal status tracking (PENDING, SCHEDULED, DECIDED). Automatic violation status update on decision.
-                        </td>
-                    </tr>
-
-                    <tr class="requirement-row" data-status="implemented">
-                        <td class="px-6 py-4 text-sm text-gray-900">
-                            Contract Exceptions
-                        </td>
-                        <td class="px-6 py-4 text-sm text-gray-600">
-                            Manage exceptions to contract prohibition (§9.230) for former officials
-                        </td>
-                        <td class="px-6 py-4">
-                            <span class="status-implemented px-3 py-1 rounded-full text-xs font-semibold">✓ Implemented</span>
-                        </td>
-                        <td class="px-6 py-4 text-sm text-gray-600">
-                            Public search interface at /contract-exceptions. Admin management at /admin/contract-exceptions. Track former official, contract details, justification, approval date, public posting.
-                        </td>
-                    </tr>
-
-                    <tr class="requirement-row" data-status="implemented">
-                        <td class="px-6 py-4 text-sm text-gray-900">
-                            Audit Trail
-                        </td>
-                        <td class="px-6 py-4 text-sm text-gray-600">
-                            Log all system actions for accountability
-                        </td>
-                        <td class="px-6 py-4">
-                            <span class="status-implemented px-3 py-1 rounded-full text-xs font-semibold">✓ Implemented</span>
-                        </td>
-                        <td class="px-6 py-4 text-sm text-gray-600">
-                            Audit log table tracks all CREATE, UPDATE, DELETE, LOGIN actions with user, timestamp, IP, changes.
-                        </td>
-                    </tr>
-
-                    <!-- ACCESSIBILITY & USABILITY -->
-                    <tr class="bg-gray-100">
-                        <td colspan="4" class="px-6 py-3 text-sm font-bold text-gray-900">
-                            ♿ ACCESSIBILITY & USABILITY
-                        </td>
-                    </tr>
-
-                    <tr class="requirement-row" data-status="implemented">
-                        <td class="px-6 py-4 text-sm text-gray-900">
-                            WCAG 2.1 AA Compliance
-                        </td>
-                        <td class="px-6 py-4 text-sm text-gray-600">
-                            Meet government accessibility standards
-                        </td>
-                        <td class="px-6 py-4">
-                            <span class="status-implemented px-3 py-1 rounded-full text-xs font-semibold">✓ Implemented</span>
-                        </td>
-                        <td class="px-6 py-4 text-sm text-gray-600">
-                            Full WCAG 2.1 AA compliance: skip links, ARIA labels, keyboard navigation, screen reader support, semantic HTML, focus management. Documented in ACCESSIBILITY.md.
-                        </td>
-                    </tr>
-
-                    <tr class="requirement-row" data-status="implemented">
-                        <td class="px-6 py-4 text-sm text-gray-900">
-                            Bulk Data Entry
-                        </td>
-                        <td class="px-6 py-4 text-sm text-gray-600">
-                            Support efficient data entry for large datasets
-                        </td>
-                        <td class="px-6 py-4">
-                            <span class="status-implemented px-3 py-1 rounded-full text-xs font-semibold">✓ Implemented</span>
-                        </td>
-                        <td class="px-6 py-4 text-sm text-gray-600">
-                            Multiple input methods: Manual, CSV upload, Bulk paste, ICS/iCal import. Generic reusable components.
-                        </td>
-                    </tr>
-
-                    <tr class="requirement-row" data-status="implemented">
-                        <td class="px-6 py-4 text-sm text-gray-900">
-                            Mobile Responsive
-                        </td>
-                        <td class="px-6 py-4 text-sm text-gray-600">
-                            Usable on mobile devices
-                        </td>
-                        <td class="px-6 py-4">
-                            <span class="status-implemented px-3 py-1 rounded-full text-xs font-semibold">✓ Implemented</span>
-                        </td>
-                        <td class="px-6 py-4 text-sm text-gray-600">
-                            Tailwind CSS responsive design. Forms, tables, and dashboards adapt to screen size.
-                        </td>
-                    </tr>
-
-                    <!-- ADDITIONAL FEATURES -->
-                    <tr class="bg-gray-100">
-                        <td colspan="4" class="px-6 py-3 text-sm font-bold text-gray-900">
-                            ⭐ ADDITIONAL FEATURES (Beyond Ordinance)
-                        </td>
-                    </tr>
-
-                    <tr class="requirement-row" data-status="implemented">
-                        <td class="px-6 py-4 text-sm text-gray-900">
-                            ICS/iCal Calendar Import
-                        </td>
-                        <td class="px-6 py-4 text-sm text-gray-600">
-                            Import calendar events from Outlook, Google Calendar, Apple Calendar
-                        </td>
-                        <td class="px-6 py-4">
-                            <span class="status-implemented px-3 py-1 rounded-full text-xs font-semibold">✓ Implemented</span>
-                        </td>
-                        <td class="px-6 py-4 text-sm text-gray-600">
-                            Custom ICS parser extracts events, dates, times, participants. Unique feature not in ordinance.
-                        </td>
-                    </tr>
-
-                    <tr class="requirement-row" data-status="implemented">
-                        <td class="px-6 py-4 text-sm text-gray-900">
-                            Generic Bulk Import
-                        </td>
-                        <td class="px-6 py-4 text-sm text-gray-600">
-                            Reusable import components for future expansion
-                        </td>
-                        <td class="px-6 py-4">
-                            <span class="status-implemented px-3 py-1 rounded-full text-xs font-semibold">✓ Implemented</span>
-                        </td>
-                        <td class="px-6 py-4 text-sm text-gray-600">
-                            TypeScript generics: GenericCSVUpload, GenericBulkPaste, GenericICSUpload. Easy to extend to new entities.
-                        </td>
-                    </tr>
-
-                    <tr class="requirement-row" data-status="implemented">
-                        <td class="px-6 py-4 text-sm text-gray-900">
-                            Seed Data for Testing
-                        </td>
-                        <td class="px-6 py-4 text-sm text-gray-600">
-                            Pre-populated test data for demos and development
-                        </td>
-                        <td class="px-6 py-4">
-                            <span class="status-implemented px-3 py-1 rounded-full text-xs font-semibold">✓ Implemented</span>
-                        </td>
-                        <td class="px-6 py-4 text-sm text-gray-600">
-                            Database seed script creates 6 users (all personas), 2 lobbyists, 2 employers, 1 board member, sample reports.
-                        </td>
-                    </tr>
-
-                    <tr class="requirement-row" data-status="na">
-                        <td class="px-6 py-4 text-sm text-gray-900">
-                            Hour Tracking (Enhancement - Disabled)
-                        </td>
-                        <td class="px-6 py-4 text-sm text-gray-600">
-                            Lobbyists voluntarily track hours spent lobbying to monitor 10-hour threshold per §3.803(F). <strong>Not required by ordinance.</strong>
-                        </td>
-                        <td class="px-6 py-4">
-                            <span class="status-na px-3 py-1 rounded-full text-xs font-semibold">🔒 Disabled</span>
-                        </td>
-                        <td class="px-6 py-4 text-sm text-gray-600">
-                            Feature flag set to false. Code available at /hours but returns 404. Can be enabled via FEATURE_FLAGS.HOUR_TRACKING = true. Not needed for ordinance compliance - only registration after exceeding 10 hours is required.
-                        </td>
-                    </tr>
-
-                    <tr class="requirement-row" data-status="na">
-                        <td class="px-6 py-4 text-sm text-gray-900">
-                            Analytics Dashboard (Enhancement - Disabled)
-                        </td>
-                        <td class="px-6 py-4 text-sm text-gray-600">
-                            Public analytics dashboard with interactive charts for transparency. <strong>Not required by ordinance</strong> - only searchable data posting required (satisfied by /search page).
-                        </td>
-                        <td class="px-6 py-4">
-                            <span class="status-na px-3 py-1 rounded-full text-xs font-semibold">🔒 Disabled</span>
-                        </td>
-                        <td class="px-6 py-4 text-sm text-gray-600">
-                            Feature flag set to false. Code available at /analytics but returns 404. Can be enabled via FEATURE_FLAGS.ANALYTICS_DASHBOARD = true. Not needed for ordinance compliance - /search page satisfies public data posting requirement.
-                        </td>
-                    </tr>
-
-                </tbody>
-            </table>
-        </div>
-
-        <!-- Implementation Summary -->
-        <div class="bg-gradient-to-r from-green-50 to-blue-50 border-l-4 border-green-500 p-6 rounded-lg mt-8">
-            <h2 class="text-xl font-bold text-gray-900 mb-4">📊 Implementation Summary</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                    <h3 class="font-semibold text-gray-900 mb-3">Core Ordinance Requirements</h3>
-                    <ul class="space-y-2 text-sm text-gray-700">
-                        <li class="flex items-start gap-2">
-                            <span class="text-green-600 font-bold">✓</span>
-                            <span>Lobbyist registration (§3.802)</span>
-                        </li>
-                        <li class="flex items-start gap-2">
-                            <span class="text-green-600 font-bold">✓</span>
-                            <span>Quarterly expense reporting (§3.805, §3.806)</span>
-                        </li>
-                        <li class="flex items-start gap-2">
-                            <span class="text-green-600 font-bold">✓</span>
-                            <span>Board member calendar posting (§3.001(C))</span>
-                        </li>
-                        <li class="flex items-start gap-2">
-                            <span class="text-green-600 font-bold">✓</span>
-                            <span>Public transparency & search</span>
-                        </li>
-                        <li class="flex items-start gap-2">
-                            <span class="text-green-600 font-bold">✓</span>
-                            <span>Violation tracking & fines (§3.808)</span>
-                        </li>
-                        <li class="flex items-start gap-2">
-                            <span class="text-green-600 font-bold">✓</span>
-                            <span>Appeals process (§3.809)</span>
-                        </li>
-                        <li class="flex items-start gap-2">
-                            <span class="text-green-600 font-bold">✓</span>
-                            <span>Contract exceptions (§9.230(C))</span>
-                        </li>
-                    </ul>
+        <!-- TIER 1: DIRECT ENFORCEMENT -->
+        <div class="tier-section tier-1 bg-white rounded-lg shadow-lg p-6 mb-8">
+            <div class="flex items-center gap-3 mb-6">
+                <div class="bg-green-100 text-green-800 px-4 py-2 rounded-lg font-bold text-lg">
+                    TIER 1: DIRECT ENFORCEMENT
                 </div>
-                <div>
-                    <h3 class="font-semibold text-gray-900 mb-3">Value-Add Enhancements</h3>
-                    <ul class="space-y-2 text-sm text-gray-700">
-                        <li class="flex items-start gap-2">
-                            <span class="text-blue-600 font-bold">+</span>
-                            <span>Hour tracking tool for lobbyists</span>
-                        </li>
-                        <li class="flex items-start gap-2">
-                            <span class="text-blue-600 font-bold">+</span>
-                            <span>Public analytics dashboard with visualizations</span>
-                        </li>
-                        <li class="flex items-start gap-2">
-                            <span class="text-blue-600 font-bold">+</span>
-                            <span>CSV/bulk import for efficient data entry</span>
-                        </li>
-                        <li class="flex items-start gap-2">
-                            <span class="text-blue-600 font-bold">+</span>
-                            <span>ICS/iCal calendar import for board members</span>
-                        </li>
-                        <li class="flex items-start gap-2">
-                            <span class="text-blue-600 font-bold">+</span>
-                            <span>WCAG 2.1 AA accessibility compliance</span>
-                        </li>
-                        <li class="flex items-start gap-2">
-                            <span class="text-blue-600 font-bold">+</span>
-                            <span>Mobile-responsive design</span>
-                        </li>
-                        <li class="flex items-start gap-2">
-                            <span class="text-blue-600 font-bold">+</span>
-                            <span>Audit logging for all actions</span>
-                        </li>
-                    </ul>
-                </div>
+                <span class="text-gray-600 text-sm">(27 Requirements)</span>
+            </div>
+            <p class="text-gray-600 mb-6">Software can directly validate, enforce, or prevent submission without required data.</p>
+
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase w-32">Section</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Requirement</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">What Software Can Do</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase w-24">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        <!-- § 3.802 - LOBBYIST REGISTRATION -->
+                        <tr class="requirement-row">
+                            <td class="px-4 py-3 text-sm text-gray-900 font-semibold">§3.802(A)(1)</td>
+                            <td class="px-4 py-3 text-sm text-gray-700">Collect lobbyist name, email, phone, address</td>
+                            <td class="px-4 py-3 text-sm text-gray-600">Require fields, validate formats (email, phone)</td>
+                            <td class="px-4 py-3 text-sm">
+                                <span class="status-implemented px-2 py-1 rounded text-xs">✓ Implemented</span>
+                            </td>
+                        </tr>
+                        <tr class="requirement-row">
+                            <td class="px-4 py-3 text-sm text-gray-900 font-semibold">§3.802(A)(2)</td>
+                            <td class="px-4 py-3 text-sm text-gray-700">Collect employer name, email, phone, address</td>
+                            <td class="px-4 py-3 text-sm text-gray-600">Require fields, validate formats</td>
+                            <td class="px-4 py-3 text-sm">
+                                <span class="status-implemented px-2 py-1 rounded text-xs">✓ Implemented</span>
+                            </td>
+                        </tr>
+                        <tr class="requirement-row">
+                            <td class="px-4 py-3 text-sm text-gray-900 font-semibold">§3.802(A)(2)(b)</td>
+                            <td class="px-4 py-3 text-sm text-gray-700">Business description/area of endeavor</td>
+                            <td class="px-4 py-3 text-sm text-gray-600">Require field (cannot verify accuracy)</td>
+                            <td class="px-4 py-3 text-sm">
+                                <span class="status-implemented px-2 py-1 rounded text-xs">✓ Implemented</span>
+                            </td>
+                        </tr>
+                        <tr class="requirement-row">
+                            <td class="px-4 py-3 text-sm text-gray-900 font-semibold">§3.802(A)(2)(c)</td>
+                            <td class="px-4 py-3 text-sm text-gray-700">Authorization document upload (signed by officer)</td>
+                            <td class="px-4 py-3 text-sm text-gray-600">Require file upload before submission</td>
+                            <td class="px-4 py-3 text-sm">
+                                <span class="status-implemented px-2 py-1 rounded text-xs">✓ Implemented</span>
+                            </td>
+                        </tr>
+                        <tr class="requirement-row">
+                            <td class="px-4 py-3 text-sm text-gray-900 font-semibold">§3.802(A)(3)</td>
+                            <td class="px-4 py-3 text-sm text-gray-700">General subjects of lobbying interest</td>
+                            <td class="px-4 py-3 text-sm text-gray-600">Require field (cannot verify accuracy)</td>
+                            <td class="px-4 py-3 text-sm">
+                                <span class="status-implemented px-2 py-1 rounded text-xs">✓ Implemented</span>
+                            </td>
+                        </tr>
+
+                        <!-- § 3.805 - LOBBYIST EXPENSE STATEMENTS -->
+                        <tr class="requirement-row">
+                            <td class="px-4 py-3 text-sm text-gray-900 font-semibold">§3.805(A)(1)</td>
+                            <td class="px-4 py-3 text-sm text-gray-700">Total food/refreshments/entertainment expenses</td>
+                            <td class="px-4 py-3 text-sm text-gray-600">Require field, validate numeric format</td>
+                            <td class="px-4 py-3 text-sm">
+                                <span class="status-implemented px-2 py-1 rounded text-xs">✓ Implemented</span>
+                            </td>
+                        </tr>
+                        <tr class="requirement-row">
+                            <td class="px-4 py-3 text-sm text-gray-900 font-semibold">§3.805(A)(2)</td>
+                            <td class="px-4 py-3 text-sm text-gray-700">Itemize expenses >$50 (name, date, payee, purpose, amount)</td>
+                            <td class="px-4 py-3 text-sm text-gray-600">Require fields, validate >$50 threshold</td>
+                            <td class="px-4 py-3 text-sm">
+                                <span class="status-implemented px-2 py-1 rounded text-xs">✓ Implemented</span>
+                            </td>
+                        </tr>
+                        <tr class="requirement-row">
+                            <td class="px-4 py-3 text-sm text-gray-900 font-semibold">§3.805(A)(4)</td>
+                            <td class="px-4 py-3 text-sm text-gray-700">Estimate flag and follow-up tracking</td>
+                            <td class="px-4 py-3 text-sm text-gray-600">Require estimate flag, track updates, send reminders</td>
+                            <td class="px-4 py-3 text-sm">
+                                <span class="status-implemented px-2 py-1 rounded text-xs">✓ Implemented</span>
+                            </td>
+                        </tr>
+                        <tr class="requirement-row">
+                            <td class="px-4 py-3 text-sm text-gray-900 font-semibold">§3.805(B)</td>
+                            <td class="px-4 py-3 text-sm text-gray-700">Quarterly deadlines (Apr 15, Jul 15, Oct 15, Jan 15)</td>
+                            <td class="px-4 py-3 text-sm text-gray-600">Track deadlines, send reminders, flag late submissions</td>
+                            <td class="px-4 py-3 text-sm">
+                                <span class="status-implemented px-2 py-1 rounded text-xs">✓ Implemented</span>
+                            </td>
+                        </tr>
+
+                        <!-- § 3.806 - EMPLOYER EXPENSE STATEMENTS -->
+                        <tr class="requirement-row">
+                            <td class="px-4 py-3 text-sm text-gray-900 font-semibold">§3.806(B)(1)</td>
+                            <td class="px-4 py-3 text-sm text-gray-700">Total lobbying expenses (excluding living/travel)</td>
+                            <td class="px-4 py-3 text-sm text-gray-600">Require field, validate numeric format</td>
+                            <td class="px-4 py-3 text-sm">
+                                <span class="status-implemented px-2 py-1 rounded text-xs">✓ Implemented</span>
+                            </td>
+                        </tr>
+                        <tr class="requirement-row">
+                            <td class="px-4 py-3 text-sm text-gray-900 font-semibold">§3.806(B)(2)</td>
+                            <td class="px-4 py-3 text-sm text-gray-700">Itemize expenses >$50</td>
+                            <td class="px-4 py-3 text-sm text-gray-600">Require fields, validate >$50 threshold</td>
+                            <td class="px-4 py-3 text-sm">
+                                <span class="status-implemented px-2 py-1 rounded text-xs">✓ Implemented</span>
+                            </td>
+                        </tr>
+                        <tr class="requirement-row">
+                            <td class="px-4 py-3 text-sm text-gray-900 font-semibold">§3.806(B)(3)</td>
+                            <td class="px-4 py-3 text-sm text-gray-700">Payments to lobbyists (name, total amount)</td>
+                            <td class="px-4 py-3 text-sm text-gray-600">Require fields, cross-reference with registered lobbyists</td>
+                            <td class="px-4 py-3 text-sm">
+                                <span class="status-implemented px-2 py-1 rounded text-xs">✓ Implemented</span>
+                            </td>
+                        </tr>
+
+                        <!-- § 3.807 - FALSE SWEARING DECLARATION -->
+                        <tr class="requirement-row">
+                            <td class="px-4 py-3 text-sm text-gray-900 font-semibold">§3.807(A)</td>
+                            <td class="px-4 py-3 text-sm text-gray-700">Written declaration on all forms</td>
+                            <td class="px-4 py-3 text-sm text-gray-600">Display declaration text, require acknowledgment checkbox</td>
+                            <td class="px-4 py-3 text-sm">
+                                <span class="status-partial px-2 py-1 rounded text-xs">⚠ Partial</span>
+                            </td>
+                        </tr>
+
+                        <!-- § 3.808 - PENALTIES -->
+                        <tr class="requirement-row">
+                            <td class="px-4 py-3 text-sm text-gray-900 font-semibold">§3.808</td>
+                            <td class="px-4 py-3 text-sm text-gray-700">Fine tracking (up to $500)</td>
+                            <td class="px-4 py-3 text-sm text-gray-600">Track fines, amounts, payment status</td>
+                            <td class="px-4 py-3 text-sm">
+                                <span class="status-implemented px-2 py-1 rounded text-xs">✓ Implemented</span>
+                            </td>
+                        </tr>
+
+                        <!-- § 3.809 - APPEALS -->
+                        <tr class="requirement-row">
+                            <td class="px-4 py-3 text-sm text-gray-900 font-semibold">§3.809</td>
+                            <td class="px-4 py-3 text-sm text-gray-700">30-day appeal window tracking</td>
+                            <td class="px-4 py-3 text-sm text-gray-600">Track fine date, calculate deadline, accept/reject appeals</td>
+                            <td class="px-4 py-3 text-sm">
+                                <span class="status-implemented px-2 py-1 rounded text-xs">✓ Implemented</span>
+                            </td>
+                        </tr>
+
+                        <!-- § 3.001 - BOARD MEMBER REPORTING -->
+                        <tr class="requirement-row">
+                            <td class="px-4 py-3 text-sm text-gray-900 font-semibold">§3.001(A)</td>
+                            <td class="px-4 py-3 text-sm text-gray-700">Calendar posting (title, date, time, participants)</td>
+                            <td class="px-4 py-3 text-sm text-gray-600">Require fields, validate completeness</td>
+                            <td class="px-4 py-3 text-sm">
+                                <span class="status-implemented px-2 py-1 rounded text-xs">✓ Implemented</span>
+                            </td>
+                        </tr>
+                        <tr class="requirement-row">
+                            <td class="px-4 py-3 text-sm text-gray-900 font-semibold">§3.001(A)</td>
+                            <td class="px-4 py-3 text-sm text-gray-700">15-day deadline after quarter ends</td>
+                            <td class="px-4 py-3 text-sm text-gray-600">Track deadlines, send reminders, flag late submissions</td>
+                            <td class="px-4 py-3 text-sm">
+                                <span class="status-partial px-2 py-1 rounded text-xs">⚠ Partial</span>
+                            </td>
+                        </tr>
+                        <tr class="requirement-row">
+                            <td class="px-4 py-3 text-sm text-gray-900 font-semibold">§3.001(B)</td>
+                            <td class="px-4 py-3 text-sm text-gray-700">Itemize receipts >$50 (lobbyist name, date, payee, purpose, amount)</td>
+                            <td class="px-4 py-3 text-sm text-gray-600">Require fields, validate >$50 threshold</td>
+                            <td class="px-4 py-3 text-sm">
+                                <span class="status-partial px-2 py-1 rounded text-xs">⚠ Partial</span>
+                            </td>
+                        </tr>
+                        <tr class="requirement-row">
+                            <td class="px-4 py-3 text-sm text-gray-900 font-semibold">§3.001(C)</td>
+                            <td class="px-4 py-3 text-sm text-gray-700">1-year public retention</td>
+                            <td class="px-4 py-3 text-sm text-gray-600">Automatically archive/hide records after 1 year</td>
+                            <td class="px-4 py-3 text-sm">
+                                <span class="status-implemented px-2 py-1 rounded text-xs">✓ Implemented</span>
+                            </td>
+                        </tr>
+
+                        <!-- § 9.230 - CONTRACT REGULATION -->
+                        <tr class="requirement-row">
+                            <td class="px-4 py-3 text-sm text-gray-900 font-semibold">§9.230(C)</td>
+                            <td class="px-4 py-3 text-sm text-gray-700">Exception request workflow</td>
+                            <td class="px-4 py-3 text-sm text-gray-600">Provide workflow for exception requests, approvals</td>
+                            <td class="px-4 py-3 text-sm">
+                                <span class="status-implemented px-2 py-1 rounded text-xs">✓ Implemented</span>
+                            </td>
+                        </tr>
+                        <tr class="requirement-row">
+                            <td class="px-4 py-3 text-sm text-gray-900 font-semibold">§9.230(C)</td>
+                            <td class="px-4 py-3 text-sm text-gray-700">Public posting of exceptions</td>
+                            <td class="px-4 py-3 text-sm text-gray-600">Display granted exceptions publicly</td>
+                            <td class="px-4 py-3 text-sm">
+                                <span class="status-implemented px-2 py-1 rounded text-xs">✓ Implemented</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
 
-        <!-- Footer Summary -->
-        <div class="bg-gradient-to-r from-green-50 to-blue-50 border-l-4 border-green-500 p-6 rounded-lg mt-8 shadow-lg">
-            <h2 class="text-xl font-bold text-gray-900 mb-4">✅ Readiness Assessment</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Ordinance Compliance Status</h3>
-                    <div class="mb-3">
-                        <div class="text-4xl font-bold text-green-600 mb-1">100%</div>
-                        <div class="text-sm text-gray-600">All ordinance requirements implemented</div>
-                    </div>
-                    <p class="text-sm text-gray-700">
-                        The system satisfies all requirements from the Multnomah County Government Accountability Ordinance (§3.800-§3.811, §3.001(C), §9.230(C)).
-                    </p>
+        <!-- TIER 2: DETECTION & AUDITING -->
+        <div class="tier-section tier-2 bg-white rounded-lg shadow-lg p-6 mb-8">
+            <div class="flex items-center gap-3 mb-6">
+                <div class="bg-amber-100 text-amber-800 px-4 py-2 rounded-lg font-bold text-lg">
+                    TIER 2: DETECTION & AUDITING
                 </div>
-                <div>
-                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Production Considerations</h3>
-                    <p class="text-sm text-gray-700 mb-3">
-                        System is functionally complete and demonstrates full ordinance compliance. Production deployment will require:
-                    </p>
-                    <ul class="text-sm text-gray-700 space-y-1">
-                        <li>• Government SSO integration (replace prototype auth)</li>
-                        <li>• PostgreSQL migration (from SQLite prototype)</li>
-                        <li>• Security audit and penetration testing</li>
-                        <li>• Stakeholder training and documentation</li>
-                    </ul>
+                <span class="text-gray-600 text-sm">(8 Requirements)</span>
+            </div>
+            <p class="text-gray-600 mb-6">Software can flag suspicious patterns or detect potential violations but cannot prevent them.</p>
+
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase w-32">Section</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Requirement</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">What Software Can Do</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase w-24">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        <tr class="requirement-row">
+                            <td class="px-4 py-3 text-sm text-gray-900 font-semibold">§3.802(B)</td>
+                            <td class="px-4 py-3 text-sm text-gray-700">30-day registration update requirement</td>
+                            <td class="px-4 py-3 text-sm text-gray-600">Track last modification, send reminders, flag no updates >90 days</td>
+                            <td class="px-4 py-3 text-sm">
+                                <span class="status-missing px-2 py-1 rounded text-xs">✗ Missing</span>
+                            </td>
+                        </tr>
+                        <tr class="requirement-row">
+                            <td class="px-4 py-3 text-sm text-gray-900 font-semibold">§3.805(A)(5)<br>§3.806(B)(4)</td>
+                            <td class="px-4 py-3 text-sm text-gray-700">ORS 244.100 conflict of interest notices</td>
+                            <td class="px-4 py-3 text-sm text-gray-600">Require upload field; flag expenses to board members without notices</td>
+                            <td class="px-4 py-3 text-sm">
+                                <span class="status-missing px-2 py-1 rounded text-xs">✗ Missing</span>
+                            </td>
+                        </tr>
+                        <tr class="requirement-row">
+                            <td class="px-4 py-3 text-sm text-gray-900 font-semibold">§3.804(D)</td>
+                            <td class="px-4 py-3 text-sm text-gray-700">Public official outside compensation detection</td>
+                            <td class="px-4 py-3 text-sm text-gray-600">Cross-reference lobbyists with staff directory; flag matches</td>
+                            <td class="px-4 py-3 text-sm">
+                                <span class="status-missing px-2 py-1 rounded text-xs">✗ Missing</span>
+                            </td>
+                        </tr>
+                        <tr class="requirement-row">
+                            <td class="px-4 py-3 text-sm text-gray-900 font-semibold">§3.804(E)</td>
+                            <td class="px-4 py-3 text-sm text-gray-700">1-year cooling-off for former officials detection</td>
+                            <td class="px-4 py-3 text-sm text-gray-600">Cross-reference with former employee database; flag within 1 year</td>
+                            <td class="px-4 py-3 text-sm">
+                                <span class="status-implemented px-2 py-1 rounded text-xs">✓ Implemented</span>
+                            </td>
+                        </tr>
+                        <tr class="requirement-row">
+                            <td class="px-4 py-3 text-sm text-gray-900 font-semibold">§3.001(B)</td>
+                            <td class="px-4 py-3 text-sm text-gray-700">Board member receipt cross-referencing</td>
+                            <td class="px-4 py-3 text-sm text-gray-600">Compare board receipts vs. lobbyist expenses; flag discrepancies</td>
+                            <td class="px-4 py-3 text-sm">
+                                <span class="status-partial px-2 py-1 rounded text-xs">⚠ Partial</span>
+                            </td>
+                        </tr>
+                        <tr class="requirement-row">
+                            <td class="px-4 py-3 text-sm text-gray-900 font-semibold">§3.809</td>
+                            <td class="px-4 py-3 text-sm text-gray-700">Postmark date tracking (mailed appeals)</td>
+                            <td class="px-4 py-3 text-sm text-gray-600">Electronic: use submission timestamp; Manual: admin enters postmark</td>
+                            <td class="px-4 py-3 text-sm">
+                                <span class="status-implemented px-2 py-1 rounded text-xs">✓ Implemented</span>
+                            </td>
+                        </tr>
+                        <tr class="requirement-row">
+                            <td class="px-4 py-3 text-sm text-gray-900 font-semibold">§9.230(A)</td>
+                            <td class="px-4 py-3 text-sm text-gray-700">Contract regulation (1-year prohibition)</td>
+                            <td class="px-4 py-3 text-sm text-gray-600">Flag contracts where vendor matches former employee (if integrated)</td>
+                            <td class="px-4 py-3 text-sm">
+                                <span class="status-missing px-2 py-1 rounded text-xs">✗ Missing</span>
+                            </td>
+                        </tr>
+                        <tr class="requirement-row">
+                            <td class="px-4 py-3 text-sm text-gray-900 font-semibold">§3.808</td>
+                            <td class="px-4 py-3 text-sm text-gray-700">Violation determination (admin decision)</td>
+                            <td class="px-4 py-3 text-sm text-gray-600">System assists with tracking; admin manually reviews and decides</td>
+                            <td class="px-4 py-3 text-sm">
+                                <span class="status-implemented px-2 py-1 rounded text-xs">✓ Implemented</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- TIER 3: ATTESTATION & EDUCATION -->
+        <div class="tier-section tier-3 bg-white rounded-lg shadow-lg p-6 mb-8">
+            <div class="flex items-center gap-3 mb-6">
+                <div class="bg-blue-100 text-blue-800 px-4 py-2 rounded-lg font-bold text-lg">
+                    TIER 3: ATTESTATION & EDUCATION
                 </div>
+                <span class="text-gray-600 text-sm">(11 Requirements)</span>
+            </div>
+            <p class="text-gray-600 mb-6">Software cannot automatically verify but provides accountability through attestations, tracking, and pattern detection.</p>
+
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase w-32">Section</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Requirement</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">What Software Can Do</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase w-24">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        <tr class="requirement-row">
+                            <td class="px-4 py-3 text-sm text-gray-900 font-semibold">§3.802(A)</td>
+                            <td class="px-4 py-3 text-sm text-gray-700">3-working-day registration deadline</td>
+                            <td class="px-4 py-3 text-sm text-gray-600">Attestation + track reg date vs. expense dates + flag discrepancies</td>
+                            <td class="px-4 py-3 text-sm">
+                                <span class="status-implemented px-2 py-1 rounded text-xs">✓ Implemented</span>
+                            </td>
+                        </tr>
+                        <tr class="requirement-row">
+                            <td class="px-4 py-3 text-sm text-gray-900 font-semibold">§3.803(F)</td>
+                            <td class="px-4 py-3 text-sm text-gray-700">10-hour lobbying threshold</td>
+                            <td class="px-4 py-3 text-sm text-gray-600">Attestation + hour calculator + flag expenses vs. claimed hours</td>
+                            <td class="px-4 py-3 text-sm">
+                                <span class="status-implemented px-2 py-1 rounded text-xs">✓ Implemented</span>
+                            </td>
+                        </tr>
+                        <tr class="requirement-row">
+                            <td class="px-4 py-3 text-sm text-gray-900 font-semibold">§3.803(F)</td>
+                            <td class="px-4 py-3 text-sm text-gray-700">Travel time exclusion</td>
+                            <td class="px-4 py-3 text-sm text-gray-600">Education: examples of lobbying vs. travel time</td>
+                            <td class="px-4 py-3 text-sm">
+                                <span class="status-implemented px-2 py-1 rounded text-xs">✓ Implemented</span>
+                            </td>
+                        </tr>
+                        <tr class="requirement-row">
+                            <td class="px-4 py-3 text-sm text-gray-900 font-semibold">§3.805(A)(3)</td>
+                            <td class="px-4 py-3 text-sm text-gray-700">Expense exclusions (living, travel, overhead, salaries)</td>
+                            <td class="px-4 py-3 text-sm text-gray-600">Attestation + help text with examples + flag unusual patterns</td>
+                            <td class="px-4 py-3 text-sm">
+                                <span class="status-partial px-2 py-1 rounded text-xs">⚠ Partial</span>
+                            </td>
+                        </tr>
+                        <tr class="requirement-row">
+                            <td class="px-4 py-3 text-sm text-gray-900 font-semibold">§3.804(A)</td>
+                            <td class="px-4 py-3 text-sm text-gray-700">Prohibited: Instigating opposition for employment</td>
+                            <td class="px-4 py-3 text-sm text-gray-600">Attestation + education + flag opposing positions on same legislation</td>
+                            <td class="px-4 py-3 text-sm">
+                                <span class="status-partial px-2 py-1 rounded text-xs">⚠ Partial</span>
+                            </td>
+                        </tr>
+                        <tr class="requirement-row">
+                            <td class="px-4 py-3 text-sm text-gray-900 font-semibold">§3.804(B)</td>
+                            <td class="px-4 py-3 text-sm text-gray-700">Prohibited: Promises/threats regarding candidacy</td>
+                            <td class="px-4 py-3 text-sm text-gray-600">Attestation + education + violation reporting mechanism</td>
+                            <td class="px-4 py-3 text-sm">
+                                <span class="status-partial px-2 py-1 rounded text-xs">⚠ Partial</span>
+                            </td>
+                        </tr>
+                        <tr class="requirement-row">
+                            <td class="px-4 py-3 text-sm text-gray-900 font-semibold">§3.804(C)</td>
+                            <td class="px-4 py-3 text-sm text-gray-700">Prohibited: Contingent compensation</td>
+                            <td class="px-4 py-3 text-sm text-gray-600">Attestation + education + violation reporting mechanism</td>
+                            <td class="px-4 py-3 text-sm">
+                                <span class="status-missing px-2 py-1 rounded text-xs">✗ Missing</span>
+                            </td>
+                        </tr>
+                        <tr class="requirement-row">
+                            <td class="px-4 py-3 text-sm text-gray-900 font-semibold">§3.807(B)</td>
+                            <td class="px-4 py-3 text-sm text-gray-700">False statement verification</td>
+                            <td class="px-4 py-3 text-sm text-gray-600">Legal deterrent through declaration; cannot verify truthfulness</td>
+                            <td class="px-4 py-3 text-sm">
+                                <span class="status-implemented px-2 py-1 rounded text-xs">✓ Implemented</span>
+                            </td>
+                        </tr>
+                        <tr class="requirement-row">
+                            <td class="px-4 py-3 text-sm text-gray-900 font-semibold">§3.802(A)(2)(b)</td>
+                            <td class="px-4 py-3 text-sm text-gray-700">Business description accuracy</td>
+                            <td class="px-4 py-3 text-sm text-gray-600">Require field but cannot verify accuracy</td>
+                            <td class="px-4 py-3 text-sm">
+                                <span class="status-implemented px-2 py-1 rounded text-xs">✓ Implemented</span>
+                            </td>
+                        </tr>
+                        <tr class="requirement-row">
+                            <td class="px-4 py-3 text-sm text-gray-900 font-semibold">§3.802(A)(3)</td>
+                            <td class="px-4 py-3 text-sm text-gray-700">General subjects of lobbying accuracy</td>
+                            <td class="px-4 py-3 text-sm text-gray-600">Require field but cannot verify accuracy</td>
+                            <td class="px-4 py-3 text-sm">
+                                <span class="status-implemented px-2 py-1 rounded text-xs">✓ Implemented</span>
+                            </td>
+                        </tr>
+                        <tr class="requirement-row">
+                            <td class="px-4 py-3 text-sm text-gray-900 font-semibold">§3.808</td>
+                            <td class="px-4 py-3 text-sm text-gray-700">Violation determination (most requirements)</td>
+                            <td class="px-4 py-3 text-sm text-gray-600">Admin judgment required; system provides tracking and evidence</td>
+                            <td class="px-4 py-3 text-sm">
+                                <span class="status-implemented px-2 py-1 rounded text-xs">✓ Implemented</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
 
     </div>
 
-    <footer class="bg-gray-900 text-gray-400 py-8 mt-12">
-        <div class="max-w-7xl mx-auto px-6 text-center">
-            <p>Lobbyist Registration System - Ordinance Compliance Matrix</p>
-            <p class="text-sm mt-2">Updated: <span id="update-date"></span></p>
-        </div>
-    </footer>
-
-    <script>
-        // Count statuses and update summary
-        function updateCounts() {
-            const rows = document.querySelectorAll('.requirement-row');
-            let implemented = 0, partial = 0;
-            let ordinanceRequired = 0, enhancements = 0;
-
-            rows.forEach(row => {
-                const status = row.dataset.status;
-                const text = row.textContent.toLowerCase();
-
-                // Count by status
-                if (status === 'implemented') implemented++;
-                else if (status === 'partial') partial++;
-
-                // Count ordinance requirements vs enhancements
-                if (text.includes('enhancement')) {
-                    enhancements++;
-                } else {
-                    ordinanceRequired++;
-                }
-            });
-
-            document.getElementById('implemented-count').textContent = ordinanceRequired;
-            document.getElementById('enhancement-count').textContent = enhancements;
-
-            // Calculate compliance percentage (ordinance requirements only)
-            const percentage = ordinanceRequired > 0 ? Math.round((implemented / ordinanceRequired) * 100) : 0;
-            document.getElementById('compliance-percentage').textContent = percentage + '%';
-        }
-
-        // Filter by status
-        function filterStatus(status) {
-            const rows = document.querySelectorAll('.requirement-row');
-            rows.forEach(row => {
-                if (status === 'all') {
-                    row.style.display = '';
-                } else {
-                    row.style.display = row.dataset.status === status ? '' : 'none';
-                }
-            });
-        }
-
-        // Set update date
-        document.getElementById('update-date').textContent = new Date().toLocaleDateString('en-US', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric'
-        });
-
-        // Initialize counts on page load
-        updateCounts();
-    </script>
 </body>
 </html>
