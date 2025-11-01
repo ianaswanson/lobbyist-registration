@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lobbyist Registration System - Documentation Hub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .doc-card {
+            transition: all 0.3s ease;
+        }
+        .doc-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .icon-circle {
+            width: 64px;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-size: 32px;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Header -->
+    <header class="gradient-bg text-white py-12 shadow-lg">
+        <div class="max-w-6xl mx-auto px-6">
+            <h1 class="text-5xl font-bold mb-3">Lobbyist Registration System</h1>
+            <p class="text-2xl text-blue-100 mb-4">Documentation Hub</p>
+            <p class="text-lg text-blue-50 max-w-3xl">
+                Comprehensive documentation for Multnomah County's Government Accountability
+                Ordinance compliance system (effective July 1, 2026)
+            </p>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-6xl mx-auto px-6 py-12">
+
+        <!-- Introduction -->
+        <section class="bg-white rounded-lg shadow-md p-8 mb-8">
+            <h2 class="text-2xl font-bold text-gray-900 mb-4">Welcome</h2>
+            <p class="text-gray-700 text-lg leading-relaxed">
+                This documentation hub provides comprehensive information about the Lobbyist Registration System.
+                Choose from the resources below to learn about system capabilities, compliance status,
+                security measures, and development practices.
+            </p>
+        </section>
+
+        <!-- Documentation Cards Grid -->
+        <div class="grid md:grid-cols-2 gap-8">
+
+            <!-- Demo Guide Card -->
+            <a href="DEMO-GUIDE-V2.html" class="doc-card bg-white rounded-lg shadow-lg p-8 hover:no-underline block">
+                <div class="flex items-start gap-4 mb-4">
+                    <div class="icon-circle bg-blue-100 text-blue-600 flex-shrink-0">
+                        🎬
+                    </div>
+                    <div>
+                        <h3 class="text-2xl font-bold text-gray-900 mb-2">Demo Walkthrough</h3>
+                        <p class="text-sm text-blue-600 font-semibold uppercase tracking-wide">Interactive Guide</p>
+                    </div>
+                </div>
+                <p class="text-gray-700 leading-relaxed mb-4">
+                    Step-by-step demonstration of all system features including lobbyist registration,
+                    expense reporting, board member calendars, admin workflows, and public transparency dashboard.
+                </p>
+                <ul class="text-sm text-gray-600 space-y-1 mb-4">
+                    <li>✓ Test account credentials</li>
+                    <li>✓ Complete user workflows</li>
+                    <li>✓ Feature highlights</li>
+                    <li>✓ Copy-to-clipboard credentials</li>
+                </ul>
+                <div class="text-blue-600 font-semibold flex items-center gap-2">
+                    View Demo Guide
+                    <span class="text-xl">→</span>
+                </div>
+            </a>
+
+            <!-- Ordinance Compliance Card -->
+            <a href="ORDINANCE-COMPLIANCE.html" class="doc-card bg-white rounded-lg shadow-lg p-8 hover:no-underline block">
+                <div class="flex items-start gap-4 mb-4">
+                    <div class="icon-circle bg-green-100 text-green-600 flex-shrink-0">
+                        ✓
+                    </div>
+                    <div>
+                        <h3 class="text-2xl font-bold text-gray-900 mb-2">Ordinance Compliance</h3>
+                        <p class="text-sm text-green-600 font-semibold uppercase tracking-wide">Compliance Matrix</p>
+                    </div>
+                </div>
+                <p class="text-gray-700 leading-relaxed mb-4">
+                    Detailed compliance matrix showing how the system meets all Multnomah County ordinance
+                    requirements (§3.800-§3.809, §3.001, §9.230) with implementation status for each provision.
+                </p>
+                <ul class="text-sm text-gray-600 space-y-1 mb-4">
+                    <li>✓ Three-tier requirement tracking</li>
+                    <li>✓ Implementation status</li>
+                    <li>✓ Section-by-section breakdown</li>
+                    <li>✓ Missing feature identification</li>
+                </ul>
+                <div class="text-green-600 font-semibold flex items-center gap-2">
+                    View Compliance Matrix
+                    <span class="text-xl">→</span>
+                </div>
+            </a>
+
+            <!-- Security Assessment Card -->
+            <a href="SECURITY-ASSESSMENT.html" class="doc-card bg-white rounded-lg shadow-lg p-8 hover:no-underline block">
+                <div class="flex items-start gap-4 mb-4">
+                    <div class="icon-circle bg-red-100 text-red-600 flex-shrink-0">
+                        🔒
+                    </div>
+                    <div>
+                        <h3 class="text-2xl font-bold text-gray-900 mb-2">Security Assessment</h3>
+                        <p class="text-sm text-red-600 font-semibold uppercase tracking-wide">Security Report</p>
+                    </div>
+                </div>
+                <p class="text-gray-700 leading-relaxed mb-4">
+                    Comprehensive security assessment covering authentication, authorization, data protection,
+                    infrastructure security, and compliance with government security standards.
+                </p>
+                <ul class="text-sm text-gray-600 space-y-1 mb-4">
+                    <li>✓ OWASP Top 10 coverage</li>
+                    <li>✓ Government compliance</li>
+                    <li>✓ Risk assessment</li>
+                    <li>✓ Security recommendations</li>
+                </ul>
+                <div class="text-red-600 font-semibold flex items-center gap-2">
+                    View Security Report
+                    <span class="text-xl">→</span>
+                </div>
+            </a>
+
+            <!-- Dev Practices Card -->
+            <a href="DEV-PRACTICES-CHECKLIST.html" class="doc-card bg-white rounded-lg shadow-lg p-8 hover:no-underline block">
+                <div class="flex items-start gap-4 mb-4">
+                    <div class="icon-circle bg-purple-100 text-purple-600 flex-shrink-0">
+                        ⚙️
+                    </div>
+                    <div>
+                        <h3 class="text-2xl font-bold text-gray-900 mb-2">Development Practices</h3>
+                        <p class="text-sm text-purple-600 font-semibold uppercase tracking-wide">Best Practices Checklist</p>
+                    </div>
+                </div>
+                <p class="text-gray-700 leading-relaxed mb-4">
+                    Modern development practices checklist covering code quality, testing, CI/CD, security,
+                    monitoring, documentation, and infrastructure-as-code standards.
+                </p>
+                <ul class="text-sm text-gray-600 space-y-1 mb-4">
+                    <li>✓ 50+ best practices</li>
+                    <li>✓ Category scoring</li>
+                    <li>✓ Implementation status</li>
+                    <li>✓ Priority recommendations</li>
+                </ul>
+                <div class="text-purple-600 font-semibold flex items-center gap-2">
+                    View Practices Checklist
+                    <span class="text-xl">→</span>
+                </div>
+            </a>
+
+        </div>
+
+        <!-- System Info Footer -->
+        <section class="mt-12 bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg p-8 border border-blue-100">
+            <h3 class="text-xl font-bold text-gray-900 mb-4">System Information</h3>
+            <div class="grid md:grid-cols-3 gap-6 text-sm">
+                <div>
+                    <div class="font-semibold text-gray-700 mb-1">Ordinance Effective Date</div>
+                    <div class="text-gray-600">July 1, 2026</div>
+                </div>
+                <div>
+                    <div class="font-semibold text-gray-700 mb-1">Technology Stack</div>
+                    <div class="text-gray-600">Next.js 15 • PostgreSQL • Cloud Run</div>
+                </div>
+                <div>
+                    <div class="font-semibold text-gray-700 mb-1">Compliance Status</div>
+                    <div class="text-green-600 font-semibold">Phase 1 Complete</div>
+                </div>
+            </div>
+            <div class="mt-6 pt-6 border-t border-blue-200">
+                <div class="flex flex-wrap gap-3">
+                    <span class="px-3 py-1 bg-white rounded-full text-xs font-semibold text-gray-700 border border-gray-200">
+                        WCAG 2.1 AA Accessible
+                    </span>
+                    <span class="px-3 py-1 bg-white rounded-full text-xs font-semibold text-gray-700 border border-gray-200">
+                        Sentry Error Tracking
+                    </span>
+                    <span class="px-3 py-1 bg-white rounded-full text-xs font-semibold text-gray-700 border border-gray-200">
+                        PostgreSQL + Cloud SQL
+                    </span>
+                    <span class="px-3 py-1 bg-white rounded-full text-xs font-semibold text-gray-700 border border-gray-200">
+                        CI/CD Automated
+                    </span>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="max-w-6xl mx-auto px-6 py-8 text-center text-gray-600">
+        <p class="mb-2">Lobbyist Registration System - Multnomah County</p>
+        <p class="text-sm">Government Accountability Ordinance Compliance Platform</p>
+    </footer>
+
+</body>
+</html>

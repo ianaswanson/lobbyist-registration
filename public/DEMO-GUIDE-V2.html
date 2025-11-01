@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lobbyist Registration System - Demo Walkthrough</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .copy-btn {
+            transition: all 0.2s ease;
+        }
+        .copy-btn:hover {
+            transform: scale(1.05);
+        }
+        .copy-btn.copied {
+            background-color: #10b981;
+        }
+        .step-number {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        @media print {
+            .no-print {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Header -->
+    <header class="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-8 shadow-lg">
+        <div class="max-w-7xl mx-auto px-6">
+            <h1 class="text-4xl font-bold mb-2">Lobbyist Registration System</h1>
+            <p class="text-xl text-blue-100">Demo Walkthrough - Multnomah County Ordinance Compliance</p>
+            <div class="mt-4 flex flex-wrap gap-4 text-sm">
+                <span class="px-3 py-1 bg-white/20 rounded-full">Full Ordinance Compliance (§3.800-§3.809)</span>
+                <span class="px-3 py-1 bg-white/20 rounded-full">Board Member Transparency (§3.001)</span>
+                <span class="px-3 py-1 bg-white/20 rounded-full">Contract Exceptions (§9.230)</span>
+                <span class="px-3 py-1 bg-white/20 rounded-full">WCAG 2.1 AA Accessible</span>
+            </div>
+        </div>
+    </header>
+
+    <div class="max-w-7xl mx-auto px-6 py-8">
+
+        <!-- Introduction -->
+        <section class="bg-white rounded-lg shadow-lg p-6 mb-8">
+            <h2 class="text-2xl font-bold text-gray-900 mb-4">About This Demo</h2>
+            <p class="text-gray-700 mb-4">
+                This walkthrough demonstrates a lobbyist registration system built to meet Multnomah County's
+                Government Accountability Ordinance requirements (effective July 1, 2026). The system supports
+                five distinct user workflows: public transparency, lobbyist registration and reporting, employer
+                expense reporting, board member calendar posting, and administrative compliance monitoring.
+            </p>
+            <p class="text-gray-700 mb-4">
+                <strong>Demo Time:</strong> 15-20 minutes for full walkthrough, or 8-10 minutes for key highlights only.
+            </p>
+            <p class="text-gray-700">
+                <strong>Test Data:</strong> All accounts have pre-loaded data based on realistic Portland lobbying scenarios.
+                The "Rule of 3" pattern means 3 entities of each type, with 3 reports each, and 3 line items per report.
+            </p>
+        </section>
+
+        <!-- Demo Flow Overview -->
+        <section class="bg-white rounded-lg shadow-lg p-6 mb-8">
+            <h2 class="text-2xl font-bold text-gray-900 mb-4">Demo Flow</h2>
+            <p class="text-gray-600 mb-6">Five user workflows demonstrate how different stakeholders interact with the system. The demo follows the data lifecycle: from filing to review to public transparency.</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+                <div class="text-center">
+                    <div class="w-16 h-16 mx-auto mb-2 rounded-full bg-blue-100 flex items-center justify-center text-2xl">🎯</div>
+                    <div class="font-semibold">1. Lobbyist</div>
+                    <div class="text-xs text-gray-500">Registration & Reports</div>
+                </div>
+                <div class="text-center">
+                    <div class="w-16 h-16 mx-auto mb-2 rounded-full bg-purple-100 flex items-center justify-center text-2xl">🏢</div>
+                    <div class="font-semibold">2. Employer</div>
+                    <div class="text-xs text-gray-500">Quarterly Expenses</div>
+                </div>
+                <div class="text-center">
+                    <div class="w-16 h-16 mx-auto mb-2 rounded-full bg-indigo-100 flex items-center justify-center text-2xl">⚖️</div>
+                    <div class="font-semibold">3. Board Member</div>
+                    <div class="text-xs text-gray-500">Calendar & Receipts</div>
+                </div>
+                <div class="text-center">
+                    <div class="w-16 h-16 mx-auto mb-2 rounded-full bg-red-100 flex items-center justify-center text-2xl">🛡️</div>
+                    <div class="font-semibold">4. Administrator</div>
+                    <div class="text-xs text-gray-500">Review & Compliance</div>
+                </div>
+                <div class="text-center">
+                    <div class="w-16 h-16 mx-auto mb-2 rounded-full bg-green-100 flex items-center justify-center text-2xl">🌐</div>
+                    <div class="font-semibold">5. Public Access</div>
+                    <div class="text-xs text-gray-500">Search & Transparency</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Part 1: Lobbyist Experience -->
+        <section class="bg-white rounded-lg shadow-lg p-6 mb-8 border-l-4 border-blue-500">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-2xl font-bold text-gray-900">Part 1: Lobbyist Workflow</h2>
+                <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-semibold">5 minutes</span>
+            </div>
+
+            <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+                <div class="font-semibold text-blue-900 mb-2">User Experience Focus</div>
+                <p class="text-blue-800 text-sm mb-2">
+                    Lobbyists need to register quickly and submit quarterly expense reports. We support multiple
+                    data entry methods to accommodate different workflows—from single expenses to bulk imports.
+                </p>
+                <ul class="text-blue-800 text-sm space-y-1">
+                    <li>• Multi-step registration wizard with validation</li>
+                    <li>• Dashboard shows report status and upcoming deadlines</li>
+                    <li>• Three ways to enter expenses: manual, bulk paste, CSV upload</li>
+                    <li>• Draft saving to complete reports over multiple sessions</li>
+                </ul>
+            </div>
+
+
+            <div class="space-y-4">
+                <div class="bg-gray-50 rounded-lg p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="step-number text-white px-3 py-1 rounded-full font-semibold">Step 1</span>
+                        <span class="text-sm text-gray-600">Dashboard overview</span>
+                    </div>
+                    <p class="text-gray-700 mb-3">Sign in and view the lobbyist dashboard. Notice the Q1 2025 report is already submitted with $350.00 in expenses across 3 line items (Portland restaurants).</p>
+                    <a href="/auth/signin" target="_blank" class="inline-block bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition">
+                        Open Sign In Page →
+                    </a>
+                </div>
+
+                <div class="bg-gray-50 rounded-lg p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="step-number text-white px-3 py-1 rounded-full font-semibold">Step 2</span>
+                        <span class="text-sm text-gray-600">View existing report</span>
+                    </div>
+                    <p class="text-gray-700 mb-3">Click into the Q1 2025 report to see the completed data. Each expense shows the official contacted, date, restaurant, purpose, and amount.</p>
+                </div>
+
+                <div class="bg-gray-50 rounded-lg p-4 border-2 border-blue-300">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="step-number text-white px-3 py-1 rounded-full font-semibold">Step 3</span>
+                        <span class="text-sm text-blue-600 font-semibold">Key Feature: Multiple Input Methods</span>
+                    </div>
+                    <p class="text-gray-700 mb-3">Start a new Q2 2025 expense report. Demonstrate all three input methods:</p>
+                    <ul class="text-gray-700 text-sm space-y-2 mb-3">
+                        <li><strong>Manual Entry:</strong> Click "Add Expense" and fill out the form fields one at a time.</li>
+                        <li><strong>Bulk Paste:</strong> Copy sample data from Excel/spreadsheet and paste into the form. The system parses tab-separated values automatically.</li>
+                        <li><strong>CSV Upload:</strong> Upload a pre-formatted CSV file with 10+ expenses at once.</li>
+                    </ul>
+                    <div class="bg-blue-50 p-3 rounded mb-3">
+                        <p class="text-sm text-blue-900">
+                            <strong>Why this matters:</strong> Different lobbyists have different workflows. Some track expenses one-by-one as they occur. Others maintain spreadsheets and import quarterly. Supporting multiple methods reduces friction.
+                        </p>
+                    </div>
+                    <a href="/reports/lobbyist" target="_blank" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition text-sm">
+                        Open Report Form →
+                    </a>
+                </div>
+
+                <div class="bg-gray-50 rounded-lg p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="step-number text-white px-3 py-1 rounded-full font-semibold">Step 4</span>
+                        <span class="text-sm text-gray-600">Draft saving</span>
+                    </div>
+                    <p class="text-gray-700 mb-2">Notice the "Save Draft" button. Lobbyists can save incomplete reports and return later. Drafts are visible only to the user until submitted.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Part 2: Employer Experience -->
+        <section class="bg-white rounded-lg shadow-lg p-6 mb-8 border-l-4 border-purple-500">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-2xl font-bold text-gray-900">Part 2: Employer Workflow</h2>
+                <span class="px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-sm font-semibold">3 minutes</span>
+            </div>
+
+            <div class="bg-purple-50 border border-purple-200 rounded-lg p-4 mb-6">
+                <div class="font-semibold text-purple-900 mb-2">User Experience Focus</div>
+                <p class="text-purple-800 text-sm mb-2">
+                    Employers of lobbyists must report quarterly spending. The workflow mirrors the lobbyist
+                    experience—same import options, similar form structure—to maintain consistency.
+                </p>
+                <ul class="text-purple-800 text-sm space-y-1">
+                    <li>• Report total lobbying expenditures per quarter</li>
+                    <li>• Itemize expenses over $50 given to individual officials (§3.806)</li>
+                    <li>• Same import methods: manual, bulk paste, CSV</li>
+                </ul>
+            </div>
+
+
+            <div class="space-y-4">
+                <div class="bg-gray-50 rounded-lg p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="step-number text-white px-3 py-1 rounded-full font-semibold">Step 1</span>
+                        <span class="text-sm text-gray-600">Dashboard & existing reports</span>
+                    </div>
+                    <p class="text-gray-700 mb-3">Sign out from the lobbyist account, then sign in as the employer. The dashboard shows Q1 2025 report with monthly retainer payments to John Doe.</p>
+                    <a href="/auth/signin" target="_blank" class="inline-block bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700 transition">
+                        Open Sign In Page →
+                    </a>
+                </div>
+
+                <div class="bg-gray-50 rounded-lg p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="step-number text-white px-3 py-1 rounded-full font-semibold">Step 2</span>
+                        <span class="text-sm text-gray-600">Report structure</span>
+                    </div>
+                    <p class="text-gray-700 mb-3">Open the employer expense report form. Notice it tracks payments to lobbyists (retainers, hourly fees) rather than meals/entertainment.</p>
+                    <a href="/reports/employer" target="_blank" class="inline-block bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700 transition">
+                        Open Employer Report Form →
+                    </a>
+                </div>
+
+                <div class="bg-gray-50 rounded-lg p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="step-number text-white px-3 py-1 rounded-full font-semibold">Step 3</span>
+                        <span class="text-sm text-gray-600">Consistent experience</span>
+                    </div>
+                    <p class="text-gray-700 mb-2">The same import options (manual, bulk paste, CSV) work here. This reduces training burden—if a user learns the lobbyist workflow, they already understand the employer workflow.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Part 3: Board Member Experience -->
+        <section class="bg-white rounded-lg shadow-lg p-6 mb-8 border-l-4 border-indigo-500">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-2xl font-bold text-gray-900">Part 3: Board Member Workflow</h2>
+                <span class="px-3 py-1 bg-indigo-100 text-indigo-800 rounded-full text-sm font-semibold">5 minutes</span>
+            </div>
+
+            <div class="bg-indigo-50 border border-indigo-200 rounded-lg p-4 mb-6">
+                <div class="font-semibold text-indigo-900 mb-2">User Experience Focus</div>
+                <p class="text-indigo-800 text-sm mb-2">
+                    Board members must post their quarterly calendars and report receipts from lobbyists exceeding $50
+                    (§3.001). We designed for their reality: calendars are already maintained in Outlook or Google.
+                </p>
+                <ul class="text-indigo-800 text-sm space-y-1">
+                    <li>• Calendar entries: manual, CSV, or ICS/iCal file import</li>
+                    <li>• Receipt tracking: manual, CSV, or bulk paste</li>
+                    <li>• 15-day submission deadline after quarter end</li>
+                    <li>• Public posting for minimum 1 year retention</li>
+                </ul>
+            </div>
+
+
+            <div class="space-y-4">
+                <div class="bg-gray-50 rounded-lg p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="step-number text-white px-3 py-1 rounded-full font-semibold">Step 1</span>
+                        <span class="text-sm text-gray-600">Dashboard & existing data</span>
+                    </div>
+                    <p class="text-gray-700 mb-3">Sign in as the board member. Navigate to the calendar form to see Q1 2025 data already submitted.</p>
+                    <div class="flex gap-2">
+                        <a href="/auth/signin" target="_blank" class="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700 transition">
+                            Open Sign In Page →
+                        </a>
+                        <a href="/board-member/calendar" target="_blank" class="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700 transition">
+                            Open Calendar Form →
+                        </a>
+                    </div>
+                </div>
+
+                <div class="bg-gray-50 rounded-lg p-4 border-2 border-indigo-300">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="step-number text-white px-3 py-1 rounded-full font-semibold">Step 2</span>
+                        <span class="text-sm text-indigo-600 font-semibold">Key Feature: Calendar File Import</span>
+                    </div>
+                    <p class="text-gray-700 mb-3">Start a new Q2 2025 submission. Show the calendar import options:</p>
+                    <ul class="text-gray-700 text-sm space-y-2 mb-3">
+                        <li><strong>Manual Entry:</strong> Add individual calendar entries via form fields.</li>
+                        <li><strong>CSV Upload:</strong> Upload a spreadsheet with meeting dates, titles, and attendees.</li>
+                        <li><strong>ICS/iCal Import:</strong> Export calendar from Outlook or Google Calendar (.ics file) and upload directly.</li>
+                    </ul>
+                    <div class="bg-indigo-50 p-3 rounded mb-3">
+                        <p class="text-sm text-indigo-900">
+                            <strong>Why this matters:</strong> Commissioners maintain packed calendars in Outlook or Google.
+                            Instead of forcing manual re-entry, they can export a quarter's worth of meetings and upload
+                            the .ics file. The system parses dates, titles, locations, and attendees automatically.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="bg-gray-50 rounded-lg p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="step-number text-white px-3 py-1 rounded-full font-semibold">Step 3</span>
+                        <span class="text-sm text-gray-600">Receipt tracking</span>
+                    </div>
+                    <p class="text-gray-700 mb-3">Switch to the "Lobbying Receipts" tab. Show how commissioners track meals, gifts, or other items received from lobbyists exceeding $50 aggregate per quarter.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Part 4: Admin Experience -->
+        <section class="bg-white rounded-lg shadow-lg p-6 mb-8 border-l-4 border-red-500">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-2xl font-bold text-gray-900">Part 4: Administrator Workflow</h2>
+                <span class="px-3 py-1 bg-red-100 text-red-800 rounded-full text-sm font-semibold">5 minutes</span>
+            </div>
+
+            <div class="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+                <div class="font-semibold text-red-900 mb-2">User Experience Focus</div>
+                <p class="text-red-800 text-sm mb-2">
+                    County staff need to review registrations, monitor compliance, and enforce violations. The
+                    admin interface provides a compliance dashboard and review workflows.
+                </p>
+                <ul class="text-red-800 text-sm space-y-1">
+                    <li>• Compliance dashboard with deadline tracking</li>
+                    <li>• Review queue for pending registrations and reports</li>
+                    <li>• Violation issuance and fine tracking (§3.808)</li>
+                    <li>• Appeal processing within 30-day window (§3.809)</li>
+                    <li>• User management with audit logging</li>
+                </ul>
+            </div>
+
+
+            <div class="space-y-4">
+                <div class="bg-gray-50 rounded-lg p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="step-number text-white px-3 py-1 rounded-full font-semibold">Step 1</span>
+                        <span class="text-sm text-gray-600">Compliance dashboard</span>
+                    </div>
+                    <p class="text-gray-700 mb-3">Sign in and view the admin dashboard. Notice summary statistics, upcoming deadlines, and quick links to common tasks.</p>
+                    <div class="flex gap-2">
+                        <a href="/auth/signin" target="_blank" class="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 transition">
+                            Open Sign In Page →
+                        </a>
+                        <a href="/admin/compliance" target="_blank" class="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 transition">
+                            Open Compliance Dashboard →
+                        </a>
+                    </div>
+                </div>
+
+                <div class="bg-gray-50 rounded-lg p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="step-number text-white px-3 py-1 rounded-full font-semibold">Step 2</span>
+                        <span class="text-sm text-gray-600">Registration review</span>
+                    </div>
+                    <p class="text-gray-700 mb-3">Navigate to the registration review queue. Admins can approve or reject registrations with feedback. Email notifications are sent automatically (currently logged to console in demo).</p>
+                    <a href="/admin/review/registrations" target="_blank" class="inline-block bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 transition">
+                        Open Registration Review →
+                    </a>
+                </div>
+
+                <div class="bg-gray-50 rounded-lg p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="step-number text-white px-3 py-1 rounded-full font-semibold">Step 3</span>
+                        <span class="text-sm text-gray-600">Violations & appeals</span>
+                    </div>
+                    <p class="text-gray-700 mb-3">Open the violations page. Admins can issue violations for late filings, false statements, or prohibited conduct. Fines up to $500 can be assessed per §3.808.</p>
+                    <a href="/admin/violations" target="_blank" class="inline-block bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 transition">
+                        Open Violations Management →
+                    </a>
+                    <div class="mt-2 text-sm text-gray-600">
+                        Try: Issue a violation, then view it from the lobbyist perspective (/my-violations) to see the appeal workflow
+                    </div>
+                </div>
+
+                <div class="bg-gray-50 rounded-lg p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="step-number text-white px-3 py-1 rounded-full font-semibold">Step 4</span>
+                        <span class="text-sm text-gray-600">User management</span>
+                    </div>
+                    <p class="text-gray-700 mb-3">Navigate to user administration. Admins can create accounts, reset passwords, deactivate users, and view audit logs of all account changes.</p>
+                    <a href="/admin/users" target="_blank" class="inline-block bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 transition">
+                        Open User Management →
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Part 5: Public Transparency -->
+        <section class="bg-white rounded-lg shadow-lg p-6 mb-8 border-l-4 border-green-500">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-2xl font-bold text-gray-900">Part 5: Public Transparency</h2>
+                <span class="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-semibold">5 minutes</span>
+            </div>
+
+            <div class="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
+                <div class="font-semibold text-green-900 mb-2">User Experience Focus</div>
+                <p class="text-green-800 text-sm mb-2">
+                    Once data is filed and reviewed, it becomes publicly accessible. Members of the public can search
+                    and analyze lobbying activity without creating an account. This completes the transparency cycle.
+                </p>
+                <ul class="text-green-800 text-sm space-y-1">
+                    <li>• Search registered lobbyists, employers, and subjects</li>
+                    <li>• Filter by date range and activity status</li>
+                    <li>• Export results to CSV for further analysis</li>
+                    <li>• Self-service exemption checker (reduces admin inquiries)</li>
+                </ul>
+            </div>
+
+            <div class="space-y-4">
+                <div class="bg-gray-50 rounded-lg p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="step-number text-white px-3 py-1 rounded-full font-semibold">Step 1</span>
+                        <span class="text-sm text-gray-600">Homepage & navigation</span>
+                    </div>
+                    <p class="text-gray-700 mb-3">Start at the home page. Notice the public navigation shows search and exemption checker without requiring login.</p>
+                    <a href="/" target="_blank" class="inline-block bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition">
+                        Open Home Page →
+                    </a>
+                </div>
+
+                <div class="bg-gray-50 rounded-lg p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="step-number text-white px-3 py-1 rounded-full font-semibold">Step 2</span>
+                        <span class="text-sm text-gray-600">Search functionality</span>
+                    </div>
+                    <p class="text-gray-700 mb-3">Navigate to the search page. Try searching for registered lobbyists, employers, or filtering by various criteria.</p>
+                    <a href="/search" target="_blank" class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition">
+                        Open Search Page →
+                    </a>
+                </div>
+
+                <div class="bg-gray-50 rounded-lg p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="step-number text-white px-3 py-1 rounded-full font-semibold">Step 3</span>
+                        <span class="text-sm text-gray-600">Data export</span>
+                    </div>
+                    <p class="text-gray-700 mb-2">Click the export button to download search results as CSV. This allows journalists, researchers, and citizens to analyze data in their preferred tools.</p>
+                </div>
+
+                <div class="bg-gray-50 rounded-lg p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="step-number text-white px-3 py-1 rounded-full font-semibold">Step 4</span>
+                        <span class="text-sm text-gray-600">Exemption checker</span>
+                    </div>
+                    <p class="text-gray-700 mb-3">Visit the exemption checker. Users can enter their lobbying hours to determine if they meet the 10-hour threshold requiring registration (per §3.802).</p>
+                    <a href="/exemption-checker" target="_blank" class="inline-block bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition">
+                        Open Exemption Checker →
+                    </a>
+                    <div class="mt-2 text-sm text-gray-600">
+                        Try: Enter 7 hours to see "registration not required", then 15 hours to see "must register"
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Technical Implementation -->
+        <section class="bg-white rounded-lg shadow-lg p-6 mb-8">
+            <h2 class="text-2xl font-bold text-gray-900 mb-4">Technical Implementation</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <h3 class="font-semibold text-gray-900 mb-3">Technology Stack</h3>
+                    <ul class="text-gray-700 text-sm space-y-2">
+                        <li><strong>Framework:</strong> Next.js 15 (App Router) + React 19</li>
+                        <li><strong>Language:</strong> TypeScript (strict mode)</li>
+                        <li><strong>Database:</strong> PostgreSQL (Cloud SQL) + Prisma ORM</li>
+                        <li><strong>Authentication:</strong> NextAuth.js with session management</li>
+                        <li><strong>UI:</strong> Tailwind CSS + shadcn/ui components</li>
+                        <li><strong>Deployment:</strong> Google Cloud Run (containerized)</li>
+                        <li><strong>CI/CD:</strong> GitHub Actions + Cloud Build Triggers</li>
+                        <li><strong>Monitoring:</strong> Sentry error tracking, Cloud Run metrics</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="font-semibold text-gray-900 mb-3">Infrastructure</h3>
+                    <ul class="text-gray-700 text-sm space-y-2">
+                        <li><strong>Dev Environment:</strong> Auto-deploy from 'develop' branch</li>
+                        <li><strong>Prod Environment:</strong> Manual approval from 'main' branch</li>
+                        <li><strong>Database:</strong> Cloud SQL PostgreSQL (shared across instances)</li>
+                        <li><strong>Secrets:</strong> Google Cloud Secret Manager</li>
+                        <li><strong>Security:</strong> Dependabot for dependency updates</li>
+                        <li><strong>Accessibility:</strong> WCAG 2.1 AA compliant</li>
+                        <li><strong>Cost:</strong> ~$84/month infrastructure + database</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Ordinance Compliance -->
+        <section class="bg-white rounded-lg shadow-lg p-6 mb-8">
+            <h2 class="text-2xl font-bold text-gray-900 mb-4">Ordinance Compliance</h2>
+            <p class="text-gray-700 mb-4">
+                Every feature maps to specific ordinance sections. See the full compliance matrix at
+                <a href="/ORDINANCE-COMPLIANCE.html" target="_blank" class="text-blue-600 hover:underline">/ORDINANCE-COMPLIANCE.html</a>.
+            </p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="bg-gray-50 rounded-lg p-4">
+                    <h3 class="font-semibold text-gray-900 mb-2">Lobbyist Requirements (§3.802-§3.805)</h3>
+                    <ul class="text-gray-700 text-sm space-y-1">
+                        <li>✅ Registration within 3 days of 10-hour threshold</li>
+                        <li>✅ Employer authorization documentation</li>
+                        <li>✅ Quarterly expense reports (April 15, July 15, Oct 15, Jan 15)</li>
+                        <li>✅ Itemization of expenses >$50 per official</li>
+                        <li>✅ 30-day update requirement for profile changes</li>
+                    </ul>
+                </div>
+                <div class="bg-gray-50 rounded-lg p-4">
+                    <h3 class="font-semibold text-gray-900 mb-2">Employer Requirements (§3.806)</h3>
+                    <ul class="text-gray-700 text-sm space-y-1">
+                        <li>✅ Quarterly spending reports</li>
+                        <li>✅ Itemization of payments to lobbyists</li>
+                        <li>✅ Itemization of gifts/expenses >$50 to officials</li>
+                        <li>✅ Same quarterly deadlines as lobbyists</li>
+                    </ul>
+                </div>
+                <div class="bg-gray-50 rounded-lg p-4">
+                    <h3 class="font-semibold text-gray-900 mb-2">Board Member Requirements (§3.001)</h3>
+                    <ul class="text-gray-700 text-sm space-y-1">
+                        <li>✅ Quarterly calendar posting (15 days after quarter)</li>
+                        <li>✅ Lobbying receipt tracking (>$50 from single source)</li>
+                        <li>✅ Public posting for minimum 1 year</li>
+                        <li>✅ Meeting dates, attendees, subjects documented</li>
+                    </ul>
+                </div>
+                <div class="bg-gray-50 rounded-lg p-4">
+                    <h3 class="font-semibold text-gray-900 mb-2">Enforcement (§3.808-§3.809, §9.230)</h3>
+                    <ul class="text-gray-700 text-sm space-y-1">
+                        <li>✅ Violation issuance workflow</li>
+                        <li>✅ Fines up to $500 per violation</li>
+                        <li>✅ 30-day appeal window</li>
+                        <li>✅ Contract exceptions (1-year cooling-off period)</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Demo Resources -->
+        <section class="bg-white rounded-lg shadow-lg p-6 mb-8">
+            <h2 class="text-2xl font-bold text-gray-900 mb-4">Additional Resources</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                    <h3 class="font-semibold text-gray-700 mb-2">Documentation</h3>
+                    <ul class="space-y-1 text-sm">
+                        <li><a href="/ORDINANCE-COMPLIANCE.html" target="_blank" class="text-blue-600 hover:underline">Ordinance Compliance Matrix</a></li>
+                        <li><a href="/SECURITY-ASSESSMENT.html" target="_blank" class="text-blue-600 hover:underline">Security Assessment</a></li>
+                        <li><a href="/DEV-PRACTICES-CHECKLIST.html" target="_blank" class="text-blue-600 hover:underline">Development Practices</a></li>
+                        <li><a href="/user-story-map.html" target="_blank" class="text-blue-600 hover:underline">User Story Map</a></li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <footer class="bg-gray-900 text-gray-400 py-8 mt-12">
+        <div class="max-w-7xl mx-auto px-6 text-center">
+            <p>Lobbyist Registration System - Multnomah County Government Accountability Ordinance</p>
+            <p class="text-sm mt-2">Built with Next.js 15, TypeScript, PostgreSQL, and Cloud Run</p>
+        </div>
+    </footer>
+
+</body>
+</html>

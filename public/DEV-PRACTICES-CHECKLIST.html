@@ -1,0 +1,1346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modern Development Practices Checklist - Lobbyist Registration System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #1f2937;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 2rem 1rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            color: white;
+            padding: 3rem 2rem;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .stats-bar {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            padding: 2rem;
+            background: #f9fafb;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .stat {
+            text-align: center;
+            padding: 1rem;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #3b82f6;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .content {
+            padding: 2rem;
+        }
+
+        .intro {
+            background: #eff6ff;
+            border-left: 4px solid #3b82f6;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border-radius: 4px;
+        }
+
+        .intro h2 {
+            color: #1e40af;
+            margin-bottom: 0.5rem;
+        }
+
+        .category {
+            margin-bottom: 3rem;
+        }
+
+        .category-header {
+            background: linear-gradient(90deg, #f3f4f6 0%, #e5e7eb 100%);
+            padding: 1rem 1.5rem;
+            border-left: 4px solid #3b82f6;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            user-select: none;
+            transition: all 0.2s;
+        }
+
+        .category-header:hover {
+            background: linear-gradient(90deg, #e5e7eb 0%, #d1d5db 100%);
+        }
+
+        .category-header h2 {
+            font-size: 1.5rem;
+            color: #1f2937;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .category-icon {
+            font-size: 1.75rem;
+        }
+
+        .category-count {
+            background: #3b82f6;
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .practices-grid {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .practice-card {
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 1.5rem;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .practice-card:hover {
+            border-color: #3b82f6;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .practice-card.expanded {
+            border-color: #3b82f6;
+            background: #eff6ff;
+        }
+
+        .practice-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .practice-check {
+            flex-shrink: 0;
+            width: 28px;
+            height: 28px;
+            background: #10b981;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .practice-title {
+            flex: 1;
+        }
+
+        .practice-title h3 {
+            color: #1f2937;
+            font-size: 1.25rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .practice-title .subtitle {
+            color: #6b7280;
+            font-size: 0.95rem;
+            font-style: italic;
+        }
+
+        .practice-details {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #e5e7eb;
+            display: none;
+        }
+
+        .practice-card.expanded .practice-details {
+            display: block;
+        }
+
+        .practice-section {
+            margin-bottom: 1rem;
+        }
+
+        .practice-section h4 {
+            color: #1e40af;
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .practice-section p {
+            color: #4b5563;
+            line-height: 1.7;
+        }
+
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        .before, .after {
+            padding: 1rem;
+            border-radius: 6px;
+        }
+
+        .before {
+            background: #fef2f2;
+            border-left: 3px solid #dc2626;
+        }
+
+        .after {
+            background: #f0fdf4;
+            border-left: 3px solid #10b981;
+        }
+
+        .before h5 {
+            color: #dc2626;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .after h5 {
+            color: #10b981;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .toggle-icon {
+            transition: transform 0.2s;
+        }
+
+        .category.collapsed .toggle-icon {
+            transform: rotate(-90deg);
+        }
+
+        .category.collapsed .practices-grid {
+            display: none;
+        }
+
+        .summary {
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+            border: 2px solid #10b981;
+            border-radius: 8px;
+            padding: 2rem;
+            margin-top: 3rem;
+        }
+
+        .summary h2 {
+            color: #166534;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .summary-item {
+            background: white;
+            padding: 1rem;
+            border-radius: 6px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .summary-item h3 {
+            color: #059669;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .summary-item ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .summary-item li {
+            padding: 0.25rem 0;
+            color: #4b5563;
+        }
+
+        .summary-item li::before {
+            content: "✓ ";
+            color: #10b981;
+            font-weight: bold;
+        }
+
+        .impact-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-left: 0.5rem;
+        }
+
+        .impact-high {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .impact-medium {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .impact-critical {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.75rem;
+            }
+
+            .comparison {
+                grid-template-columns: 1fr;
+            }
+
+            .stat-value {
+                font-size: 1.5rem;
+            }
+        }
+
+        .expand-all {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .expand-all button {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: 6px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .expand-all button:hover {
+            background: #2563eb;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 Modern Development Practices Checklist</h1>
+            <p>Lobbyist Registration System - Industry-Standard Implementation</p>
+        </div>
+
+        <div class="stats-bar">
+            <div class="stat">
+                <span class="stat-value">23</span>
+                <span class="stat-label">Best Practices</span>
+            </div>
+            <div class="stat">
+                <span class="stat-value">10 Days</span>
+                <span class="stat-label">Implementation Time</span>
+            </div>
+            <div class="stat">
+                <span class="stat-value">100%</span>
+                <span class="stat-label">Implemented</span>
+            </div>
+            <div class="stat">
+                <span class="stat-value">$84/mo</span>
+                <span class="stat-label">Infrastructure Cost</span>
+            </div>
+        </div>
+
+        <div class="content">
+            <div class="intro">
+                <h2>What This Checklist Represents</h2>
+                <p>
+                    This document outlines 23 industry-standard software development practices implemented in the Lobbyist Registration System.
+                    These practices are common in modern software companies but often missing from government IT projects due to time,
+                    budget, or knowledge constraints. <strong>AI-assisted development made it possible to implement all of these practices
+                    in just 10 days</strong>, creating a robust, secure, and maintainable application that follows enterprise-grade standards.
+                </p>
+            </div>
+
+            <div class="expand-all">
+                <button onclick="toggleAllPractices()">Expand All Practices</button>
+            </div>
+
+            <!-- Code Standardization & Quality -->
+            <div class="category">
+                <div class="category-header" onclick="toggleCategory(this)">
+                    <h2>
+                        <span class="category-icon">📝</span>
+                        Code Standardization & Quality
+                    </h2>
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <span class="category-count">4 practices</span>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                </div>
+                <div class="practices-grid">
+                    <div class="practice-card" onclick="togglePractice(this)">
+                        <div class="practice-header">
+                            <div class="practice-check">✓</div>
+                            <div class="practice-title">
+                                <h3>Code Formatting (Prettier) <span class="impact-badge impact-high">High Impact</span></h3>
+                                <p class="subtitle">Automatically formats all code to look identical</p>
+                            </div>
+                        </div>
+                        <div class="practice-details">
+                            <div class="practice-section">
+                                <h4>🎯 What It Does</h4>
+                                <p>Prettier automatically formats all code files (JavaScript, TypeScript, CSS, JSON) to follow consistent spacing, indentation, quotes, and line breaks. Runs on save and during CI/CD.</p>
+                            </div>
+                            <div class="practice-section">
+                                <h4>💡 Why It Matters</h4>
+                                <p>Eliminates endless "tabs vs spaces" debates. All code looks like it was written by one person, making it easier to read, review, and maintain. Reduces code review noise by 50-70%.</p>
+                            </div>
+                            <div class="comparison">
+                                <div class="before">
+                                    <h5>❌ Before</h5>
+                                    <p>Every developer formats code their own way. Code reviews argue about style. Diffs are messy with spacing changes.</p>
+                                </div>
+                                <div class="after">
+                                    <h5>✅ After</h5>
+                                    <p>Code auto-formats on save. Everyone's code looks identical. Code reviews focus on logic, not style.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="practice-card" onclick="togglePractice(this)">
+                        <div class="practice-header">
+                            <div class="practice-check">✓</div>
+                            <div class="practice-title">
+                                <h3>Code Quality Rules (ESLint) <span class="impact-badge impact-high">High Impact</span></h3>
+                                <p class="subtitle">Catches common mistakes and enforces best practices</p>
+                            </div>
+                        </div>
+                        <div class="practice-details">
+                            <div class="practice-section">
+                                <h4>🎯 What It Does</h4>
+                                <p>ESLint analyzes code in real-time to catch bugs, unused variables, missing error handling, accessibility issues, and React best practices violations. Runs in IDE and CI/CD.</p>
+                            </div>
+                            <div class="practice-section">
+                                <h4>💡 Why It Matters</h4>
+                                <p>Prevents bugs before they reach production. Acts like spell-check for code. Enforces team coding standards automatically instead of relying on code review.</p>
+                            </div>
+                            <div class="comparison">
+                                <div class="before">
+                                    <h5>❌ Before</h5>
+                                    <p>Bugs slip through because no one caught the mistake. Code quality varies by developer experience.</p>
+                                </div>
+                                <div class="after">
+                                    <h5>✅ After</h5>
+                                    <p>Developer gets red squiggly lines when making mistakes. Issues caught before commit.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="practice-card" onclick="togglePractice(this)">
+                        <div class="practice-header">
+                            <div class="practice-check">✓</div>
+                            <div class="practice-title">
+                                <h3>Pre-Commit Checks (Husky) <span class="impact-badge impact-critical">Critical</span></h3>
+                                <p class="subtitle">Runs automatic checks before code gets saved to git</p>
+                            </div>
+                        </div>
+                        <div class="practice-details">
+                            <div class="practice-section">
+                                <h4>🎯 What It Does</h4>
+                                <p>Husky runs automated tests and checks before allowing git commits. Enforces code formatting, linting, and commit message standards. Bad code literally cannot be committed.</p>
+                            </div>
+                            <div class="practice-section">
+                                <h4>💡 Why It Matters</h4>
+                                <p>Prevents broken code from entering the repository. Ensures main branch is always deployable. Catches issues at the earliest possible moment.</p>
+                            </div>
+                            <div class="comparison">
+                                <div class="before">
+                                    <h5>❌ Before</h5>
+                                    <p>Broken code gets committed, breaks the build for everyone. Manual enforcement of standards.</p>
+                                </div>
+                                <div class="after">
+                                    <h5>✅ After</h5>
+                                    <p>Git rejects the commit if tests fail or formatting is wrong. Standards enforced automatically.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="practice-card" onclick="togglePractice(this)">
+                        <div class="practice-header">
+                            <div class="practice-check">✓</div>
+                            <div class="practice-title">
+                                <h3>Standardized Commit Messages (Commitlint) <span class="impact-badge impact-medium">Medium Impact</span></h3>
+                                <p class="subtitle">Enforces a format for describing changes</p>
+                            </div>
+                        </div>
+                        <div class="practice-details">
+                            <div class="practice-section">
+                                <h4>🎯 What It Does</h4>
+                                <p>Commitlint enforces conventional commit format: "feat: add user login" or "fix: resolve timeout issue". Categorizes changes and makes history searchable.</p>
+                            </div>
+                            <div class="practice-section">
+                                <h4>💡 Why It Matters</h4>
+                                <p>Anyone can read git history and understand what changed and why. Enables automated changelog generation. Makes debugging easier by searching for specific types of changes.</p>
+                            </div>
+                            <div class="comparison">
+                                <div class="before">
+                                    <h5>❌ Before</h5>
+                                    <p>Commit messages like "fixed stuff" or "updates" tell you nothing about what changed.</p>
+                                </div>
+                                <div class="after">
+                                    <h5>✅ After</h5>
+                                    <p>Every commit explains what changed: "fix: resolve login timeout issue" or "feat: add expense reports"</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Automated Testing & QA -->
+            <div class="category">
+                <div class="category-header" onclick="toggleCategory(this)">
+                    <h2>
+                        <span class="category-icon">🧪</span>
+                        Automated Testing & Quality Assurance
+                    </h2>
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <span class="category-count">4 practices</span>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                </div>
+                <div class="practices-grid">
+                    <div class="practice-card" onclick="togglePractice(this)">
+                        <div class="practice-header">
+                            <div class="practice-check">✓</div>
+                            <div class="practice-title">
+                                <h3>Automated CI/CD Testing (GitHub Actions) <span class="impact-badge impact-critical">Critical</span></h3>
+                                <p class="subtitle">Robots run all tests automatically on every change</p>
+                            </div>
+                        </div>
+                        <div class="practice-details">
+                            <div class="practice-section">
+                                <h4>🎯 What It Does</h4>
+                                <p>GitHub Actions automatically runs formatting checks, linting, type checking, unit tests, and E2E tests on every pull request. PRs cannot merge until all checks pass.</p>
+                            </div>
+                            <div class="practice-section">
+                                <h4>💡 Why It Matters</h4>
+                                <p>Broken code gets caught immediately, not weeks later in production. Creates a safety net for all changes. Reduces manual QA time by 80%.</p>
+                            </div>
+                            <div class="comparison">
+                                <div class="before">
+                                    <h5>❌ Before</h5>
+                                    <p>Code gets merged, breaks production, scramble to fix it. Manual testing is slow and inconsistent.</p>
+                                </div>
+                                <div class="after">
+                                    <h5>✅ After</h5>
+                                    <p>PR gets a red X if tests fail. Can't merge until it's green. Production stays stable.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="practice-card" onclick="togglePractice(this)">
+                        <div class="practice-header">
+                            <div class="practice-check">✓</div>
+                            <div class="practice-title">
+                                <h3>Automated Security Updates (Dependabot) <span class="impact-badge impact-high">High Impact</span></h3>
+                                <p class="subtitle">Robot creates PRs for security vulnerabilities</p>
+                            </div>
+                        </div>
+                        <div class="practice-details">
+                            <div class="practice-section">
+                                <h4>🎯 What It Does</h4>
+                                <p>Dependabot monitors all npm dependencies daily. When security vulnerabilities are announced, it automatically creates a PR with the fix within hours.</p>
+                            </div>
+                            <div class="practice-section">
+                                <h4>💡 Why It Matters</h4>
+                                <p>Security patches happen automatically instead of "when we get around to it". Reduces vulnerability window from weeks to hours. Already merged 8 security updates.</p>
+                            </div>
+                            <div class="comparison">
+                                <div class="before">
+                                    <h5>❌ Before</h5>
+                                    <p>Vulnerability announced. Manually check if affected. Manually update. Days or weeks later.</p>
+                                </div>
+                                <div class="after">
+                                    <h5>✅ After</h5>
+                                    <p>Wake up to a PR: "I found a vulnerability and here's the fix." Review and merge same day.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="practice-card" onclick="togglePractice(this)">
+                        <div class="practice-header">
+                            <div class="practice-check">✓</div>
+                            <div class="practice-title">
+                                <h3>End-to-End Testing (Playwright) <span class="impact-badge impact-high">High Impact</span></h3>
+                                <p class="subtitle">Robot simulates real user workflows</p>
+                            </div>
+                        </div>
+                        <div class="practice-details">
+                            <div class="practice-section">
+                                <h4>🎯 What It Does</h4>
+                                <p>Playwright controls a real browser to test complete user workflows: login, fill forms, submit reports, search data. Tests 122 scenarios including admin workflows, expense reports, and public search.</p>
+                            </div>
+                            <div class="practice-section">
+                                <h4>💡 Why It Matters</h4>
+                                <p>Ensures complete workflows actually work, not just individual pieces. Catches integration bugs that unit tests miss. Runs in 30-40 minutes vs hours of manual testing.</p>
+                            </div>
+                            <div class="comparison">
+                                <div class="before">
+                                    <h5>❌ Before</h5>
+                                    <p>Manual QA testers click through every workflow before releases. Slow, expensive, inconsistent.</p>
+                                </div>
+                                <div class="after">
+                                    <h5>✅ After</h5>
+                                    <p>Robot tests 122 user scenarios in 30 minutes automatically. Runs on every PR.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="practice-card" onclick="togglePractice(this)">
+                        <div class="practice-header">
+                            <div class="practice-check">✓</div>
+                            <div class="practice-title">
+                                <h3>Unit Testing (Vitest) <span class="impact-badge impact-high">High Impact</span></h3>
+                                <p class="subtitle">Tests individual pieces of code in isolation</p>
+                            </div>
+                        </div>
+                        <div class="practice-details">
+                            <div class="practice-section">
+                                <h4>🎯 What It Does</h4>
+                                <p>Vitest tests individual functions, components, and utilities in isolation. Fast-running tests (milliseconds) that verify logic works correctly before integration.</p>
+                            </div>
+                            <div class="practice-section">
+                                <h4>💡 Why It Matters</h4>
+                                <p>Catches bugs at the smallest level before they combine into bigger problems. Runs in seconds, giving immediate feedback. Enables confident refactoring.</p>
+                            </div>
+                            <div class="comparison">
+                                <div class="before">
+                                    <h5>❌ Before</h5>
+                                    <p>Write code, hope it works, find out in production it doesn't. Refactoring is scary.</p>
+                                </div>
+                                <div class="after">
+                                    <h5>✅ After</h5>
+                                    <p>Write test, write code, test passes, you know it works. Refactor with confidence.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Deployment & Release Management -->
+            <div class="category">
+                <div class="category-header" onclick="toggleCategory(this)">
+                    <h2>
+                        <span class="category-icon">🚢</span>
+                        Deployment & Release Management
+                    </h2>
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <span class="category-count">4 practices</span>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                </div>
+                <div class="practices-grid">
+                    <div class="practice-card" onclick="togglePractice(this)">
+                        <div class="practice-header">
+                            <div class="practice-check">✓</div>
+                            <div class="practice-title">
+                                <h3>Automated Deployments (Cloud Build) <span class="impact-badge impact-critical">Critical</span></h3>
+                                <p class="subtitle">Code deploys automatically to dev environment</p>
+                            </div>
+                        </div>
+                        <div class="practice-details">
+                            <div class="practice-section">
+                                <h4>🎯 What It Does</h4>
+                                <p>When code is pushed to 'develop' branch, Cloud Build automatically builds Docker image, runs tests, and deploys to dev Cloud Run service. Zero manual steps.</p>
+                            </div>
+                            <div class="practice-section">
+                                <h4>💡 Why It Matters</h4>
+                                <p>No manual deployment steps means no human error. "Works on my machine" problems disappear because deployment is standardized. Can deploy dozens of times per day.</p>
+                            </div>
+                            <div class="comparison">
+                                <div class="before">
+                                    <h5>❌ Before</h5>
+                                    <p>Developer manually builds, manually uploads, manually configures server. Prone to mistakes.</p>
+                                </div>
+                                <div class="after">
+                                    <h5>✅ After</h5>
+                                    <p>Git push → 5 minutes later it's live on dev server. Consistent and reliable.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="practice-card" onclick="togglePractice(this)">
+                        <div class="practice-header">
+                            <div class="practice-check">✓</div>
+                            <div class="practice-title">
+                                <h3>Manual Approval Gates (Production) <span class="impact-badge impact-critical">Critical</span></h3>
+                                <p class="subtitle">Human approval required before production deploys</p>
+                            </div>
+                        </div>
+                        <div class="practice-details">
+                            <div class="practice-section">
+                                <h4>🎯 What It Does</h4>
+                                <p>Production deployments require a human to click "approve" in Cloud Build console. Builds new version, waits for approval, then routes traffic after verification.</p>
+                            </div>
+                            <div class="practice-section">
+                                <h4>💡 Why It Matters</h4>
+                                <p>Prevents accidental production deployments. Gives time to verify staging/dev environment. Balances automation speed with production safety. Audit trail for compliance.</p>
+                            </div>
+                            <div class="comparison">
+                                <div class="before">
+                                    <h5>❌ Before</h5>
+                                    <p>All deployments automatic (risky) or all manual (slow). No middle ground.</p>
+                                </div>
+                                <div class="after">
+                                    <h5>✅ After</h5>
+                                    <p>Dev is automatic for speed. Production requires approval for safety. Best of both.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="practice-card" onclick="togglePractice(this)">
+                        <div class="practice-header">
+                            <div class="practice-check">✓</div>
+                            <div class="practice-title">
+                                <h3>Blue-Green Deployments <span class="impact-badge impact-high">High Impact</span></h3>
+                                <p class="subtitle">Zero-downtime deployments with instant rollback</p>
+                            </div>
+                        </div>
+                        <div class="practice-details">
+                            <div class="practice-section">
+                                <h4>🎯 What It Does</h4>
+                                <p>New version deploys alongside old version (no traffic). After health checks pass, traffic switches to new version. Old version stays running as backup for instant rollback.</p>
+                            </div>
+                            <div class="practice-section">
+                                <h4>💡 Why It Matters</h4>
+                                <p>Zero downtime deployments. Instant rollback if something breaks (just route traffic back to old version). Users never experience deployment-related outages.</p>
+                            </div>
+                            <div class="comparison">
+                                <div class="before">
+                                    <h5>❌ Before</h5>
+                                    <p>Deploy new version, site goes down for 5 minutes while deploying. Hope nothing broke.</p>
+                                </div>
+                                <div class="after">
+                                    <h5>✅ After</h5>
+                                    <p>New version starts, gets tested, traffic switches seamlessly. Rollback in seconds if needed.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="practice-card" onclick="togglePractice(this)">
+                        <div class="practice-header">
+                            <div class="practice-check">✓</div>
+                            <div class="practice-title">
+                                <h3>Environment Separation (Dev → Prod) <span class="impact-badge impact-high">High Impact</span></h3>
+                                <p class="subtitle">Separate databases and servers for testing vs production</p>
+                            </div>
+                        </div>
+                        <div class="practice-details">
+                            <div class="practice-section">
+                                <h4>🎯 What It Does</h4>
+                                <p>Two identical Cloud Run services with separate PostgreSQL databases. Dev environment auto-deploys for testing. Production environment requires approval and uses separate data.</p>
+                            </div>
+                            <div class="practice-section">
+                                <h4>💡 Why It Matters</h4>
+                                <p>Can test changes without risking production data. Identical environments prevent "works in dev but not prod" issues. Safe experimentation environment.</p>
+                            </div>
+                            <div class="comparison">
+                                <div class="before">
+                                    <h5>❌ Before</h5>
+                                    <p>Test in production (yikes!) or complex local setup that doesn't match production.</p>
+                                </div>
+                                <div class="after">
+                                    <h5>✅ After</h5>
+                                    <p>Dev environment identical to production. Test freely without risk. Confidence in deployments.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Security & Compliance -->
+            <div class="category">
+                <div class="category-header" onclick="toggleCategory(this)">
+                    <h2>
+                        <span class="category-icon">🔒</span>
+                        Security & Compliance
+                    </h2>
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <span class="category-count">5 practices</span>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                </div>
+                <div class="practices-grid">
+                    <div class="practice-card" onclick="togglePractice(this)">
+                        <div class="practice-header">
+                            <div class="practice-check">✓</div>
+                            <div class="practice-title">
+                                <h3>Centralized Secret Management <span class="impact-badge impact-critical">Critical</span></h3>
+                                <p class="subtitle">Passwords stored in secure vault, not in code</p>
+                            </div>
+                        </div>
+                        <div class="practice-details">
+                            <div class="practice-section">
+                                <h4>🎯 What It Does</h4>
+                                <p>Google Secret Manager stores all passwords, API keys, and database URLs. Code references secrets by name. Secrets can be rotated without code changes. IAM controls who can access secrets.</p>
+                            </div>
+                            <div class="practice-section">
+                                <h4>💡 Why It Matters</h4>
+                                <p>Secrets never appear in code or git history (major security win). Can rotate compromised secrets instantly. Audit trail shows who accessed what. Meets government security requirements.</p>
+                            </div>
+                            <div class="comparison">
+                                <div class="before">
+                                    <h5>❌ Before</h5>
+                                    <p>Database password hardcoded in config file, committed to git. Security nightmare.</p>
+                                </div>
+                                <div class="after">
+                                    <h5>✅ After</h5>
+                                    <p>Password stored in Secret Manager, accessed at runtime, rotatable without code changes.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="practice-card" onclick="togglePractice(this)">
+                        <div class="practice-header">
+                            <div class="practice-check">✓</div>
+                            <div class="practice-title">
+                                <h3>Error Tracking & Monitoring (Sentry) <span class="impact-badge impact-high">High Impact</span></h3>
+                                <p class="subtitle">All production errors automatically reported</p>
+                            </div>
+                        </div>
+                        <div class="practice-details">
+                            <div class="practice-section">
+                                <h4>🎯 What It Does</h4>
+                                <p>Sentry captures all production errors with stack traces, user context, and reproduction steps. PII filtering removes sensitive data. Session replay shows exactly what user did before error.</p>
+                            </div>
+                            <div class="practice-section">
+                                <h4>💡 Why It Matters</h4>
+                                <p>Know about bugs before users complain. See exactly what went wrong without guessing. Fix issues faster with full context. Government-compliant with PII filtering.</p>
+                            </div>
+                            <div class="comparison">
+                                <div class="before">
+                                    <h5>❌ Before</h5>
+                                    <p>User reports "it's broken," developer can't reproduce, no error details. Weeks to fix.</p>
+                                </div>
+                                <div class="after">
+                                    <h5>✅ After</h5>
+                                    <p>Error happens, Sentry shows exact error, stack trace, user actions. Fixed in hours.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="practice-card" onclick="togglePractice(this)">
+                        <div class="practice-header">
+                            <div class="practice-check">✓</div>
+                            <div class="practice-title">
+                                <h3>Audit Logging <span class="impact-badge impact-critical">Critical</span></h3>
+                                <p class="subtitle">Every data change recorded with who, what, when, where</p>
+                            </div>
+                        </div>
+                        <div class="practice-details">
+                            <div class="practice-section">
+                                <h4>🎯 What It Does</h4>
+                                <p>UserAuditLog table records all user administration actions. Tracks who made the change, what changed, when, and from what IP address. Immutable audit trail for compliance.</p>
+                            </div>
+                            <div class="practice-section">
+                                <h4>💡 Why It Matters</h4>
+                                <p>Government compliance requirement. Accountability for data modifications. Forensics for security incidents. Required for public sector transparency.</p>
+                            </div>
+                            <div class="comparison">
+                                <div class="before">
+                                    <h5>❌ Before</h5>
+                                    <p>Data changes, no record of who changed it or why. Can't investigate incidents.</p>
+                                </div>
+                                <div class="after">
+                                    <h5>✅ After</h5>
+                                    <p>Complete audit trail for investigations and compliance. Who, what, when, from where.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="practice-card" onclick="togglePractice(this)">
+                        <div class="practice-header">
+                            <div class="practice-check">✓</div>
+                            <div class="practice-title">
+                                <h3>Security Audits <span class="impact-badge impact-critical">Critical</span></h3>
+                                <p class="subtitle">Formal security review before production launch</p>
+                            </div>
+                        </div>
+                        <div class="practice-details">
+                            <div class="practice-section">
+                                <h4>🎯 What It Does</h4>
+                                <p>Comprehensive security audit covering authentication, authorization, input validation, SQL injection, XSS, CSRF, secret management, and session security. Documented findings and remediations.</p>
+                            </div>
+                            <div class="practice-section">
+                                <h4>💡 Why It Matters</h4>
+                                <p>Find vulnerabilities before attackers do. Government requirement for production systems. Creates baseline security documentation. Demonstrates due diligence.</p>
+                            </div>
+                            <div class="comparison">
+                                <div class="before">
+                                    <h5>❌ Before</h5>
+                                    <p>Ship to production, hope no one finds vulnerabilities. Discover issues after attacks.</p>
+                                </div>
+                                <div class="after">
+                                    <h5>✅ After</h5>
+                                    <p>Security audit passes, documented vulnerabilities addressed, production approved.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="practice-card" onclick="togglePractice(this)">
+                        <div class="practice-header">
+                            <div class="practice-check">✓</div>
+                            <div class="practice-title">
+                                <h3>Session Timeout Policies <span class="impact-badge impact-high">High Impact</span></h3>
+                                <p class="subtitle">Sessions expire to prevent security risks</p>
+                            </div>
+                        </div>
+                        <div class="practice-details">
+                            <div class="practice-section">
+                                <h4>🎯 What It Does</h4>
+                                <p>User sessions expire after 8 hours maximum. Active users get refreshed tokens every 1 hour. Secure, httpOnly cookies with SameSite CSRF protection. Automatic logout after inactivity.</p>
+                            </div>
+                            <div class="practice-section">
+                                <h4>💡 Why It Matters</h4>
+                                <p>Prevents abandoned sessions from being security risk. Stolen session cookies expire quickly. Meets government security standards. Balances security with user experience.</p>
+                            </div>
+                            <div class="comparison">
+                                <div class="before">
+                                    <h5>❌ Before</h5>
+                                    <p>Sessions last forever, stolen session cookie valid indefinitely. Security risk on shared computers.</p>
+                                </div>
+                                <div class="after">
+                                    <h5>✅ After</h5>
+                                    <p>Sessions expire, users re-authenticate, stolen sessions expire quickly. Much safer.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Data Management & Reliability -->
+            <div class="category">
+                <div class="category-header" onclick="toggleCategory(this)">
+                    <h2>
+                        <span class="category-icon">💾</span>
+                        Data Management & Reliability
+                    </h2>
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <span class="category-count">3 practices</span>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                </div>
+                <div class="practices-grid">
+                    <div class="practice-card" onclick="togglePractice(this)">
+                        <div class="practice-header">
+                            <div class="practice-check">✓</div>
+                            <div class="practice-title">
+                                <h3>Migration-Based Database Changes <span class="impact-badge impact-critical">Critical</span></h3>
+                                <p class="subtitle">Database changes scripted and version-controlled</p>
+                            </div>
+                        </div>
+                        <div class="practice-details">
+                            <div class="practice-section">
+                                <h4>🎯 What It Does</h4>
+                                <p>Prisma migrations track all database schema changes as versioned files. Changes tested on dev, same script runs on production. Rollback capability. Never manually edit database.</p>
+                            </div>
+                            <div class="practice-section">
+                                <h4>💡 Why It Matters</h4>
+                                <p>Database schema changes are trackable and reversible. Prevents "vibe coding" chaos where database structure becomes unpredictable. Dev and prod stay in sync.</p>
+                            </div>
+                            <div class="comparison">
+                                <div class="before">
+                                    <h5>❌ Before</h5>
+                                    <p>Developer manually runs SQL, forgets what changed, can't replicate on production. Schema drift.</p>
+                                </div>
+                                <div class="after">
+                                    <h5>✅ After</h5>
+                                    <p>Schema change scripted, tested on dev, same script runs on production, version controlled.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="practice-card" onclick="togglePractice(this)">
+                        <div class="practice-header">
+                            <div class="practice-check">✓</div>
+                            <div class="practice-title">
+                                <h3>Soft Delete Pattern <span class="impact-badge impact-high">High Impact</span></h3>
+                                <p class="subtitle">Data marked deleted but never removed</p>
+                            </div>
+                        </div>
+                        <div class="practice-details">
+                            <div class="practice-section">
+                                <h4>🎯 What It Does</h4>
+                                <p>Users and records marked as "INACTIVE" or "deleted" but never actually removed from database. Data preserved for compliance and recovery. Can be restored if needed.</p>
+                            </div>
+                            <div class="practice-section">
+                                <h4>💡 Why It Matters</h4>
+                                <p>Government compliance requirement for data retention. Can recover from mistakes. Audit trail remains intact. Required for legal investigations and public records law.</p>
+                            </div>
+                            <div class="comparison">
+                                <div class="before">
+                                    <h5>❌ Before</h5>
+                                    <p>Delete user, data gone forever, can't undo. No audit trail of deleted data.</p>
+                                </div>
+                                <div class="after">
+                                    <h5>✅ After</h5>
+                                    <p>Delete user, marked inactive, data preserved for compliance/recovery. Can restore if needed.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="practice-card" onclick="togglePractice(this)">
+                        <div class="practice-header">
+                            <div class="practice-check">✓</div>
+                            <div class="practice-title">
+                                <h3>Automated Database Seeding <span class="impact-badge impact-medium">Medium Impact</span></h3>
+                                <p class="subtitle">Demo data automatically generated following patterns</p>
+                            </div>
+                        </div>
+                        <div class="practice-details">
+                            <div class="practice-section">
+                                <h4>🎯 What It Does</h4>
+                                <p>Seed script generates 150+ realistic demo records following "Rule of 3" pattern: 3 lobbyists, 3 employers, 3 board members. Real Portland restaurants, realistic policy narratives. Dev environment auto-seeds.</p>
+                            </div>
+                            <div class="practice-section">
+                                <h4>💡 Why It Matters</h4>
+                                <p>Every environment has realistic test data. Demos always work. Stakeholders see professional data. Consistent testing baseline across all environments.</p>
+                            </div>
+                            <div class="comparison">
+                                <div class="before">
+                                    <h5>❌ Before</h5>
+                                    <p>Manually create test users, inconsistent data across environments, demos break frequently.</p>
+                                </div>
+                                <div class="after">
+                                    <h5>✅ After</h5>
+                                    <p>Run one command, 150+ realistic demo records created following Rule of 3 pattern. Reliable.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Documentation & Knowledge Management -->
+            <div class="category">
+                <div class="category-header" onclick="toggleCategory(this)">
+                    <h2>
+                        <span class="category-icon">📚</span>
+                        Documentation & Knowledge Management
+                    </h2>
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <span class="category-count">3 practices</span>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                </div>
+                <div class="practices-grid">
+                    <div class="practice-card" onclick="togglePractice(this)">
+                        <div class="practice-header">
+                            <div class="practice-check">✓</div>
+                            <div class="practice-title">
+                                <h3>Session Summaries <span class="impact-badge impact-high">High Impact</span></h3>
+                                <p class="subtitle">Comprehensive documentation after major work</p>
+                            </div>
+                        </div>
+                        <div class="practice-details">
+                            <div class="practice-section">
+                                <h4>🎯 What It Does</h4>
+                                <p>After each major development session, create a comprehensive summary documenting what changed, why decisions were made, problems solved, and lessons learned. 40+ session summaries created.</p>
+                            </div>
+                            <div class="practice-section">
+                                <h4>💡 Why It Matters</h4>
+                                <p>Knowledge doesn't live in one person's head. New team members can catch up quickly. Can understand decisions made months ago. Prevents re-debating same issues.</p>
+                            </div>
+                            <div class="comparison">
+                                <div class="before">
+                                    <h5>❌ Before</h5>
+                                    <p>Code changes, no one remembers why. Tribal knowledge locked in senior developers' heads.</p>
+                                </div>
+                                <div class="after">
+                                    <h5>✅ After</h5>
+                                    <p>40+ session summary documents explaining every major decision. Knowledge accessible to all.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="practice-card" onclick="togglePractice(this)">
+                        <div class="practice-header">
+                            <div class="practice-check">✓</div>
+                            <div class="practice-title">
+                                <h3>Issue Tracking (Beads) <span class="impact-badge impact-medium">Medium Impact</span></h3>
+                                <p class="subtitle">All work tracked with status and dependencies</p>
+                            </div>
+                        </div>
+                        <div class="practice-details">
+                            <div class="practice-section">
+                                <h4>🎯 What It Does</h4>
+                                <p>Beads issue tracker manages all tasks with status (pending/in-progress/done), dependencies (X blocks Y), and labels (feature/bug/mvp). Can see what's blocked, what's ready to start.</p>
+                            </div>
+                            <div class="practice-section">
+                                <h4>💡 Why It Matters</h4>
+                                <p>Can see what's in progress, what's blocked, what's done. Prevents duplicate work and forgotten tasks. Clear visibility into project status for stakeholders.</p>
+                            </div>
+                            <div class="comparison">
+                                <div class="before">
+                                    <h5>❌ Before</h5>
+                                    <p>Work happens, no central tracking, duplicate work, forgotten tasks. "What's the status?" → confusion.</p>
+                                </div>
+                                <div class="after">
+                                    <h5>✅ After</h5>
+                                    <p>Every task is an issue, status visible, dependencies tracked. "What's the status?" → instant answer.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="practice-card" onclick="togglePractice(this)">
+                        <div class="practice-header">
+                            <div class="practice-check">✓</div>
+                            <div class="practice-title">
+                                <h3>Architecture Decision Records <span class="impact-badge impact-high">High Impact</span></h3>
+                                <p class="subtitle">Document why we chose X over Y for major decisions</p>
+                            </div>
+                        </div>
+                        <div class="practice-details">
+                            <div class="practice-section">
+                                <h4>🎯 What It Does</h4>
+                                <p>ARCHITECTURE-DECISIONS.md documents major technical choices: PostgreSQL vs SQLite, Next.js vs alternatives, Prisma ORM, deployment strategy. Explains rationale, alternatives considered, trade-offs.</p>
+                            </div>
+                            <div class="practice-section">
+                                <h4>💡 Why It Matters</h4>
+                                <p>Future developers understand the reasoning behind choices. Don't repeat debates about decisions already made. New team members can onboard faster.</p>
+                            </div>
+                            <div class="comparison">
+                                <div class="before">
+                                    <h5>❌ Before</h5>
+                                    <p>"Why did we use PostgreSQL?" "No idea, it's just what we have." Decisions questioned repeatedly.</p>
+                                </div>
+                                <div class="after">
+                                    <h5>✅ After</h5>
+                                    <p>ARCHITECTURE-DECISIONS.md explains every major choice with rationale. Decisions documented.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Summary -->
+            <div class="summary">
+                <h2>The Transformation: Before vs. After AI-Assisted Development</h2>
+                <div class="summary-grid">
+                    <div class="summary-item">
+                        <h3>Code Quality</h3>
+                        <ul>
+                            <li>Automated formatting (Prettier)</li>
+                            <li>Automated linting (ESLint)</li>
+                            <li>Pre-commit hooks (Husky)</li>
+                            <li>Standardized commits (Commitlint)</li>
+                        </ul>
+                    </div>
+                    <div class="summary-item">
+                        <h3>Testing</h3>
+                        <ul>
+                            <li>122 E2E tests (Playwright)</li>
+                            <li>Unit testing (Vitest)</li>
+                            <li>CI/CD automation (GitHub Actions)</li>
+                            <li>Automated security updates (Dependabot)</li>
+                        </ul>
+                    </div>
+                    <div class="summary-item">
+                        <h3>Deployment</h3>
+                        <ul>
+                            <li>Auto-deploy to dev (Cloud Build)</li>
+                            <li>Manual approval for prod</li>
+                            <li>Blue-green deployments</li>
+                            <li>Environment separation</li>
+                        </ul>
+                    </div>
+                    <div class="summary-item">
+                        <h3>Security</h3>
+                        <ul>
+                            <li>Secret Manager (no hardcoded secrets)</li>
+                            <li>Error tracking (Sentry)</li>
+                            <li>Audit logging</li>
+                            <li>Security audits</li>
+                            <li>Session timeout policies</li>
+                        </ul>
+                    </div>
+                    <div class="summary-item">
+                        <h3>Data Management</h3>
+                        <ul>
+                            <li>Migration-based schema changes</li>
+                            <li>Soft delete pattern</li>
+                            <li>Automated seeding (Rule of 3)</li>
+                            <li>PostgreSQL production database</li>
+                        </ul>
+                    </div>
+                    <div class="summary-item">
+                        <h3>Documentation</h3>
+                        <ul>
+                            <li>40+ session summaries</li>
+                            <li>Issue tracking (Beads)</li>
+                            <li>Architecture decision records</li>
+                            <li>SECURITY.md and MONITORING.md</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div style="margin-top: 2rem; padding: 1.5rem; background: white; border-radius: 8px;">
+                    <h3 style="color: #059669; text-align: center; margin-bottom: 1rem;">By The Numbers</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; text-align: center;">
+                        <div>
+                            <div style="font-size: 2rem; font-weight: 700; color: #3b82f6;">23</div>
+                            <div style="color: #6b7280; font-size: 0.875rem;">Industry Practices</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 2rem; font-weight: 700; color: #3b82f6;">10 Days</div>
+                            <div style="color: #6b7280; font-size: 0.875rem;">Implementation Time</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 2rem; font-weight: 700; color: #3b82f6;">$84/mo</div>
+                            <div style="color: #6b7280; font-size: 0.875rem;">Infrastructure Cost</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 2rem; font-weight: 700; color: #3b82f6;">15,000+</div>
+                            <div style="color: #6b7280; font-size: 0.875rem;">Lines of Code</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 2rem; font-weight: 700; color: #3b82f6;">150+</div>
+                            <div style="color: #6b7280; font-size: 0.875rem;">Git Commits</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 2rem; font-weight: 700; color: #3b82f6;">100+</div>
+                            <div style="color: #6b7280; font-size: 0.875rem;">Files Created</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 2rem; text-align: center; font-size: 1.1rem; color: #166534;">
+                    <strong>This isn't just about building one application faster.</strong><br>
+                    It's about raising the baseline for all government software development.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleCategory(header) {
+            const category = header.parentElement;
+            category.classList.toggle('collapsed');
+        }
+
+        function togglePractice(card) {
+            card.classList.toggle('expanded');
+        }
+
+        let allExpanded = false;
+        function toggleAllPractices() {
+            const practices = document.querySelectorAll('.practice-card');
+            const button = document.querySelector('.expand-all button');
+
+            allExpanded = !allExpanded;
+
+            practices.forEach(practice => {
+                if (allExpanded) {
+                    practice.classList.add('expanded');
+                } else {
+                    practice.classList.remove('expanded');
+                }
+            });
+
+            button.textContent = allExpanded ? 'Collapse All Practices' : 'Expand All Practices';
+        }
+
+        // Expand all categories by default (but not individual practices)
+        document.addEventListener('DOMContentLoaded', function() {
+            const categories = document.querySelectorAll('.category');
+            categories.forEach(category => {
+                // Categories start expanded by default
+                // Only collapse if explicitly clicking the header
+            });
+        });
+    </script>
+</body>
+</html>

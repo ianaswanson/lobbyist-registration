@@ -21,11 +21,11 @@ export function DemoGuideButton() {
 
         {/* Main button */}
         <a
-          href="/DEMO-GUIDE.html"
+          href="/index.html"
           target="_blank"
           rel="noopener noreferrer"
           className="flex items-center gap-2 rounded-full bg-blue-600 px-4 py-3 text-sm font-medium text-white shadow-lg transition-colors hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none"
-          aria-label="Open demo guide in new tab"
+          aria-label="Open documentation hub in new tab"
         >
           <svg
             className="h-5 w-5"
@@ -41,7 +41,7 @@ export function DemoGuideButton() {
               d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
             />
           </svg>
-          <span>Demo Guide</span>
+          <span>Learn More</span>
         </a>
       </div>
     </div>
