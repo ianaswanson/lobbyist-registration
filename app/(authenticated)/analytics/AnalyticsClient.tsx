@@ -112,10 +112,10 @@ export function AnalyticsClient() {
       </div>
 
       {/* Info Alert */}
-      <Alert className="mb-6 border-blue-200 bg-blue-50">
-        <Info className="h-4 w-4 text-blue-600" />
-        <AlertTitle className="text-blue-800">About This Data</AlertTitle>
-        <AlertDescription className="text-blue-700">
+      <Alert className="mb-6 border-blue-200 bg-primary/10">
+        <Info className="h-4 w-4 text-primary" />
+        <AlertTitle className="text-primary">About This Data</AlertTitle>
+        <AlertDescription className="text-primary">
           This dashboard aggregates data from submitted quarterly expense
           reports. All spending amounts represent food, entertainment, and
           lobbying expenses as required by the Government Accountability
@@ -225,7 +225,7 @@ export function AnalyticsClient() {
                     </div>
                     <div className="h-6 w-full overflow-hidden rounded-full bg-gray-200">
                       <div
-                        className="flex h-full items-center justify-end bg-blue-600 px-2 text-xs font-medium text-white transition-all"
+                        className="flex h-full items-center justify-end bg-primary px-2 text-xs font-medium text-white transition-all"
                         style={{ width: `${percentage}%` }}
                       >
                         {percentage > 20 && `${quarter.reportCount} reports`}
@@ -271,7 +271,7 @@ export function AnalyticsClient() {
                     className="flex items-center justify-between"
                   >
                     <div className="flex items-center gap-2">
-                      <span className="flex h-6 w-6 items-center justify-center rounded-full bg-blue-100 text-xs font-bold text-blue-700">
+                      <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary/20 text-xs font-bold text-primary">
                         {index + 1}
                       </span>
                       <span className="max-w-[200px] truncate text-sm font-medium">
@@ -349,7 +349,7 @@ export function AnalyticsClient() {
                     className="flex items-center justify-between"
                   >
                     <div className="flex items-center gap-2">
-                      <span className="flex h-6 w-6 items-center justify-center rounded-full bg-green-100 text-xs font-bold text-green-700">
+                      <span className="flex h-6 w-6 items-center justify-center rounded-full bg-success/20 text-xs font-bold text-success">
                         {index + 1}
                       </span>
                       <span className="max-w-[200px] truncate text-sm font-medium">
@@ -384,7 +384,7 @@ export function AnalyticsClient() {
               </div>
               <div className="h-6 w-full overflow-hidden rounded-full bg-gray-200">
                 <div
-                  className="flex h-full items-center justify-end bg-blue-600 px-2 text-xs font-medium text-white"
+                  className="flex h-full items-center justify-end bg-primary px-2 text-xs font-medium text-white"
                   style={{
                     width: `${(data.summary.totalLobbyistSpending / data.summary.totalSpending) * 100}%`,
                   }}

@@ -29,10 +29,10 @@ export default async function Home() {
           {/* Exemption Checker */}
           <a
             href="/exemption-checker"
-            className="group relative rounded-lg border border-gray-200 bg-white p-6 shadow-sm transition-all hover:border-green-500 hover:shadow-md focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:outline-none"
+            className="group relative rounded-lg border border-gray-200 bg-white p-6 shadow-sm transition-all hover:border-success hover:shadow-md focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:outline-none"
             aria-label="Check if you need to register as a lobbyist"
           >
-            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-green-100 text-green-600 transition-colors group-hover:bg-green-600 group-hover:text-white">
+            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-success/20 text-success transition-colors group-hover:bg-success group-hover:text-white">
               <svg
                 className="h-6 w-6"
                 fill="none"
@@ -56,7 +56,7 @@ export default async function Home() {
               register as a lobbyist
             </p>
             <div
-              className="mt-4 flex items-center text-sm font-medium text-green-600 group-hover:text-green-700"
+              className="mt-4 flex items-center text-sm font-medium text-success group-hover:text-success"
               aria-hidden="true"
             >
               Check now

@@ -221,7 +221,7 @@ export function SearchClient({ user }: SearchClientProps) {
                     setFilters({ ...filters, searchTerm: e.target.value })
                   }
                   placeholder="Search by name, employer, or subject..."
-                  className="block w-full rounded-md border border-gray-300 px-4 py-3 focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
+                  className="block w-full rounded-md border border-gray-300 px-4 py-3 focus:border-primary focus:ring-primary focus:outline-none"
                 />
               </div>
 
@@ -241,7 +241,7 @@ export function SearchClient({ user }: SearchClientProps) {
                           entityType: e.target.value as any,
                         })
                       }
-                      className="h-4 w-4 border-gray-300 text-blue-600 focus:ring-blue-500"
+                      className="h-4 w-4 border-gray-300 text-primary focus:ring-primary"
                     />
                     <span className="ml-2 text-sm text-gray-700">
                       All Results
@@ -258,7 +258,7 @@ export function SearchClient({ user }: SearchClientProps) {
                           entityType: e.target.value as any,
                         })
                       }
-                      className="h-4 w-4 border-gray-300 text-blue-600 focus:ring-blue-500"
+                      className="h-4 w-4 border-gray-300 text-primary focus:ring-primary"
                     />
                     <span className="ml-2 text-sm text-gray-700">
                       Lobbyists Only
@@ -275,7 +275,7 @@ export function SearchClient({ user }: SearchClientProps) {
                           entityType: e.target.value as any,
                         })
                       }
-                      className="h-4 w-4 border-gray-300 text-blue-600 focus:ring-blue-500"
+                      className="h-4 w-4 border-gray-300 text-primary focus:ring-primary"
                     />
                     <span className="ml-2 text-sm text-gray-700">
                       Employers Only
@@ -295,7 +295,7 @@ export function SearchClient({ user }: SearchClientProps) {
                     showAdvanced: !filters.showAdvanced,
                   })
                 }
-                className="flex items-center text-sm font-medium text-blue-600 hover:text-blue-700"
+                className="flex items-center text-sm font-medium text-primary hover:text-primary"
               >
                 {filters.showAdvanced ? "Hide" : "Show"} Advanced Filters
                 <svg
@@ -334,7 +334,7 @@ export function SearchClient({ user }: SearchClientProps) {
                       onChange={(e) =>
                         setFilters({ ...filters, dateFrom: e.target.value })
                       }
-                      className="block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
+                      className="block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-primary focus:ring-primary focus:outline-none"
                     />
                   </div>
                   <div>
@@ -351,7 +351,7 @@ export function SearchClient({ user }: SearchClientProps) {
                       onChange={(e) =>
                         setFilters({ ...filters, dateTo: e.target.value })
                       }
-                      className="block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
+                      className="block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-primary focus:ring-primary focus:outline-none"
                     />
                   </div>
                 </div>
@@ -377,7 +377,7 @@ export function SearchClient({ user }: SearchClientProps) {
                         onChange={(e) =>
                           setFilters({ ...filters, minAmount: e.target.value })
                         }
-                        className="block w-full rounded-md border border-gray-300 py-2 pr-3 pl-7 focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
+                        className="block w-full rounded-md border border-gray-300 py-2 pr-3 pl-7 focus:border-primary focus:ring-primary focus:outline-none"
                         placeholder="0.00"
                       />
                     </div>
@@ -402,7 +402,7 @@ export function SearchClient({ user }: SearchClientProps) {
                         onChange={(e) =>
                           setFilters({ ...filters, maxAmount: e.target.value })
                         }
-                        className="block w-full rounded-md border border-gray-300 py-2 pr-3 pl-7 focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
+                        className="block w-full rounded-md border border-gray-300 py-2 pr-3 pl-7 focus:border-primary focus:ring-primary focus:outline-none"
                         placeholder="10000.00"
                       />
                     </div>
@@ -422,7 +422,7 @@ export function SearchClient({ user }: SearchClientProps) {
               </button>
               <button
                 type="submit"
-                className="rounded-md bg-blue-600 px-6 py-2 text-white hover:bg-blue-700"
+                className="rounded-md bg-primary px-6 py-2 text-white hover:bg-primary"
               >
                 Search
               </button>
@@ -447,7 +447,7 @@ export function SearchClient({ user }: SearchClientProps) {
                 (showEmployers && filteredEmployers.length > 0)) && (
                 <button
                   onClick={handleExport}
-                  className="flex items-center space-x-2 rounded-md bg-green-600 px-4 py-2 text-sm text-white hover:bg-green-700"
+                  className="flex items-center space-x-2 rounded-md bg-success px-4 py-2 text-sm text-white hover:bg-success"
                 >
                   <svg
                     className="h-4 w-4"
@@ -596,16 +596,16 @@ export function SearchClient({ user }: SearchClientProps) {
 
         {/* Information */}
         {!hasSearched && (
-          <div className="mt-8 rounded-lg border border-blue-200 bg-blue-50 p-6">
+          <div className="mt-8 rounded-lg border border-blue-200 bg-primary/10 p-6">
             <h3 className="mb-2 font-semibold text-blue-900">
               About This Database
             </h3>
-            <p className="mb-3 text-sm text-blue-700">
+            <p className="mb-3 text-sm text-primary">
               This public database contains information about registered
               lobbyists, their employers, and lobbying expenditures in Multnomah
               County as required by ordinance.
             </p>
-            <ul className="list-inside list-disc space-y-1 text-sm text-blue-700">
+            <ul className="list-inside list-disc space-y-1 text-sm text-primary">
               <li>Search by lobbyist name, employer, or subject matter</li>
               <li>View expense reports and lobbying activities</li>
               <li>Filter by date range and expense amounts</li>

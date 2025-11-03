@@ -41,35 +41,35 @@ export function GenericCSVUpload<T>({
   const colors = {
     blue: {
       template:
-        "border-blue-200 bg-blue-50 text-blue-900 text-blue-700 bg-blue-600 hover:bg-blue-700",
+        "border-blue-200 bg-primary/10 text-blue-900 text-primary bg-primary hover:bg-primary",
       upload:
-        "border-blue-200 bg-blue-50 text-blue-900 text-blue-700 file:bg-blue-600 hover:file:bg-blue-700",
+        "border-blue-200 bg-primary/10 text-blue-900 text-primary file:bg-primary hover:file:bg-primary",
       preview:
-        "border-green-200 bg-green-50 text-green-900 bg-green-600 hover:bg-green-700",
+        "border-success/30 bg-success/10 text-green-900 bg-success hover:bg-success",
     },
     green: {
       template:
-        "border-green-200 bg-green-50 text-green-900 text-green-700 bg-green-600 hover:bg-green-700",
+        "border-success/30 bg-success/10 text-green-900 text-success bg-success hover:bg-success",
       upload:
-        "border-green-200 bg-green-50 text-green-900 text-green-700 file:bg-green-600 hover:file:bg-green-700",
+        "border-success/30 bg-success/10 text-green-900 text-success file:bg-success hover:file:bg-success",
       preview:
-        "border-yellow-200 bg-yellow-50 text-yellow-900 bg-yellow-600 hover:bg-yellow-700",
+        "border-yellow-200 bg-primary/10 text-yellow-900 bg-yellow-600 hover:bg-yellow-700",
     },
     purple: {
       template:
-        "border-purple-200 bg-purple-50 text-purple-900 text-purple-700 bg-purple-600 hover:bg-purple-700",
+        "border-purple-200 bg-primary/10 text-purple-900 text-purple-700 bg-purple-600 hover:bg-purple-700",
       upload:
-        "border-purple-200 bg-purple-50 text-purple-900 text-purple-700 file:bg-purple-600 hover:file:bg-purple-700",
+        "border-purple-200 bg-primary/10 text-purple-900 text-purple-700 file:bg-purple-600 hover:file:bg-purple-700",
       preview:
-        "border-green-200 bg-green-50 text-green-900 bg-green-600 hover:bg-green-700",
+        "border-success/30 bg-success/10 text-green-900 bg-success hover:bg-success",
     },
     orange: {
       template:
-        "border-orange-200 bg-orange-50 text-orange-900 text-orange-700 bg-orange-600 hover:bg-orange-700",
+        "border-orange-200 bg-primary/10 text-orange-900 text-orange-700 bg-orange-600 hover:bg-orange-700",
       upload:
-        "border-orange-200 bg-orange-50 text-orange-900 text-orange-700 file:bg-orange-600 hover:file:bg-orange-700",
+        "border-orange-200 bg-primary/10 text-orange-900 text-orange-700 file:bg-orange-600 hover:file:bg-orange-700",
       preview:
-        "border-green-200 bg-green-50 text-green-900 bg-green-600 hover:bg-green-700",
+        "border-success/30 bg-success/10 text-green-900 bg-success hover:bg-success",
     },
   };
 
@@ -112,20 +112,20 @@ export function GenericCSVUpload<T>({
       )}
 
       {/* Step 1: Download Template */}
-      <div className="rounded-lg border-2 border-green-200 bg-green-50 p-4">
+      <div className="rounded-lg border-2 border-success/30 bg-success/10 p-4">
         <div className="flex items-center justify-between">
           <div>
             <h4 className="mb-1 font-semibold text-green-900">
               Step 1: Download CSV Template
             </h4>
-            <p className="text-sm text-green-700">
+            <p className="text-sm text-success">
               Use this template to ensure correct formatting
             </p>
           </div>
           <a
             href={templateUrl}
             download={templateName}
-            className="rounded-md bg-green-600 px-4 py-2 text-white hover:bg-green-700 focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:outline-none"
+            className="rounded-md bg-success px-4 py-2 text-white hover:bg-success focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:outline-none"
           >
             Download Template
           </a>
@@ -133,7 +133,7 @@ export function GenericCSVUpload<T>({
       </div>
 
       {/* Step 2: Upload CSV */}
-      <div className="rounded-lg border-2 border-blue-200 bg-blue-50 p-4">
+      <div className="rounded-lg border-2 border-blue-200 bg-primary/10 p-4">
         <h4 className="mb-3 font-semibold text-blue-900">
           Step 2: Upload Your CSV File
         </h4>
@@ -142,11 +142,11 @@ export function GenericCSVUpload<T>({
           id="csv-upload"
           accept=".csv"
           onChange={handleFileChange}
-          className="block w-full text-sm text-gray-500 file:mr-4 file:rounded-md file:border-0 file:bg-blue-600 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white hover:file:bg-blue-700"
+          className="block w-full text-sm text-gray-500 file:mr-4 file:rounded-md file:border-0 file:bg-primary file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white hover:file:bg-primary"
           aria-label={`Upload ${entityName} CSV file`}
         />
         {file && (
-          <p className="mt-2 text-sm text-blue-700">
+          <p className="mt-2 text-sm text-primary">
             ✓ File selected: {file.name}
           </p>
         )}
@@ -155,13 +155,13 @@ export function GenericCSVUpload<T>({
       {/* Errors */}
       {errors.length > 0 && (
         <div
-          className="rounded-lg border-2 border-red-200 bg-red-50 p-4"
+          className="rounded-lg border-2 border-red-200 bg-destructive/10 p-4"
           role="alert"
         >
           <h4 className="mb-2 font-semibold text-red-900">
             Errors Found in CSV:
           </h4>
-          <ul className="list-inside list-disc space-y-1 text-sm text-red-700">
+          <ul className="list-inside list-disc space-y-1 text-sm text-destructive">
             {errors.map((error, i) => (
               <li key={i}>{error}</li>
             ))}
@@ -171,7 +171,7 @@ export function GenericCSVUpload<T>({
 
       {/* Preview */}
       {preview.length > 0 && (
-        <div className="rounded-lg border-2 border-yellow-200 bg-yellow-50 p-4">
+        <div className="rounded-lg border-2 border-yellow-200 bg-primary/10 p-4">
           <h4 className="mb-3 font-semibold text-yellow-900">
             Step 3: Preview & Import ({preview.length} items)
           </h4>
@@ -208,7 +208,7 @@ export function GenericCSVUpload<T>({
 
           <button
             onClick={handleImport}
-            className="w-full rounded-md bg-yellow-600 px-4 py-2 text-white hover:bg-yellow-700 focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 focus:outline-none"
+            className="w-full rounded-md bg-yellow-600 px-4 py-2 text-white hover:bg-yellow-700 focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:outline-none"
           >
             Import {preview.length} {entityName}
           </button>

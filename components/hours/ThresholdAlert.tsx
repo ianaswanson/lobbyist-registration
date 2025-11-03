@@ -34,12 +34,12 @@ export function ThresholdAlert({
     <div
       className={`rounded-lg border-l-4 p-6 shadow ${
         isRegistered
-          ? "border-green-500 bg-green-50"
+          ? "border-success bg-success/10"
           : isPending
-            ? "border-yellow-500 bg-yellow-50"
+            ? "border-yellow-500 bg-primary/10"
             : isDeadlineClose
-              ? "border-red-500 bg-red-50"
-              : "border-orange-500 bg-orange-50"
+              ? "border-destructive bg-destructive/10"
+              : "border-orange-500 bg-primary/10"
       }`}
     >
       <div className="flex">
@@ -78,7 +78,7 @@ export function ThresholdAlert({
           <h3
             className={`text-lg font-semibold ${
               isRegistered
-                ? "text-green-800"
+                ? "text-success-foreground"
                 : isDeadlineClose
                   ? "text-red-800"
                   : "text-orange-800"
@@ -93,7 +93,7 @@ export function ThresholdAlert({
 
           <div className="mt-2 text-sm">
             {isRegistered ? (
-              <p className="text-green-700">
+              <p className="text-success">
                 Your lobbyist registration is active. You're in compliance with
                 the 10-hour threshold requirement.
               </p>
@@ -109,7 +109,7 @@ export function ThresholdAlert({
               </div>
             ) : (
               <div
-                className={isDeadlineClose ? "text-red-700" : "text-orange-700"}
+                className={isDeadlineClose ? "text-destructive" : "text-orange-700"}
               >
                 <p className="mb-2 font-medium">
                   You have exceeded 10 lobbying hours in this quarter.
@@ -132,8 +132,8 @@ export function ThresholdAlert({
                     href="/register/lobbyist"
                     className={`inline-flex items-center rounded-md border border-transparent px-4 py-2 text-sm font-medium text-white ${
                       isDeadlineClose
-                        ? "bg-red-600 hover:bg-red-700 focus:ring-red-500"
-                        : "bg-orange-600 hover:bg-orange-700 focus:ring-orange-500"
+                        ? "bg-red-600 hover:bg-red-700 focus:ring-destructive"
+                        : "bg-orange-600 hover:bg-orange-700 focus:ring-primary"
                     } focus:ring-2 focus:ring-offset-2 focus:outline-none`}
                   >
                     Register Now →

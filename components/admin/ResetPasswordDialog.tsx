@@ -129,7 +129,7 @@ export function ResetPasswordDialog({
                       className="shrink-0"
                     >
                       {copied ? (
-                        <CheckCircle className="h-4 w-4 text-green-600" />
+                        <CheckCircle className="h-4 w-4 text-success" />
                       ) : (
                         <Copy className="h-4 w-4" />
                       )}

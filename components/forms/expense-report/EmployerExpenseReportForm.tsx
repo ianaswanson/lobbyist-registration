@@ -291,7 +291,7 @@ export function EmployerExpenseReportForm({
               id="quarter"
               value={quarter}
               onChange={(e) => setQuarter(e.target.value)}
-              className="block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
+              className="block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-primary focus:ring-primary focus:outline-none"
             >
               <option value="Q1">Q1 (Jan-Mar) - Due April 15</option>
               <option value="Q2">Q2 (Apr-Jun) - Due July 15</option>
@@ -311,7 +311,7 @@ export function EmployerExpenseReportForm({
               id="year"
               value={year}
               onChange={(e) => setYear(parseInt(e.target.value))}
-              className="block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
+              className="block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-primary focus:ring-primary focus:outline-none"
             />
           </div>
         </div>
@@ -335,7 +335,7 @@ export function EmployerExpenseReportForm({
                 htmlFor="lobbyistName"
                 className="block text-sm font-medium text-gray-700"
               >
-                Lobbyist Name <span className="text-red-600">*</span>
+                Lobbyist Name <span className="text-destructive">*</span>
               </label>
               <input
                 type="text"
@@ -345,7 +345,7 @@ export function EmployerExpenseReportForm({
                 onChange={(e) =>
                   setNewPayment({ ...newPayment, lobbyistName: e.target.value })
                 }
-                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
+                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-primary focus:ring-primary focus:outline-none"
                 placeholder="Jane Smith"
               />
             </div>
@@ -354,7 +354,7 @@ export function EmployerExpenseReportForm({
                 htmlFor="amountPaid"
                 className="block text-sm font-medium text-gray-700"
               >
-                Amount Paid <span className="text-red-600">*</span>
+                Amount Paid <span className="text-destructive">*</span>
               </label>
               <div className="relative mt-1">
                 <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
@@ -370,7 +370,7 @@ export function EmployerExpenseReportForm({
                   onChange={(e) =>
                     setNewPayment({ ...newPayment, amountPaid: e.target.value })
                   }
-                  className="block w-full rounded-md border border-gray-300 py-2 pr-3 pl-7 focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
+                  className="block w-full rounded-md border border-gray-300 py-2 pr-3 pl-7 focus:border-primary focus:ring-primary focus:outline-none"
                   placeholder="5000.00"
                 />
               </div>
@@ -379,7 +379,7 @@ export function EmployerExpenseReportForm({
           <div className="flex justify-end">
             <button
               type="submit"
-              className="rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
+              className="rounded-md bg-primary px-4 py-2 text-white hover:bg-primary"
             >
               Add Lobbyist Payment
             </button>
@@ -413,7 +413,7 @@ export function EmployerExpenseReportForm({
                     <td className="px-3 py-4 text-right text-sm whitespace-nowrap">
                       <button
                         onClick={() => handleRemovePayment(payment.id)}
-                        className="text-red-600 hover:text-red-900"
+                        className="text-destructive hover:text-red-900"
                       >
                         Remove
                       </button>
@@ -422,7 +422,7 @@ export function EmployerExpenseReportForm({
                 ))}
               </tbody>
             </table>
-            <div className="mt-4 flex items-center justify-between rounded-md bg-blue-50 p-4">
+            <div className="mt-4 flex items-center justify-between rounded-md bg-primary/10 p-4">
               <span className="text-sm font-medium text-blue-900">
                 Total Lobbyist Payments:
               </span>
@@ -453,7 +453,7 @@ export function EmployerExpenseReportForm({
               onClick={() => setMode("manual")}
               className={`rounded-md px-4 py-2 text-sm font-medium transition-colors ${
                 mode === "manual"
-                  ? "bg-blue-600 text-white"
+                  ? "bg-primary text-white"
                   : "bg-gray-100 text-gray-700 hover:bg-gray-200"
               }`}
             >
@@ -464,7 +464,7 @@ export function EmployerExpenseReportForm({
               onClick={() => setMode("csv")}
               className={`rounded-md px-4 py-2 text-sm font-medium transition-colors ${
                 mode === "csv"
-                  ? "bg-blue-600 text-white"
+                  ? "bg-primary text-white"
                   : "bg-gray-100 text-gray-700 hover:bg-gray-200"
               }`}
             >
@@ -475,7 +475,7 @@ export function EmployerExpenseReportForm({
               onClick={() => setMode("paste")}
               className={`rounded-md px-4 py-2 text-sm font-medium transition-colors ${
                 mode === "paste"
-                  ? "bg-blue-600 text-white"
+                  ? "bg-primary text-white"
                   : "bg-gray-100 text-gray-700 hover:bg-gray-200"
               }`}
             >
@@ -525,7 +525,7 @@ export function EmployerExpenseReportForm({
                     <td className="px-3 py-4 text-sm whitespace-nowrap text-gray-900">
                       {expense.officialName}
                       {expense.isEstimate && (
-                        <span className="ml-2 text-xs text-yellow-600">
+                        <span className="ml-2 text-xs text-primary">
                           (Est.)
                         </span>
                       )}
@@ -545,7 +545,7 @@ export function EmployerExpenseReportForm({
                     <td className="px-3 py-4 text-right text-sm whitespace-nowrap">
                       <button
                         onClick={() => handleRemoveExpense(expense.id)}
-                        className="text-red-600 hover:text-red-900"
+                        className="text-destructive hover:text-red-900"
                       >
                         Remove
                       </button>
@@ -556,7 +556,7 @@ export function EmployerExpenseReportForm({
             </table>
           </div>
 
-          <div className="mt-4 flex items-center justify-between rounded-md bg-purple-50 p-4">
+          <div className="mt-4 flex items-center justify-between rounded-md bg-primary/10 p-4">
             <span className="text-sm font-medium text-purple-900">
               Total Expenses:
             </span>
@@ -593,8 +593,8 @@ export function EmployerExpenseReportForm({
             </div>
           </div>
 
-          <div className="mt-6 rounded-md bg-blue-50 p-4">
-            <p className="text-sm text-blue-700">
+          <div className="mt-6 rounded-md bg-primary/10 p-4">
+            <p className="text-sm text-primary">
               <strong>Note:</strong> Total includes all payments to registered
               lobbyists and itemized expenses over $50 paid to or for any public
               official for food, refreshments, and entertainment.
@@ -621,11 +621,11 @@ export function EmployerExpenseReportForm({
 
       {/* Unsaved Changes Warning */}
       {hasUnsavedChanges && (
-        <div className="rounded-lg border-2 border-yellow-200 bg-yellow-50 p-4 shadow-sm">
+        <div className="rounded-lg border-2 border-yellow-200 bg-primary/10 p-4 shadow-sm">
           <div className="flex items-start">
             <div className="flex-shrink-0">
               <svg
-                className="h-5 w-5 text-yellow-600"
+                className="h-5 w-5 text-primary"
                 viewBox="0 0 20 20"
                 fill="currentColor"
               >
@@ -654,8 +654,8 @@ export function EmployerExpenseReportForm({
         <div
           className={`rounded-lg p-4 ${
             message.type === "success"
-              ? "border border-green-200 bg-green-50 text-green-800"
-              : "border border-red-200 bg-red-50 text-red-800"
+              ? "border border-success/30 bg-success/10 text-success-foreground"
+              : "border border-red-200 bg-destructive/10 text-red-800"
           }`}
         >
           <div className="flex items-center justify-between">
@@ -687,7 +687,7 @@ export function EmployerExpenseReportForm({
             isLoading ||
             (lobbyistPayments.length === 0 && expenses.length === 0)
           }
-          className="flex items-center space-x-2 rounded-md bg-green-600 px-6 py-2 text-white hover:bg-green-700 disabled:cursor-not-allowed disabled:bg-gray-300"
+          className="flex items-center space-x-2 rounded-md bg-success px-6 py-2 text-white hover:bg-success disabled:cursor-not-allowed disabled:bg-gray-300"
         >
           {isLoading && (
             <svg

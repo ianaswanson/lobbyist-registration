@@ -60,12 +60,12 @@ const violationTypeLabels = {
 
 const statusColors = {
   PENDING: "bg-yellow-100 text-yellow-800",
-  ISSUED: "bg-red-100 text-red-800",
+  ISSUED: "bg-destructive/20 text-red-800",
   APPEALED: "bg-purple-100 text-purple-800",
-  UPHELD: "bg-red-100 text-red-800",
-  OVERTURNED: "bg-green-100 text-green-800",
-  PAID: "bg-green-100 text-green-800",
-  WAIVED: "bg-blue-100 text-blue-800",
+  UPHELD: "bg-destructive/20 text-red-800",
+  OVERTURNED: "bg-success/20 text-success-foreground",
+  PAID: "bg-success/20 text-success-foreground",
+  WAIVED: "bg-primary/20 text-primary",
 };
 
 export function ViolationsClient() {
@@ -216,25 +216,25 @@ export function ViolationsClient() {
         <Alert
           className={`mb-6 ${
             message.type === "success"
-              ? "border-green-200 bg-green-50"
-              : "border-red-200 bg-red-50"
+              ? "border-success/30 bg-success/10"
+              : "border-red-200 bg-destructive/10"
           }`}
         >
           <AlertCircle
             className={`h-4 w-4 ${
-              message.type === "success" ? "text-green-600" : "text-red-600"
+              message.type === "success" ? "text-success" : "text-destructive"
             }`}
           />
           <AlertTitle
             className={
-              message.type === "success" ? "text-green-800" : "text-red-800"
+              message.type === "success" ? "text-success-foreground" : "text-red-800"
             }
           >
             {message.type === "success" ? "Success" : "Error"}
           </AlertTitle>
           <AlertDescription
             className={
-              message.type === "success" ? "text-green-700" : "text-red-700"
+              message.type === "success" ? "text-success" : "text-destructive"
             }
           >
             {message.text}
@@ -733,7 +733,7 @@ export function ViolationsClient() {
                         ))}
                         <a
                           href="/admin/appeals"
-                          className="mt-2 inline-block text-sm font-medium text-blue-600 hover:underline"
+                          className="mt-2 inline-block text-sm font-medium text-primary hover:underline"
                         >
                           View in Appeals Dashboard →
                         </a>

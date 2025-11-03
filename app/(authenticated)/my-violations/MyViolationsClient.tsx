@@ -48,12 +48,12 @@ const violationTypeLabels: Record<string, string> = {
 
 const statusColors: Record<string, string> = {
   PENDING: "bg-yellow-100 text-yellow-800",
-  ISSUED: "bg-red-100 text-red-800",
+  ISSUED: "bg-destructive/20 text-red-800",
   APPEALED: "bg-purple-100 text-purple-800",
-  UPHELD: "bg-red-100 text-red-800",
-  OVERTURNED: "bg-green-100 text-green-800",
-  PAID: "bg-green-100 text-green-800",
-  WAIVED: "bg-blue-100 text-blue-800",
+  UPHELD: "bg-destructive/20 text-red-800",
+  OVERTURNED: "bg-success/20 text-success-foreground",
+  PAID: "bg-success/20 text-success-foreground",
+  WAIVED: "bg-primary/20 text-primary",
 };
 
 export function MyViolationsClient({
@@ -207,21 +207,21 @@ export function MyViolationsClient({
       {/* Success/Error Message */}
       {message && (
         <Alert
-          className={`mb-4 ${message.type === "success" ? "border-green-200 bg-green-50" : "border-red-200 bg-red-50"}`}
+          className={`mb-4 ${message.type === "success" ? "border-success/30 bg-success/10" : "border-red-200 bg-destructive/10"}`}
         >
           <AlertCircle
-            className={`h-4 w-4 ${message.type === "success" ? "text-green-600" : "text-red-600"}`}
+            className={`h-4 w-4 ${message.type === "success" ? "text-success" : "text-destructive"}`}
           />
           <AlertTitle
             className={
-              message.type === "success" ? "text-green-800" : "text-red-800"
+              message.type === "success" ? "text-success-foreground" : "text-red-800"
             }
           >
             {message.type === "success" ? "Success" : "Error"}
           </AlertTitle>
           <AlertDescription
             className={
-              message.type === "success" ? "text-green-700" : "text-red-700"
+              message.type === "success" ? "text-success" : "text-destructive"
             }
           >
             {message.text}
@@ -233,8 +233,8 @@ export function MyViolationsClient({
       {violations.some(
         (v) => v.status === "ISSUED" && !isAppealDeadlinePassed(v.issuedDate)
       ) && (
-        <Alert className="mb-4 border-orange-200 bg-orange-50">
-          <AlertCircle className="h-4 w-4 text-orange-600" />
+        <Alert className="mb-4 border-orange-200 bg-primary/10">
+          <AlertCircle className="h-4 w-4 text-primary" />
           <AlertTitle className="text-orange-800">Action Required</AlertTitle>
           <AlertDescription className="text-orange-700">
             You have{" "}
@@ -379,13 +379,13 @@ export function MyViolationsClient({
                               </div>
                               {canAppeal(violation) && !deadlinePassed && (
                                 <div
-                                  className={`text-xs whitespace-nowrap ${daysLeft <= 7 ? "font-semibold text-red-600" : "text-muted-foreground"}`}
+                                  className={`text-xs whitespace-nowrap ${daysLeft <= 7 ? "font-semibold text-destructive" : "text-muted-foreground"}`}
                                 >
                                   {daysLeft} days left
                                 </div>
                               )}
                               {deadlinePassed && canAppeal(violation) && (
-                                <div className="text-xs whitespace-nowrap text-red-600">
+                                <div className="text-xs whitespace-nowrap text-destructive">
                                   Expired
                                 </div>
                               )}
@@ -415,14 +415,14 @@ export function MyViolationsClient({
                           ) : violation.status === "UPHELD" ? (
                             <Badge
                               variant="outline"
-                              className="bg-red-50 whitespace-nowrap"
+                              className="bg-destructive/10 whitespace-nowrap"
                             >
                               Upheld
                             </Badge>
                           ) : violation.status === "OVERTURNED" ? (
                             <Badge
                               variant="outline"
-                              className="bg-green-50 whitespace-nowrap"
+                              className="bg-success/10 whitespace-nowrap"
                             >
                               Overturned
                             </Badge>
@@ -554,8 +554,8 @@ export function MyViolationsClient({
 
               {/* Warning about deadline */}
               {daysUntilDeadline(selectedViolation.issuedDate) <= 7 && (
-                <Alert className="border-orange-200 bg-orange-50">
-                  <Calendar className="h-4 w-4 text-orange-600" />
+                <Alert className="border-orange-200 bg-primary/10">
+                  <Calendar className="h-4 w-4 text-primary" />
                   <AlertTitle className="text-orange-800">
                     Urgent: Deadline Approaching
                   </AlertTitle>

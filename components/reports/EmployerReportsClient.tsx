@@ -34,11 +34,11 @@ export function EmployerReportsClient({
   const getStatusBadge = (status: ReportStatus) => {
     const styles: Record<ReportStatus, string> = {
       DRAFT: "bg-gray-100 text-gray-800",
-      SUBMITTED: "bg-blue-100 text-blue-800",
-      LATE: "bg-red-100 text-red-800",
+      SUBMITTED: "bg-primary/20 text-primary",
+      LATE: "bg-destructive/20 text-red-800",
       OVERDUE: "bg-orange-100 text-orange-800",
-      APPROVED: "bg-green-100 text-green-800",
-      REJECTED: "bg-red-100 text-red-800",
+      APPROVED: "bg-success/20 text-success-foreground",
+      REJECTED: "bg-destructive/20 text-red-800",
       NEEDS_CLARIFICATION: "bg-yellow-100 text-yellow-800",
     };
 
@@ -104,8 +104,8 @@ export function EmployerReportsClient({
         <div
           className={`mb-4 rounded-md p-4 ${
             message.type === "success"
-              ? "bg-green-50 text-green-800"
-              : "bg-red-50 text-red-800"
+              ? "bg-success/10 text-success-foreground"
+              : "bg-destructive/10 text-red-800"
           }`}
         >
           <p className="text-sm font-medium">{message.text}</p>
@@ -122,7 +122,7 @@ export function EmployerReportsClient({
           </p>
           <a
             href="/reports/employer/new"
-            className="mt-4 inline-block rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+            className="mt-4 inline-block rounded-md bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary"
           >
             Create Report
           </a>
@@ -192,7 +192,7 @@ export function EmployerReportsClient({
                     <div className="flex justify-end gap-2">
                       <a
                         href={`/reports/employer/${report.id}`}
-                        className="text-blue-600 hover:text-blue-900"
+                        className="text-primary hover:text-blue-900"
                         title="View details"
                       >
                         <Eye className="h-5 w-5" />
@@ -209,7 +209,7 @@ export function EmployerReportsClient({
                           <button
                             onClick={() => handleDelete(report.id)}
                             disabled={loading === report.id}
-                            className="text-red-600 hover:text-red-900 disabled:opacity-50"
+                            className="text-destructive hover:text-red-900 disabled:opacity-50"
                             title="Delete report"
                           >
                             {loading === report.id ? (

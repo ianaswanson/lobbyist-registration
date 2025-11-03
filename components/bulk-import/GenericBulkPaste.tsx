@@ -58,7 +58,7 @@ export function GenericBulkPaste<T>({
         </div>
       )}
 
-      <div className="rounded-lg border-2 border-purple-200 bg-purple-50 p-4">
+      <div className="rounded-lg border-2 border-purple-200 bg-primary/10 p-4">
         <h4 className="mb-2 font-semibold text-purple-900">
           Format Instructions:
         </h4>
@@ -66,7 +66,7 @@ export function GenericBulkPaste<T>({
         <code className="block rounded bg-purple-100 p-2 text-xs whitespace-pre-wrap text-purple-900">
           {columns.map((col) => col.label).join(", ")}
         </code>
-        <p className="mt-2 text-xs text-purple-600">Example: {exampleText}</p>
+        <p className="mt-2 text-xs text-primary">Example: {exampleText}</p>
       </div>
 
       {/* Paste Area */}
@@ -82,7 +82,7 @@ export function GenericBulkPaste<T>({
           rows={8}
           value={textData}
           onChange={(e) => setTextData(e.target.value)}
-          className="block w-full rounded-md border border-gray-300 px-3 py-2 font-mono text-sm focus:border-purple-500 focus:ring-purple-500 focus:outline-none"
+          className="block w-full rounded-md border border-gray-300 px-3 py-2 font-mono text-sm focus:border-purple-500 focus:ring-primary focus:outline-none"
           placeholder={exampleText}
           aria-describedby="paste-instructions"
         />
@@ -91,7 +91,7 @@ export function GenericBulkPaste<T>({
       <button
         onClick={handleParse}
         disabled={!textData.trim()}
-        className="w-full rounded-md bg-purple-600 px-4 py-2 text-white hover:bg-purple-700 focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:outline-none disabled:bg-gray-300"
+        className="w-full rounded-md bg-purple-600 px-4 py-2 text-white hover:bg-purple-700 focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:outline-none disabled:bg-gray-300"
       >
         Parse Data
       </button>
@@ -99,11 +99,11 @@ export function GenericBulkPaste<T>({
       {/* Errors */}
       {errors.length > 0 && (
         <div
-          className="rounded-lg border-2 border-red-200 bg-red-50 p-4"
+          className="rounded-lg border-2 border-red-200 bg-destructive/10 p-4"
           role="alert"
         >
           <h4 className="mb-2 font-semibold text-red-900">Errors:</h4>
-          <ul className="list-inside list-disc space-y-1 text-sm text-red-700">
+          <ul className="list-inside list-disc space-y-1 text-sm text-destructive">
             {errors.map((error, i) => (
               <li key={i}>{error}</li>
             ))}
@@ -113,7 +113,7 @@ export function GenericBulkPaste<T>({
 
       {/* Preview */}
       {preview.length > 0 && (
-        <div className="rounded-lg border-2 border-green-200 bg-green-50 p-4">
+        <div className="rounded-lg border-2 border-success/30 bg-success/10 p-4">
           <h4 className="mb-3 font-semibold text-green-900">
             Preview ({preview.length} items):
           </h4>
@@ -150,7 +150,7 @@ export function GenericBulkPaste<T>({
 
           <button
             onClick={handleImport}
-            className="w-full rounded-md bg-green-600 px-4 py-2 text-white hover:bg-green-700 focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:outline-none"
+            className="w-full rounded-md bg-success px-4 py-2 text-white hover:bg-success focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:outline-none"
           >
             Import {preview.length} {entityName}
           </button>

@@ -74,7 +74,7 @@ export function BoardCalendarsClient() {
     return (
       <div className="flex items-center justify-center py-12">
         <div className="text-center">
-          <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-blue-600 border-r-transparent"></div>
+          <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-primary border-r-transparent"></div>
           <p className="mt-2 text-gray-600">Loading board member data...</p>
         </div>
       </div>
@@ -83,7 +83,7 @@ export function BoardCalendarsClient() {
 
   if (error) {
     return (
-      <div className="rounded-md bg-red-50 p-4">
+      <div className="rounded-md bg-destructive/10 p-4">
         <p className="text-sm text-red-800">
           <strong>Error:</strong> {error}
         </p>
@@ -93,7 +93,7 @@ export function BoardCalendarsClient() {
 
   if (!data || data.boardMembers.length === 0) {
     return (
-      <div className="rounded-md bg-yellow-50 p-4">
+      <div className="rounded-md bg-primary/10 p-4">
         <p className="text-sm text-yellow-800">
           No board member data available at this time.
         </p>
@@ -117,7 +117,7 @@ export function BoardCalendarsClient() {
               onClick={() => setSelectedMember(member.id)}
               className={`rounded-lg border-2 p-4 text-left transition-all ${
                 selectedMember === member.id
-                  ? "border-blue-600 bg-blue-50"
+                  ? "border-primary bg-primary/10"
                   : "border-gray-200 hover:border-gray-300"
               }`}
             >
@@ -131,8 +131,8 @@ export function BoardCalendarsClient() {
                     </p>
                   )}
                 </div>
-                <div className="rounded-full bg-blue-100 p-2">
-                  <User className="h-5 w-5 text-blue-600" />
+                <div className="rounded-full bg-primary/20 p-2">
+                  <User className="h-5 w-5 text-primary" />
                 </div>
               </div>
               <div className="mt-3 flex items-center justify-between text-xs text-gray-500">
@@ -159,7 +159,7 @@ export function BoardCalendarsClient() {
                     {currentMember.calendarEntries.length}
                   </p>
                 </div>
-                <Calendar className="h-12 w-12 text-blue-600" />
+                <Calendar className="h-12 w-12 text-primary" />
               </div>
             </div>
 
@@ -173,7 +173,7 @@ export function BoardCalendarsClient() {
                     {currentMember.totalReceipts}
                   </p>
                 </div>
-                <DollarSign className="h-12 w-12 text-green-600" />
+                <DollarSign className="h-12 w-12 text-success" />
               </div>
             </div>
 
@@ -232,7 +232,7 @@ export function BoardCalendarsClient() {
                           )}
                         </div>
                       </div>
-                      <span className="ml-4 rounded-full bg-blue-100 px-3 py-1 text-xs font-medium text-blue-800">
+                      <span className="ml-4 rounded-full bg-primary/20 px-3 py-1 text-xs font-medium text-primary">
                         {entry.quarter} {entry.year}
                       </span>
                     </div>

@@ -124,8 +124,8 @@ export function ReviewRegistrationsList({
         <div
           className={`rounded-lg p-4 ${
             message.type === "success"
-              ? "border border-green-200 bg-green-50 text-green-800"
-              : "border border-red-200 bg-red-50 text-red-800"
+              ? "border border-success/30 bg-success/10 text-success-foreground"
+              : "border border-red-200 bg-destructive/10 text-red-800"
           }`}
         >
           <div className="flex items-center justify-between">

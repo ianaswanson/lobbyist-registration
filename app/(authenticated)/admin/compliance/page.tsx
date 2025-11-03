@@ -260,9 +260,9 @@ export default async function AdminComplianceDashboardPage() {
                   {complianceData.totalLobbyists}
                 </p>
               </div>
-              <div className="rounded-full bg-blue-100 p-3">
+              <div className="rounded-full bg-primary/20 p-3">
                 <svg
-                  className="h-6 w-6 text-blue-600"
+                  className="h-6 w-6 text-primary"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -288,7 +288,7 @@ export default async function AdminComplianceDashboardPage() {
               </div>
               <div className="rounded-full bg-purple-100 p-3">
                 <svg
-                  className="h-6 w-6 text-purple-600"
+                  className="h-6 w-6 text-primary"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -316,7 +316,7 @@ export default async function AdminComplianceDashboardPage() {
               </div>
               <div className="rounded-full bg-indigo-100 p-3">
                 <svg
-                  className="h-6 w-6 text-indigo-600"
+                  className="h-6 w-6 text-primary"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -340,9 +340,9 @@ export default async function AdminComplianceDashboardPage() {
                   {complianceData.violations.length}
                 </p>
               </div>
-              <div className="rounded-full bg-red-100 p-3">
+              <div className="rounded-full bg-destructive/20 p-3">
                 <svg
-                  className="h-6 w-6 text-red-600"
+                  className="h-6 w-6 text-destructive"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -362,11 +362,11 @@ export default async function AdminComplianceDashboardPage() {
         {/* Alert Cards */}
         <div className="mb-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
           {/* Upcoming Deadline */}
-          <div className="rounded-lg border-2 border-yellow-200 bg-yellow-50 p-6 shadow-sm">
+          <div className="rounded-lg border-2 border-yellow-200 bg-primary/10 p-6 shadow-sm">
             <div className="flex items-start">
               <div className="flex-shrink-0">
                 <svg
-                  className="h-6 w-6 text-yellow-600"
+                  className="h-6 w-6 text-primary"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -403,11 +403,11 @@ export default async function AdminComplianceDashboardPage() {
           </div>
 
           {/* Overdue Reports */}
-          <div className="rounded-lg border-2 border-red-200 bg-red-50 p-6 shadow-sm">
+          <div className="rounded-lg border-2 border-red-200 bg-destructive/10 p-6 shadow-sm">
             <div className="flex items-start">
               <div className="flex-shrink-0">
                 <svg
-                  className="h-6 w-6 text-red-600"
+                  className="h-6 w-6 text-destructive"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -424,7 +424,7 @@ export default async function AdminComplianceDashboardPage() {
                 <h3 className="text-sm font-semibold text-red-900">
                   Overdue Reports
                 </h3>
-                <div className="mt-2 text-sm text-red-700">
+                <div className="mt-2 text-sm text-destructive">
                   <p>
                     <strong>{complianceData.overdueReports.length}</strong>{" "}
                     reports overdue
@@ -445,7 +445,7 @@ export default async function AdminComplianceDashboardPage() {
             </h2>
             <a
               href="/admin/review/registrations"
-              className="text-sm font-medium text-blue-600 hover:text-blue-700"
+              className="text-sm font-medium text-primary hover:text-primary"
             >
               View All →
             </a>
@@ -474,7 +474,7 @@ export default async function AdminComplianceDashboardPage() {
                   </span>
                   <a
                     href="/admin/review/registrations"
-                    className="rounded-md bg-blue-600 px-4 py-2 text-sm text-white hover:bg-blue-700"
+                    className="rounded-md bg-primary px-4 py-2 text-sm text-white hover:bg-primary"
                   >
                     Review
                   </a>
@@ -492,7 +492,7 @@ export default async function AdminComplianceDashboardPage() {
             </h2>
             <a
               href="/admin/review/reports"
-              className="text-sm font-medium text-blue-600 hover:text-blue-700"
+              className="text-sm font-medium text-primary hover:text-primary"
             >
               View All →
             </a>
@@ -508,7 +508,7 @@ export default async function AdminComplianceDashboardPage() {
             {complianceData.pendingReportsCount > 0 && (
               <a
                 href="/admin/review/reports"
-                className="mt-2 inline-block rounded-md bg-blue-600 px-4 py-2 text-sm text-white hover:bg-blue-700"
+                className="mt-2 inline-block rounded-md bg-primary px-4 py-2 text-sm text-white hover:bg-primary"
               >
                 Review Reports
               </a>
@@ -561,13 +561,13 @@ export default async function AdminComplianceDashboardPage() {
                       {new Date(report.dueDate).toLocaleDateString()}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className="rounded-full bg-red-100 px-2 py-1 text-xs font-medium text-red-800">
+                      <span className="rounded-full bg-destructive/20 px-2 py-1 text-xs font-medium text-red-800">
                         {report.daysOverdue} days
                       </span>
                     </td>
                     <td className="px-6 py-4 text-right text-sm whitespace-nowrap">
                       <button
-                        className="text-blue-600 hover:text-blue-900"
+                        className="text-primary hover:text-blue-900"
                         disabled
                         title="Send reminder workflow coming soon"
                       >

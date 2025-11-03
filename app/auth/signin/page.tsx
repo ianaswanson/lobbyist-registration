@@ -67,7 +67,7 @@ export default async function SignInPage({
         </div>
 
         {params.error && (
-          <div className="rounded-md bg-red-50 p-4">
+          <div className="rounded-md bg-destructive/10 p-4">
             <p className="text-sm text-red-800">
               Invalid email or password. Please try again.
             </p>

@@ -121,11 +121,11 @@ export function Step4Review({
             <dt className="text-gray-600">Authorization Document:</dt>
             <dd className="font-medium text-gray-900">
               {data.authorizationDocument ? (
-                <span className="text-green-600">
+                <span className="text-success">
                   ✓ {data.authorizationDocument.name}
                 </span>
               ) : (
-                <span className="text-yellow-600">Not uploaded</span>
+                <span className="text-primary">Not uploaded</span>
               )}
             </dd>
           </div>
@@ -133,7 +133,7 @@ export function Step4Review({
       </div>
 
       {/* Attestation */}
-      <div className="rounded-md border-2 border-blue-200 bg-blue-50 p-4">
+      <div className="rounded-md border-2 border-blue-200 bg-primary/10 p-4">
         <div className="flex items-start">
           <div className="flex h-5 items-center">
             <input
@@ -141,7 +141,7 @@ export function Step4Review({
               name="attestation"
               type="checkbox"
               required
-              className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+              className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
             />
           </div>
           <div className="ml-3">
@@ -162,14 +162,14 @@ export function Step4Review({
           type="button"
           onClick={onBack}
           disabled={isSubmitting}
-          className="rounded-md border border-gray-300 bg-white px-6 py-2 text-gray-700 hover:bg-gray-50 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+          className="rounded-md border border-gray-300 bg-white px-6 py-2 text-gray-700 hover:bg-gray-50 focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
         >
           Back
         </button>
         <button
           type="submit"
           disabled={isSubmitting}
-          className="flex items-center gap-2 rounded-md bg-green-600 px-6 py-2 text-white hover:bg-green-700 focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+          className="flex items-center gap-2 rounded-md bg-success px-6 py-2 text-white hover:bg-success focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
         >
           {isSubmitting && <Loader2 className="h-4 w-4 animate-spin" />}
           {isSubmitting ? "Submitting..." : "Submit Registration"}

@@ -114,7 +114,7 @@ export default async function BoardMemberReportsPage() {
             <div className="flex gap-2">
               <a
                 href="/board-member/calendar"
-                className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+                className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary"
               >
                 Add Calendar & Receipts
               </a>

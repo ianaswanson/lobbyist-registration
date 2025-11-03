@@ -26,7 +26,7 @@ const DEMO_ACCOUNTS: DemoAccount[] = [
     email: "john.doe@lobbying.com",
     password: "lobbyist123",
     icon: "🎯",
-    color: "bg-blue-600 hover:bg-blue-700",
+    color: "bg-primary hover:bg-primary",
   },
   {
     role: "Employer",
@@ -34,7 +34,7 @@ const DEMO_ACCOUNTS: DemoAccount[] = [
     email: "contact@techcorp.com",
     password: "employer123",
     icon: "🏢",
-    color: "bg-green-600 hover:bg-green-700",
+    color: "bg-success hover:bg-success",
   },
   {
     role: "Board Member",
@@ -103,7 +103,7 @@ export function DemoCredentialsPanel() {
         {/* Expanded panel */}
         {isExpanded && (
           <div className="absolute bottom-full left-1/2 mb-2 w-80 -translate-x-1/2 overflow-hidden rounded-lg border border-gray-200 bg-white shadow-2xl">
-            <div className="bg-blue-600 px-4 py-3 text-white">
+            <div className="bg-primary px-4 py-3 text-white">
               <h3 className="text-sm font-semibold">Demo Test Accounts</h3>
               <p className="mt-1 text-xs text-blue-100">
                 Click any account to auto-fill credentials
@@ -117,7 +117,7 @@ export function DemoCredentialsPanel() {
                   onClick={() =>
                     handleAutoFill(account.email, account.password)
                   }
-                  className="w-full border-b border-gray-100 px-4 py-3 text-left transition-colors last:border-b-0 hover:bg-gray-50 focus:bg-blue-50 focus:outline-none"
+                  className="w-full border-b border-gray-100 px-4 py-3 text-left transition-colors last:border-b-0 hover:bg-gray-50 focus:bg-primary/10 focus:outline-none"
                   type="button"
                 >
                   <div className="flex items-start gap-3">
@@ -165,7 +165,7 @@ export function DemoCredentialsPanel() {
         {/* Toggle button */}
         <button
           onClick={() => setIsExpanded(!isExpanded)}
-          className="flex items-center gap-2 rounded-full bg-blue-600 px-4 py-3 text-sm font-medium text-white shadow-lg transition-colors hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none"
+          className="flex items-center gap-2 rounded-full bg-primary px-4 py-3 text-sm font-medium text-white shadow-lg transition-colors hover:bg-primary focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:outline-none"
           aria-label={
             isExpanded ? "Collapse demo credentials" : "Show demo credentials"
           }

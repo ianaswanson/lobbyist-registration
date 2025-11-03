@@ -82,7 +82,7 @@ export function DemoFilesPanel({ page }: DemoFilesPanelProps) {
         {/* Expanded panel */}
         {isExpanded && (
           <div className="absolute bottom-full left-1/2 mb-2 w-96 -translate-x-1/2 overflow-hidden rounded-lg border border-gray-200 bg-white shadow-2xl">
-            <div className="bg-green-600 px-4 py-3 text-white">
+            <div className="bg-success px-4 py-3 text-white">
               <h3 className="text-sm font-semibold">Demo Sample Files</h3>
               <p className="mt-1 text-xs text-green-100">
                 Download these files to test upload/import features
@@ -113,7 +113,7 @@ export function DemoFilesPanel({ page }: DemoFilesPanelProps) {
                         <span
                           className={`rounded-full px-2 py-0.5 text-xs ${
                             file.type === "csv"
-                              ? "bg-blue-100 text-blue-700"
+                              ? "bg-primary/20 text-primary"
                               : "bg-purple-100 text-purple-700"
                           }`}
                         >
@@ -125,7 +125,7 @@ export function DemoFilesPanel({ page }: DemoFilesPanelProps) {
                       </div>
                     </div>
                     <svg
-                      className="h-5 w-5 flex-shrink-0 text-green-600"
+                      className="h-5 w-5 flex-shrink-0 text-success"
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke="currentColor"
@@ -155,7 +155,7 @@ export function DemoFilesPanel({ page }: DemoFilesPanelProps) {
         {/* Toggle button */}
         <button
           onClick={() => setIsExpanded(!isExpanded)}
-          className="flex items-center gap-2 rounded-full bg-green-600 px-4 py-3 text-sm font-medium text-white shadow-lg transition-colors hover:bg-green-700 focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:outline-none"
+          className="flex items-center gap-2 rounded-full bg-success px-4 py-3 text-sm font-medium text-white shadow-lg transition-colors hover:bg-success focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:outline-none"
           aria-label={isExpanded ? "Collapse demo files" : "Show demo files"}
           aria-expanded={isExpanded}
         >
@@ -174,7 +174,7 @@ export function DemoFilesPanel({ page }: DemoFilesPanelProps) {
             />
           </svg>
           <span>Demo Files</span>
-          <span className="rounded-full bg-green-700 px-2 py-0.5 text-xs text-white">
+          <span className="rounded-full bg-success px-2 py-0.5 text-xs text-white">
             {files.length}
           </span>
           <svg

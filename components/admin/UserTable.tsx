@@ -94,8 +94,8 @@ export function UserTable({
   const getRoleBadgeColor = (role: UserRole) => {
     const colors: Record<UserRole, string> = {
       ADMIN: "bg-purple-100 text-purple-800",
-      LOBBYIST: "bg-blue-100 text-blue-800",
-      EMPLOYER: "bg-green-100 text-green-800",
+      LOBBYIST: "bg-primary/20 text-primary",
+      EMPLOYER: "bg-success/20 text-success-foreground",
       BOARD_MEMBER: "bg-orange-100 text-orange-800",
       PUBLIC: "bg-gray-100 text-gray-800",
     };

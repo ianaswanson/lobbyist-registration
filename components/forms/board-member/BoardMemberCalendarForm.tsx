@@ -237,25 +237,25 @@ export function BoardMemberCalendarForm({
         <Alert
           className={`${
             message.type === "success"
-              ? "border-green-200 bg-green-50"
-              : "border-red-200 bg-red-50"
+              ? "border-success/30 bg-success/10"
+              : "border-red-200 bg-destructive/10"
           }`}
         >
           <AlertCircle
             className={`h-4 w-4 ${
-              message.type === "success" ? "text-green-600" : "text-red-600"
+              message.type === "success" ? "text-success" : "text-destructive"
             }`}
           />
           <AlertTitle
             className={
-              message.type === "success" ? "text-green-800" : "text-red-800"
+              message.type === "success" ? "text-success-foreground" : "text-red-800"
             }
           >
             {message.type === "success" ? "Success" : "Error"}
           </AlertTitle>
           <AlertDescription
             className={
-              message.type === "success" ? "text-green-700" : "text-red-700"
+              message.type === "success" ? "text-success" : "text-destructive"
             }
           >
             {message.text}
@@ -286,7 +286,7 @@ export function BoardMemberCalendarForm({
               id="quarter"
               value={quarter}
               onChange={(e) => setQuarter(e.target.value)}
-              className="block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
+              className="block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-primary focus:ring-primary focus:outline-none"
             >
               <option value="Q1">Q1 (Jan-Mar) - Due April 15</option>
               <option value="Q2">Q2 (Apr-Jun) - Due July 15</option>
@@ -306,7 +306,7 @@ export function BoardMemberCalendarForm({
               id="year"
               value={year}
               onChange={(e) => setYear(parseInt(e.target.value))}
-              className="block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
+              className="block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-primary focus:ring-primary focus:outline-none"
             />
           </div>
         </div>
@@ -321,7 +321,7 @@ export function BoardMemberCalendarForm({
               onClick={() => setActiveTab("calendar")}
               className={`border-b-2 px-6 py-4 text-sm font-medium transition-colors ${
                 activeTab === "calendar"
-                  ? "border-blue-600 text-blue-600"
+                  ? "border-primary text-primary"
                   : "border-transparent text-gray-500 hover:text-gray-700"
               }`}
             >
@@ -332,7 +332,7 @@ export function BoardMemberCalendarForm({
               onClick={() => setActiveTab("receipts")}
               className={`border-b-2 px-6 py-4 text-sm font-medium transition-colors ${
                 activeTab === "receipts"
-                  ? "border-blue-600 text-blue-600"
+                  ? "border-primary text-primary"
                   : "border-transparent text-gray-500 hover:text-gray-700"
               }`}
             >
@@ -411,7 +411,7 @@ export function BoardMemberCalendarForm({
                         htmlFor="eventTitle"
                         className="block text-sm font-medium text-gray-700"
                       >
-                        Event Title <span className="text-red-600">*</span>
+                        Event Title <span className="text-destructive">*</span>
                       </label>
                       <input
                         type="text"
@@ -424,7 +424,7 @@ export function BoardMemberCalendarForm({
                             eventTitle: e.target.value,
                           })
                         }
-                        className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
+                        className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-primary focus:ring-primary focus:outline-none"
                         placeholder="Budget Planning Meeting"
                       />
                     </div>
@@ -433,7 +433,7 @@ export function BoardMemberCalendarForm({
                         htmlFor="eventDate"
                         className="block text-sm font-medium text-gray-700"
                       >
-                        Date <span className="text-red-600">*</span>
+                        Date <span className="text-destructive">*</span>
                       </label>
                       <input
                         type="date"
@@ -446,7 +446,7 @@ export function BoardMemberCalendarForm({
                             eventDate: e.target.value,
                           })
                         }
-                        className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
+                        className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-primary focus:ring-primary focus:outline-none"
                       />
                     </div>
                   </div>
@@ -457,7 +457,7 @@ export function BoardMemberCalendarForm({
                         htmlFor="eventTime"
                         className="block text-sm font-medium text-gray-700"
                       >
-                        Time <span className="text-red-600">*</span>
+                        Time <span className="text-destructive">*</span>
                       </label>
                       <input
                         type="time"
@@ -470,7 +470,7 @@ export function BoardMemberCalendarForm({
                             eventTime: e.target.value,
                           })
                         }
-                        className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
+                        className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-primary focus:ring-primary focus:outline-none"
                       />
                     </div>
                     <div>
@@ -479,7 +479,7 @@ export function BoardMemberCalendarForm({
                         className="block text-sm font-medium text-gray-700"
                       >
                         Primary Participants{" "}
-                        <span className="text-red-600">*</span>
+                        <span className="text-destructive">*</span>
                       </label>
                       <input
                         type="text"
@@ -492,7 +492,7 @@ export function BoardMemberCalendarForm({
                             participants: e.target.value,
                           })
                         }
-                        className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
+                        className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-primary focus:ring-primary focus:outline-none"
                         placeholder="County staff, community members"
                       />
                     </div>
@@ -501,7 +501,7 @@ export function BoardMemberCalendarForm({
                   <div className="flex justify-end">
                     <button
                       type="submit"
-                      className="rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
+                      className="rounded-md bg-primary px-4 py-2 text-white hover:bg-primary"
                     >
                       Add Calendar Entry
                     </button>
@@ -550,7 +550,7 @@ export function BoardMemberCalendarForm({
                               onClick={() =>
                                 handleRemoveCalendarEntry(entry.id)
                               }
-                              className="text-red-600 hover:text-red-900"
+                              className="text-destructive hover:text-red-900"
                             >
                               Remove
                             </button>
@@ -559,8 +559,8 @@ export function BoardMemberCalendarForm({
                       ))}
                     </tbody>
                   </table>
-                  <div className="mt-4 rounded-md bg-blue-50 p-4">
-                    <p className="text-sm text-blue-700">
+                  <div className="mt-4 rounded-md bg-primary/10 p-4">
+                    <p className="text-sm text-primary">
                       <strong>{calendarEntries.length}</strong> calendar{" "}
                       {calendarEntries.length === 1 ? "entry" : "entries"} will
                       be posted publicly for at least 1 year.
@@ -640,7 +640,7 @@ export function BoardMemberCalendarForm({
                         htmlFor="lobbyistName"
                         className="block text-sm font-medium text-gray-700"
                       >
-                        Lobbyist Name <span className="text-red-600">*</span>
+                        Lobbyist Name <span className="text-destructive">*</span>
                       </label>
                       <input
                         type="text"
@@ -653,7 +653,7 @@ export function BoardMemberCalendarForm({
                             lobbyistName: e.target.value,
                           })
                         }
-                        className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
+                        className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-primary focus:ring-primary focus:outline-none"
                         placeholder="Jane Smith"
                       />
                     </div>
@@ -662,7 +662,7 @@ export function BoardMemberCalendarForm({
                         htmlFor="receiptDate"
                         className="block text-sm font-medium text-gray-700"
                       >
-                        Date <span className="text-red-600">*</span>
+                        Date <span className="text-destructive">*</span>
                       </label>
                       <input
                         type="date"
@@ -672,7 +672,7 @@ export function BoardMemberCalendarForm({
                         onChange={(e) =>
                           setNewReceipt({ ...newReceipt, date: e.target.value })
                         }
-                        className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
+                        className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-primary focus:ring-primary focus:outline-none"
                       />
                     </div>
                   </div>
@@ -682,7 +682,7 @@ export function BoardMemberCalendarForm({
                       htmlFor="payee"
                       className="block text-sm font-medium text-gray-700"
                     >
-                      Payee <span className="text-red-600">*</span>
+                      Payee <span className="text-destructive">*</span>
                     </label>
                     <input
                       type="text"
@@ -692,7 +692,7 @@ export function BoardMemberCalendarForm({
                       onChange={(e) =>
                         setNewReceipt({ ...newReceipt, payee: e.target.value })
                       }
-                      className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
+                      className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-primary focus:ring-primary focus:outline-none"
                       placeholder="Restaurant or vendor name"
                     />
                   </div>
@@ -702,7 +702,7 @@ export function BoardMemberCalendarForm({
                       htmlFor="purpose"
                       className="block text-sm font-medium text-gray-700"
                     >
-                      Purpose <span className="text-red-600">*</span>
+                      Purpose <span className="text-destructive">*</span>
                     </label>
                     <textarea
                       id="purpose"
@@ -715,7 +715,7 @@ export function BoardMemberCalendarForm({
                           purpose: e.target.value,
                         })
                       }
-                      className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
+                      className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-primary focus:ring-primary focus:outline-none"
                       placeholder="Lunch meeting to discuss..."
                     />
                   </div>
@@ -726,7 +726,7 @@ export function BoardMemberCalendarForm({
                         htmlFor="amount"
                         className="block text-sm font-medium text-gray-700"
                       >
-                        Amount <span className="text-red-600">*</span>
+                        Amount <span className="text-destructive">*</span>
                       </label>
                       <div className="relative mt-1">
                         <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
@@ -745,7 +745,7 @@ export function BoardMemberCalendarForm({
                               amount: e.target.value,
                             })
                           }
-                          className="block w-full rounded-md border border-gray-300 py-2 pr-3 pl-7 focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
+                          className="block w-full rounded-md border border-gray-300 py-2 pr-3 pl-7 focus:border-primary focus:ring-primary focus:outline-none"
                           placeholder="125.00"
                         />
                       </div>
@@ -808,7 +808,7 @@ export function BoardMemberCalendarForm({
                           <td className="px-3 py-4 text-right text-sm whitespace-nowrap">
                             <button
                               onClick={() => handleRemoveReceipt(receipt.id)}
-                              className="text-red-600 hover:text-red-900"
+                              className="text-destructive hover:text-red-900"
                             >
                               Remove
                             </button>
@@ -817,7 +817,7 @@ export function BoardMemberCalendarForm({
                       ))}
                     </tbody>
                   </table>
-                  <div className="mt-4 flex items-center justify-between rounded-md bg-purple-50 p-4">
+                  <div className="mt-4 flex items-center justify-between rounded-md bg-primary/10 p-4">
                     <span className="text-sm font-medium text-purple-900">
                       Total Receipts:
                     </span>
@@ -848,7 +848,7 @@ export function BoardMemberCalendarForm({
             type="button"
             onClick={handleSubmit}
             disabled={isSubmitting}
-            className="flex items-center gap-2 rounded-md bg-green-600 px-6 py-2 text-white hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-50"
+            className="flex items-center gap-2 rounded-md bg-success px-6 py-2 text-white hover:bg-success disabled:cursor-not-allowed disabled:opacity-50"
           >
             {isSubmitting && <Loader2 className="h-4 w-4 animate-spin" />}
             {isSubmitting ? "Submitting..." : "Submit & Post Publicly"}
@@ -857,11 +857,11 @@ export function BoardMemberCalendarForm({
       )}
 
       {/* Information */}
-      <div className="rounded-lg border border-blue-200 bg-blue-50 p-4">
+      <div className="rounded-lg border border-blue-200 bg-primary/10 p-4">
         <h4 className="mb-2 font-semibold text-blue-900">
           Important Information:
         </h4>
-        <ul className="list-inside list-disc space-y-1 text-sm text-blue-700">
+        <ul className="list-inside list-disc space-y-1 text-sm text-primary">
           <li>
             Quarterly calendar must be posted within 15 days after quarter ends
           </li>

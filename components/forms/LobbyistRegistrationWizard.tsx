@@ -128,9 +128,9 @@ export function LobbyistRegistrationWizard({
               <div
                 className={`flex h-10 w-10 items-center justify-center rounded-full border-2 font-semibold ${
                   step === currentStep
-                    ? "border-blue-600 bg-blue-600 text-white"
+                    ? "border-primary bg-primary text-white"
                     : step < currentStep
-                      ? "border-green-600 bg-green-600 text-white"
+                      ? "border-green-600 bg-success text-white"
                       : "border-gray-300 bg-white text-gray-500"
                 }`}
               >
@@ -155,7 +155,7 @@ export function LobbyistRegistrationWizard({
               {step < 4 && (
                 <div
                   className={`mx-2 h-1 w-16 sm:w-24 ${
-                    step < currentStep ? "bg-green-600" : "bg-gray-300"
+                    step < currentStep ? "bg-success" : "bg-gray-300"
                   }`}
                 />
               )}
@@ -164,22 +164,22 @@ export function LobbyistRegistrationWizard({
         </div>
         <div className="mt-4 flex justify-between text-xs text-gray-600">
           <span
-            className={currentStep === 1 ? "font-semibold text-blue-600" : ""}
+            className={currentStep === 1 ? "font-semibold text-primary" : ""}
           >
             Personal Info
           </span>
           <span
-            className={currentStep === 2 ? "font-semibold text-blue-600" : ""}
+            className={currentStep === 2 ? "font-semibold text-primary" : ""}
           >
             Employer
           </span>
           <span
-            className={currentStep === 3 ? "font-semibold text-blue-600" : ""}
+            className={currentStep === 3 ? "font-semibold text-primary" : ""}
           >
             Documents
           </span>
           <span
-            className={currentStep === 4 ? "font-semibold text-blue-600" : ""}
+            className={currentStep === 4 ? "font-semibold text-primary" : ""}
           >
             Review
           </span>
@@ -192,25 +192,25 @@ export function LobbyistRegistrationWizard({
           <Alert
             className={`${
               message.type === "success"
-                ? "border-green-200 bg-green-50"
-                : "border-red-200 bg-red-50"
+                ? "border-success/30 bg-success/10"
+                : "border-red-200 bg-destructive/10"
             }`}
           >
             <AlertCircle
               className={`h-4 w-4 ${
-                message.type === "success" ? "text-green-600" : "text-red-600"
+                message.type === "success" ? "text-success" : "text-destructive"
               }`}
             />
             <AlertTitle
               className={
-                message.type === "success" ? "text-green-800" : "text-red-800"
+                message.type === "success" ? "text-success-foreground" : "text-red-800"
               }
             >
               {message.type === "success" ? "Success" : "Error"}
             </AlertTitle>
             <AlertDescription
               className={
-                message.type === "success" ? "text-green-700" : "text-red-700"
+                message.type === "success" ? "text-success" : "text-destructive"
               }
             >
               {message.text}

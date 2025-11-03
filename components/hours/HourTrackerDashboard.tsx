@@ -84,7 +84,7 @@ export function HourTrackerDashboard({ userId }: Props) {
       <div className="flex items-center justify-center py-12">
         <div className="text-center">
           <div
-            className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-blue-600 border-r-transparent"
+            className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-primary border-r-transparent"
             role="status"
           >
             <span className="sr-only">Loading...</span>
@@ -99,7 +99,7 @@ export function HourTrackerDashboard({ userId }: Props) {
 
   if (error) {
     return (
-      <div className="rounded-lg border border-red-200 bg-red-50 p-4">
+      <div className="rounded-lg border border-red-200 bg-destructive/10 p-4">
         <div className="flex">
           <div className="flex-shrink-0">
             <svg
@@ -116,7 +116,7 @@ export function HourTrackerDashboard({ userId }: Props) {
           </div>
           <div className="ml-3">
             <h3 className="text-sm font-medium text-red-800">Error</h3>
-            <p className="mt-1 text-sm text-red-700">{error}</p>
+            <p className="mt-1 text-sm text-destructive">{error}</p>
             <button
               onClick={fetchData}
               className="mt-2 text-sm font-medium text-red-800 underline hover:text-red-900"

@@ -50,7 +50,7 @@ export function HourSummary({ summary }: Props) {
             Total Lobbying Hours
           </span>
           <span
-            className={`text-2xl font-bold ${summary.thresholdExceeded ? "text-red-600" : "text-gray-900"}`}
+            className={`text-2xl font-bold ${summary.thresholdExceeded ? "text-destructive" : "text-gray-900"}`}
           >
             {summary.totalHours.toFixed(2)} / 10
           </span>
@@ -63,8 +63,8 @@ export function HourSummary({ summary }: Props) {
               summary.thresholdExceeded
                 ? "bg-red-600"
                 : isNearThreshold
-                  ? "bg-yellow-500"
-                  : "bg-green-500"
+                  ? "bg-primary/100"
+                  : "bg-success/100"
             }`}
             style={{ width: `${percentage}%` }}
             role="progressbar"
@@ -78,11 +78,11 @@ export function HourSummary({ summary }: Props) {
         {/* Helper Text */}
         <div className="mt-2">
           {summary.thresholdExceeded ? (
-            <p className="text-sm font-medium text-red-600">
+            <p className="text-sm font-medium text-destructive">
               ⚠️ Threshold exceeded - Registration required
             </p>
           ) : isNearThreshold ? (
-            <p className="text-sm font-medium text-yellow-600">
+            <p className="text-sm font-medium text-primary">
               ⚡ Approaching threshold -{" "}
               {summary.hoursUntilThreshold.toFixed(2)} hours remaining
             </p>
@@ -96,7 +96,7 @@ export function HourSummary({ summary }: Props) {
       </div>
 
       {/* Info Box */}
-      <div className="rounded-md border border-blue-200 bg-blue-50 p-4">
+      <div className="rounded-md border border-blue-200 bg-primary/10 p-4">
         <div className="flex">
           <div className="flex-shrink-0">
             <svg
@@ -113,10 +113,10 @@ export function HourSummary({ summary }: Props) {
             </svg>
           </div>
           <div className="ml-3">
-            <h4 className="text-sm font-medium text-blue-800">
+            <h4 className="text-sm font-medium text-primary">
               Registration Requirement
             </h4>
-            <p className="mt-1 text-sm text-blue-700">
+            <p className="mt-1 text-sm text-primary">
               Per §3.802, you must register within{" "}
               <strong>3 working days</strong> after exceeding 10 hours of
               lobbying activity in a quarter. Track time spent communicating

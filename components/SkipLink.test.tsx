@@ -42,7 +42,7 @@ describe("SkipLink", () => {
       const link = screen.getByRole("link");
 
       // Check for focus styles
-      expect(link.className).toContain("focus:bg-blue-600");
+      expect(link.className).toContain("focus:bg-primary");
       expect(link.className).toContain("focus:text-white");
       expect(link.className).toContain("focus:px-4");
       expect(link.className).toContain("focus:py-2");
@@ -64,7 +64,7 @@ describe("SkipLink", () => {
       const link = screen.getByRole("link");
 
       expect(link.className).toContain("focus:ring-2");
-      expect(link.className).toContain("focus:ring-blue-500");
+      expect(link.className).toContain("focus:ring-primary");
       expect(link.className).toContain("focus:ring-offset-2");
     });
 

@@ -292,25 +292,25 @@ export function ContractExceptionsClient() {
         <Alert
           className={`mb-6 ${
             message.type === "success"
-              ? "border-green-200 bg-green-50"
-              : "border-red-200 bg-red-50"
+              ? "border-success/30 bg-success/10"
+              : "border-red-200 bg-destructive/10"
           }`}
         >
           <AlertCircle
             className={`h-4 w-4 ${
-              message.type === "success" ? "text-green-600" : "text-red-600"
+              message.type === "success" ? "text-success" : "text-destructive"
             }`}
           />
           <AlertTitle
             className={
-              message.type === "success" ? "text-green-800" : "text-red-800"
+              message.type === "success" ? "text-success-foreground" : "text-red-800"
             }
           >
             {message.type === "success" ? "Success" : "Error"}
           </AlertTitle>
           <AlertDescription
             className={
-              message.type === "success" ? "text-green-700" : "text-red-700"
+              message.type === "success" ? "text-success" : "text-destructive"
             }
           >
             {message.text}
@@ -319,12 +319,12 @@ export function ContractExceptionsClient() {
       )}
 
       {/* Info Alert */}
-      <Alert className="mb-6 border-blue-200 bg-blue-50">
-        <FileCheck className="h-4 w-4 text-blue-600" />
-        <AlertTitle className="text-blue-800">
+      <Alert className="mb-6 border-blue-200 bg-primary/10">
+        <FileCheck className="h-4 w-4 text-primary" />
+        <AlertTitle className="text-primary">
           Contract Regulation (§9.230)
         </AlertTitle>
-        <AlertDescription className="text-blue-700">
+        <AlertDescription className="text-primary">
           County cannot contract with former officials who influenced contract
           authorization during or within 1 year after County service. Chair may
           grant exceptions with written findings that must be publicly posted.
@@ -401,7 +401,7 @@ export function ContractExceptionsClient() {
                     </TableCell>
                     <TableCell>
                       {exception.publiclyPostedDate ? (
-                        <Badge className="bg-green-100 text-green-800">
+                        <Badge className="bg-success/20 text-success-foreground">
                           <CheckCircle2 className="mr-1 h-3 w-3" />
                           Posted
                         </Badge>
@@ -434,9 +434,9 @@ export function ContractExceptionsClient() {
                           onClick={() => handleTogglePosted(exception)}
                         >
                           {exception.publiclyPostedDate ? (
-                            <XCircle className="h-4 w-4 text-yellow-600" />
+                            <XCircle className="h-4 w-4 text-primary" />
                           ) : (
-                            <CheckCircle2 className="h-4 w-4 text-green-600" />
+                            <CheckCircle2 className="h-4 w-4 text-success" />
                           )}
                         </Button>
                         <Button
@@ -444,7 +444,7 @@ export function ContractExceptionsClient() {
                           size="sm"
                           onClick={() => handleDelete(exception.id)}
                         >
-                          <Trash2 className="h-4 w-4 text-red-600" />
+                          <Trash2 className="h-4 w-4 text-destructive" />
                         </Button>
                       </div>
                     </TableCell>
@@ -472,8 +472,8 @@ export function ContractExceptionsClient() {
 
           <div className="space-y-4">
             {/* Alert about requirements */}
-            <Alert className="border-orange-200 bg-orange-50">
-              <AlertCircle className="h-4 w-4 text-orange-600" />
+            <Alert className="border-orange-200 bg-primary/10">
+              <AlertCircle className="h-4 w-4 text-primary" />
               <AlertTitle className="text-orange-800">
                 Legal Requirements
               </AlertTitle>
@@ -635,7 +635,7 @@ export function ContractExceptionsClient() {
                   <Label className="text-muted-foreground">Status</Label>
                   <div className="mt-1">
                     {selectedException.publiclyPostedDate ? (
-                      <Badge className="bg-green-100 text-green-800">
+                      <Badge className="bg-success/20 text-success-foreground">
                         <CheckCircle2 className="mr-1 h-3 w-3" />
                         Publicly Posted
                       </Badge>

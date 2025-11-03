@@ -62,8 +62,8 @@ export default function NewUserPage() {
       </div>
 
       {/* Info alert */}
-      <div className="mb-6 rounded-md border border-blue-200 bg-blue-50 p-4">
-        <p className="text-sm text-blue-800">
+      <div className="mb-6 rounded-md border border-blue-200 bg-primary/10 p-4">
+        <p className="text-sm text-primary">
           <strong>Note:</strong> A temporary password will be generated and
           logged to the console. The user will be required to change their
           password on first login.

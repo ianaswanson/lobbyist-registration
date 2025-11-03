@@ -112,7 +112,7 @@ export default async function BoardMemberQuarterDetailPage({
         <div className="mb-6">
           <Link
             href="/reports/board-member"
-            className="mb-4 inline-flex items-center text-sm font-medium text-blue-600 hover:text-blue-800"
+            className="mb-4 inline-flex items-center text-sm font-medium text-primary hover:text-primary"
           >
             <ArrowLeft className="mr-2 h-4 w-4" />
             Back to Reports
@@ -300,11 +300,11 @@ export default async function BoardMemberQuarterDetailPage({
         </div>
 
         {/* Public Posting Note */}
-        <div className="rounded-lg border border-blue-200 bg-blue-50 p-6 shadow">
+        <div className="rounded-lg border border-blue-200 bg-primary/10 p-6 shadow">
           <h3 className="text-lg font-medium text-blue-900">
             Public Transparency (§3.001)
           </h3>
-          <p className="mt-2 text-sm text-blue-800">
+          <p className="mt-2 text-sm text-primary">
             This information is publicly posted on the county website and
             maintained for a minimum of one year to ensure transparency in board
             member interactions with lobbyists.

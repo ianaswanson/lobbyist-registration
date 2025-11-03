@@ -26,6 +26,8 @@
   --color-input: var(--input);
   --color-border: var(--border);
   --color-destructive: var(--destructive);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
   --color-accent-foreground: var(--accent-foreground);
   --color-accent: var(--accent);
   --color-muted-foreground: var(--muted-foreground);
@@ -71,6 +73,8 @@
   --accent: oklch(0.466 0.108 251.5); /* Multnomah Blue for accents */
   --accent-foreground: oklch(1 0 0); /* White text on blue accent */
   --destructive: oklch(0.577 0.245 27.325); /* Keep red for errors */
+  --success: oklch(0.577 0.145 145); /* Green for success states - accessible */
+  --success-foreground: oklch(0.145 0 0); /* Dark text on green */
   --border: oklch(0.922 0 0); /* Light gray borders */
   --input: oklch(0.922 0 0); /* Light gray input borders */
   --ring: oklch(0.466 0.108 251.5); /* Multnomah Blue for focus rings */
@@ -106,6 +110,8 @@
   --accent: oklch(0.566 0.118 251.5); /* Lighter Multnomah Blue accent */
   --accent-foreground: oklch(1 0 0); /* White text on accent */
   --destructive: oklch(0.704 0.191 22.216); /* Keep red for errors */
+  --success: oklch(0.677 0.165 145); /* Lighter green for dark mode */
+  --success-foreground: oklch(0.145 0 0); /* Dark text on green */
   --border: oklch(1 0 0 / 10%); /* Subtle borders */
   --input: oklch(1 0 0 / 15%); /* Input borders */
   --ring: oklch(0.566 0.118 251.5); /* Multnomah Blue focus rings */

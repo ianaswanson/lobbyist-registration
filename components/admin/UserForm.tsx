@@ -69,7 +69,7 @@ export function UserForm({
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       {error && (
-        <div className="rounded-md bg-red-50 p-4">
+        <div className="rounded-md bg-destructive/10 p-4">
           <p className="text-sm text-red-800">{error}</p>
         </div>
       )}

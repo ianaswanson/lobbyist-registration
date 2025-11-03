@@ -96,7 +96,7 @@ export default function EditUserPage() {
   if (error) {
     return (
       <div className="container mx-auto max-w-2xl py-8">
-        <div className="rounded-md bg-red-50 p-4">
+        <div className="rounded-md bg-destructive/10 p-4">
           <p className="text-sm text-red-800">{error}</p>
         </div>
         <Button variant="outline" onClick={handleCancel} className="mt-4">
@@ -110,7 +110,7 @@ export default function EditUserPage() {
   if (!user) {
     return (
       <div className="container mx-auto max-w-2xl py-8">
-        <div className="rounded-md bg-yellow-50 p-4">
+        <div className="rounded-md bg-primary/10 p-4">
           <p className="text-sm text-yellow-800">User not found</p>
         </div>
         <Button variant="outline" onClick={handleCancel} className="mt-4">
@@ -134,8 +134,8 @@ export default function EditUserPage() {
       </div>
 
       {/* Info alert */}
-      <div className="mb-6 rounded-md border border-blue-200 bg-blue-50 p-4">
-        <p className="text-sm text-blue-800">
+      <div className="mb-6 rounded-md border border-blue-200 bg-primary/10 p-4">
+        <p className="text-sm text-primary">
           <strong>Note:</strong> Email addresses cannot be changed. If you need
           to change a user's email, create a new account and deactivate this
           one.

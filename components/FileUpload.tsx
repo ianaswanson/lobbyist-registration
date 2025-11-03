@@ -134,7 +134,7 @@ export default function FileUpload({
         onDragLeave={handleDragLeave}
         className={`relative cursor-pointer rounded-lg border-2 border-dashed p-6 text-center transition-colors ${
           isDragging
-            ? "border-blue-500 bg-blue-50"
+            ? "border-primary bg-primary/10"
             : "border-gray-300 hover:border-gray-400"
         } `}
       >
@@ -167,7 +167,7 @@ export default function FileUpload({
           />
         </svg>
         <p className="mt-2 text-sm text-gray-600">
-          <span className="font-medium text-blue-600">Click to upload</span> or
+          <span className="font-medium text-primary">Click to upload</span> or
           drag and drop
         </p>
         <p className="mt-1 text-xs text-gray-500" id="file-upload-instructions">
@@ -179,7 +179,7 @@ export default function FileUpload({
       {/* Error Message */}
       {error && (
         <div
-          className="mt-2 flex items-center text-sm text-red-600"
+          className="mt-2 flex items-center text-sm text-destructive"
           role="alert"
           aria-live="polite"
         >
@@ -233,7 +233,7 @@ export default function FileUpload({
               <button
                 type="button"
                 onClick={() => handleRemove(file.id)}
-                className="ml-4 rounded text-red-600 hover:text-red-800 focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:outline-none"
+                className="ml-4 rounded text-destructive hover:text-red-800 focus:ring-2 focus:ring-destructive focus:ring-offset-2 focus:outline-none"
                 aria-label={`Remove ${file.name}`}
               >
                 <svg

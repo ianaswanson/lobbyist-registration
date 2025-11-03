@@ -159,7 +159,7 @@ export default function UsersPage() {
 
       {/* Error message */}
       {error && (
-        <div className="mb-6 rounded-md bg-red-50 p-4">
+        <div className="mb-6 rounded-md bg-destructive/10 p-4">
           <p className="text-sm text-red-800">{error}</p>
         </div>
       )}

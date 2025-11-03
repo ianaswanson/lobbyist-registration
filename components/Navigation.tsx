@@ -279,9 +279,9 @@ export function Navigation({ user }: NavigationProps) {
               {/* Logo */}
               <Link
                 href="/dashboard"
-                className="flex items-center space-x-2 text-xl font-bold transition-colors hover:text-blue-600"
+                className="flex items-center space-x-2 text-xl font-bold transition-colors hover:text-primary"
               >
-                <Building2 className="h-8 w-8 text-blue-600" />
+                <Building2 className="h-8 w-8 text-primary" />
                 <span className="hidden sm:inline">Lobbyist Registry</span>
                 <span className="sm:hidden">Registry</span>
               </Link>
@@ -319,7 +319,7 @@ export function Navigation({ user }: NavigationProps) {
                                 onClick={() => setIsMyWorkOpen(false)}
                                 className={`flex items-center space-x-2 px-4 py-2 text-sm transition-colors ${
                                   isActive(item.href)
-                                    ? "bg-blue-50 text-blue-700"
+                                    ? "bg-primary/10 text-primary"
                                     : "text-gray-700 hover:bg-gray-100"
                                 }`}
                               >
@@ -373,7 +373,7 @@ export function Navigation({ user }: NavigationProps) {
                                     onClick={() => setIsAdminOpen(false)}
                                     className={`flex items-center space-x-2 px-4 py-2 text-sm transition-colors ${
                                       isActive(item.href)
-                                        ? "bg-blue-50 text-blue-700"
+                                        ? "bg-primary/10 text-primary"
                                         : "text-gray-700 hover:bg-gray-100"
                                     }`}
                                   >
@@ -420,7 +420,7 @@ export function Navigation({ user }: NavigationProps) {
                               onClick={() => setIsPublicDataOpen(false)}
                               className={`flex items-center space-x-2 px-4 py-2 text-sm transition-colors ${
                                 isActive(item.href)
-                                  ? "bg-blue-50 text-blue-700"
+                                  ? "bg-primary/10 text-primary"
                                   : "text-gray-700 hover:bg-gray-100"
                               }`}
                             >
@@ -452,7 +452,7 @@ export function Navigation({ user }: NavigationProps) {
               </button>
 
               {/* Role badge */}
-              <span className="hidden rounded-full bg-blue-100 px-3 py-1 text-xs font-medium text-blue-800 sm:inline-flex">
+              <span className="hidden rounded-full bg-primary/20 px-3 py-1 text-xs font-medium text-primary sm:inline-flex">
                 {getRoleDisplay()}
               </span>
 
@@ -516,7 +516,7 @@ export function Navigation({ user }: NavigationProps) {
                           onClick={() => {
                             window.location.href = "/auth/signout";
                           }}
-                          className="flex w-full items-center space-x-2 px-4 py-2 text-left text-sm text-red-700 hover:bg-red-50"
+                          className="flex w-full items-center space-x-2 px-4 py-2 text-left text-sm text-destructive hover:bg-destructive/10"
                         >
                           <LogOut className="h-4 w-4" />
                           <span>Sign Out</span>
@@ -545,7 +545,7 @@ export function Navigation({ user }: NavigationProps) {
             <div className="p-4">
               <div className="mb-6 flex items-center justify-between">
                 <div className="flex items-center space-x-2">
-                  <Building2 className="h-8 w-8 text-blue-600" />
+                  <Building2 className="h-8 w-8 text-primary" />
                   <span className="text-lg font-bold">Menu</span>
                 </div>
                 <button
@@ -571,7 +571,7 @@ export function Navigation({ user }: NavigationProps) {
                         onClick={() => setIsMobileMenuOpen(false)}
                         className={`flex items-center space-x-3 rounded-md px-4 py-3 transition-colors ${
                           isActive(item.href)
-                            ? "bg-blue-50 text-blue-700"
+                            ? "bg-primary/10 text-primary"
                             : "text-gray-700 hover:bg-gray-100"
                         }`}
                       >
@@ -597,7 +597,7 @@ export function Navigation({ user }: NavigationProps) {
                       onClick={() => setIsMobileMenuOpen(false)}
                       className={`flex items-center space-x-3 rounded-md px-4 py-3 transition-colors ${
                         isActive(item.href)
-                          ? "bg-blue-50 text-blue-700"
+                          ? "bg-primary/10 text-primary"
                           : "text-gray-700 hover:bg-gray-100"
                       }`}
                     >
@@ -628,7 +628,7 @@ export function Navigation({ user }: NavigationProps) {
                             onClick={() => setIsMobileMenuOpen(false)}
                             className={`flex items-center space-x-3 rounded-md px-4 py-3 transition-colors ${
                               isActive(item.href)
-                                ? "bg-blue-50 text-blue-700"
+                                ? "bg-primary/10 text-primary"
                                 : "text-gray-700 hover:bg-gray-100"
                             }`}
                           >

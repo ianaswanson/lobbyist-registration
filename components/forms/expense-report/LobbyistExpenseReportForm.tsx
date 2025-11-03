@@ -230,12 +230,12 @@ export function LobbyistExpenseReportForm({
       {/* Loading Indicator */}
       {isLoading && (
         <div
-          className="rounded-md border border-blue-200 bg-blue-50 p-4"
+          className="rounded-md border border-blue-200 bg-primary/10 p-4"
           data-testid="loading-indicator"
         >
           <div className="flex items-center">
             <svg
-              className="h-5 w-5 animate-spin text-blue-600"
+              className="h-5 w-5 animate-spin text-primary"
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"
@@ -254,7 +254,7 @@ export function LobbyistExpenseReportForm({
                 d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
               ></path>
             </svg>
-            <span className="ml-3 text-sm font-medium text-blue-800">
+            <span className="ml-3 text-sm font-medium text-primary">
               Loading existing report data...
             </span>
           </div>
@@ -263,10 +263,10 @@ export function LobbyistExpenseReportForm({
 
       {/* Unsaved Changes Warning */}
       {hasUnsavedChanges && (
-        <div className="rounded-md border border-yellow-300 bg-yellow-50 p-4">
+        <div className="rounded-md border border-yellow-300 bg-primary/10 p-4">
           <div className="flex items-center">
             <svg
-              className="h-5 w-5 text-yellow-600"
+              className="h-5 w-5 text-primary"
               viewBox="0 0 20 20"
               fill="currentColor"
             >
@@ -297,8 +297,8 @@ export function LobbyistExpenseReportForm({
           }
           className={`rounded-md p-4 ${
             message.type === "success"
-              ? "border border-green-200 bg-green-50 text-green-800"
-              : "border border-red-200 bg-red-50 text-red-800"
+              ? "border border-success/30 bg-success/10 text-success-foreground"
+              : "border border-red-200 bg-destructive/10 text-red-800"
           }`}
         >
           <div className="flex">
@@ -372,7 +372,7 @@ export function LobbyistExpenseReportForm({
               id="quarter"
               value={quarter}
               onChange={(e) => setQuarter(e.target.value)}
-              className="block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
+              className="block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-primary focus:ring-primary focus:outline-none"
             >
               <option value="Q1">Q1 (Jan-Mar) - Due April 15</option>
               <option value="Q2">Q2 (Apr-Jun) - Due July 15</option>
@@ -392,7 +392,7 @@ export function LobbyistExpenseReportForm({
               id="year"
               value={year}
               onChange={(e) => setYear(parseInt(e.target.value))}
-              className="block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
+              className="block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-primary focus:ring-primary focus:outline-none"
             />
           </div>
         </div>
@@ -414,7 +414,7 @@ export function LobbyistExpenseReportForm({
               onClick={() => setMode("manual")}
               className={`rounded-md px-4 py-2 text-sm font-medium transition-colors ${
                 mode === "manual"
-                  ? "bg-blue-600 text-white"
+                  ? "bg-primary text-white"
                   : "bg-gray-100 text-gray-700 hover:bg-gray-200"
               }`}
             >
@@ -425,7 +425,7 @@ export function LobbyistExpenseReportForm({
               onClick={() => setMode("csv")}
               className={`rounded-md px-4 py-2 text-sm font-medium transition-colors ${
                 mode === "csv"
-                  ? "bg-blue-600 text-white"
+                  ? "bg-primary text-white"
                   : "bg-gray-100 text-gray-700 hover:bg-gray-200"
               }`}
             >
@@ -436,7 +436,7 @@ export function LobbyistExpenseReportForm({
               onClick={() => setMode("paste")}
               className={`rounded-md px-4 py-2 text-sm font-medium transition-colors ${
                 mode === "paste"
-                  ? "bg-blue-600 text-white"
+                  ? "bg-primary text-white"
                   : "bg-gray-100 text-gray-700 hover:bg-gray-200"
               }`}
             >
@@ -494,7 +494,7 @@ export function LobbyistExpenseReportForm({
                     <td className="px-3 py-4 text-sm whitespace-nowrap text-gray-900">
                       {expense.officialName}
                       {expense.isEstimate && (
-                        <span className="ml-2 text-xs text-yellow-600">
+                        <span className="ml-2 text-xs text-primary">
                           (Est.)
                         </span>
                       )}
@@ -514,7 +514,7 @@ export function LobbyistExpenseReportForm({
                     <td className="px-3 py-4 text-right text-sm whitespace-nowrap">
                       <button
                         onClick={() => handleRemoveExpense(expense.id)}
-                        className="text-red-600 hover:text-red-900"
+                        className="text-destructive hover:text-red-900"
                       >
                         Remove
                       </button>
@@ -525,8 +525,8 @@ export function LobbyistExpenseReportForm({
             </table>
           </div>
 
-          <div className="mt-6 rounded-md bg-blue-50 p-4">
-            <p className="text-sm text-blue-700">
+          <div className="mt-6 rounded-md bg-primary/10 p-4">
+            <p className="text-sm text-primary">
               <strong>Note:</strong> Only itemize expenses over $50 paid to or
               for any public official. Total includes all food, refreshments,
               and entertainment expenses related to lobbying activities.
@@ -593,7 +593,7 @@ export function LobbyistExpenseReportForm({
           onClick={handleSubmit}
           disabled={isSubmitting || expenses.length === 0}
           data-testid="submit-report-button"
-          className="flex items-center space-x-2 rounded-md bg-green-600 px-6 py-2 text-white hover:bg-green-700 disabled:cursor-not-allowed disabled:bg-gray-300"
+          className="flex items-center space-x-2 rounded-md bg-success px-6 py-2 text-white hover:bg-success disabled:cursor-not-allowed disabled:bg-gray-300"
         >
           {isSubmitting ? (
             <>

@@ -39,7 +39,7 @@ export function BoardMemberReportsClient({
           </p>
           <a
             href="/board-member/calendar"
-            className="mt-4 inline-block rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+            className="mt-4 inline-block rounded-md bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary"
           >
             Add Calendar & Receipts
           </a>
@@ -107,7 +107,7 @@ export function BoardMemberReportsClient({
                       <div className="flex justify-end gap-2">
                         <a
                           href={`/reports/board-member/${submission.year}/${submission.quarter.toLowerCase()}`}
-                          className="text-blue-600 hover:text-blue-900"
+                          className="text-primary hover:text-blue-900"
                           title="View details"
                         >
                           <Eye className="h-5 w-5" />
@@ -122,11 +122,11 @@ export function BoardMemberReportsClient({
         </div>
       )}
 
-      <div className="mt-6 rounded-lg border border-blue-200 bg-blue-50 p-4">
+      <div className="mt-6 rounded-lg border border-blue-200 bg-primary/10 p-4">
         <h3 className="text-sm font-medium text-blue-900">
           Ordinance Requirement (§3.001)
         </h3>
-        <p className="mt-1 text-sm text-blue-800">
+        <p className="mt-1 text-sm text-primary">
           Board members must post quarterly calendars and lobbying receipts over
           $50. Data must remain publicly posted for at least 1 year.
         </p>

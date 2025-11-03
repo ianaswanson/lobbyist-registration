@@ -82,7 +82,7 @@ export default async function LobbyistReportsPage() {
             <div className="flex gap-2">
               <a
                 href="/reports/lobbyist/new"
-                className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+                className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary"
               >
                 New Report
               </a>
