@@ -35,7 +35,7 @@ export default async function SignInPage({
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50">
+    <div className="flex min-h-screen items-center justify-center bg-secondary">
       {/* Demo Credentials Panel - bottom center */}
       <DemoCredentialsPanel />
 
@@ -43,7 +43,7 @@ export default async function SignInPage({
         <div className="text-center">
           <Link
             href="/"
-            className="mb-4 inline-flex items-center text-sm text-blue-600 hover:text-blue-800"
+            className="mb-4 inline-flex items-center text-sm text-primary hover:text-primary/80"
           >
             <svg
               className="mr-1 h-4 w-4"
@@ -89,7 +89,7 @@ export default async function SignInPage({
                 type="email"
                 autoComplete="email"
                 required
-                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
+                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary focus:ring-primary focus:outline-none"
               />
             </div>
 
@@ -106,14 +106,14 @@ export default async function SignInPage({
                 type="password"
                 autoComplete="current-password"
                 required
-                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
+                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary focus:ring-primary focus:outline-none"
               />
             </div>
           </div>
 
           <button
             type="submit"
-            className="w-full rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none"
+            className="w-full rounded-md bg-primary px-4 py-2 text-white hover:bg-primary/90 focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:outline-none"
           >
             Sign in
           </button>

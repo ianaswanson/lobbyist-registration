@@ -6,7 +6,7 @@ export default async function Home() {
   const session = await auth();
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-secondary">
       <SkipLink />
       <PublicNavigation user={session?.user} />
 
@@ -79,10 +79,10 @@ export default async function Home() {
           {/* Search Lobbyists */}
           <a
             href="/search"
-            className="group relative rounded-lg border border-gray-200 bg-white p-6 shadow-sm transition-all hover:border-blue-500 hover:shadow-md focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none"
+            className="group relative rounded-lg border border-gray-200 bg-white p-6 shadow-sm transition-all hover:border-primary hover:shadow-md focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:outline-none"
             aria-label="Search the lobbyist registry"
           >
-            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-blue-100 text-blue-600 transition-colors group-hover:bg-blue-600 group-hover:text-white">
+            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-white">
               <svg
                 className="h-6 w-6"
                 fill="none"
@@ -106,7 +106,7 @@ export default async function Home() {
               expense reports
             </p>
             <div
-              className="mt-4 flex items-center text-sm font-medium text-blue-600 group-hover:text-blue-700"
+              className="mt-4 flex items-center text-sm font-medium text-primary group-hover:text-primary/90"
               aria-hidden="true"
             >
               Search now
@@ -129,10 +129,10 @@ export default async function Home() {
           {/* View Board Calendars */}
           <a
             href="/board-calendars"
-            className="group relative rounded-lg border border-gray-200 bg-white p-6 shadow-sm transition-all hover:border-purple-500 hover:shadow-md focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:outline-none"
+            className="group relative rounded-lg border border-gray-200 bg-white p-6 shadow-sm transition-all hover:border-primary hover:shadow-md focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:outline-none"
             aria-label="View board member calendars and lobbying receipts"
           >
-            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-purple-100 text-purple-600 transition-colors group-hover:bg-purple-600 group-hover:text-white">
+            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-white">
               <svg
                 className="h-6 w-6"
                 fill="none"
@@ -156,7 +156,7 @@ export default async function Home() {
               members
             </p>
             <div
-              className="mt-4 flex items-center text-sm font-medium text-purple-600 group-hover:text-purple-700"
+              className="mt-4 flex items-center text-sm font-medium text-primary group-hover:text-primary/90"
               aria-hidden="true"
             >
               View calendars
@@ -220,13 +220,13 @@ export default async function Home() {
         </div>
 
         {/* Contact Section */}
-        <div className="mt-8 rounded-lg border border-blue-200 bg-blue-50 p-6">
-          <h3 className="mb-2 font-semibold text-blue-900">Questions?</h3>
-          <p className="text-sm text-blue-700">
+        <div className="mt-8 rounded-lg border border-primary/20 bg-primary/5 p-6">
+          <h3 className="mb-2 font-semibold text-primary">Questions?</h3>
+          <p className="text-sm text-foreground">
             Contact Multnomah County staff at{" "}
             <a
               href="mailto:lobbying@multco.us"
-              className="font-medium underline hover:text-blue-800"
+              className="font-medium text-primary underline hover:text-primary/80"
             >
               lobbying@multco.us
             </a>{" "}

@@ -99,7 +99,7 @@ export function PublicNavigation({ user }: PublicNavigationProps) {
             {/* Logo */}
             <Link
               href="/"
-              className="flex items-center space-x-2 text-xl font-bold transition-colors hover:text-blue-600"
+              className="flex items-center space-x-2 text-xl font-bold transition-colors hover:text-primary"
             >
               <Building2 className="h-6 w-6" />
               <span className="hidden sm:inline">Lobbyist Registry</span>
@@ -133,7 +133,7 @@ export function PublicNavigation({ user }: PublicNavigationProps) {
                             onClick={() => setIsPublicDataOpen(false)}
                             className={`flex items-center space-x-2 px-4 py-2 text-sm transition-colors ${
                               isActive(item.href)
-                                ? "bg-blue-50 text-blue-700"
+                                ? "bg-primary/10 text-primary"
                                 : "text-gray-700 hover:bg-gray-100"
                             }`}
                           >
@@ -156,7 +156,7 @@ export function PublicNavigation({ user }: PublicNavigationProps) {
                 {/* User is authenticated - show dashboard link */}
                 <Link
                   href="/dashboard"
-                  className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700"
+                  className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-primary/90"
                 >
                   Dashboard
                 </Link>
