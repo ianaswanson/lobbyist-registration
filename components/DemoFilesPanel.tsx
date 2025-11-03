@@ -5,9 +5,10 @@ import { useState } from "react";
 interface DemoFile {
   name: string;
   description: string;
-  path: string;
+  path?: string;
+  bulkData?: string;
   icon: string;
-  type: "csv" | "ics";
+  type: "csv" | "ics" | "bulk-paste";
 }
 
 interface DemoFilesPanelProps {
@@ -47,6 +48,17 @@ const FILE_CONFIGS: Record<string, DemoFile[]> = {
       icon: "💰",
       type: "csv",
     },
+    {
+      name: "Bulk Paste Data",
+      description: "Tab-delimited data ready to copy and paste",
+      bulkData:
+        "Commissioner Williams\t2025-01-15\tPortland City Grill\tLunch meeting to discuss technology infrastructure\t125.00\n" +
+        "Board Members\t2025-02-10\tOffice Supply Co\tConference materials and refreshments\t85.50\n" +
+        "Commissioner Williams\t2025-03-05\tJake's Famous Crawfish\tDinner discussion about budget priorities\t175.00\n" +
+        "Board Members\t2025-03-20\tPrintShop Pro\tResearch report printing and distribution\t45.00",
+      icon: "📋",
+      type: "bulk-paste",
+    },
   ],
   "employer-expenses": [
     {
@@ -62,8 +74,20 @@ const FILE_CONFIGS: Record<string, DemoFile[]> = {
 export function DemoFilesPanel({ page }: DemoFilesPanelProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
+  const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
 
   const files = FILE_CONFIGS[page] || [];
+
+  const handleCopyBulkData = async (bulkData: string, index: number) => {
+    try {
+      await navigator.clipboard.writeText(bulkData);
+      setCopiedIndex(index);
+      setTimeout(() => setCopiedIndex(null), 2000);
+      console.log("Copied bulk paste data to clipboard");
+    } catch (err) {
+      console.error("Failed to copy bulk data:", err);
+    }
+  };
 
   if (!isVisible || files.length === 0) return null;
 
@@ -90,17 +114,11 @@ export function DemoFilesPanel({ page }: DemoFilesPanelProps) {
             </div>
 
             <div className="max-h-96 overflow-y-auto">
-              {files.map((file) => (
-                <a
-                  key={file.path}
-                  href={file.path}
-                  download
-                  className="block border-b border-gray-100 px-4 py-3 transition-colors last:border-b-0 hover:bg-gray-50"
-                  onClick={() => {
-                    // Optional: Track downloads
-                    console.log(`Downloaded: ${file.name}`);
-                  }}
-                >
+              {files.map((file, index) => {
+                const isBulkPaste = file.type === "bulk-paste";
+                const isCopied = copiedIndex === index;
+
+                const content = (
                   <div className="flex items-start gap-3">
                     <span className="text-2xl" aria-hidden="true">
                       {file.icon}
@@ -114,39 +132,91 @@ export function DemoFilesPanel({ page }: DemoFilesPanelProps) {
                           className={`rounded-full px-2 py-0.5 text-xs ${
                             file.type === "csv"
                               ? "bg-primary/20 text-primary"
-                              : "bg-purple-100 text-purple-700"
+                              : file.type === "bulk-paste"
+                                ? "bg-orange-100 text-orange-700"
+                                : "bg-purple-100 text-purple-700"
                           }`}
                         >
-                          {file.type.toUpperCase()}
+                          {file.type === "bulk-paste"
+                            ? "PASTE"
+                            : file.type.toUpperCase()}
                         </span>
                       </div>
                       <div className="text-xs text-gray-600">
                         {file.description}
                       </div>
                     </div>
-                    <svg
-                      className="h-5 w-5 flex-shrink-0 text-success"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                      aria-hidden="true"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
-                      />
-                    </svg>
+                    {isBulkPaste ? (
+                      <div className="flex flex-shrink-0 items-center gap-1">
+                        {isCopied ? (
+                          <span className="text-xs font-medium text-success">
+                            Copied!
+                          </span>
+                        ) : null}
+                        <svg
+                          className="h-5 w-5 text-success"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                          aria-hidden="true"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                          />
+                        </svg>
+                      </div>
+                    ) : (
+                      <svg
+                        className="h-5 w-5 flex-shrink-0 text-success"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        aria-hidden="true"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+                        />
+                      </svg>
+                    )}
                   </div>
-                </a>
-              ))}
+                );
+
+                return isBulkPaste ? (
+                  <button
+                    key={`bulk-${index}`}
+                    onClick={() =>
+                      handleCopyBulkData(file.bulkData || "", index)
+                    }
+                    className="block w-full border-b border-gray-100 px-4 py-3 text-left transition-colors last:border-b-0 hover:bg-gray-50"
+                  >
+                    {content}
+                  </button>
+                ) : (
+                  <a
+                    key={file.path}
+                    href={file.path}
+                    download
+                    className="block border-b border-gray-100 px-4 py-3 transition-colors last:border-b-0 hover:bg-gray-50"
+                    onClick={() => {
+                      console.log(`Downloaded: ${file.name}`);
+                    }}
+                  >
+                    {content}
+                  </a>
+                );
+              })}
             </div>
 
             <div className="border-t border-gray-200 bg-gray-50 px-4 py-3">
               <p className="text-xs text-gray-600">
-                <strong>Tip:</strong> Download a sample file, then use the CSV
-                Upload or Bulk Paste feature to import the data.
+                <strong>Tip:</strong> Download CSV files or copy bulk paste
+                data to clipboard, then use CSV Upload or Bulk Paste to import.
               </p>
             </div>
           </div>
