@@ -68,6 +68,15 @@ const FILE_CONFIGS: Record<string, DemoFile[]> = {
       icon: "💼",
       type: "csv",
     },
+    {
+      name: "Bulk Paste Data",
+      description: "Tab-delimited data ready to copy and paste",
+      bulkData:
+        "John Doe\t15000.00\tQuarterly retainer for lobbying services related to technology policy and government IT contracts\n" +
+        "Jane Smith\t12500.00\tQuarterly retainer for healthcare policy advocacy and Medicaid expansion efforts",
+      icon: "📋",
+      type: "bulk-paste",
+    },
   ],
 };
 
