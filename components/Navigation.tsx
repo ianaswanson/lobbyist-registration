@@ -5,8 +5,8 @@ import { usePathname } from "next/navigation";
 import { UserRole } from "@prisma/client";
 import { useState, useEffect, useRef } from "react";
 import { FEATURE_FLAGS } from "@/lib/feature-flags";
+import Image from "next/image";
 import {
-  Building2,
   FileText,
   Clock,
   DollarSign,
@@ -271,7 +271,7 @@ export function Navigation({ user }: NavigationProps) {
   return (
     <>
       {/* Main Navigation */}
-      <nav className="sticky top-0 z-50 border-b bg-white shadow-sm">
+      <nav className="sticky top-0 z-50 border-b bg-primary shadow-sm">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex h-16 items-center justify-between">
             {/* Left side - Logo and nav items */}
@@ -279,11 +279,19 @@ export function Navigation({ user }: NavigationProps) {
               {/* Logo */}
               <Link
                 href="/dashboard"
-                className="flex items-center space-x-2 text-xl font-bold transition-colors hover:text-primary"
+                className="flex items-center space-x-3 text-xl font-bold text-white transition-colors hover:text-white/90"
               >
-                <Building2 className="h-8 w-8 text-primary" />
-                <span className="hidden sm:inline">Lobbyist Registry</span>
-                <span className="sm:hidden">Registry</span>
+                <Image
+                  src="/multco-logo-white.svg"
+                  alt="Multnomah County"
+                  width={120}
+                  height={37}
+                  className="h-9 w-auto"
+                  priority
+                />
+                <span className="hidden lg:inline border-l border-white/30 pl-3">
+                  Accountability Portal
+                </span>
               </Link>
 
               {/* Desktop Navigation - Grouped Dropdowns */}
@@ -297,7 +305,7 @@ export function Navigation({ user }: NavigationProps) {
                         setIsPublicDataOpen(false);
                         setIsAdminOpen(false);
                       }}
-                      className="flex items-center space-x-1 rounded-md px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100"
+                      className="flex items-center space-x-1 rounded-md px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-white/10"
                     >
                       <Clipboard className="h-4 w-4" />
                       <span>My Work</span>
@@ -343,7 +351,7 @@ export function Navigation({ user }: NavigationProps) {
                         setIsMyWorkOpen(false);
                         setIsPublicDataOpen(false);
                       }}
-                      className="flex items-center space-x-1 rounded-md px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100"
+                      className="flex items-center space-x-1 rounded-md px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-white/10"
                     >
                       <Settings className="h-4 w-4" />
                       <span>Admin</span>
@@ -398,7 +406,7 @@ export function Navigation({ user }: NavigationProps) {
                       setIsMyWorkOpen(false);
                       setIsAdminOpen(false);
                     }}
-                    className="flex items-center space-x-1 rounded-md px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100"
+                    className="flex items-center space-x-1 rounded-md px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-white/10"
                   >
                     <Search className="h-4 w-4" />
                     <span>Public Data</span>
@@ -441,7 +449,7 @@ export function Navigation({ user }: NavigationProps) {
               {/* Mobile menu button */}
               <button
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="rounded-md p-2 text-gray-700 hover:bg-gray-100 md:hidden"
+                className="rounded-md p-2 text-white hover:bg-white/10 md:hidden"
                 aria-label="Toggle mobile menu"
               >
                 {isMobileMenuOpen ? (
@@ -452,7 +460,7 @@ export function Navigation({ user }: NavigationProps) {
               </button>
 
               {/* Role badge */}
-              <span className="hidden rounded-full bg-primary/20 px-3 py-1 text-xs font-medium text-primary sm:inline-flex">
+              <span className="hidden rounded-full bg-white/20 px-3 py-1 text-xs font-medium text-white sm:inline-flex">
                 {getRoleDisplay()}
               </span>
 
@@ -460,7 +468,7 @@ export function Navigation({ user }: NavigationProps) {
               <div ref={userMenuRef} className="relative">
                 <button
                   onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-                  className="flex items-center space-x-2 rounded-md px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100"
+                  className="flex items-center space-x-2 rounded-md px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-white/10"
                   aria-expanded={isUserMenuOpen}
                   aria-haspopup="true"
                 >
@@ -544,9 +552,14 @@ export function Navigation({ user }: NavigationProps) {
           <div className="fixed inset-y-0 left-0 w-80 max-w-full overflow-y-auto bg-white shadow-xl">
             <div className="p-4">
               <div className="mb-6 flex items-center justify-between">
-                <div className="flex items-center space-x-2">
-                  <Building2 className="h-8 w-8 text-primary" />
-                  <span className="text-lg font-bold">Menu</span>
+                <div className="flex items-center space-x-3">
+                  <Image
+                    src="/multco-logo-white.svg"
+                    alt="Multnomah County"
+                    width={100}
+                    height={31}
+                    className="h-8 w-auto brightness-0"
+                  />
                 </div>
                 <button
                   onClick={() => setIsMobileMenuOpen(false)}

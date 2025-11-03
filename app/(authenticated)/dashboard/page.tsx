@@ -11,14 +11,14 @@ export default async function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-white">
       <SkipLink />
       <main
         id="main-content"
         className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8"
       >
         {/* Welcome Section */}
-        <div className="mb-8">
+        <div className="mb-8 rounded-lg bg-gray-50 p-6">
           <h2 className="text-3xl font-bold text-gray-900">
             Welcome back,{" "}
             {session.user?.name || session.user?.email?.split("@")[0]}
@@ -40,11 +40,11 @@ export default async function DashboardPage() {
         {/* Important Reminders */}
         {(session.user?.role === "LOBBYIST" ||
           session.user?.role === "EMPLOYER") && (
-          <div className="mb-8 rounded-lg border-l-4 border-primary bg-primary/10 p-4">
+          <div className="mb-8 rounded-lg border-2 border-yellow-400 bg-yellow-50 p-6 shadow-sm">
             <div className="flex">
               <div className="flex-shrink-0">
                 <svg
-                  className="h-5 w-5 text-blue-400"
+                  className="h-5 w-5 text-yellow-600"
                   viewBox="0 0 20 20"
                   fill="currentColor"
                   aria-hidden="true"
@@ -57,13 +57,13 @@ export default async function DashboardPage() {
                 </svg>
               </div>
               <div className="ml-3">
-                <h3 className="text-sm font-medium text-primary">
+                <h3 className="text-sm font-semibold text-yellow-900">
                   Upcoming Deadlines
                 </h3>
-                <div className="mt-2 text-sm text-primary">
+                <div className="mt-2 text-sm text-yellow-800">
                   <p>
                     Quarterly expense reports are due:{" "}
-                    <strong>
+                    <strong className="text-yellow-900">
                       January 15, April 15, July 15, and October 15
                     </strong>
                   </p>
@@ -356,7 +356,7 @@ export default async function DashboardPage() {
         </div>
 
         {/* Help & Resources */}
-        <div className="rounded-lg border bg-white p-6 shadow-sm">
+        <div className="rounded-lg border bg-gray-50 p-6 shadow-sm">
           <h3 className="mb-4 text-lg font-semibold text-gray-900">
             Help & Resources
           </h3>

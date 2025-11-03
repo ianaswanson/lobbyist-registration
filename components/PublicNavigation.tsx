@@ -3,8 +3,8 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, useRef, useEffect } from "react";
+import Image from "next/image";
 import {
-  Building2,
   Search,
   FileCheck,
   TrendingUp,
@@ -91,7 +91,7 @@ export function PublicNavigation({ user }: PublicNavigationProps) {
   const isActive = (href: string) => pathname.startsWith(href);
 
   return (
-    <nav className="sticky top-0 z-50 border-b bg-white shadow-sm">
+    <nav className="sticky top-0 z-50 border-b bg-primary shadow-sm">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           {/* Left side - Logo and nav items */}
@@ -99,11 +99,19 @@ export function PublicNavigation({ user }: PublicNavigationProps) {
             {/* Logo */}
             <Link
               href="/"
-              className="flex items-center space-x-2 text-xl font-bold transition-colors hover:text-primary"
+              className="flex items-center space-x-3 text-xl font-bold text-white transition-colors hover:text-white/90"
             >
-              <Building2 className="h-6 w-6" />
-              <span className="hidden sm:inline">Lobbyist Registry</span>
-              <span className="sm:hidden">Registry</span>
+              <Image
+                src="/multco-logo-white.svg"
+                alt="Multnomah County"
+                width={120}
+                height={37}
+                className="h-9 w-auto"
+                priority
+              />
+              <span className="hidden lg:inline border-l border-white/30 pl-3">
+                Accountability Portal
+              </span>
             </Link>
 
             {/* Public Data Dropdown */}
@@ -111,7 +119,7 @@ export function PublicNavigation({ user }: PublicNavigationProps) {
               <div ref={publicDataRef} className="relative">
                 <button
                   onClick={() => setIsPublicDataOpen(!isPublicDataOpen)}
-                  className="flex items-center space-x-1 rounded-md px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100"
+                  className="flex items-center space-x-1 rounded-md px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-white/10"
                 >
                   <Search className="h-4 w-4" />
                   <span>Public Data</span>
@@ -156,7 +164,7 @@ export function PublicNavigation({ user }: PublicNavigationProps) {
                 {/* User is authenticated - show dashboard link */}
                 <Link
                   href="/dashboard"
-                  className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-primary/90"
+                  className="rounded-md bg-white px-4 py-2 text-sm font-medium text-primary transition-colors hover:bg-white/90"
                 >
                   Dashboard
                 </Link>
@@ -166,7 +174,7 @@ export function PublicNavigation({ user }: PublicNavigationProps) {
                 {/* User is not authenticated - show sign in link */}
                 <Link
                   href="/auth/signin"
-                  className="text-sm text-gray-600 transition-colors hover:text-gray-900"
+                  className="rounded-md bg-white px-4 py-2 text-sm font-medium text-primary transition-colors hover:bg-white/90"
                 >
                   Sign In
                 </Link>

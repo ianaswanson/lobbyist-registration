@@ -362,11 +362,11 @@ export default async function AdminComplianceDashboardPage() {
         {/* Alert Cards */}
         <div className="mb-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
           {/* Upcoming Deadline */}
-          <div className="rounded-lg border-2 border-yellow-200 bg-primary/10 p-6 shadow-sm">
+          <div className="rounded-lg border-2 border-yellow-400 bg-yellow-50 p-6 shadow-sm">
             <div className="flex items-start">
               <div className="flex-shrink-0">
                 <svg
-                  className="h-6 w-6 text-primary"
+                  className="h-6 w-6 text-yellow-600"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"

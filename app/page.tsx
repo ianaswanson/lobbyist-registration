@@ -18,7 +18,7 @@ export default async function Home() {
           <h2 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">
             Multnomah County
             <br />
-            Lobbyist Registration System
+            Accountability Portal
           </h2>
           <p className="mt-4 text-lg text-gray-600">
             Promoting transparency and accountability in county government
