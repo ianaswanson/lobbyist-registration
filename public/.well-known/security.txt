@@ -1,0 +1,20 @@
+# Our security address
+Contact: mailto:ian@piratesofpinehurst.com
+
+# Our OpenPGP key (if available, otherwise omit this line)
+# Encryption: https://example.com/pgp-key.txt
+
+# Our security policy
+Policy: https://github.com/ianaswanson/lobbyist-registration/blob/main/SECURITY.md
+
+# Preferred languages
+Preferred-Languages: en
+
+# Our security acknowledgments page
+# Acknowledgments: https://example.com/hall-of-fame.html
+
+# Expiration date for this file (1 year from now - update annually)
+Expires: 2026-11-03T23:59:59.000Z
+
+# Canonical URL for this file
+Canonical: https://lobbyist-registration-zzp44w3snq-uw.a.run.app/.well-known/security.txt
