@@ -39,6 +39,16 @@ const FILE_CONFIGS: Record<string, DemoFile[]> = {
       icon: "🧾",
       type: "csv",
     },
+    {
+      name: "Bulk Paste Receipts",
+      description: "Tab-delimited receipts data ready to copy and paste",
+      bulkData:
+        "John Doe\t2025-01-15\tPortland City Grill\tLunch meeting to discuss technology infrastructure\t125.00\n" +
+        "Jane Smith\t2025-02-20\tStarbucks\tCoffee meeting regarding healthcare policy\t15.50\n" +
+        "John Doe\t2025-03-05\tJake's Famous Crawfish\tDinner discussion about budget priorities\t175.00",
+      icon: "📋",
+      type: "bulk-paste",
+    },
   ],
   "lobbyist-expenses": [
     {
