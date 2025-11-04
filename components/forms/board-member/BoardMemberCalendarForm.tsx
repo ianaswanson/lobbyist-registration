@@ -755,7 +755,7 @@ export function BoardMemberCalendarForm({
                   <div className="flex justify-end">
                     <button
                       type="submit"
-                      className="rounded-md bg-purple-600 px-4 py-2 text-white hover:bg-purple-700"
+                      className="rounded-md bg-primary px-4 py-2 text-white hover:bg-primary/90"
                     >
                       Add Receipt
                     </button>
@@ -818,10 +818,10 @@ export function BoardMemberCalendarForm({
                     </tbody>
                   </table>
                   <div className="mt-4 flex items-center justify-between rounded-md bg-primary/10 p-4">
-                    <span className="text-sm font-medium text-purple-900">
+                    <span className="text-sm font-medium text-primary">
                       Total Receipts:
                     </span>
-                    <span className="text-lg font-bold text-purple-900">
+                    <span className="text-lg font-bold text-primary">
                       ${totalReceiptAmount.toFixed(2)}
                     </span>
                   </div>

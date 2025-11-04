@@ -286,7 +286,7 @@ export default async function AdminComplianceDashboardPage() {
                   {complianceData.totalEmployers}
                 </p>
               </div>
-              <div className="rounded-full bg-purple-100 p-3">
+              <div className="rounded-full bg-primary/20 p-3">
                 <svg
                   className="h-6 w-6 text-primary"
                   fill="none"

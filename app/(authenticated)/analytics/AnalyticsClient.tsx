@@ -310,7 +310,7 @@ export function AnalyticsClient() {
                     className="flex items-center justify-between"
                   >
                     <div className="flex items-center gap-2">
-                      <span className="flex h-6 w-6 items-center justify-center rounded-full bg-purple-100 text-xs font-bold text-purple-700">
+                      <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary/20 text-xs font-bold text-primary">
                         {index + 1}
                       </span>
                       <span className="max-w-[200px] truncate text-sm font-medium">
@@ -408,7 +408,7 @@ export function AnalyticsClient() {
               </div>
               <div className="h-6 w-full overflow-hidden rounded-full bg-gray-200">
                 <div
-                  className="flex h-full items-center justify-end bg-purple-600 px-2 text-xs font-medium text-white"
+                  className="flex h-full items-center justify-end bg-primary px-2 text-xs font-medium text-white"
                   style={{
                     width: `${(data.summary.totalEmployerSpending / data.summary.totalSpending) * 100}%`,
                   }}

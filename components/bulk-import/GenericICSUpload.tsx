@@ -51,12 +51,12 @@ export function GenericICSUpload<T>({
         "bg-success/20 text-success-foreground dark:bg-green-900 dark:text-green-200",
     },
     purple: {
-      border: "border-purple-300 dark:border-purple-700",
-      bg: "bg-primary/10 dark:bg-purple-900/20",
-      text: "text-purple-700 dark:text-purple-300",
-      button: "bg-purple-600 hover:bg-purple-700",
+      border: "border-primary/30 dark:border-primary/50",
+      bg: "bg-primary/10 dark:bg-primary/20",
+      text: "text-primary/80 dark:text-primary/70",
+      button: "bg-primary hover:bg-primary/90",
       badge:
-        "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200",
+        "bg-primary/20 text-primary dark:bg-primary/30 dark:text-primary/90",
     },
     orange: {
       border: "border-orange-300 dark:border-orange-700",

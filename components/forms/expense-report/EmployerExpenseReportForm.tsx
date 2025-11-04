@@ -557,10 +557,10 @@ export function EmployerExpenseReportForm({
           </div>
 
           <div className="mt-4 flex items-center justify-between rounded-md bg-primary/10 p-4">
-            <span className="text-sm font-medium text-purple-900">
+            <span className="text-sm font-medium text-primary">
               Total Expenses:
             </span>
-            <span className="text-lg font-bold text-purple-900">
+            <span className="text-lg font-bold text-primary">
               ${totalExpenses.toFixed(2)}
             </span>
           </div>

@@ -153,7 +153,7 @@ export function DemoFilesPanel({ page }: DemoFilesPanelProps) {
                               ? "bg-primary/20 text-primary"
                               : file.type === "bulk-paste"
                                 ? "bg-orange-100 text-orange-700"
-                                : "bg-purple-100 text-purple-700"
+                                : "bg-primary/20 text-primary"
                           }`}
                         >
                           {file.type === "bulk-paste"

@@ -18,7 +18,7 @@ const DEMO_ACCOUNTS: DemoAccount[] = [
     email: "admin@multnomah.gov",
     password: "Demo2025!Admin",
     icon: "👤",
-    color: "bg-purple-600 hover:bg-purple-700",
+    color: "bg-primary hover:bg-primary/90",
   },
   {
     role: "Lobbyist",

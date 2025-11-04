@@ -57,9 +57,9 @@ export function GenericCSVUpload<T>({
     },
     purple: {
       template:
-        "border-purple-200 bg-primary/10 text-purple-900 text-purple-700 bg-purple-600 hover:bg-purple-700",
+        "border-primary/30 bg-primary/10 text-primary text-primary/80 bg-primary hover:bg-primary/90",
       upload:
-        "border-purple-200 bg-primary/10 text-purple-900 text-purple-700 file:bg-purple-600 hover:file:bg-purple-700",
+        "border-primary/30 bg-primary/10 text-primary text-primary/80 file:bg-primary hover:file:bg-primary/90",
       preview:
         "border-success/30 bg-success/10 text-green-900 bg-success hover:bg-success",
     },

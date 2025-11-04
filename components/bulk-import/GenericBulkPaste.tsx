@@ -58,12 +58,12 @@ export function GenericBulkPaste<T>({
         </div>
       )}
 
-      <div className="rounded-lg border-2 border-purple-200 bg-primary/10 p-4">
-        <h4 className="mb-2 font-semibold text-purple-900">
+      <div className="rounded-lg border-2 border-primary/30 bg-primary/10 p-4">
+        <h4 className="mb-2 font-semibold text-primary">
           Format Instructions:
         </h4>
-        <p className="mb-2 text-sm text-purple-700">{formatInstructions}</p>
-        <code className="block rounded bg-purple-100 p-2 text-xs whitespace-pre-wrap text-purple-900">
+        <p className="mb-2 text-sm text-primary/80">{formatInstructions}</p>
+        <code className="block rounded bg-primary/20 p-2 text-xs whitespace-pre-wrap text-primary">
           {columns.map((col) => col.label).join(", ")}
         </code>
         <p className="mt-2 text-xs text-primary">Example: {exampleText}</p>
@@ -82,7 +82,7 @@ export function GenericBulkPaste<T>({
           rows={8}
           value={textData}
           onChange={(e) => setTextData(e.target.value)}
-          className="block w-full rounded-md border border-gray-300 px-3 py-2 font-mono text-sm focus:border-purple-500 focus:ring-primary focus:outline-none"
+          className="block w-full rounded-md border border-gray-300 px-3 py-2 font-mono text-sm focus:border-primary focus:ring-primary focus:outline-none"
           placeholder={exampleText}
           aria-describedby="paste-instructions"
         />
@@ -91,7 +91,7 @@ export function GenericBulkPaste<T>({
       <button
         onClick={handleParse}
         disabled={!textData.trim()}
-        className="w-full rounded-md bg-purple-600 px-4 py-2 text-white hover:bg-purple-700 focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:outline-none disabled:bg-gray-300"
+        className="w-full rounded-md bg-primary px-4 py-2 text-white hover:bg-primary/90 focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:outline-none disabled:bg-gray-300"
       >
         Parse Data
       </button>
