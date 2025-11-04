@@ -7,9 +7,9 @@ import Image from "next/image";
 import {
   Search,
   FileCheck,
-  TrendingUp,
   ChevronDown,
   Calendar,
+  BarChart3,
 } from "lucide-react";
 import { FEATURE_FLAGS } from "@/lib/feature-flags";
 
@@ -42,10 +42,10 @@ const PUBLIC_DATA_ITEMS: NavItem[] = [
     description: "View board member calendars and receipts",
   },
   {
-    label: "Analytics Dashboard",
-    href: "/transparency/analytics",
-    icon: TrendingUp,
-    description: "View spending trends and charts",
+    label: "Transparency Dashboard",
+    href: "/transparency",
+    icon: BarChart3,
+    description: "Explore metrics, charts, and spending data",
   },
   {
     label: "Contract Exceptions",
@@ -61,7 +61,7 @@ export function PublicNavigation({ user }: PublicNavigationProps) {
   const publicDataRef = useRef<HTMLDivElement>(null);
 
   const publicDataItems = PUBLIC_DATA_ITEMS.filter((item) => {
-    if (item.href === "/analytics" && !FEATURE_FLAGS.ANALYTICS_DASHBOARD) {
+    if (item.href === "/transparency" && !FEATURE_FLAGS.ANALYTICS_DASHBOARD) {
       return false;
     }
     if (

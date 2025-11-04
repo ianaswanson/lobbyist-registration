@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
 
-export default function AnalyticsRedirect() {
+export default function InsightsRedirect() {
   redirect("/transparency");
 }
