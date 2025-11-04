@@ -12,7 +12,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Loader2, RefreshCw } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
 
 interface Alert {
   id: string;
@@ -43,7 +42,10 @@ export function AlertList() {
   const [generating, setGenerating] = useState(false);
   const [severityFilter, setSeverityFilter] = useState<string>("all");
   const [typeFilter, setTypeFilter] = useState<string>("all");
-  const { toast } = useToast();
+  const [message, setMessage] = useState<{
+    type: "success" | "error";
+    text: string;
+  } | null>(null);
 
   const fetchAlerts = async () => {
     setLoading(true);
@@ -58,18 +60,17 @@ export function AlertList() {
       if (response.ok) {
         setAlerts(data.alerts);
         setCounts(data.counts);
+        setMessage(null);
       } else {
-        toast({
-          title: "Error",
-          description: data.error || "Failed to fetch alerts",
-          variant: "destructive",
+        setMessage({
+          type: "error",
+          text: data.error || "Failed to fetch alerts",
         });
       }
     } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to fetch alerts",
-        variant: "destructive",
+      setMessage({
+        type: "error",
+        text: "Failed to fetch alerts",
       });
     } finally {
       setLoading(false);
@@ -85,23 +86,21 @@ export function AlertList() {
       const data = await response.json();
 
       if (response.ok) {
-        toast({
-          title: "Alerts Generated",
-          description: data.message,
+        setMessage({
+          type: "success",
+          text: data.message,
         });
         await fetchAlerts(); // Refresh list
       } else {
-        toast({
-          title: "Error",
-          description: data.error || "Failed to generate alerts",
-          variant: "destructive",
+        setMessage({
+          type: "error",
+          text: data.error || "Failed to generate alerts",
         });
       }
     } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to generate alerts",
-        variant: "destructive",
+      setMessage({
+        type: "error",
+        text: "Failed to generate alerts",
       });
     } finally {
       setGenerating(false);
@@ -116,23 +115,21 @@ export function AlertList() {
       const data = await response.json();
 
       if (response.ok) {
-        toast({
-          title: "Alert Reviewed",
-          description: "Alert has been marked as reviewed",
+        setMessage({
+          type: "success",
+          text: "Alert has been marked as reviewed",
         });
         await fetchAlerts(); // Refresh list
       } else {
-        toast({
-          title: "Error",
-          description: data.error || "Failed to review alert",
-          variant: "destructive",
+        setMessage({
+          type: "error",
+          text: data.error || "Failed to review alert",
         });
       }
     } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to review alert",
-        variant: "destructive",
+      setMessage({
+        type: "error",
+        text: "Failed to review alert",
       });
     }
   };
@@ -143,6 +140,19 @@ export function AlertList() {
 
   return (
     <div className="space-y-6">
+      {/* Message Display */}
+      {message && (
+        <div
+          className={`p-4 rounded-lg border ${
+            message.type === "success"
+              ? "bg-green-50 border-green-200 text-green-800"
+              : "bg-red-50 border-red-200 text-red-800"
+          }`}
+        >
+          {message.text}
+        </div>
+      )}
+
       {/* Summary Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <div className="bg-white p-4 rounded-lg border">
