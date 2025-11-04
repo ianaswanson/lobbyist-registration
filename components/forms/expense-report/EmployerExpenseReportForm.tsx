@@ -44,6 +44,7 @@ export function EmployerExpenseReportForm({
     text: string;
   } | null>(null);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const [noActivity, setNoActivity] = useState(false);
 
   // New lobbyist payment form state
   const [newPayment, setNewPayment] = useState({
@@ -179,11 +180,22 @@ export function EmployerExpenseReportForm({
 
   const handleAddExpenses = (newExpenses: ExpenseLineItem[]) => {
     setExpenses([...expenses, ...newExpenses]);
+    setNoActivity(false); // Uncheck noActivity if user adds expenses
     setHasUnsavedChanges(true);
   };
 
   const handleRemoveExpense = (id: string) => {
     setExpenses(expenses.filter((exp) => exp.id !== id));
+    setHasUnsavedChanges(true);
+  };
+
+  const handleNoActivityChange = (checked: boolean) => {
+    setNoActivity(checked);
+    if (checked) {
+      // Clear expenses and payments when noActivity is checked
+      setExpenses([]);
+      setLobbyistPayments([]);
+    }
     setHasUnsavedChanges(true);
   };
 
@@ -197,6 +209,7 @@ export function EmployerExpenseReportForm({
     };
 
     setLobbyistPayments([...lobbyistPayments, payment]);
+    setNoActivity(false); // Uncheck noActivity if user adds payments
     setHasUnsavedChanges(true);
 
     // Reset form
@@ -227,6 +240,7 @@ export function EmployerExpenseReportForm({
           expenses,
           lobbyistPayments,
           isDraft,
+          noActivity,
         }),
       });
 
@@ -317,11 +331,47 @@ export function EmployerExpenseReportForm({
         </div>
       </div>
 
-      {/* Lobbyist Payments Section */}
+      {/* No Activity Checkbox */}
       <div className="rounded-lg border bg-white p-6 shadow-sm">
-        <h3 className="mb-4 text-lg font-semibold text-gray-900">
-          Payments to Registered Lobbyists
-        </h3>
+        <div className="flex items-start space-x-3">
+          <input
+            type="checkbox"
+            id="noActivity"
+            checked={noActivity}
+            onChange={(e) => handleNoActivityChange(e.target.checked)}
+            className="mt-1 h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+          />
+          <div className="flex-1">
+            <label
+              htmlFor="noActivity"
+              className="block text-base font-medium text-gray-900 cursor-pointer"
+            >
+              No payments to lobbyists this quarter
+            </label>
+            <p className="mt-1 text-sm text-gray-600">
+              Check this box if you made no payments to registered lobbyists and had no
+              lobbying-related expenses during this quarter. This will submit a zero-activity
+              attestation.
+            </p>
+            {noActivity && (
+              <div className="mt-3 rounded-md bg-primary/10 p-3">
+                <p className="text-sm text-primary">
+                  <strong>Attestation:</strong> By checking this box and submitting this report,
+                  you are attesting under penalty of law that you made no payments to registered
+                  lobbyists and had no lobbying-related expenses during this quarter.
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Lobbyist Payments Section */}
+      {!noActivity && (
+        <div className="rounded-lg border bg-white p-6 shadow-sm">
+          <h3 className="mb-4 text-lg font-semibold text-gray-900">
+            Payments to Registered Lobbyists
+          </h3>
         <p className="mb-4 text-sm text-gray-600">
           Report all payments made to registered lobbyists for lobbying services
           during this quarter.
@@ -432,13 +482,15 @@ export function EmployerExpenseReportForm({
             </div>
           </div>
         )}
-      </div>
+        </div>
+      )}
 
       {/* Lobbying Expenses Section */}
-      <div className="rounded-lg border bg-white p-6 shadow-sm">
-        <h3 className="mb-4 text-lg font-semibold text-gray-900">
-          Lobbying Expenses (Food, Refreshments, Entertainment)
-        </h3>
+      {!noActivity && (
+        <div className="rounded-lg border bg-white p-6 shadow-sm">
+          <h3 className="mb-4 text-lg font-semibold text-gray-900">
+            Lobbying Expenses (Food, Refreshments, Entertainment)
+          </h3>
         <p className="mb-4 text-sm text-gray-600">
           Itemize expenses over $50 paid to or for any public official.
         </p>
@@ -484,11 +536,12 @@ export function EmployerExpenseReportForm({
           </div>
         </div>
 
-        {/* Mode-specific content */}
-        {mode === "manual" && <ManualEntryMode onAdd={handleAddExpenses} />}
-        {mode === "csv" && <CSVUploadMode onAdd={handleAddExpenses} />}
-        {mode === "paste" && <BulkPasteMode onAdd={handleAddExpenses} />}
-      </div>
+          {/* Mode-specific content */}
+          {mode === "manual" && <ManualEntryMode onAdd={handleAddExpenses} />}
+          {mode === "csv" && <CSVUploadMode onAdd={handleAddExpenses} />}
+          {mode === "paste" && <BulkPasteMode onAdd={handleAddExpenses} />}
+        </div>
+      )}
 
       {/* Expenses List */}
       {expenses.length > 0 && (
@@ -685,7 +738,7 @@ export function EmployerExpenseReportForm({
           onClick={handleSubmit}
           disabled={
             isLoading ||
-            (lobbyistPayments.length === 0 && expenses.length === 0)
+            (!noActivity && lobbyistPayments.length === 0 && expenses.length === 0)
           }
           className="flex items-center space-x-2 rounded-md bg-success px-6 py-2 text-white hover:bg-success disabled:cursor-not-allowed disabled:bg-gray-300"
         >
@@ -711,7 +764,7 @@ export function EmployerExpenseReportForm({
               ></path>
             </svg>
           )}
-          <span>{isLoading ? "Submitting..." : "Submit Report"}</span>
+          <span>{isLoading ? "Submitting..." : noActivity ? "Submit Zero-Activity Report" : "Submit Report"}</span>
         </button>
       </div>
     </div>

@@ -37,12 +37,31 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { quarter, year, expenses, lobbyistPayments, isDraft } = body;
+    const { quarter, year, expenses, lobbyistPayments, isDraft, noActivity = false } = body;
 
     // Validate required fields
     if (!quarter || !year) {
       return NextResponse.json(
         { error: "Quarter and year are required" },
+        { status: 400 }
+      );
+    }
+
+    // Validation: Cannot have both noActivity and expenses/payments
+    const hasExpenses = expenses && expenses.length > 0;
+    const hasPayments = lobbyistPayments && lobbyistPayments.length > 0;
+
+    if (noActivity && (hasExpenses || hasPayments)) {
+      return NextResponse.json(
+        { error: "Cannot check 'No Activity' and add expenses or payments" },
+        { status: 400 }
+      );
+    }
+
+    // Validation: Must have either noActivity or expenses/payments
+    if (!noActivity && !hasExpenses && !hasPayments && !isDraft) {
+      return NextResponse.json(
+        { error: "Must either check 'No Activity' or add expenses/payments" },
         { status: 400 }
       );
     }

@@ -41,6 +41,7 @@ export function LobbyistExpenseReportForm({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const [noActivity, setNoActivity] = useState(false);
   const [message, setMessage] = useState<{
     type: "success" | "error";
     text: string;
@@ -155,11 +156,21 @@ export function LobbyistExpenseReportForm({
 
   const handleAddExpenses = (newExpenses: ExpenseLineItem[]) => {
     setExpenses([...expenses, ...newExpenses]);
+    setNoActivity(false); // Uncheck noActivity if user adds expenses
     setHasUnsavedChanges(true);
   };
 
   const handleRemoveExpense = (id: string) => {
     setExpenses(expenses.filter((exp) => exp.id !== id));
+    setHasUnsavedChanges(true);
+  };
+
+  const handleNoActivityChange = (checked: boolean) => {
+    setNoActivity(checked);
+    if (checked) {
+      // Clear any existing expenses when noActivity is checked
+      setExpenses([]);
+    }
     setHasUnsavedChanges(true);
   };
 
@@ -178,6 +189,7 @@ export function LobbyistExpenseReportForm({
           year,
           expenses,
           isDraft,
+          noActivity,
         }),
       });
 
@@ -398,11 +410,47 @@ export function LobbyistExpenseReportForm({
         </div>
       </div>
 
-      {/* Input Method Selector */}
+      {/* No Activity Checkbox */}
       <div className="rounded-lg border bg-white p-6 shadow-sm">
-        <h3 className="mb-4 text-lg font-semibold text-gray-900">
-          Add Expenses
-        </h3>
+        <div className="flex items-start space-x-3">
+          <input
+            type="checkbox"
+            id="noActivity"
+            checked={noActivity}
+            onChange={(e) => handleNoActivityChange(e.target.checked)}
+            className="mt-1 h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+          />
+          <div className="flex-1">
+            <label
+              htmlFor="noActivity"
+              className="block text-base font-medium text-gray-900 cursor-pointer"
+            >
+              No lobbying activity this quarter
+            </label>
+            <p className="mt-1 text-sm text-gray-600">
+              Check this box if you had no lobbying expenses during this quarter. This will
+              submit a zero-activity attestation and you won't need to add any expense items.
+            </p>
+            {noActivity && (
+              <div className="mt-3 rounded-md bg-primary/10 p-3">
+                <p className="text-sm text-primary">
+                  <strong>Attestation:</strong> By checking this box and submitting this report,
+                  you are attesting under penalty of law that you had no lobbying-related food,
+                  refreshment, or entertainment expenses over $50 for any public official during
+                  this quarter.
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Input Method Selector */}
+      {!noActivity && (
+        <div className="rounded-lg border bg-white p-6 shadow-sm">
+          <h3 className="mb-4 text-lg font-semibold text-gray-900">
+            Add Expenses
+          </h3>
 
         <div className="mb-6">
           <label className="mb-3 block text-sm font-semibold text-gray-700">
@@ -445,11 +493,12 @@ export function LobbyistExpenseReportForm({
           </div>
         </div>
 
-        {/* Mode-specific content */}
-        {mode === "manual" && <ManualEntryMode onAdd={handleAddExpenses} />}
-        {mode === "csv" && <CSVUploadMode onAdd={handleAddExpenses} />}
-        {mode === "paste" && <BulkPasteMode onAdd={handleAddExpenses} />}
-      </div>
+          {/* Mode-specific content */}
+          {mode === "manual" && <ManualEntryMode onAdd={handleAddExpenses} />}
+          {mode === "csv" && <CSVUploadMode onAdd={handleAddExpenses} />}
+          {mode === "paste" && <BulkPasteMode onAdd={handleAddExpenses} />}
+        </div>
+      )}
 
       {/* Expenses List */}
       {expenses.length > 0 && (
@@ -556,7 +605,7 @@ export function LobbyistExpenseReportForm({
         <button
           type="button"
           onClick={handleSaveDraft}
-          disabled={isSubmitting || expenses.length === 0}
+          disabled={isSubmitting || (!noActivity && expenses.length === 0)}
           data-testid="save-draft-button"
           className="flex items-center space-x-2 rounded-md border border-gray-300 bg-white px-6 py-2 text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-400"
         >
@@ -591,7 +640,7 @@ export function LobbyistExpenseReportForm({
         <button
           type="button"
           onClick={handleSubmit}
-          disabled={isSubmitting || expenses.length === 0}
+          disabled={isSubmitting || (!noActivity && expenses.length === 0)}
           data-testid="submit-report-button"
           className="flex items-center space-x-2 rounded-md bg-success px-6 py-2 text-white hover:bg-success disabled:cursor-not-allowed disabled:bg-gray-300"
         >
@@ -620,7 +669,7 @@ export function LobbyistExpenseReportForm({
               <span>Submitting...</span>
             </>
           ) : (
-            <span>Submit Report</span>
+            <span>{noActivity ? "Submit Zero-Activity Report" : "Submit Report"}</span>
           )}
         </button>
       </div>

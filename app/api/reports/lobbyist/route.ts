@@ -58,7 +58,7 @@ export async function POST(req: Request) {
 
     // 2. Parse request body
     const body = await req.json();
-    const { quarter, year, expenses, isDraft = false } = body;
+    const { quarter, year, expenses, isDraft = false, noActivity = false } = body;
 
     // 3. Validation
     if (!quarter || !year) {
@@ -78,6 +78,22 @@ export async function POST(req: Request) {
     if (!Array.isArray(expenses)) {
       return NextResponse.json(
         { error: "Expenses must be an array" },
+        { status: 400 }
+      );
+    }
+
+    // Validation: Cannot have both noActivity and expenses
+    if (noActivity && expenses.length > 0) {
+      return NextResponse.json(
+        { error: "Cannot check 'No Activity' and add expense items" },
+        { status: 400 }
+      );
+    }
+
+    // Validation: Must have either noActivity or expenses
+    if (!noActivity && expenses.length === 0 && !isDraft) {
+      return NextResponse.json(
+        { error: "Must either check 'No Activity' or add expense items" },
         { status: 400 }
       );
     }

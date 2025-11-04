@@ -171,13 +171,25 @@ export function EmployerReportsClient({
                     {report.year}
                   </td>
                   <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-900">
-                    {formatCurrency(report.totalLobbyingSpend)}
+                    {report.lineItems.length === 0 && report.lobbyistPayments.length === 0 && report.status !== ReportStatus.DRAFT ? (
+                      <span className="italic text-gray-500">No activity reported</span>
+                    ) : (
+                      formatCurrency(report.totalLobbyingSpend)
+                    )}
                   </td>
                   <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-500">
-                    {report.lineItems.length}
+                    {report.lineItems.length === 0 && report.lobbyistPayments.length === 0 && report.status !== ReportStatus.DRAFT ? (
+                      <span className="italic">—</span>
+                    ) : (
+                      report.lineItems.length
+                    )}
                   </td>
                   <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-500">
-                    {report.lobbyistPayments.length}
+                    {report.lineItems.length === 0 && report.lobbyistPayments.length === 0 && report.status !== ReportStatus.DRAFT ? (
+                      <span className="italic">—</span>
+                    ) : (
+                      report.lobbyistPayments.length
+                    )}
                   </td>
                   <td className="px-6 py-4 text-sm whitespace-nowrap">
                     {getStatusBadge(report.status)}
