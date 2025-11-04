@@ -47,6 +47,7 @@ async function clearDatabase() {
   await prisma.auditLog.deleteMany();
   await prisma.appeal.deleteMany();
   await prisma.violation.deleteMany();
+  await prisma.complianceAlert.deleteMany();
   await prisma.contractException.deleteMany();
   await prisma.hourLog.deleteMany();
   await prisma.boardLobbyingReceipt.deleteMany();
@@ -218,7 +219,7 @@ async function createApprovedData(
       phone: "503-555-0101",
       address: "123 Main St, Portland, OR 97201",
       hours: 25.5,
-      regDate: "2025-01-15",
+      regDate: "2023-06-15", // Earlier registration for growth chart
     },
     {
       name: "Jane Smith",
@@ -226,7 +227,7 @@ async function createApprovedData(
       phone: "503-555-0102",
       address: "456 Oak Ave, Portland, OR 97202",
       hours: 18.0,
-      regDate: "2025-02-01",
+      regDate: "2024-03-01", // Staggered registration
     },
     {
       name: "Michael Chen",
@@ -234,7 +235,7 @@ async function createApprovedData(
       phone: "503-555-0103",
       address: "789 Elm St, Portland, OR 97203",
       hours: 22.5,
-      regDate: "2025-02-15",
+      regDate: "2024-11-15", // Most recent registration
     },
   ];
 
@@ -1003,7 +1004,58 @@ async function createViolationsAndAppeals(
 }
 
 // ============================================================================
-// SECTION 6: CREATE CONTRACT EXCEPTIONS (Rule of 3)
+// SECTION 6: CREATE COMPLIANCE ALERTS (Rule of 3)
+// ============================================================================
+
+async function createComplianceAlerts(
+  approvedData: Awaited<ReturnType<typeof createApprovedData>>
+) {
+  console.log("🚨 Creating compliance alerts (Rule of 3)...");
+
+  // Following Rule of 3: Create 3 alerts for demonstration
+  // These demonstrate the automated compliance monitoring system
+
+  // Alert 1: UNUSUAL_SPENDING - John Doe's Q3 spending spike
+  // (In Q2 he spent $412.50, Q3 jumped to $378.00 - not quite 3x, so we'll create a manual alert)
+  await prisma.complianceAlert.create({
+    data: {
+      type: "UNUSUAL_SPENDING",
+      severity: "HIGH",
+      message: `${approvedData.lobbyists[0].name}: Expenses increased 320% ($125.50 → $402.10) from Q1 to Q2 2025. Review for legitimacy.`,
+      relatedReportId: approvedData.lobbyistReports[1].id, // John's Q2 report
+      relatedUserId: approvedData.lobbyists[0].userId,
+    },
+  });
+
+  // Alert 2: FIRST_TIME_FILER - Michael Chen (most recent registration)
+  await prisma.complianceAlert.create({
+    data: {
+      type: "FIRST_TIME_FILER",
+      severity: "LOW",
+      message: `${approvedData.lobbyists[2].name}: First quarterly report filed (Q1 2025). Recommend extra review to catch any registration errors.`,
+      relatedReportId: approvedData.lobbyistReports[6].id, // Michael's Q1 report
+      relatedUserId: approvedData.lobbyists[2].userId,
+    },
+  });
+
+  // Alert 3: DUPLICATE_ENTRY - Create a duplicate in Jane's Q2 report
+  // We'll add this after creating a duplicate line item
+  const janeQ2Report = approvedData.lobbyistReports[4]; // Jane's Q2 report
+  await prisma.complianceAlert.create({
+    data: {
+      type: "DUPLICATE_ENTRY",
+      severity: "MEDIUM",
+      message: `Possible duplicate entries: 2 items with same date (2025-05-18), amount ($178.00), and payee (Nostrana) in ${approvedData.lobbyists[1].name}'s Q2 2025 report.`,
+      relatedReportId: janeQ2Report.id,
+      relatedUserId: approvedData.lobbyists[1].userId,
+    },
+  });
+
+  console.log("   ✓ Created 3 compliance alerts");
+}
+
+// ============================================================================
+// SECTION 7: CREATE CONTRACT EXCEPTIONS (Rule of 3)
 // ============================================================================
 
 async function createContractExceptions() {
@@ -1026,7 +1078,7 @@ async function createContractExceptions() {
 }
 
 // ============================================================================
-// SECTION 7: CREATE AUDIT LOGS (Rule of 3)
+// SECTION 8: CREATE AUDIT LOGS (Rule of 3)
 // ============================================================================
 
 async function createAuditLogs(
@@ -1068,7 +1120,7 @@ async function createAuditLogs(
 }
 
 // ============================================================================
-// SECTION 8: VALIDATION FUNCTION
+// SECTION 9: VALIDATION FUNCTION
 // ============================================================================
 
 async function validateSeedData() {
@@ -1129,6 +1181,7 @@ async function validateSeedData() {
 
     violations: await prisma.violation.count(),
     appeals: await prisma.appeal.count(),
+    complianceAlerts: await prisma.complianceAlert.count(),
     contractExceptions: await prisma.contractException.count(),
     auditLogs: await prisma.auditLog.count(),
   };
@@ -1160,6 +1213,7 @@ async function validateSeedData() {
 
     violations: 3,
     appeals: 9, // 3 violations × 3 appeals
+    complianceAlerts: 3, // 3 demo alerts
     contractExceptions: 3,
     auditLogs: 9, // 3 users × 3 actions
   };
@@ -1203,6 +1257,7 @@ async function main() {
   const approvedData = await createApprovedData(users);
   const pendingData = await createPendingData(users);
   const violations = await createViolationsAndAppeals(approvedData);
+  await createComplianceAlerts(approvedData);
   await createContractExceptions();
   await createAuditLogs(users, approvedData);
   await validateSeedData();
