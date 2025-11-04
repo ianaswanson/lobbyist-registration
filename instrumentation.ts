@@ -1,9 +1,4 @@
 import * as Sentry from "@sentry/nextjs";
-import { PrismaClient } from "@prisma/client";
-import { exec } from "child_process";
-import { promisify } from "util";
-
-const execAsync = promisify(exec);
 
 export async function register() {
   if (process.env.NEXT_RUNTIME === "nodejs") {
@@ -19,6 +14,12 @@ export async function register() {
         console.log(
           "🌱 Local development detected - checking database state..."
         );
+
+        // Dynamic imports to avoid loading in edge runtime
+        const { PrismaClient } = await import("@prisma/client");
+        const { exec } = await import("child_process");
+        const { promisify } = await import("util");
+        const execAsync = promisify(exec);
 
         const prisma = new PrismaClient();
         const userCount = await prisma.user.count();
