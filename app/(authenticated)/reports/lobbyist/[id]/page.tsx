@@ -3,6 +3,7 @@ import { redirect, notFound } from "next/navigation";
 import { prisma } from "@/lib/db";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
+import { ReportAmendmentSection } from "@/components/ReportAmendmentSection";
 
 interface PageProps {
   params: Promise<{
@@ -34,6 +35,23 @@ async function getReport(reportId: string, userId: string) {
             email: true,
           },
         },
+        originalReport: {
+          select: {
+            id: true,
+            amendmentReason: true,
+            submittedAt: true,
+            status: true,
+          },
+        },
+        amendments: {
+          select: {
+            id: true,
+            amendmentReason: true,
+            submittedAt: true,
+            status: true,
+          },
+          take: 1,
+        },
       },
     });
 
@@ -50,7 +68,7 @@ async function getReport(reportId: string, userId: string) {
       },
     });
 
-    return { ...report, lineItems };
+    return { ...report, lineItems, amendedByReport: report.amendments[0] || null };
   } catch (error) {
     console.error("Error fetching lobbyist expense report:", error);
     return null;
@@ -79,6 +97,7 @@ export default async function LobbyistReportDetailPage({ params }: PageProps) {
       APPROVED: "bg-success/20 text-success-foreground",
       REJECTED: "bg-destructive/20 text-red-800",
       NEEDS_CLARIFICATION: "bg-yellow-100 text-yellow-800",
+      AMENDED: "bg-orange-100 text-orange-800",
     };
 
     return (
@@ -135,6 +154,21 @@ export default async function LobbyistReportDetailPage({ params }: PageProps) {
             </div>
             <div>{getStatusBadge(report.status)}</div>
           </div>
+        </div>
+
+        {/* Amendment Section */}
+        <div className="mb-6">
+          <ReportAmendmentSection
+            reportId={report.id}
+            reportType="lobbyist"
+            status={report.status}
+            quarter={report.quarter.toString()}
+            year={report.year}
+            originalReport={report.originalReport}
+            amendedByReport={report.amendedByReport}
+            amendmentReason={report.amendmentReason}
+            canAmend={true}
+          />
         </div>
 
         {/* Summary Cards */}

@@ -3,7 +3,6 @@
 -- This is needed because the table has a polymorphic relationship (reportId can point to either LobbyistExpenseReport or EmployerExpenseReport)
 -- SQLite doesn't support having multiple foreign keys on the same column
 
-PRAGMA foreign_keys=OFF;
 
 -- Create new table without foreign keys
 CREATE TABLE "ExpenseLineItem_new" (
@@ -11,13 +10,13 @@ CREATE TABLE "ExpenseLineItem_new" (
     "reportId" TEXT NOT NULL,
     "reportType" TEXT NOT NULL,
     "officialName" TEXT NOT NULL,
-    "date" DATETIME NOT NULL,
+    "date" TIMESTAMP NOT NULL,
     "payee" TEXT NOT NULL,
     "purpose" TEXT NOT NULL,
     "amount" REAL NOT NULL,
     "isEstimate" BOOLEAN NOT NULL DEFAULT 0,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" DATETIME NOT NULL
+    "createdAt" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP NOT NULL
 );
 
 -- Copy data from old table
@@ -34,5 +33,3 @@ CREATE INDEX "ExpenseLineItem_reportId_idx" ON "ExpenseLineItem"("reportId");
 CREATE INDEX "ExpenseLineItem_officialName_idx" ON "ExpenseLineItem"("officialName");
 CREATE INDEX "ExpenseLineItem_date_idx" ON "ExpenseLineItem"("date");
 
-PRAGMA foreign_key_check;
-PRAGMA foreign_keys=ON;

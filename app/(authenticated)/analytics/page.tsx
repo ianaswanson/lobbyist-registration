@@ -1,12 +1,6 @@
-import { notFound } from "next/navigation";
-import { AnalyticsClient } from "./AnalyticsClient";
-import { FEATURE_FLAGS } from "@/lib/feature-flags";
+import { redirect } from "next/navigation";
 
-export default async function AnalyticsPage() {
-  // Check if feature is enabled
-  if (!FEATURE_FLAGS.ANALYTICS_DASHBOARD) {
-    notFound();
-  }
-
-  return <AnalyticsClient />;
+export default function AnalyticsRedirect() {
+  // Redirect to unified Transparency Dashboard
+  redirect("/transparency");
 }

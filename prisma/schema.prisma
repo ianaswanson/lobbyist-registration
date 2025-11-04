@@ -168,6 +168,7 @@ enum ReportStatus {
   APPROVED              // Admin approved
   REJECTED              // Admin rejected
   NEEDS_CLARIFICATION   // Admin requested more info
+  AMENDED               // Original report that was superseded by an amendment
 }
 
 enum Quarter {
@@ -189,16 +190,23 @@ model LobbyistExpenseReport {
   reviewedBy             String?      // Admin user ID who reviewed
   reviewedAt             DateTime?    // When reviewed
   reviewNotes            String?      // Admin's review notes
+  amendmentReason        String?      // Why this report was amended (if this is an amendment)
+  originalReportId       String?      // Points to original report if this is an amendment
+  amendedByReportId      String?      // Points to amendment if this report was amended
   createdAt              DateTime     @default(now())
   updatedAt              DateTime     @updatedAt
 
-  lobbyist   Lobbyist          @relation(fields: [lobbyistId], references: [id], onDelete: Cascade)
+  lobbyist        Lobbyist                 @relation(fields: [lobbyistId], references: [id], onDelete: Cascade)
+  originalReport  LobbyistExpenseReport?   @relation("LobbyistAmendments", fields: [originalReportId], references: [id], onDelete: Restrict)
+  amendments      LobbyistExpenseReport[]  @relation("LobbyistAmendments")
   // Note: lineItems accessed via application-level query using reportId + reportType
 
   @@unique([lobbyistId, quarter, year])
   @@index([status])
   @@index([dueDate])
   @@index([lobbyistId, year])
+  @@index([originalReportId])
+  @@index([amendedByReportId])
 }
 
 enum ExpenseReportType {
@@ -241,10 +249,15 @@ model EmployerExpenseReport {
   reviewedBy          String?      // Admin user ID who reviewed
   reviewedAt          DateTime?    // When reviewed
   reviewNotes         String?      // Admin's review notes
+  amendmentReason     String?      // Why this report was amended (if this is an amendment)
+  originalReportId    String?      // Points to original report if this is an amendment
+  amendedByReportId   String?      // Points to amendment if this report was amended
   createdAt           DateTime     @default(now())
   updatedAt           DateTime     @updatedAt
 
   employer         Employer                  @relation(fields: [employerId], references: [id], onDelete: Cascade)
+  originalReport   EmployerExpenseReport?    @relation("EmployerAmendments", fields: [originalReportId], references: [id], onDelete: Restrict)
+  amendments       EmployerExpenseReport[]   @relation("EmployerAmendments")
   // Note: lineItems accessed via application-level query using reportId + reportType
   lobbyistPayments EmployerLobbyistPayment[]
 
@@ -252,6 +265,8 @@ model EmployerExpenseReport {
   @@index([status])
   @@index([dueDate])
   @@index([employerId, year])
+  @@index([originalReportId])
+  @@index([amendedByReportId])
 }
 
 // Track how much employer paid to each lobbyist this quarter

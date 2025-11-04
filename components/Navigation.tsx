@@ -117,10 +117,10 @@ const PUBLIC_DATA_ITEMS: NavItem[] = [
     description: "View board member calendars and receipts",
   },
   {
-    label: "Analytics Dashboard",
-    href: "/analytics",
+    label: "Transparency Dashboard",
+    href: "/transparency",
     icon: TrendingUp,
-    description: "View spending trends",
+    description: "View spending trends and insights",
   },
   {
     label: "Contract Exceptions",
@@ -217,7 +217,7 @@ export function Navigation({ user }: NavigationProps) {
 
   // Filter public data items by feature flags
   const publicDataItems = PUBLIC_DATA_ITEMS.filter((item) => {
-    if (item.href === "/analytics" && !FEATURE_FLAGS.ANALYTICS_DASHBOARD) {
+    if (item.href === "/transparency" && !FEATURE_FLAGS.ANALYTICS_DASHBOARD) {
       return false;
     }
     if (

@@ -5,8 +5,8 @@ CREATE TABLE "User" (
     "name" TEXT NOT NULL,
     "role" TEXT NOT NULL DEFAULT 'PUBLIC',
     "password" TEXT NOT NULL,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" DATETIME NOT NULL
+    "createdAt" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP NOT NULL
 );
 
 -- CreateTable
@@ -17,11 +17,11 @@ CREATE TABLE "Lobbyist" (
     "email" TEXT NOT NULL,
     "phone" TEXT NOT NULL,
     "address" TEXT NOT NULL,
-    "registrationDate" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "registrationDate" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "status" TEXT NOT NULL DEFAULT 'DRAFT',
     "hoursCurrentQuarter" REAL NOT NULL DEFAULT 0,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" DATETIME NOT NULL,
+    "createdAt" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP NOT NULL,
     CONSTRAINT "Lobbyist_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
@@ -34,8 +34,8 @@ CREATE TABLE "Employer" (
     "phone" TEXT NOT NULL,
     "address" TEXT NOT NULL,
     "businessDescription" TEXT NOT NULL,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" DATETIME NOT NULL,
+    "createdAt" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP NOT NULL,
     CONSTRAINT "Employer_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User" ("id") ON DELETE SET NULL ON UPDATE CASCADE
 );
 
@@ -45,12 +45,12 @@ CREATE TABLE "LobbyistEmployer" (
     "lobbyistId" TEXT NOT NULL,
     "employerId" TEXT NOT NULL,
     "authorizationDocumentUrl" TEXT,
-    "authorizationDate" DATETIME,
-    "startDate" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "endDate" DATETIME,
+    "authorizationDate" TIMESTAMP,
+    "startDate" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "endDate" TIMESTAMP,
     "subjectsOfInterest" TEXT NOT NULL,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" DATETIME NOT NULL,
+    "createdAt" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP NOT NULL,
     CONSTRAINT "LobbyistEmployer_lobbyistId_fkey" FOREIGN KEY ("lobbyistId") REFERENCES "Lobbyist" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT "LobbyistEmployer_employerId_fkey" FOREIGN KEY ("employerId") REFERENCES "Employer" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
@@ -63,10 +63,10 @@ CREATE TABLE "LobbyistExpenseReport" (
     "year" INTEGER NOT NULL,
     "totalFoodEntertainment" REAL NOT NULL DEFAULT 0,
     "status" TEXT NOT NULL DEFAULT 'DRAFT',
-    "submittedAt" DATETIME,
-    "dueDate" DATETIME NOT NULL,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" DATETIME NOT NULL,
+    "submittedAt" TIMESTAMP,
+    "dueDate" TIMESTAMP NOT NULL,
+    "createdAt" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP NOT NULL,
     CONSTRAINT "LobbyistExpenseReport_lobbyistId_fkey" FOREIGN KEY ("lobbyistId") REFERENCES "Lobbyist" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
@@ -76,15 +76,13 @@ CREATE TABLE "ExpenseLineItem" (
     "reportId" TEXT NOT NULL,
     "reportType" TEXT NOT NULL,
     "officialName" TEXT NOT NULL,
-    "date" DATETIME NOT NULL,
+    "date" TIMESTAMP NOT NULL,
     "payee" TEXT NOT NULL,
     "purpose" TEXT NOT NULL,
     "amount" REAL NOT NULL,
     "isEstimate" BOOLEAN NOT NULL DEFAULT false,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" DATETIME NOT NULL,
-    CONSTRAINT "ExpenseLineItem_reportId_fkey" FOREIGN KEY ("reportId") REFERENCES "LobbyistExpenseReport" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT "ExpenseLineItem_reportId_fkey" FOREIGN KEY ("reportId") REFERENCES "EmployerExpenseReport" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+    "createdAt" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP NOT NULL
 );
 
 -- CreateTable
@@ -95,10 +93,10 @@ CREATE TABLE "EmployerExpenseReport" (
     "year" INTEGER NOT NULL,
     "totalLobbyingSpend" REAL NOT NULL DEFAULT 0,
     "status" TEXT NOT NULL DEFAULT 'DRAFT',
-    "submittedAt" DATETIME,
-    "dueDate" DATETIME NOT NULL,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" DATETIME NOT NULL,
+    "submittedAt" TIMESTAMP,
+    "dueDate" TIMESTAMP NOT NULL,
+    "createdAt" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP NOT NULL,
     CONSTRAINT "EmployerExpenseReport_employerId_fkey" FOREIGN KEY ("employerId") REFERENCES "Employer" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
@@ -108,8 +106,8 @@ CREATE TABLE "EmployerLobbyistPayment" (
     "employerReportId" TEXT NOT NULL,
     "lobbyistId" TEXT NOT NULL,
     "amountPaid" REAL NOT NULL,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" DATETIME NOT NULL,
+    "createdAt" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP NOT NULL,
     CONSTRAINT "EmployerLobbyistPayment_employerReportId_fkey" FOREIGN KEY ("employerReportId") REFERENCES "EmployerExpenseReport" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT "EmployerLobbyistPayment_lobbyistId_fkey" FOREIGN KEY ("lobbyistId") REFERENCES "Lobbyist" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
@@ -120,11 +118,11 @@ CREATE TABLE "BoardMember" (
     "userId" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "district" TEXT,
-    "termStart" DATETIME NOT NULL,
-    "termEnd" DATETIME,
+    "termStart" TIMESTAMP NOT NULL,
+    "termEnd" TIMESTAMP,
     "isActive" BOOLEAN NOT NULL DEFAULT true,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" DATETIME NOT NULL,
+    "createdAt" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP NOT NULL,
     CONSTRAINT "BoardMember_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
@@ -133,13 +131,13 @@ CREATE TABLE "BoardCalendarEntry" (
     "id" TEXT NOT NULL PRIMARY KEY,
     "boardMemberId" TEXT NOT NULL,
     "eventTitle" TEXT NOT NULL,
-    "eventDate" DATETIME NOT NULL,
+    "eventDate" TIMESTAMP NOT NULL,
     "eventTime" TEXT,
     "participantsList" TEXT NOT NULL,
     "quarter" TEXT NOT NULL,
     "year" INTEGER NOT NULL,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" DATETIME NOT NULL,
+    "createdAt" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP NOT NULL,
     CONSTRAINT "BoardCalendarEntry_boardMemberId_fkey" FOREIGN KEY ("boardMemberId") REFERENCES "BoardMember" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
@@ -149,13 +147,13 @@ CREATE TABLE "BoardLobbyingReceipt" (
     "boardMemberId" TEXT NOT NULL,
     "lobbyistId" TEXT NOT NULL,
     "amount" REAL NOT NULL,
-    "date" DATETIME NOT NULL,
+    "date" TIMESTAMP NOT NULL,
     "payee" TEXT NOT NULL,
     "purpose" TEXT NOT NULL,
     "quarter" TEXT NOT NULL,
     "year" INTEGER NOT NULL,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" DATETIME NOT NULL,
+    "createdAt" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP NOT NULL,
     CONSTRAINT "BoardLobbyingReceipt_boardMemberId_fkey" FOREIGN KEY ("boardMemberId") REFERENCES "BoardMember" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT "BoardLobbyingReceipt_lobbyistId_fkey" FOREIGN KEY ("lobbyistId") REFERENCES "Lobbyist" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
@@ -169,28 +167,24 @@ CREATE TABLE "Violation" (
     "description" TEXT NOT NULL,
     "fineAmount" REAL NOT NULL DEFAULT 0,
     "status" TEXT NOT NULL DEFAULT 'PENDING',
-    "issuedDate" DATETIME,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" DATETIME NOT NULL,
-    CONSTRAINT "Violation_entityId_fkey" FOREIGN KEY ("entityId") REFERENCES "Lobbyist" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT "Violation_entityId_fkey" FOREIGN KEY ("entityId") REFERENCES "Employer" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT "Violation_entityId_fkey" FOREIGN KEY ("entityId") REFERENCES "LobbyistExpenseReport" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT "Violation_entityId_fkey" FOREIGN KEY ("entityId") REFERENCES "EmployerExpenseReport" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+    "issuedDate" TIMESTAMP,
+    "createdAt" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP NOT NULL
 );
 
 -- CreateTable
 CREATE TABLE "Appeal" (
     "id" TEXT NOT NULL PRIMARY KEY,
     "violationId" TEXT NOT NULL,
-    "submittedDate" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "appealDeadline" DATETIME NOT NULL,
+    "submittedDate" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "appealDeadline" TIMESTAMP NOT NULL,
     "reason" TEXT NOT NULL,
     "status" TEXT NOT NULL DEFAULT 'PENDING',
-    "hearingDate" DATETIME,
+    "hearingDate" TIMESTAMP,
     "decision" TEXT,
-    "decidedAt" DATETIME,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" DATETIME NOT NULL,
+    "decidedAt" TIMESTAMP,
+    "createdAt" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP NOT NULL,
     CONSTRAINT "Appeal_violationId_fkey" FOREIGN KEY ("violationId") REFERENCES "Violation" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
@@ -202,10 +196,10 @@ CREATE TABLE "ContractException" (
     "contractDescription" TEXT NOT NULL,
     "justification" TEXT NOT NULL,
     "approvedBy" TEXT NOT NULL,
-    "approvedDate" DATETIME NOT NULL,
-    "publiclyPostedDate" DATETIME,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" DATETIME NOT NULL
+    "approvedDate" TIMESTAMP NOT NULL,
+    "publiclyPostedDate" TIMESTAMP,
+    "createdAt" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP NOT NULL
 );
 
 -- CreateTable
@@ -217,7 +211,7 @@ CREATE TABLE "AuditLog" (
     "entityId" TEXT,
     "changesJson" TEXT,
     "ipAddress" TEXT,
-    "timestamp" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "timestamp" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT "AuditLog_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
