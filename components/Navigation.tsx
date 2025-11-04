@@ -30,6 +30,7 @@ import {
   Clipboard,
   Settings,
   Users,
+  User,
 } from "lucide-react";
 
 interface NavigationProps {
@@ -505,6 +506,15 @@ export function Navigation({ user }: NavigationProps) {
                       >
                         <Home className="h-4 w-4" />
                         <span>Dashboard</span>
+                      </Link>
+
+                      <Link
+                        href="/profile"
+                        onClick={() => setIsUserMenuOpen(false)}
+                        className="flex items-center space-x-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      >
+                        <User className="h-4 w-4" />
+                        <span>Profile Settings</span>
                       </Link>
 
                       {/* Update Registration (lobbyists only) */}
