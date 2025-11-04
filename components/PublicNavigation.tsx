@@ -43,9 +43,9 @@ const PUBLIC_DATA_ITEMS: NavItem[] = [
   },
   {
     label: "Analytics Dashboard",
-    href: "/analytics",
+    href: "/transparency/analytics",
     icon: TrendingUp,
-    description: "View spending trends",
+    description: "View spending trends and charts",
   },
   {
     label: "Contract Exceptions",
