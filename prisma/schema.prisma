@@ -1,6 +1,3 @@
-// Lobbyist Registration System - Database Schema
-// Based on Multnomah County Government Accountability Ordinance
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -10,317 +7,53 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// ============================================================================
-// USER MANAGEMENT
-// ============================================================================
+model Appeal {
+  id             String       @id
+  violationId    String
+  submittedDate  DateTime     @default(now())
+  appealDeadline DateTime
+  reason         String
+  status         AppealStatus @default(PENDING)
+  hearingDate    DateTime?
+  decision       String?
+  decidedAt      DateTime?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime
+  Violation      Violation    @relation(fields: [violationId], references: [id], onDelete: Cascade)
 
-enum UserRole {
-  PUBLIC         // Read-only access to transparency data
-  LOBBYIST       // Can register and submit reports
-  EMPLOYER       // Can authorize lobbyists and submit reports
-  BOARD_MEMBER   // Can post calendars and receipts
-  ADMIN          // Full system access
-}
-
-enum UserStatus {
-  ACTIVE    // User account is active and can login
-  INACTIVE  // User account is deactivated (soft delete)
-  SUSPENDED // User account is temporarily suspended
-}
-
-model User {
-  id                    String     @id @default(uuid())
-  email                 String     @unique
-  name                  String
-  role                  UserRole   @default(PUBLIC)
-  password              String     // Hashed password
-  status                UserStatus @default(ACTIVE) // User account status
-  passwordResetRequired Boolean    @default(false) // Force password change on next login
-  lastLoginAt           DateTime? // Track last successful login
-  createdAt             DateTime   @default(now())
-  updatedAt             DateTime   @updatedAt
-
-  lobbyist         Lobbyist?
-  employer         Employer?
-  boardMember      BoardMember?
-  auditLogs        AuditLog[]
-  userAuditLogs    UserAuditLog[] @relation("UserAuditLogs")
-  adminActions     UserAuditLog[] @relation("AdminActions")
-
-  @@index([email])
-  @@index([role])
+  @@index([hearingDate])
   @@index([status])
+  @@index([violationId])
 }
 
-// ============================================================================
-// LOBBYIST REGISTRATION
-// ============================================================================
+model AuditLog {
+  id          String   @id
+  userId      String
+  action      String
+  entityType  String
+  entityId    String?
+  changesJson String?
+  ipAddress   String?
+  timestamp   DateTime @default(now())
+  User        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-enum RegistrationStatus {
-  DRAFT        // In progress, not submitted
-  PENDING      // Submitted, awaiting review
-  APPROVED     // Active registration
-  REJECTED     // Rejected by admin
-  INACTIVE     // No longer active
-}
-
-model Lobbyist {
-  id                      String             @id @default(uuid())
-  userId                  String             @unique
-  name                    String
-  email                   String
-  phone                   String
-  address                 String
-  registrationDate        DateTime           @default(now())
-  status                  RegistrationStatus @default(DRAFT)
-  hoursCurrentQuarter     Float              @default(0) // Track hours to determine if registration required
-  thresholdExceededDate   DateTime?          // When 10-hour threshold was first exceeded
-  registrationDeadline    DateTime?          // 3 working days after threshold exceeded
-  reviewedBy              String?            // Admin user ID who reviewed
-  reviewedAt              DateTime?          // When reviewed
-  rejectionReason         String?            // Why rejected (if status = REJECTED)
-  createdAt               DateTime           @default(now())
-  updatedAt               DateTime           @updatedAt
-
-  user             User                     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  employers        LobbyistEmployer[]
-  expenseReports   LobbyistExpenseReport[]
-  employerPayments EmployerLobbyistPayment[]
-  boardReceipts    BoardLobbyingReceipt[]
-  hourLogs         HourLog[]
-
-  @@index([status])
-  @@index([email])
-  @@index([registrationDate])
-}
-
-model Employer {
-  id                  String   @id @default(uuid())
-  userId              String?  @unique // Optional if employer doesn't have login
-  name                String
-  email               String
-  phone               String
-  address             String
-  businessDescription String
-  createdAt           DateTime @default(now())
-  updatedAt           DateTime @updatedAt
-
-  user           User?                   @relation(fields: [userId], references: [id], onDelete: SetNull)
-  lobbyists      LobbyistEmployer[]
-  expenseReports EmployerExpenseReport[]
-
-  @@index([email])
-  @@index([name])
-}
-
-// Many-to-many relationship: A lobbyist can work for multiple employers
-model LobbyistEmployer {
-  id                       String    @id @default(uuid())
-  lobbyistId               String
-  employerId               String
-  authorizationDocumentUrl String? // URL to uploaded PDF/document
-  authorizationDate        DateTime?
-  startDate                DateTime  @default(now())
-  endDate                  DateTime? // Null if still active
-  subjectsOfInterest       String // JSON or comma-separated list
-  createdAt                DateTime  @default(now())
-  updatedAt                DateTime  @updatedAt
-
-  lobbyist Lobbyist @relation(fields: [lobbyistId], references: [id], onDelete: Cascade)
-  employer Employer @relation(fields: [employerId], references: [id], onDelete: Cascade)
-
-  @@unique([lobbyistId, employerId, startDate])
-  @@index([lobbyistId])
-  @@index([employerId])
-}
-
-// ============================================================================
-// HOUR TRACKING (§3.802 - 10-hour threshold)
-// ============================================================================
-
-model HourLog {
-  id           String   @id @default(uuid())
-  lobbyistId   String
-  activityDate DateTime // When lobbying activity occurred
-  hours        Float    // Hours spent lobbying (excluding travel time)
-  description  String   // Description of lobbying activity
-  quarter      Quarter  // Which quarter this belongs to
-  year         Int
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-
-  lobbyist Lobbyist @relation(fields: [lobbyistId], references: [id], onDelete: Cascade)
-
-  @@index([lobbyistId])
-  @@index([quarter, year])
-  @@index([activityDate])
-}
-
-// ============================================================================
-// QUARTERLY REPORTING
-// ============================================================================
-
-enum ReportStatus {
-  DRAFT                 // In progress
-  SUBMITTED             // Submitted on time
-  LATE                  // Submitted after deadline
-  OVERDUE               // Not yet submitted, past deadline
-  APPROVED              // Admin approved
-  REJECTED              // Admin rejected
-  NEEDS_CLARIFICATION   // Admin requested more info
-  AMENDED               // Original report that was superseded by an amendment
-}
-
-enum Quarter {
-  Q1 // Jan 1 - Mar 31 (due April 15)
-  Q2 // Apr 1 - Jun 30 (due July 15)
-  Q3 // Jul 1 - Sep 30 (due October 15)
-  Q4 // Oct 1 - Dec 31 (due January 15)
-}
-
-model LobbyistExpenseReport {
-  id                     String       @id @default(uuid())
-  lobbyistId             String
-  quarter                Quarter
-  year                   Int
-  totalFoodEntertainment Float        @default(0) // Total spent on food/refreshments/entertainment
-  status                 ReportStatus @default(DRAFT)
-  submittedAt            DateTime?
-  dueDate                DateTime
-  reviewedBy             String?      // Admin user ID who reviewed
-  reviewedAt             DateTime?    // When reviewed
-  reviewNotes            String?      // Admin's review notes
-  amendmentReason        String?      // Why this report was amended (if this is an amendment)
-  originalReportId       String?      // Points to original report if this is an amendment
-  amendedByReportId      String?      // Points to amendment if this report was amended
-  createdAt              DateTime     @default(now())
-  updatedAt              DateTime     @updatedAt
-
-  lobbyist        Lobbyist                 @relation(fields: [lobbyistId], references: [id], onDelete: Cascade)
-  originalReport  LobbyistExpenseReport?   @relation("LobbyistAmendments", fields: [originalReportId], references: [id], onDelete: Restrict)
-  amendments      LobbyistExpenseReport[]  @relation("LobbyistAmendments")
-  // Note: lineItems accessed via application-level query using reportId + reportType
-
-  @@unique([lobbyistId, quarter, year])
-  @@index([status])
-  @@index([dueDate])
-  @@index([lobbyistId, year])
-  @@index([originalReportId])
-  @@index([amendedByReportId])
-}
-
-enum ExpenseReportType {
-  LOBBYIST  // From lobbyist expense report
-  EMPLOYER  // From employer expense report
-}
-
-model ExpenseLineItem {
-  id           String            @id @default(uuid())
-  reportId     String // Can be LobbyistExpenseReport or EmployerExpenseReport
-  reportType   ExpenseReportType
-  officialName String // Name of public official
-  date         DateTime
-  payee        String // Who received the money
-  purpose      String // Description of expense
-  amount       Float
-  isEstimate   Boolean           @default(false) // True if exact amount unknown
-  createdAt    DateTime          @default(now())
-  updatedAt    DateTime          @updatedAt
-
-  // NOTE: Polymorphic relationship managed at application level
-  // reportId can point to either LobbyistExpenseReport.id OR EmployerExpenseReport.id
-  // reportType indicates which table to join with
-  // No Prisma relations defined = No FK constraints in database
-
-  @@index([reportId])
-  @@index([officialName])
-  @@index([date])
-}
-
-model EmployerExpenseReport {
-  id                  String       @id @default(uuid())
-  employerId          String
-  quarter             Quarter
-  year                Int
-  totalLobbyingSpend  Float        @default(0) // Total spent on lobbying (excluding lobbyist living/travel)
-  status              ReportStatus @default(DRAFT)
-  submittedAt         DateTime?
-  dueDate             DateTime
-  reviewedBy          String?      // Admin user ID who reviewed
-  reviewedAt          DateTime?    // When reviewed
-  reviewNotes         String?      // Admin's review notes
-  amendmentReason     String?      // Why this report was amended (if this is an amendment)
-  originalReportId    String?      // Points to original report if this is an amendment
-  amendedByReportId   String?      // Points to amendment if this report was amended
-  createdAt           DateTime     @default(now())
-  updatedAt           DateTime     @updatedAt
-
-  employer         Employer                  @relation(fields: [employerId], references: [id], onDelete: Cascade)
-  originalReport   EmployerExpenseReport?    @relation("EmployerAmendments", fields: [originalReportId], references: [id], onDelete: Restrict)
-  amendments       EmployerExpenseReport[]   @relation("EmployerAmendments")
-  // Note: lineItems accessed via application-level query using reportId + reportType
-  lobbyistPayments EmployerLobbyistPayment[]
-
-  @@unique([employerId, quarter, year])
-  @@index([status])
-  @@index([dueDate])
-  @@index([employerId, year])
-  @@index([originalReportId])
-  @@index([amendedByReportId])
-}
-
-// Track how much employer paid to each lobbyist this quarter
-model EmployerLobbyistPayment {
-  id               String @id @default(uuid())
-  employerReportId String
-  lobbyistId       String
-  amountPaid       Float
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
-
-  employerReport EmployerExpenseReport @relation(fields: [employerReportId], references: [id], onDelete: Cascade)
-  lobbyist       Lobbyist              @relation(fields: [lobbyistId], references: [id], onDelete: Cascade)
-
-  @@unique([employerReportId, lobbyistId])
-  @@index([employerReportId])
-  @@index([lobbyistId])
-}
-
-// ============================================================================
-// BOARD MEMBER TRACKING
-// ============================================================================
-
-model BoardMember {
-  id        String    @id @default(uuid())
-  userId    String    @unique
-  name      String
-  district  String? // Which district they represent
-  termStart DateTime
-  termEnd   DateTime?
-  isActive  Boolean   @default(true)
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-
-  user            User                    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  calendarEntries BoardCalendarEntry[]
-  lobbyingReceipts BoardLobbyingReceipt[]
-
-  @@index([isActive])
+  @@index([entityType, entityId])
+  @@index([timestamp])
+  @@index([userId])
 }
 
 model BoardCalendarEntry {
-  id              String   @id @default(uuid())
-  boardMemberId   String
-  eventTitle      String
-  eventDate       DateTime
-  eventTime       String? // Time as string (e.g., "2:00 PM - 3:30 PM")
-  participantsList String // JSON or text list of primary participants
-  quarter         Quarter
-  year            Int
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-
-  boardMember BoardMember @relation(fields: [boardMemberId], references: [id], onDelete: Cascade)
+  id               String      @id
+  boardMemberId    String
+  eventTitle       String
+  eventDate        DateTime
+  eventTime        String?
+  participantsList String
+  quarter          Quarter
+  year             Int
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime
+  BoardMember      BoardMember @relation(fields: [boardMemberId], references: [id], onDelete: Cascade)
 
   @@index([boardMemberId])
   @@index([eventDate])
@@ -328,7 +61,7 @@ model BoardCalendarEntry {
 }
 
 model BoardLobbyingReceipt {
-  id            String   @id @default(uuid())
+  id            String      @id
   boardMemberId String
   lobbyistId    String
   amount        Float
@@ -337,20 +70,324 @@ model BoardLobbyingReceipt {
   purpose       String
   quarter       Quarter
   year          Int
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-
-  boardMember BoardMember @relation(fields: [boardMemberId], references: [id], onDelete: Cascade)
-  lobbyist    Lobbyist    @relation(fields: [lobbyistId], references: [id], onDelete: Cascade)
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime
+  BoardMember   BoardMember @relation(fields: [boardMemberId], references: [id], onDelete: Cascade)
+  Lobbyist      Lobbyist    @relation(fields: [lobbyistId], references: [id], onDelete: Cascade)
 
   @@index([boardMemberId])
   @@index([lobbyistId])
   @@index([quarter, year])
 }
 
-// ============================================================================
-// COMPLIANCE & ENFORCEMENT
-// ============================================================================
+model BoardMember {
+  id                   String                 @id
+  userId               String                 @unique
+  name                 String
+  district             String?
+  termStart            DateTime
+  termEnd              DateTime?
+  isActive             Boolean                @default(true)
+  createdAt            DateTime               @default(now())
+  updatedAt            DateTime
+  BoardCalendarEntry   BoardCalendarEntry[]
+  BoardLobbyingReceipt BoardLobbyingReceipt[]
+  User                 User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([isActive])
+}
+
+model ComplianceAlert {
+  id                   String        @id
+  type                 AlertType
+  severity             AlertSeverity
+  message              String
+  relatedReportId      String?
+  relatedUserId        String?
+  reviewedAt           DateTime?
+  reviewedBy           String?
+  createdAt            DateTime      @default(now())
+  updatedAt            DateTime
+  resultingViolationId String?
+
+  @@index([createdAt])
+  @@index([resultingViolationId])
+  @@index([reviewedAt])
+  @@index([severity])
+  @@index([type])
+}
+
+model ContractException {
+  id                  String    @id
+  formerOfficialId    String
+  formerOfficialName  String
+  contractDescription String
+  justification       String
+  approvedBy          String
+  approvedDate        DateTime
+  publiclyPostedDate  DateTime?
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime
+
+  @@index([approvedDate])
+  @@index([formerOfficialId])
+}
+
+model Employer {
+  id                    String                  @id
+  userId                String?                 @unique
+  name                  String
+  email                 String
+  phone                 String
+  address               String
+  businessDescription   String
+  createdAt             DateTime                @default(now())
+  updatedAt             DateTime
+  User                  User?                   @relation(fields: [userId], references: [id])
+  EmployerExpenseReport EmployerExpenseReport[]
+  LobbyistEmployer      LobbyistEmployer[]
+
+  @@index([email])
+  @@index([name])
+}
+
+model EmployerExpenseReport {
+  id                          String                    @id
+  employerId                  String
+  quarter                     Quarter
+  year                        Int
+  totalLobbyingSpend          Float                     @default(0)
+  status                      ReportStatus              @default(DRAFT)
+  submittedAt                 DateTime?
+  dueDate                     DateTime
+  reviewedBy                  String?
+  reviewedAt                  DateTime?
+  reviewNotes                 String?
+  createdAt                   DateTime                  @default(now())
+  updatedAt                   DateTime
+  amendmentReason             String?
+  originalReportId            String?
+  amendedByReportId           String?
+  Employer                    Employer                  @relation(fields: [employerId], references: [id], onDelete: Cascade)
+  EmployerExpenseReport       EmployerExpenseReport?    @relation("EmployerExpenseReportToEmployerExpenseReport", fields: [originalReportId], references: [id], onDelete: Restrict)
+  other_EmployerExpenseReport EmployerExpenseReport[]   @relation("EmployerExpenseReportToEmployerExpenseReport")
+  EmployerLobbyistPayment     EmployerLobbyistPayment[]
+
+  @@index([amendedByReportId])
+  @@index([dueDate])
+  @@index([employerId, year])
+  @@index([originalReportId])
+  @@index([status])
+}
+
+model EmployerLobbyistPayment {
+  id                    String                @id
+  employerReportId      String
+  lobbyistId            String
+  amountPaid            Float
+  createdAt             DateTime              @default(now())
+  updatedAt             DateTime
+  EmployerExpenseReport EmployerExpenseReport @relation(fields: [employerReportId], references: [id], onDelete: Cascade)
+  Lobbyist              Lobbyist              @relation(fields: [lobbyistId], references: [id], onDelete: Cascade)
+
+  @@unique([employerReportId, lobbyistId])
+  @@index([employerReportId])
+  @@index([lobbyistId])
+}
+
+model ExpenseLineItem {
+  id           String            @id
+  reportId     String
+  reportType   ExpenseReportType
+  officialName String
+  date         DateTime
+  payee        String
+  purpose      String
+  amount       Float
+  isEstimate   Boolean           @default(false)
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime
+
+  @@index([date])
+  @@index([officialName])
+  @@index([reportId])
+}
+
+model HourLog {
+  id           String   @id
+  lobbyistId   String
+  activityDate DateTime
+  hours        Float
+  description  String
+  quarter      Quarter
+  year         Int
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime
+  Lobbyist     Lobbyist @relation(fields: [lobbyistId], references: [id], onDelete: Cascade)
+
+  @@index([activityDate])
+  @@index([lobbyistId])
+  @@index([quarter, year])
+}
+
+model Lobbyist {
+  id                      String                    @id
+  userId                  String                    @unique
+  name                    String
+  email                   String
+  phone                   String
+  address                 String
+  registrationDate        DateTime                  @default(now())
+  status                  RegistrationStatus        @default(DRAFT)
+  hoursCurrentQuarter     Float                     @default(0)
+  thresholdExceededDate   DateTime?
+  registrationDeadline    DateTime?
+  reviewedBy              String?
+  reviewedAt              DateTime?
+  rejectionReason         String?
+  createdAt               DateTime                  @default(now())
+  updatedAt               DateTime
+  BoardLobbyingReceipt    BoardLobbyingReceipt[]
+  EmployerLobbyistPayment EmployerLobbyistPayment[]
+  HourLog                 HourLog[]
+  User                    User                      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  LobbyistEmployer        LobbyistEmployer[]
+  LobbyistExpenseReport   LobbyistExpenseReport[]
+
+  @@index([email])
+  @@index([registrationDate])
+  @@index([status])
+}
+
+model LobbyistEmployer {
+  id                       String    @id
+  lobbyistId               String
+  employerId               String
+  authorizationDocumentUrl String?
+  authorizationDate        DateTime?
+  startDate                DateTime  @default(now())
+  endDate                  DateTime?
+  subjectsOfInterest       String
+  createdAt                DateTime  @default(now())
+  updatedAt                DateTime
+  Employer                 Employer  @relation(fields: [employerId], references: [id], onDelete: Cascade)
+  Lobbyist                 Lobbyist  @relation(fields: [lobbyistId], references: [id], onDelete: Cascade)
+
+  @@unique([lobbyistId, employerId, startDate])
+  @@index([employerId])
+  @@index([lobbyistId])
+}
+
+model LobbyistExpenseReport {
+  id                          String                  @id
+  lobbyistId                  String
+  quarter                     Quarter
+  year                        Int
+  totalFoodEntertainment      Float                   @default(0)
+  status                      ReportStatus            @default(DRAFT)
+  submittedAt                 DateTime?
+  dueDate                     DateTime
+  reviewedBy                  String?
+  reviewedAt                  DateTime?
+  reviewNotes                 String?
+  createdAt                   DateTime                @default(now())
+  updatedAt                   DateTime
+  amendmentReason             String?
+  originalReportId            String?
+  amendedByReportId           String?
+  Lobbyist                    Lobbyist                @relation(fields: [lobbyistId], references: [id], onDelete: Cascade)
+  LobbyistExpenseReport       LobbyistExpenseReport?  @relation("LobbyistExpenseReportToLobbyistExpenseReport", fields: [originalReportId], references: [id], onDelete: Restrict)
+  other_LobbyistExpenseReport LobbyistExpenseReport[] @relation("LobbyistExpenseReportToLobbyistExpenseReport")
+
+  @@index([amendedByReportId])
+  @@index([dueDate])
+  @@index([lobbyistId, year])
+  @@index([originalReportId])
+  @@index([status])
+}
+
+model User {
+  id                                      String         @id
+  email                                   String         @unique
+  name                                    String
+  role                                    UserRole       @default(PUBLIC)
+  password                                String
+  status                                  UserStatus     @default(ACTIVE)
+  passwordResetRequired                   Boolean        @default(false)
+  lastLoginAt                             DateTime?
+  createdAt                               DateTime       @default(now())
+  updatedAt                               DateTime
+  AuditLog                                AuditLog[]
+  BoardMember                             BoardMember?
+  Employer                                Employer?
+  Lobbyist                                Lobbyist?
+  UserAuditLog_UserAuditLog_adminIdToUser UserAuditLog[] @relation("UserAuditLog_adminIdToUser")
+  UserAuditLog_UserAuditLog_userIdToUser  UserAuditLog[] @relation("UserAuditLog_userIdToUser")
+
+  @@index([email])
+  @@index([role])
+  @@index([status])
+}
+
+model UserAuditLog {
+  id                              String   @id
+  userId                          String
+  adminId                         String
+  action                          String
+  changes                         Json?
+  ipAddress                       String?
+  createdAt                       DateTime @default(now())
+  User_UserAuditLog_adminIdToUser User     @relation("UserAuditLog_adminIdToUser", fields: [adminId], references: [id], onDelete: Cascade)
+  User_UserAuditLog_userIdToUser  User     @relation("UserAuditLog_userIdToUser", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([adminId])
+  @@index([createdAt])
+  @@index([userId])
+}
+
+model Violation {
+  id                   String          @id
+  entityType           EntityType
+  entityId             String
+  violationType        ViolationType
+  description          String
+  fineAmount           Float           @default(0)
+  status               ViolationStatus @default(PENDING)
+  issuedDate           DateTime?
+  isFirstTimeViolation Boolean         @default(false)
+  resolutionNotes      String?
+  resolutionDate       DateTime?
+  createdAt            DateTime        @default(now())
+  updatedAt            DateTime
+  sourceAlertId        String?
+  Appeal               Appeal[]
+
+  @@index([entityType, entityId])
+  @@index([issuedDate])
+  @@index([sourceAlertId])
+  @@index([status])
+}
+
+enum AlertSeverity {
+  HIGH
+  MEDIUM
+  LOW
+}
+
+enum AlertType {
+  UNUSUAL_SPENDING
+  DUPLICATE_ENTRY
+  OVERDUE_REPORT
+  MISSING_FIELDS
+  ROUND_NUMBER_PATTERN
+  FIRST_TIME_FILER
+}
+
+enum AppealStatus {
+  PENDING
+  SCHEDULED
+  DECIDED
+}
 
 enum EntityType {
   LOBBYIST
@@ -360,173 +397,67 @@ enum EntityType {
   BOARD_MEMBER
 }
 
-enum ViolationType {
-  LATE_REGISTRATION     // Registered more than 3 days after exceeding 10 hours
-  LATE_REPORT          // Report submitted after deadline
-  MISSING_REPORT       // Report not submitted
-  FALSE_STATEMENT      // False or misleading information
-  PROHIBITED_CONDUCT   // Violation of prohibited conduct rules
-  MISSING_AUTHORIZATION // Lobbyist operating without proper authorization
-  OTHER
+enum ExpenseReportType {
+  LOBBYIST
+  EMPLOYER
+}
+
+enum Quarter {
+  Q1
+  Q2
+  Q3
+  Q4
+}
+
+enum RegistrationStatus {
+  DRAFT
+  PENDING
+  APPROVED
+  REJECTED
+  INACTIVE
+}
+
+enum ReportStatus {
+  DRAFT
+  SUBMITTED
+  LATE
+  OVERDUE
+  APPROVED
+  REJECTED
+  NEEDS_CLARIFICATION
+  AMENDED
+}
+
+enum UserRole {
+  PUBLIC
+  LOBBYIST
+  EMPLOYER
+  BOARD_MEMBER
+  ADMIN
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
 }
 
 enum ViolationStatus {
-  PENDING    // Identified but not yet processed
-  ISSUED     // Fine issued
-  APPEALED   // Under appeal
-  UPHELD     // Appeal denied, fine stands
-  OVERTURNED // Appeal successful, fine removed
-  PAID       // Fine has been paid
-  WAIVED     // Fine waived (e.g., first-time education)
+  PENDING
+  ISSUED
+  APPEALED
+  UPHELD
+  OVERTURNED
+  PAID
+  WAIVED
 }
 
-model Violation {
-  id                   String          @id @default(uuid())
-  entityType           EntityType
-  entityId             String // ID of lobbyist, employer, or report
-  violationType        ViolationType
-  description          String
-  fineAmount           Float           @default(0) // Up to $500
-  status               ViolationStatus @default(PENDING)
-  issuedDate           DateTime?
-  isFirstTimeViolation Boolean         @default(false) // True if educational letter sent instead of fine
-  sourceAlertId        String?         // Link to ComplianceAlert that triggered this violation
-  resolutionNotes      String? // Notes about how violation was resolved
-  resolutionDate       DateTime? // When violation was resolved (paid, waived, etc.)
-  createdAt            DateTime        @default(now())
-  updatedAt            DateTime        @updatedAt
-
-  // Relations - polymorphic relationship, no foreign keys
-  // entityId can reference Lobbyist, Employer, LobbyistExpenseReport, or EmployerExpenseReport
-  // based on entityType, but we don't use Prisma foreign keys for polymorphic relations
-  appeals         Appeal[]
-
-  @@index([entityType, entityId])
-  @@index([status])
-  @@index([issuedDate])
-  @@index([sourceAlertId]) // Query violations created from alerts
-}
-
-enum AppealStatus {
-  PENDING    // Submitted, awaiting hearing
-  SCHEDULED  // Hearing scheduled
-  DECIDED    // Decision made
-}
-
-model Appeal {
-  id              String       @id @default(uuid())
-  violationId     String
-  submittedDate   DateTime     @default(now())
-  appealDeadline  DateTime // Must be within 30 days of fine notice
-  reason          String // Why they're appealing
-  status          AppealStatus @default(PENDING)
-  hearingDate     DateTime?
-  decision        String? // Admin's decision text
-  decidedAt       DateTime?
-  createdAt       DateTime     @default(now())
-  updatedAt       DateTime     @updatedAt
-
-  violation Violation @relation(fields: [violationId], references: [id], onDelete: Cascade)
-
-  @@index([violationId])
-  @@index([status])
-  @@index([hearingDate])
-}
-
-// ============================================================================
-// COMPLIANCE ALERTS
-// ============================================================================
-
-enum AlertType {
-  UNUSUAL_SPENDING      // Expenses increased >300% from previous quarter
-  DUPLICATE_ENTRY       // Same date + amount + payee detected
-  OVERDUE_REPORT        // Report not submitted by deadline
-  MISSING_FIELDS        // Submitted report has incomplete data
-  ROUND_NUMBER_PATTERN  // Exactly round amounts ($5,000, $10,000)
-  FIRST_TIME_FILER      // New lobbyist's first report (extra review)
-}
-
-enum AlertSeverity {
-  HIGH    // Requires immediate attention
-  MEDIUM  // Should be reviewed soon
-  LOW     // Informational only
-}
-
-model ComplianceAlert {
-  id                   String        @id @default(uuid())
-  type                 AlertType
-  severity             AlertSeverity
-  message              String        // Human-readable description
-  relatedReportId      String?       // Optional link to expense report
-  relatedUserId        String?       // Optional link to user (lobbyist/employer)
-  resultingViolationId String?       // Link to Violation issued from this alert
-  reviewedAt           DateTime?     // Null = active, set = dismissed
-  reviewedBy           String?       // Admin user ID who reviewed
-  createdAt            DateTime      @default(now())
-  updatedAt            DateTime      @updatedAt
-
-  @@index([reviewedAt]) // Query active alerts (reviewedAt IS NULL)
-  @@index([severity])
-  @@index([type])
-  @@index([createdAt])
-  @@index([resultingViolationId]) // Query alerts that led to violations
-}
-
-// ============================================================================
-// CONTRACT REGULATION (§9.230)
-// ============================================================================
-
-model ContractException {
-  id                   String    @id @default(uuid())
-  formerOfficialId     String // Could be User ID or separate tracking
-  formerOfficialName   String
-  contractDescription  String
-  justification        String // Why exception was granted
-  approvedBy           String // Name of Chair or approving authority
-  approvedDate         DateTime
-  publiclyPostedDate   DateTime?
-  createdAt            DateTime  @default(now())
-  updatedAt            DateTime  @updatedAt
-
-  @@index([formerOfficialId])
-  @@index([approvedDate])
-}
-
-// ============================================================================
-// AUDIT TRAIL
-// ============================================================================
-
-model AuditLog {
-  id          String   @id @default(uuid())
-  userId      String
-  action      String // e.g., "CREATE", "UPDATE", "DELETE", "LOGIN"
-  entityType  String // e.g., "Lobbyist", "ExpenseReport"
-  entityId    String? // ID of affected entity
-  changesJson String? // JSON of what changed
-  ipAddress   String?
-  timestamp   DateTime @default(now())
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@index([userId])
-  @@index([timestamp])
-  @@index([entityType, entityId])
-}
-
-// User Administration Audit Log - tracks all user management actions
-model UserAuditLog {
-  id        String   @id @default(uuid())
-  userId    String   // User being modified
-  adminId   String   // Admin making the change
-  action    String   // "CREATED", "UPDATED", "DEACTIVATED", "ACTIVATED", "PASSWORD_RESET", "ROLE_CHANGED"
-  changes   Json?    // What changed: { field: { old: "value", new: "value" } }
-  ipAddress String?  // Where change was made from
-  createdAt DateTime @default(now())
-
-  user  User @relation("UserAuditLogs", fields: [userId], references: [id], onDelete: Cascade)
-  admin User @relation("AdminActions", fields: [adminId], references: [id], onDelete: Cascade)
-
-  @@index([userId])
-  @@index([adminId])
-  @@index([createdAt])
+enum ViolationType {
+  LATE_REGISTRATION
+  LATE_REPORT
+  MISSING_REPORT
+  FALSE_STATEMENT
+  PROHIBITED_CONDUCT
+  MISSING_AUTHORIZATION
+  OTHER
 }
