@@ -417,6 +417,43 @@ model Appeal {
 }
 
 // ============================================================================
+// COMPLIANCE ALERTS
+// ============================================================================
+
+enum AlertType {
+  UNUSUAL_SPENDING      // Expenses increased >300% from previous quarter
+  DUPLICATE_ENTRY       // Same date + amount + payee detected
+  OVERDUE_REPORT        // Report not submitted by deadline
+  MISSING_FIELDS        // Submitted report has incomplete data
+  ROUND_NUMBER_PATTERN  // Exactly round amounts ($5,000, $10,000)
+  FIRST_TIME_FILER      // New lobbyist's first report (extra review)
+}
+
+enum AlertSeverity {
+  HIGH    // Requires immediate attention
+  MEDIUM  // Should be reviewed soon
+  LOW     // Informational only
+}
+
+model ComplianceAlert {
+  id              String        @id @default(uuid())
+  type            AlertType
+  severity        AlertSeverity
+  message         String        // Human-readable description
+  relatedReportId String?       // Optional link to expense report
+  relatedUserId   String?       // Optional link to user (lobbyist/employer)
+  reviewedAt      DateTime?     // Null = active, set = dismissed
+  reviewedBy      String?       // Admin user ID who reviewed
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  @@index([reviewedAt]) // Query active alerts (reviewedAt IS NULL)
+  @@index([severity])
+  @@index([type])
+  @@index([createdAt])
+}
+
+// ============================================================================
 // CONTRACT REGULATION (§9.230)
 // ============================================================================
 

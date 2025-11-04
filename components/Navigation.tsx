@@ -6,6 +6,7 @@ import { UserRole } from "@prisma/client";
 import { useState, useEffect, useRef } from "react";
 import { FEATURE_FLAGS } from "@/lib/feature-flags";
 import Image from "next/image";
+import { AlertCountBadge } from "@/components/admin/compliance/AlertCountBadge";
 import {
   FileText,
   Clock,
@@ -380,14 +381,19 @@ export function Navigation({ user }: NavigationProps) {
                                     key={item.href}
                                     href={item.href}
                                     onClick={() => setIsAdminOpen(false)}
-                                    className={`flex items-center space-x-2 px-4 py-2 text-sm transition-colors ${
+                                    className={`flex items-center justify-between px-4 py-2 text-sm transition-colors ${
                                       isActive(item.href)
                                         ? "bg-primary/10 text-primary"
                                         : "text-gray-700 hover:bg-gray-100"
                                     }`}
                                   >
-                                    <Icon className="h-4 w-4" />
-                                    <span>{item.label}</span>
+                                    <div className="flex items-center space-x-2">
+                                      <Icon className="h-4 w-4" />
+                                      <span>{item.label}</span>
+                                    </div>
+                                    {item.href === "/admin/compliance" && (
+                                      <AlertCountBadge />
+                                    )}
                                   </Link>
                                 );
                               })}
@@ -649,14 +655,19 @@ export function Navigation({ user }: NavigationProps) {
                             key={item.href}
                             href={item.href}
                             onClick={() => setIsMobileMenuOpen(false)}
-                            className={`flex items-center space-x-3 rounded-md px-4 py-3 transition-colors ${
+                            className={`flex items-center justify-between rounded-md px-4 py-3 transition-colors ${
                               isActive(item.href)
                                 ? "bg-primary/10 text-primary"
                                 : "text-gray-700 hover:bg-gray-100"
                             }`}
                           >
-                            <Icon className="h-5 w-5" />
-                            <span>{item.label}</span>
+                            <div className="flex items-center space-x-3">
+                              <Icon className="h-5 w-5" />
+                              <span>{item.label}</span>
+                            </div>
+                            {item.href === "/admin/compliance" && (
+                              <AlertCountBadge />
+                            )}
                           </Link>
                         );
                       })}

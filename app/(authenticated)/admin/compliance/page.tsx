@@ -2,6 +2,7 @@ import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/db";
 import { RegistrationStatus, ReportStatus } from "@prisma/client";
+import { ComplianceDashboardClient } from "@/components/admin/compliance/ComplianceDashboardClient";
 
 async function getComplianceData() {
   try {
@@ -236,17 +237,8 @@ export default async function AdminComplianceDashboardPage() {
     ? new Date(complianceData.upcomingDeadline.date)
     : new Date();
 
-  return (
-    <div className="min-h-screen bg-gray-50">
-      <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold tracking-tight text-gray-900">
-            Compliance Dashboard
-          </h1>
-          <p className="mt-2 text-sm text-gray-600">
-            Monitor registrations, deadlines, and compliance status
-          </p>
-        </div>
+  const overviewContent = (
+    <>
 
         {/* Key Metrics */}
         <div className="mb-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
@@ -617,7 +609,8 @@ export default async function AdminComplianceDashboardPage() {
             ))}
           </div>
         </div>
-      </main>
-    </div>
+    </>
   );
+
+  return <ComplianceDashboardClient overviewContent={overviewContent} />;
 }
