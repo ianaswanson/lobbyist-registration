@@ -375,6 +375,7 @@ model Violation {
   status               ViolationStatus @default(PENDING)
   issuedDate           DateTime?
   isFirstTimeViolation Boolean         @default(false) // True if educational letter sent instead of fine
+  sourceAlertId        String?         // Link to ComplianceAlert that triggered this violation
   resolutionNotes      String? // Notes about how violation was resolved
   resolutionDate       DateTime? // When violation was resolved (paid, waived, etc.)
   createdAt            DateTime        @default(now())
@@ -388,6 +389,7 @@ model Violation {
   @@index([entityType, entityId])
   @@index([status])
   @@index([issuedDate])
+  @@index([sourceAlertId]) // Query violations created from alerts
 }
 
 enum AppealStatus {
@@ -436,21 +438,23 @@ enum AlertSeverity {
 }
 
 model ComplianceAlert {
-  id              String        @id @default(uuid())
-  type            AlertType
-  severity        AlertSeverity
-  message         String        // Human-readable description
-  relatedReportId String?       // Optional link to expense report
-  relatedUserId   String?       // Optional link to user (lobbyist/employer)
-  reviewedAt      DateTime?     // Null = active, set = dismissed
-  reviewedBy      String?       // Admin user ID who reviewed
-  createdAt       DateTime      @default(now())
-  updatedAt       DateTime      @updatedAt
+  id                   String        @id @default(uuid())
+  type                 AlertType
+  severity             AlertSeverity
+  message              String        // Human-readable description
+  relatedReportId      String?       // Optional link to expense report
+  relatedUserId        String?       // Optional link to user (lobbyist/employer)
+  resultingViolationId String?       // Link to Violation issued from this alert
+  reviewedAt           DateTime?     // Null = active, set = dismissed
+  reviewedBy           String?       // Admin user ID who reviewed
+  createdAt            DateTime      @default(now())
+  updatedAt            DateTime      @updatedAt
 
   @@index([reviewedAt]) // Query active alerts (reviewedAt IS NULL)
   @@index([severity])
   @@index([type])
   @@index([createdAt])
+  @@index([resultingViolationId]) // Query alerts that led to violations
 }
 
 // ============================================================================

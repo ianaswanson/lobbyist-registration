@@ -77,7 +77,66 @@ export async function GET(request: NextRequest) {
       },
     });
 
-    return NextResponse.json(violations);
+    // Enrich violations with entity details (names instead of just IDs)
+    const enrichedViolations = await Promise.all(
+      violations.map(async (violation) => {
+        let entityName = null;
+        let entityEmail = null;
+
+        try {
+          if (violation.entityType === "LOBBYIST") {
+            const lobbyist = await prisma.lobbyist.findUnique({
+              where: { id: violation.entityId },
+              select: { name: true, email: true },
+            });
+            entityName = lobbyist?.name;
+            entityEmail = lobbyist?.email;
+          } else if (violation.entityType === "EMPLOYER") {
+            const employer = await prisma.employer.findUnique({
+              where: { id: violation.entityId },
+              select: { name: true, email: true },
+            });
+            entityName = employer?.name;
+            entityEmail = employer?.email;
+          } else if (violation.entityType === "BOARD_MEMBER") {
+            const boardMember = await prisma.boardMember.findUnique({
+              where: { id: violation.entityId },
+              select: { name: true },
+            });
+            entityName = boardMember?.name;
+          } else if (violation.entityType === "LOBBYIST_REPORT") {
+            const report = await prisma.lobbyistExpenseReport.findUnique({
+              where: { id: violation.entityId },
+              include: { lobbyist: { select: { name: true } } },
+            });
+            entityName = report
+              ? `${report.lobbyist.name} - ${report.quarter} ${report.year}`
+              : null;
+          } else if (violation.entityType === "EMPLOYER_REPORT") {
+            const report = await prisma.employerExpenseReport.findUnique({
+              where: { id: violation.entityId },
+              include: { employer: { select: { name: true } } },
+            });
+            entityName = report
+              ? `${report.employer.name} - ${report.quarter} ${report.year}`
+              : null;
+          }
+        } catch (error) {
+          console.error(
+            `Error fetching entity details for violation ${violation.id}:`,
+            error
+          );
+        }
+
+        return {
+          ...violation,
+          entityName,
+          entityEmail,
+        };
+      })
+    );
+
+    return NextResponse.json(enrichedViolations);
   } catch (error) {
     console.error("Error fetching violations:", error);
     return NextResponse.json(
@@ -119,6 +178,7 @@ export async function POST(request: NextRequest) {
       description,
       fineAmount,
       sendEducationalLetter,
+      sourceAlertId,
     } = body;
 
     // Validate required fields
@@ -148,8 +208,21 @@ export async function POST(request: NextRequest) {
         status: "ISSUED",
         issuedDate: new Date(),
         isFirstTimeViolation: sendEducationalLetter,
+        sourceAlertId: sourceAlertId || null,
       },
     });
+
+    // If violation was created from an alert, link them bidirectionally
+    if (sourceAlertId) {
+      await prisma.complianceAlert.update({
+        where: { id: sourceAlertId },
+        data: {
+          resultingViolationId: violation.id,
+          reviewedAt: new Date(), // Mark alert as reviewed
+          reviewedBy: session.user.id,
+        },
+      });
+    }
 
     // TODO: Send notification email to entity
     // TODO: If sendEducationalLetter is true, send educational letter instead of fine

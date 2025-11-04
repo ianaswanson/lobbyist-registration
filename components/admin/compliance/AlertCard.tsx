@@ -1,7 +1,7 @@
 "use client";
 
 import { AlertType, AlertSeverity } from "@prisma/client";
-import { AlertTriangle, CheckCircle2, Info } from "lucide-react";
+import { AlertTriangle, CheckCircle2, Info, Gavel } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -11,6 +11,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { useRouter } from "next/navigation";
 
 interface AlertCardProps {
   alert: {
@@ -26,6 +27,8 @@ interface AlertCardProps {
 }
 
 export function AlertCard({ alert, onReview }: AlertCardProps) {
+  const router = useRouter();
+
   const getSeverityColor = (severity: AlertSeverity) => {
     switch (severity) {
       case "HIGH":
@@ -59,6 +62,25 @@ export function AlertCard({ alert, onReview }: AlertCardProps) {
       .join(" ");
   };
 
+  // Determine if this alert type can lead to a violation
+  const isActionableAlert = (type: AlertType) => {
+    return ["OVERDUE_REPORT", "MISSING_FIELDS", "UNUSUAL_SPENDING"].includes(
+      type
+    );
+  };
+
+  const handleIssueViolation = () => {
+    // Navigate to violations page with alert context as URL params
+    const params = new URLSearchParams({
+      alertId: alert.id,
+      alertType: alert.type,
+      alertMessage: alert.message,
+      ...(alert.relatedReportId && { reportId: alert.relatedReportId }),
+      ...(alert.relatedUserId && { userId: alert.relatedUserId }),
+    });
+    router.push(`/admin/violations?${params.toString()}`);
+  };
+
   return (
     <Card className="hover:shadow-md transition-shadow">
       <CardHeader className="pb-3">
@@ -87,7 +109,18 @@ export function AlertCard({ alert, onReview }: AlertCardProps) {
       </CardHeader>
       <CardContent className="pt-0">
         <p className="text-sm text-muted-foreground mb-4">{alert.message}</p>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
+          {isActionableAlert(alert.type) && (
+            <Button
+              size="sm"
+              variant="default"
+              onClick={handleIssueViolation}
+              className="gap-2"
+            >
+              <Gavel className="h-4 w-4" />
+              Issue Violation
+            </Button>
+          )}
           <Button
             size="sm"
             variant="outline"

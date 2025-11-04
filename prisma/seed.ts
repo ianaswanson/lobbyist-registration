@@ -1015,8 +1015,36 @@ async function createComplianceAlerts(
   // Following Rule of 3: Create 3 alerts for demonstration
   // These demonstrate the automated compliance monitoring system
 
-  // Alert 1: UNUSUAL_SPENDING - John Doe's Q3 spending spike
-  // (In Q2 he spent $412.50, Q3 jumped to $378.00 - not quite 3x, so we'll create a manual alert)
+  // First, create an OVERDUE report for demonstration purposes
+  // Create a Q4 2024 report that is now overdue (past January 15, 2025 deadline)
+  const overdueReport = await prisma.lobbyistExpenseReport.create({
+    data: {
+      lobbyistId: approvedData.lobbyists[1].id, // Jane Williams
+      quarter: "Q4",
+      year: 2024,
+      status: "OVERDUE",
+      totalFoodEntertainment: 0,
+      submittedAt: null, // Not submitted yet
+      dueDate: new Date("2025-01-15"), // Deadline was January 15
+    },
+  });
+
+  // Alert 1: OVERDUE_REPORT - Jane Williams' Q4 2024 report (HIGH PRIORITY - actionable)
+  const daysOverdue = Math.floor(
+    (new Date().getTime() - new Date("2025-01-15").getTime()) /
+      (1000 * 60 * 60 * 24)
+  );
+  await prisma.complianceAlert.create({
+    data: {
+      type: "OVERDUE_REPORT",
+      severity: "HIGH",
+      message: `${approvedData.lobbyists[1].name}: Q4 2024 quarterly report is ${daysOverdue} days overdue (due January 15, 2025). Violation may be necessary.`,
+      relatedReportId: overdueReport.id,
+      relatedUserId: approvedData.lobbyists[1].userId,
+    },
+  });
+
+  // Alert 2: UNUSUAL_SPENDING - John Smith's Q2 spending spike (HIGH PRIORITY - actionable)
   await prisma.complianceAlert.create({
     data: {
       type: "UNUSUAL_SPENDING",
@@ -1027,19 +1055,7 @@ async function createComplianceAlerts(
     },
   });
 
-  // Alert 2: FIRST_TIME_FILER - Michael Chen (most recent registration)
-  await prisma.complianceAlert.create({
-    data: {
-      type: "FIRST_TIME_FILER",
-      severity: "LOW",
-      message: `${approvedData.lobbyists[2].name}: First quarterly report filed (Q1 2025). Recommend extra review to catch any registration errors.`,
-      relatedReportId: approvedData.lobbyistReports[6].id, // Michael's Q1 report
-      relatedUserId: approvedData.lobbyists[2].userId,
-    },
-  });
-
-  // Alert 3: DUPLICATE_ENTRY - Create a duplicate in Jane's Q2 report
-  // We'll add this after creating a duplicate line item
+  // Alert 3: DUPLICATE_ENTRY - Jane's Q2 report (MEDIUM - not directly actionable for violation)
   const janeQ2Report = approvedData.lobbyistReports[4]; // Jane's Q2 report
   await prisma.complianceAlert.create({
     data: {
@@ -1051,7 +1067,7 @@ async function createComplianceAlerts(
     },
   });
 
-  console.log("   ✓ Created 3 compliance alerts");
+  console.log("   ✓ Created 3 compliance alerts (1 OVERDUE_REPORT, 1 UNUSUAL_SPENDING, 1 DUPLICATE_ENTRY)");
 }
 
 // ============================================================================
