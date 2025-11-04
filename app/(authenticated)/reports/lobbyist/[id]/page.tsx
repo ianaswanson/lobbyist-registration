@@ -29,13 +29,13 @@ async function getReport(reportId: string, userId: string) {
         lobbyistId: lobbyist.id,
       },
       include: {
-        lobbyist: {
+        Lobbyist: {
           select: {
             name: true,
             email: true,
           },
         },
-        originalReport: {
+        LobbyistExpenseReport: {
           select: {
             id: true,
             amendmentReason: true,
@@ -43,7 +43,7 @@ async function getReport(reportId: string, userId: string) {
             status: true,
           },
         },
-        amendments: {
+        other_LobbyistExpenseReport: {
           select: {
             id: true,
             amendmentReason: true,
@@ -68,7 +68,15 @@ async function getReport(reportId: string, userId: string) {
       },
     });
 
-    return { ...report, lineItems, amendedByReport: report.amendments[0] || null };
+    // Map the relations to the expected names for backwards compatibility
+    return {
+      ...report,
+      lobbyist: report.Lobbyist,
+      originalReport: report.LobbyistExpenseReport,
+      amendments: report.other_LobbyistExpenseReport,
+      lineItems,
+      amendedByReport: report.other_LobbyistExpenseReport[0] || null,
+    };
   } catch (error) {
     console.error("Error fetching lobbyist expense report:", error);
     return null;

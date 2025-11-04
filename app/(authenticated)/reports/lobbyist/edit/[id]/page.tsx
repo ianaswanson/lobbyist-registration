@@ -81,6 +81,7 @@ export default async function EditLobbyistReportPage({
           userId={session.user.id}
           initialQuarter={report.quarter}
           initialYear={report.year}
+          reportId={id}
         />
       </main>
     </div>

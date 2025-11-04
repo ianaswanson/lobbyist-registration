@@ -2,6 +2,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { NextResponse } from "next/server";
 import { ExpenseReportType, Quarter, ReportStatus } from "@prisma/client";
+import { randomUUID } from "crypto";
 
 /**
  * Calculate due date for a given quarter
@@ -58,7 +59,14 @@ export async function POST(req: Request) {
 
     // 2. Parse request body
     const body = await req.json();
-    const { quarter, year, expenses, isDraft = false, noActivity = false } = body;
+    const {
+      reportId,
+      quarter,
+      year,
+      expenses,
+      isDraft = false,
+      noActivity = false,
+    } = body;
 
     // 3. Validation
     if (!quarter || !year) {
@@ -121,32 +129,72 @@ export async function POST(req: Request) {
 
     // 6. Database transaction - create/update report and line items
     const result = await prisma.$transaction(async (tx) => {
-      // Upsert the expense report
-      const report = await tx.lobbyistExpenseReport.upsert({
-        where: {
-          lobbyistId_quarter_year: {
+      let report;
+
+      if (reportId) {
+        // We're editing a specific report (e.g., an amendment draft)
+        // Verify it belongs to this lobbyist
+        const existingReport = await tx.lobbyistExpenseReport.findUnique({
+          where: { id: reportId },
+        });
+
+        if (!existingReport || existingReport.lobbyistId !== lobbyist.id) {
+          throw new Error("Report not found or unauthorized");
+        }
+
+        // Update the specific report
+        report = await tx.lobbyistExpenseReport.update({
+          where: { id: reportId },
+          data: {
+            totalFoodEntertainment,
+            status,
+            submittedAt,
+            dueDate,
+            updatedAt: new Date(),
+          },
+        });
+      } else {
+        // No reportId provided - find or create based on quarter/year
+        // Find existing report for this lobbyist/quarter/year that is NOT an amendment
+        // (originalReportId is null) and has NOT been amended (amendedByReportId is null)
+        const existingReport = await tx.lobbyistExpenseReport.findFirst({
+          where: {
             lobbyistId: lobbyist.id,
             quarter: quarter as Quarter,
             year: year,
+            originalReportId: null, // Not an amendment itself
+            amendedByReportId: null, // Has not been amended
           },
-        },
-        update: {
-          totalFoodEntertainment,
-          status,
-          submittedAt,
-          dueDate,
-          updatedAt: new Date(),
-        },
-        create: {
-          lobbyistId: lobbyist.id,
-          quarter: quarter as Quarter,
-          year: year,
-          totalFoodEntertainment,
-          status,
-          submittedAt,
-          dueDate,
-        },
-      });
+        });
+
+        if (existingReport) {
+          // Update existing report
+          report = await tx.lobbyistExpenseReport.update({
+            where: { id: existingReport.id },
+            data: {
+              totalFoodEntertainment,
+              status,
+              submittedAt,
+              dueDate,
+              updatedAt: new Date(),
+            },
+          });
+        } else {
+          // Create new report
+          report = await tx.lobbyistExpenseReport.create({
+            data: {
+              id: randomUUID(), // Explicit ID generation required
+              lobbyistId: lobbyist.id,
+              quarter: quarter as Quarter,
+              year: year,
+              totalFoodEntertainment,
+              status,
+              submittedAt,
+              dueDate,
+            },
+          });
+        }
+      }
 
       // Delete existing line items for this report (we'll recreate them)
       await tx.expenseLineItem.deleteMany({

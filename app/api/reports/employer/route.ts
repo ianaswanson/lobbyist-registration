@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { ReportStatus, ExpenseReportType } from "@prisma/client";
+import { randomUUID } from "crypto";
 
 /**
  * Calculate due date for quarterly reports
@@ -37,7 +38,15 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { quarter, year, expenses, lobbyistPayments, isDraft, noActivity = false } = body;
+    const {
+      reportId,
+      quarter,
+      year,
+      expenses,
+      lobbyistPayments,
+      isDraft,
+      noActivity = false,
+    } = body;
 
     // Validate required fields
     if (!quarter || !year) {
@@ -99,32 +108,75 @@ export async function POST(request: NextRequest) {
       status = ReportStatus.LATE;
     }
 
-    // Upsert the report (update if exists, create if not)
-    const report = await prisma.employerExpenseReport.upsert({
-      where: {
-        employerId_quarter_year: {
+    let report;
+
+    if (reportId) {
+      // We're editing a specific report (e.g., an amendment draft)
+      // Verify it belongs to this employer
+      const existingReport = await prisma.employerExpenseReport.findUnique({
+        where: { id: reportId },
+      });
+
+      if (!existingReport || existingReport.employerId !== employer.id) {
+        return NextResponse.json(
+          { error: "Report not found or unauthorized" },
+          { status: 404 }
+        );
+      }
+
+      // Update the specific report
+      report = await prisma.employerExpenseReport.update({
+        where: { id: reportId },
+        data: {
+          totalLobbyingSpend,
+          status,
+          submittedAt: isDraft ? null : now,
+          dueDate,
+          updatedAt: now,
+        },
+      });
+    } else {
+      // No reportId provided - find or create based on quarter/year
+      // Find existing report for this employer/quarter/year that is NOT an amendment
+      // (originalReportId is null) and has NOT been amended (amendedByReportId is null)
+      const existingReport = await prisma.employerExpenseReport.findFirst({
+        where: {
           employerId: employer.id,
           quarter,
           year: parseInt(year),
+          originalReportId: null, // Not an amendment itself
+          amendedByReportId: null, // Has not been amended
         },
-      },
-      update: {
-        totalLobbyingSpend,
-        status,
-        submittedAt: isDraft ? null : now,
-        dueDate,
-        updatedAt: now,
-      },
-      create: {
-        employerId: employer.id,
-        quarter,
-        year: parseInt(year),
-        totalLobbyingSpend,
-        status,
-        submittedAt: isDraft ? null : now,
-        dueDate,
-      },
-    });
+      });
+
+      if (existingReport) {
+        // Update existing report
+        report = await prisma.employerExpenseReport.update({
+          where: { id: existingReport.id },
+          data: {
+            totalLobbyingSpend,
+            status,
+            submittedAt: isDraft ? null : now,
+            dueDate,
+            updatedAt: now,
+          },
+        });
+      } else {
+        // Create new report
+        report = await prisma.employerExpenseReport.create({
+          data: {
+            id: randomUUID(), // Explicit ID generation required
+            employerId: employer.id,
+            quarter,
+            year: parseInt(year),
+            totalLobbyingSpend,
+            status,
+            submittedAt: isDraft ? null : now,
+            dueDate,
+          },
+        });
+      }
+    }
 
     // Delete existing expense line items for this report
     await prisma.expenseLineItem.deleteMany({

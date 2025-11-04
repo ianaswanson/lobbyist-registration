@@ -20,12 +20,14 @@ interface EmployerExpenseReportFormProps {
   userId: string;
   initialQuarter?: string;
   initialYear?: number;
+  reportId?: string; // For editing specific reports (like amendments)
 }
 
 export function EmployerExpenseReportForm({
   userId,
   initialQuarter,
   initialYear,
+  reportId,
 }: EmployerExpenseReportFormProps) {
   const router = useRouter();
   const [mode, setMode] = useState<InputMode>("manual");
@@ -64,16 +66,21 @@ export function EmployerExpenseReportForm({
     async function fetchExistingReport() {
       setIsLoading(true);
       try {
-        const response = await fetch(
-          `/api/reports/employer?quarter=${quarter}&year=${year}`
-        );
+        // If we have a specific reportId (editing mode), fetch that exact report
+        const url = reportId
+          ? `/api/reports/employer/${reportId}`
+          : `/api/reports/employer?quarter=${quarter}&year=${year}`;
+
+        const response = await fetch(url);
 
         if (response.ok) {
           const data = await response.json();
 
-          // Check if we have reports for this quarter/year
-          if (data.reports && data.reports.length > 0) {
-            const report = data.reports[0]; // Get the first (and should be only) report
+          // Handle both single report and reports array responses
+          const report = reportId ? data.report : data.reports?.[0];
+
+          // Check if we have a report
+          if (report) {
 
             // Transform line items to match our ExpenseLineItem type
             if (report.lineItems && report.lineItems.length > 0) {
@@ -235,6 +242,7 @@ export function EmployerExpenseReportForm({
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
+          reportId, // Include reportId if we're editing a specific report
           quarter,
           year,
           expenses,

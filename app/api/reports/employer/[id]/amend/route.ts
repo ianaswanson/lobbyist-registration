@@ -2,6 +2,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { NextResponse } from "next/server";
 import { ReportStatus, ExpenseReportType } from "@prisma/client";
+import { randomUUID } from "crypto";
 
 /**
  * POST /api/reports/employer/[id]/amend
@@ -108,6 +109,7 @@ export async function POST(
       // Create the amended report with same data but new ID
       const amendedReport = await tx.employerExpenseReport.create({
         data: {
+          id: randomUUID(), // Explicit ID generation
           employerId: originalReport.employerId,
           quarter: originalReport.quarter,
           year: originalReport.year,

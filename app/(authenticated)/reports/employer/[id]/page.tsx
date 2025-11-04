@@ -29,9 +29,9 @@ async function getReport(reportId: string, userId: string) {
         employerId: employer.id,
       },
       include: {
-        lobbyistPayments: {
+        EmployerLobbyistPayment: {
           include: {
-            lobbyist: {
+            Lobbyist: {
               select: {
                 name: true,
                 email: true,
@@ -42,12 +42,12 @@ async function getReport(reportId: string, userId: string) {
             amountPaid: "desc",
           },
         },
-        employer: {
+        Employer: {
           select: {
             name: true,
           },
         },
-        originalReport: {
+        EmployerExpenseReport: {
           select: {
             id: true,
             amendmentReason: true,
@@ -55,7 +55,7 @@ async function getReport(reportId: string, userId: string) {
             status: true,
           },
         },
-        amendments: {
+        other_EmployerExpenseReport: {
           select: {
             id: true,
             amendmentReason: true,
@@ -80,7 +80,19 @@ async function getReport(reportId: string, userId: string) {
       },
     });
 
-    return { ...report, lineItems, amendedByReport: report.amendments[0] || null };
+    // Map the relations to the expected names for backwards compatibility
+    return {
+      ...report,
+      lobbyistPayments: report.EmployerLobbyistPayment.map((payment) => ({
+        ...payment,
+        lobbyist: payment.Lobbyist,
+      })),
+      employer: report.Employer,
+      originalReport: report.EmployerExpenseReport,
+      amendments: report.other_EmployerExpenseReport,
+      lineItems,
+      amendedByReport: report.other_EmployerExpenseReport[0] || null,
+    };
   } catch (error) {
     console.error("Error fetching employer expense report:", error);
     return null;
