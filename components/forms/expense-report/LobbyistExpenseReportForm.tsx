@@ -23,12 +23,14 @@ interface LobbyistExpenseReportFormProps {
   userId: string;
   initialQuarter?: string;
   initialYear?: number;
+  reportId?: string; // For editing specific reports (like amendments)
 }
 
 export function LobbyistExpenseReportForm({
   userId,
   initialQuarter,
   initialYear,
+  reportId,
 }: LobbyistExpenseReportFormProps) {
   const router = useRouter();
   const [mode, setMode] = useState<InputMode>("manual");
@@ -41,6 +43,7 @@ export function LobbyistExpenseReportForm({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const [noActivity, setNoActivity] = useState(false);
   const [message, setMessage] = useState<{
     type: "success" | "error";
     text: string;
@@ -51,16 +54,21 @@ export function LobbyistExpenseReportForm({
     async function fetchExistingReport() {
       setIsLoading(true);
       try {
-        const response = await fetch(
-          `/api/reports/lobbyist?quarter=${quarter}&year=${year}`
-        );
+        // If we have a specific reportId (editing mode), fetch that exact report
+        const url = reportId
+          ? `/api/reports/lobbyist/${reportId}`
+          : `/api/reports/lobbyist?quarter=${quarter}&year=${year}`;
+
+        const response = await fetch(url);
 
         if (response.ok) {
           const data = await response.json();
 
-          // Check if we have reports for this quarter/year
-          if (data.reports && data.reports.length > 0) {
-            const report = data.reports[0]; // Get the first (and should be only) report
+          // Handle both single report and reports array responses
+          const report = reportId ? data.report : data.reports?.[0];
+
+          // Check if we have a report
+          if (report) {
 
             // Transform line items to match our ExpenseLineItem type
             if (report.lineItems && report.lineItems.length > 0) {
@@ -155,11 +163,21 @@ export function LobbyistExpenseReportForm({
 
   const handleAddExpenses = (newExpenses: ExpenseLineItem[]) => {
     setExpenses([...expenses, ...newExpenses]);
+    setNoActivity(false); // Uncheck noActivity if user adds expenses
     setHasUnsavedChanges(true);
   };
 
   const handleRemoveExpense = (id: string) => {
     setExpenses(expenses.filter((exp) => exp.id !== id));
+    setHasUnsavedChanges(true);
+  };
+
+  const handleNoActivityChange = (checked: boolean) => {
+    setNoActivity(checked);
+    if (checked) {
+      // Clear any existing expenses when noActivity is checked
+      setExpenses([]);
+    }
     setHasUnsavedChanges(true);
   };
 
@@ -174,10 +192,12 @@ export function LobbyistExpenseReportForm({
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
+          reportId, // Include reportId if we're editing a specific report
           quarter,
           year,
           expenses,
           isDraft,
+          noActivity,
         }),
       });
 
@@ -230,12 +250,12 @@ export function LobbyistExpenseReportForm({
       {/* Loading Indicator */}
       {isLoading && (
         <div
-          className="rounded-md border border-blue-200 bg-blue-50 p-4"
+          className="rounded-md border border-blue-200 bg-primary/10 p-4"
           data-testid="loading-indicator"
         >
           <div className="flex items-center">
             <svg
-              className="h-5 w-5 animate-spin text-blue-600"
+              className="h-5 w-5 animate-spin text-primary"
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"
@@ -254,7 +274,7 @@ export function LobbyistExpenseReportForm({
                 d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
               ></path>
             </svg>
-            <span className="ml-3 text-sm font-medium text-blue-800">
+            <span className="ml-3 text-sm font-medium text-primary">
               Loading existing report data...
             </span>
           </div>
@@ -263,10 +283,10 @@ export function LobbyistExpenseReportForm({
 
       {/* Unsaved Changes Warning */}
       {hasUnsavedChanges && (
-        <div className="rounded-md border border-yellow-300 bg-yellow-50 p-4">
+        <div className="rounded-md border border-yellow-300 bg-primary/10 p-4">
           <div className="flex items-center">
             <svg
-              className="h-5 w-5 text-yellow-600"
+              className="h-5 w-5 text-primary"
               viewBox="0 0 20 20"
               fill="currentColor"
             >
@@ -297,8 +317,8 @@ export function LobbyistExpenseReportForm({
           }
           className={`rounded-md p-4 ${
             message.type === "success"
-              ? "border border-green-200 bg-green-50 text-green-800"
-              : "border border-red-200 bg-red-50 text-red-800"
+              ? "border border-success/30 bg-success/10 text-success-foreground"
+              : "border border-red-200 bg-destructive/10 text-red-800"
           }`}
         >
           <div className="flex">
@@ -372,7 +392,7 @@ export function LobbyistExpenseReportForm({
               id="quarter"
               value={quarter}
               onChange={(e) => setQuarter(e.target.value)}
-              className="block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
+              className="block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-primary focus:ring-primary focus:outline-none"
             >
               <option value="Q1">Q1 (Jan-Mar) - Due April 15</option>
               <option value="Q2">Q2 (Apr-Jun) - Due July 15</option>
@@ -392,17 +412,53 @@ export function LobbyistExpenseReportForm({
               id="year"
               value={year}
               onChange={(e) => setYear(parseInt(e.target.value))}
-              className="block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
+              className="block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-primary focus:ring-primary focus:outline-none"
             />
           </div>
         </div>
       </div>
 
-      {/* Input Method Selector */}
+      {/* No Activity Checkbox */}
       <div className="rounded-lg border bg-white p-6 shadow-sm">
-        <h3 className="mb-4 text-lg font-semibold text-gray-900">
-          Add Expenses
-        </h3>
+        <div className="flex items-start space-x-3">
+          <input
+            type="checkbox"
+            id="noActivity"
+            checked={noActivity}
+            onChange={(e) => handleNoActivityChange(e.target.checked)}
+            className="mt-1 h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+          />
+          <div className="flex-1">
+            <label
+              htmlFor="noActivity"
+              className="block text-base font-medium text-gray-900 cursor-pointer"
+            >
+              No lobbying activity this quarter
+            </label>
+            <p className="mt-1 text-sm text-gray-600">
+              Check this box if you had no lobbying expenses during this quarter. This will
+              submit a zero-activity attestation and you won't need to add any expense items.
+            </p>
+            {noActivity && (
+              <div className="mt-3 rounded-md bg-primary/10 p-3">
+                <p className="text-sm text-primary">
+                  <strong>Attestation:</strong> By checking this box and submitting this report,
+                  you are attesting under penalty of law that you had no lobbying-related food,
+                  refreshment, or entertainment expenses over $50 for any public official during
+                  this quarter.
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Input Method Selector */}
+      {!noActivity && (
+        <div className="rounded-lg border bg-white p-6 shadow-sm">
+          <h3 className="mb-4 text-lg font-semibold text-gray-900">
+            Add Expenses
+          </h3>
 
         <div className="mb-6">
           <label className="mb-3 block text-sm font-semibold text-gray-700">
@@ -414,7 +470,7 @@ export function LobbyistExpenseReportForm({
               onClick={() => setMode("manual")}
               className={`rounded-md px-4 py-2 text-sm font-medium transition-colors ${
                 mode === "manual"
-                  ? "bg-blue-600 text-white"
+                  ? "bg-primary text-white"
                   : "bg-gray-100 text-gray-700 hover:bg-gray-200"
               }`}
             >
@@ -425,7 +481,7 @@ export function LobbyistExpenseReportForm({
               onClick={() => setMode("csv")}
               className={`rounded-md px-4 py-2 text-sm font-medium transition-colors ${
                 mode === "csv"
-                  ? "bg-blue-600 text-white"
+                  ? "bg-primary text-white"
                   : "bg-gray-100 text-gray-700 hover:bg-gray-200"
               }`}
             >
@@ -436,7 +492,7 @@ export function LobbyistExpenseReportForm({
               onClick={() => setMode("paste")}
               className={`rounded-md px-4 py-2 text-sm font-medium transition-colors ${
                 mode === "paste"
-                  ? "bg-blue-600 text-white"
+                  ? "bg-primary text-white"
                   : "bg-gray-100 text-gray-700 hover:bg-gray-200"
               }`}
             >
@@ -445,11 +501,12 @@ export function LobbyistExpenseReportForm({
           </div>
         </div>
 
-        {/* Mode-specific content */}
-        {mode === "manual" && <ManualEntryMode onAdd={handleAddExpenses} />}
-        {mode === "csv" && <CSVUploadMode onAdd={handleAddExpenses} />}
-        {mode === "paste" && <BulkPasteMode onAdd={handleAddExpenses} />}
-      </div>
+          {/* Mode-specific content */}
+          {mode === "manual" && <ManualEntryMode onAdd={handleAddExpenses} />}
+          {mode === "csv" && <CSVUploadMode onAdd={handleAddExpenses} />}
+          {mode === "paste" && <BulkPasteMode onAdd={handleAddExpenses} />}
+        </div>
+      )}
 
       {/* Expenses List */}
       {expenses.length > 0 && (
@@ -494,7 +551,7 @@ export function LobbyistExpenseReportForm({
                     <td className="px-3 py-4 text-sm whitespace-nowrap text-gray-900">
                       {expense.officialName}
                       {expense.isEstimate && (
-                        <span className="ml-2 text-xs text-yellow-600">
+                        <span className="ml-2 text-xs text-primary">
                           (Est.)
                         </span>
                       )}
@@ -514,7 +571,7 @@ export function LobbyistExpenseReportForm({
                     <td className="px-3 py-4 text-right text-sm whitespace-nowrap">
                       <button
                         onClick={() => handleRemoveExpense(expense.id)}
-                        className="text-red-600 hover:text-red-900"
+                        className="text-destructive hover:text-red-900"
                       >
                         Remove
                       </button>
@@ -525,8 +582,8 @@ export function LobbyistExpenseReportForm({
             </table>
           </div>
 
-          <div className="mt-6 rounded-md bg-blue-50 p-4">
-            <p className="text-sm text-blue-700">
+          <div className="mt-6 rounded-md bg-primary/10 p-4">
+            <p className="text-sm text-primary">
               <strong>Note:</strong> Only itemize expenses over $50 paid to or
               for any public official. Total includes all food, refreshments,
               and entertainment expenses related to lobbying activities.
@@ -556,7 +613,7 @@ export function LobbyistExpenseReportForm({
         <button
           type="button"
           onClick={handleSaveDraft}
-          disabled={isSubmitting || expenses.length === 0}
+          disabled={isSubmitting || (!noActivity && expenses.length === 0)}
           data-testid="save-draft-button"
           className="flex items-center space-x-2 rounded-md border border-gray-300 bg-white px-6 py-2 text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-400"
         >
@@ -591,9 +648,9 @@ export function LobbyistExpenseReportForm({
         <button
           type="button"
           onClick={handleSubmit}
-          disabled={isSubmitting || expenses.length === 0}
+          disabled={isSubmitting || (!noActivity && expenses.length === 0)}
           data-testid="submit-report-button"
-          className="flex items-center space-x-2 rounded-md bg-green-600 px-6 py-2 text-white hover:bg-green-700 disabled:cursor-not-allowed disabled:bg-gray-300"
+          className="flex items-center space-x-2 rounded-md bg-success px-6 py-2 text-white hover:bg-success disabled:cursor-not-allowed disabled:bg-gray-300"
         >
           {isSubmitting ? (
             <>
@@ -620,7 +677,7 @@ export function LobbyistExpenseReportForm({
               <span>Submitting...</span>
             </>
           ) : (
-            <span>Submit Report</span>
+            <span>{noActivity ? "Submit Zero-Activity Report" : "Submit Report"}</span>
           )}
         </button>
       </div>

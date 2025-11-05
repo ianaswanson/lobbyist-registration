@@ -25,15 +25,15 @@ export async function GET(req: Request) {
         status: status as RegistrationStatus,
       },
       include: {
-        user: {
+        User: {
           select: {
             name: true,
             email: true,
           },
         },
-        employers: {
+        LobbyistEmployer: {
           include: {
-            employer: {
+            Employer: {
               select: {
                 name: true,
               },

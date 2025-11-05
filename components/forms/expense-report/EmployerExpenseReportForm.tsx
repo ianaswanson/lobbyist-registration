@@ -20,12 +20,14 @@ interface EmployerExpenseReportFormProps {
   userId: string;
   initialQuarter?: string;
   initialYear?: number;
+  reportId?: string; // For editing specific reports (like amendments)
 }
 
 export function EmployerExpenseReportForm({
   userId,
   initialQuarter,
   initialYear,
+  reportId,
 }: EmployerExpenseReportFormProps) {
   const router = useRouter();
   const [mode, setMode] = useState<InputMode>("manual");
@@ -44,6 +46,7 @@ export function EmployerExpenseReportForm({
     text: string;
   } | null>(null);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const [noActivity, setNoActivity] = useState(false);
 
   // New lobbyist payment form state
   const [newPayment, setNewPayment] = useState({
@@ -63,16 +66,21 @@ export function EmployerExpenseReportForm({
     async function fetchExistingReport() {
       setIsLoading(true);
       try {
-        const response = await fetch(
-          `/api/reports/employer?quarter=${quarter}&year=${year}`
-        );
+        // If we have a specific reportId (editing mode), fetch that exact report
+        const url = reportId
+          ? `/api/reports/employer/${reportId}`
+          : `/api/reports/employer?quarter=${quarter}&year=${year}`;
+
+        const response = await fetch(url);
 
         if (response.ok) {
           const data = await response.json();
 
-          // Check if we have reports for this quarter/year
-          if (data.reports && data.reports.length > 0) {
-            const report = data.reports[0]; // Get the first (and should be only) report
+          // Handle both single report and reports array responses
+          const report = reportId ? data.report : data.reports?.[0];
+
+          // Check if we have a report
+          if (report) {
 
             // Transform line items to match our ExpenseLineItem type
             if (report.lineItems && report.lineItems.length > 0) {
@@ -91,12 +99,13 @@ export function EmployerExpenseReportForm({
               setExpenses([]);
             }
 
-            // Transform lobbyist payments
-            if (report.lobbyistPayments && report.lobbyistPayments.length > 0) {
-              const transformedPayments = report.lobbyistPayments.map(
+            // Transform lobbyist payments (handle both PascalCase from Prisma and camelCase from mapping)
+            const payments = report.EmployerLobbyistPayment || report.lobbyistPayments;
+            if (payments && payments.length > 0) {
+              const transformedPayments = payments.map(
                 (payment: any) => ({
                   id: payment.id,
-                  lobbyistName: payment.lobbyist.name,
+                  lobbyistName: payment.Lobbyist?.name || payment.lobbyist?.name,
                   amountPaid: payment.amountPaid,
                 })
               );
@@ -179,11 +188,22 @@ export function EmployerExpenseReportForm({
 
   const handleAddExpenses = (newExpenses: ExpenseLineItem[]) => {
     setExpenses([...expenses, ...newExpenses]);
+    setNoActivity(false); // Uncheck noActivity if user adds expenses
     setHasUnsavedChanges(true);
   };
 
   const handleRemoveExpense = (id: string) => {
     setExpenses(expenses.filter((exp) => exp.id !== id));
+    setHasUnsavedChanges(true);
+  };
+
+  const handleNoActivityChange = (checked: boolean) => {
+    setNoActivity(checked);
+    if (checked) {
+      // Clear expenses and payments when noActivity is checked
+      setExpenses([]);
+      setLobbyistPayments([]);
+    }
     setHasUnsavedChanges(true);
   };
 
@@ -197,6 +217,7 @@ export function EmployerExpenseReportForm({
     };
 
     setLobbyistPayments([...lobbyistPayments, payment]);
+    setNoActivity(false); // Uncheck noActivity if user adds payments
     setHasUnsavedChanges(true);
 
     // Reset form
@@ -222,11 +243,13 @@ export function EmployerExpenseReportForm({
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
+          reportId, // Include reportId if we're editing a specific report
           quarter,
           year,
           expenses,
           lobbyistPayments,
           isDraft,
+          noActivity,
         }),
       });
 
@@ -291,7 +314,7 @@ export function EmployerExpenseReportForm({
               id="quarter"
               value={quarter}
               onChange={(e) => setQuarter(e.target.value)}
-              className="block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
+              className="block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-primary focus:ring-primary focus:outline-none"
             >
               <option value="Q1">Q1 (Jan-Mar) - Due April 15</option>
               <option value="Q2">Q2 (Apr-Jun) - Due July 15</option>
@@ -311,17 +334,53 @@ export function EmployerExpenseReportForm({
               id="year"
               value={year}
               onChange={(e) => setYear(parseInt(e.target.value))}
-              className="block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
+              className="block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-primary focus:ring-primary focus:outline-none"
             />
           </div>
         </div>
       </div>
 
-      {/* Lobbyist Payments Section */}
+      {/* No Activity Checkbox */}
       <div className="rounded-lg border bg-white p-6 shadow-sm">
-        <h3 className="mb-4 text-lg font-semibold text-gray-900">
-          Payments to Registered Lobbyists
-        </h3>
+        <div className="flex items-start space-x-3">
+          <input
+            type="checkbox"
+            id="noActivity"
+            checked={noActivity}
+            onChange={(e) => handleNoActivityChange(e.target.checked)}
+            className="mt-1 h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+          />
+          <div className="flex-1">
+            <label
+              htmlFor="noActivity"
+              className="block text-base font-medium text-gray-900 cursor-pointer"
+            >
+              No payments to lobbyists this quarter
+            </label>
+            <p className="mt-1 text-sm text-gray-600">
+              Check this box if you made no payments to registered lobbyists and had no
+              lobbying-related expenses during this quarter. This will submit a zero-activity
+              attestation.
+            </p>
+            {noActivity && (
+              <div className="mt-3 rounded-md bg-primary/10 p-3">
+                <p className="text-sm text-primary">
+                  <strong>Attestation:</strong> By checking this box and submitting this report,
+                  you are attesting under penalty of law that you made no payments to registered
+                  lobbyists and had no lobbying-related expenses during this quarter.
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Lobbyist Payments Section */}
+      {!noActivity && (
+        <div className="rounded-lg border bg-white p-6 shadow-sm">
+          <h3 className="mb-4 text-lg font-semibold text-gray-900">
+            Payments to Registered Lobbyists
+          </h3>
         <p className="mb-4 text-sm text-gray-600">
           Report all payments made to registered lobbyists for lobbying services
           during this quarter.
@@ -335,7 +394,7 @@ export function EmployerExpenseReportForm({
                 htmlFor="lobbyistName"
                 className="block text-sm font-medium text-gray-700"
               >
-                Lobbyist Name <span className="text-red-600">*</span>
+                Lobbyist Name <span className="text-destructive">*</span>
               </label>
               <input
                 type="text"
@@ -345,7 +404,7 @@ export function EmployerExpenseReportForm({
                 onChange={(e) =>
                   setNewPayment({ ...newPayment, lobbyistName: e.target.value })
                 }
-                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
+                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-primary focus:ring-primary focus:outline-none"
                 placeholder="Jane Smith"
               />
             </div>
@@ -354,7 +413,7 @@ export function EmployerExpenseReportForm({
                 htmlFor="amountPaid"
                 className="block text-sm font-medium text-gray-700"
               >
-                Amount Paid <span className="text-red-600">*</span>
+                Amount Paid <span className="text-destructive">*</span>
               </label>
               <div className="relative mt-1">
                 <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
@@ -370,7 +429,7 @@ export function EmployerExpenseReportForm({
                   onChange={(e) =>
                     setNewPayment({ ...newPayment, amountPaid: e.target.value })
                   }
-                  className="block w-full rounded-md border border-gray-300 py-2 pr-3 pl-7 focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
+                  className="block w-full rounded-md border border-gray-300 py-2 pr-3 pl-7 focus:border-primary focus:ring-primary focus:outline-none"
                   placeholder="5000.00"
                 />
               </div>
@@ -379,7 +438,7 @@ export function EmployerExpenseReportForm({
           <div className="flex justify-end">
             <button
               type="submit"
-              className="rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
+              className="rounded-md bg-primary px-4 py-2 text-white hover:bg-primary"
             >
               Add Lobbyist Payment
             </button>
@@ -413,7 +472,7 @@ export function EmployerExpenseReportForm({
                     <td className="px-3 py-4 text-right text-sm whitespace-nowrap">
                       <button
                         onClick={() => handleRemovePayment(payment.id)}
-                        className="text-red-600 hover:text-red-900"
+                        className="text-destructive hover:text-red-900"
                       >
                         Remove
                       </button>
@@ -422,7 +481,7 @@ export function EmployerExpenseReportForm({
                 ))}
               </tbody>
             </table>
-            <div className="mt-4 flex items-center justify-between rounded-md bg-blue-50 p-4">
+            <div className="mt-4 flex items-center justify-between rounded-md bg-primary/10 p-4">
               <span className="text-sm font-medium text-blue-900">
                 Total Lobbyist Payments:
               </span>
@@ -432,13 +491,15 @@ export function EmployerExpenseReportForm({
             </div>
           </div>
         )}
-      </div>
+        </div>
+      )}
 
       {/* Lobbying Expenses Section */}
-      <div className="rounded-lg border bg-white p-6 shadow-sm">
-        <h3 className="mb-4 text-lg font-semibold text-gray-900">
-          Lobbying Expenses (Food, Refreshments, Entertainment)
-        </h3>
+      {!noActivity && (
+        <div className="rounded-lg border bg-white p-6 shadow-sm">
+          <h3 className="mb-4 text-lg font-semibold text-gray-900">
+            Lobbying Expenses (Food, Refreshments, Entertainment)
+          </h3>
         <p className="mb-4 text-sm text-gray-600">
           Itemize expenses over $50 paid to or for any public official.
         </p>
@@ -453,7 +514,7 @@ export function EmployerExpenseReportForm({
               onClick={() => setMode("manual")}
               className={`rounded-md px-4 py-2 text-sm font-medium transition-colors ${
                 mode === "manual"
-                  ? "bg-blue-600 text-white"
+                  ? "bg-primary text-white"
                   : "bg-gray-100 text-gray-700 hover:bg-gray-200"
               }`}
             >
@@ -464,7 +525,7 @@ export function EmployerExpenseReportForm({
               onClick={() => setMode("csv")}
               className={`rounded-md px-4 py-2 text-sm font-medium transition-colors ${
                 mode === "csv"
-                  ? "bg-blue-600 text-white"
+                  ? "bg-primary text-white"
                   : "bg-gray-100 text-gray-700 hover:bg-gray-200"
               }`}
             >
@@ -475,7 +536,7 @@ export function EmployerExpenseReportForm({
               onClick={() => setMode("paste")}
               className={`rounded-md px-4 py-2 text-sm font-medium transition-colors ${
                 mode === "paste"
-                  ? "bg-blue-600 text-white"
+                  ? "bg-primary text-white"
                   : "bg-gray-100 text-gray-700 hover:bg-gray-200"
               }`}
             >
@@ -484,11 +545,12 @@ export function EmployerExpenseReportForm({
           </div>
         </div>
 
-        {/* Mode-specific content */}
-        {mode === "manual" && <ManualEntryMode onAdd={handleAddExpenses} />}
-        {mode === "csv" && <CSVUploadMode onAdd={handleAddExpenses} />}
-        {mode === "paste" && <BulkPasteMode onAdd={handleAddExpenses} />}
-      </div>
+          {/* Mode-specific content */}
+          {mode === "manual" && <ManualEntryMode onAdd={handleAddExpenses} />}
+          {mode === "csv" && <CSVUploadMode onAdd={handleAddExpenses} />}
+          {mode === "paste" && <BulkPasteMode onAdd={handleAddExpenses} />}
+        </div>
+      )}
 
       {/* Expenses List */}
       {expenses.length > 0 && (
@@ -525,7 +587,7 @@ export function EmployerExpenseReportForm({
                     <td className="px-3 py-4 text-sm whitespace-nowrap text-gray-900">
                       {expense.officialName}
                       {expense.isEstimate && (
-                        <span className="ml-2 text-xs text-yellow-600">
+                        <span className="ml-2 text-xs text-primary">
                           (Est.)
                         </span>
                       )}
@@ -545,7 +607,7 @@ export function EmployerExpenseReportForm({
                     <td className="px-3 py-4 text-right text-sm whitespace-nowrap">
                       <button
                         onClick={() => handleRemoveExpense(expense.id)}
-                        className="text-red-600 hover:text-red-900"
+                        className="text-destructive hover:text-red-900"
                       >
                         Remove
                       </button>
@@ -556,11 +618,11 @@ export function EmployerExpenseReportForm({
             </table>
           </div>
 
-          <div className="mt-4 flex items-center justify-between rounded-md bg-purple-50 p-4">
-            <span className="text-sm font-medium text-purple-900">
+          <div className="mt-4 flex items-center justify-between rounded-md bg-primary/10 p-4">
+            <span className="text-sm font-medium text-primary">
               Total Expenses:
             </span>
-            <span className="text-lg font-bold text-purple-900">
+            <span className="text-lg font-bold text-primary">
               ${totalExpenses.toFixed(2)}
             </span>
           </div>
@@ -593,8 +655,8 @@ export function EmployerExpenseReportForm({
             </div>
           </div>
 
-          <div className="mt-6 rounded-md bg-blue-50 p-4">
-            <p className="text-sm text-blue-700">
+          <div className="mt-6 rounded-md bg-primary/10 p-4">
+            <p className="text-sm text-primary">
               <strong>Note:</strong> Total includes all payments to registered
               lobbyists and itemized expenses over $50 paid to or for any public
               official for food, refreshments, and entertainment.
@@ -621,11 +683,11 @@ export function EmployerExpenseReportForm({
 
       {/* Unsaved Changes Warning */}
       {hasUnsavedChanges && (
-        <div className="rounded-lg border-2 border-yellow-200 bg-yellow-50 p-4 shadow-sm">
+        <div className="rounded-lg border-2 border-yellow-200 bg-primary/10 p-4 shadow-sm">
           <div className="flex items-start">
             <div className="flex-shrink-0">
               <svg
-                className="h-5 w-5 text-yellow-600"
+                className="h-5 w-5 text-primary"
                 viewBox="0 0 20 20"
                 fill="currentColor"
               >
@@ -654,8 +716,8 @@ export function EmployerExpenseReportForm({
         <div
           className={`rounded-lg p-4 ${
             message.type === "success"
-              ? "border border-green-200 bg-green-50 text-green-800"
-              : "border border-red-200 bg-red-50 text-red-800"
+              ? "border border-success/30 bg-success/10 text-success-foreground"
+              : "border border-red-200 bg-destructive/10 text-red-800"
           }`}
         >
           <div className="flex items-center justify-between">
@@ -685,9 +747,9 @@ export function EmployerExpenseReportForm({
           onClick={handleSubmit}
           disabled={
             isLoading ||
-            (lobbyistPayments.length === 0 && expenses.length === 0)
+            (!noActivity && lobbyistPayments.length === 0 && expenses.length === 0)
           }
-          className="flex items-center space-x-2 rounded-md bg-green-600 px-6 py-2 text-white hover:bg-green-700 disabled:cursor-not-allowed disabled:bg-gray-300"
+          className="flex items-center space-x-2 rounded-md bg-success px-6 py-2 text-white hover:bg-success disabled:cursor-not-allowed disabled:bg-gray-300"
         >
           {isLoading && (
             <svg
@@ -711,7 +773,7 @@ export function EmployerExpenseReportForm({
               ></path>
             </svg>
           )}
-          <span>{isLoading ? "Submitting..." : "Submit Report"}</span>
+          <span>{isLoading ? "Submitting..." : noActivity ? "Submit Zero-Activity Report" : "Submit Report"}</span>
         </button>
       </div>
     </div>

@@ -240,9 +240,9 @@ export async function GET(
               email: true,
             },
           },
-          lobbyistPayments: {
+          EmployerLobbyistPayment: {
             include: {
-              lobbyist: {
+              Lobbyist: {
                 select: {
                   name: true,
                 },
@@ -270,6 +270,14 @@ export async function GET(
 
     // Attach lineItems to report
     report.lineItems = lineItems;
+
+    // Map PascalCase relations to camelCase for backwards compatibility (employer reports only)
+    if (reportType === "employer" && report.EmployerLobbyistPayment) {
+      report.lobbyistPayments = report.EmployerLobbyistPayment.map((payment: any) => ({
+        ...payment,
+        lobbyist: payment.Lobbyist,
+      }));
+    }
 
     // 4. Return report details
     return NextResponse.json({

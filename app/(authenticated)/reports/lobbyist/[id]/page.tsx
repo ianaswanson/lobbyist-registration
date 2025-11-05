@@ -3,6 +3,7 @@ import { redirect, notFound } from "next/navigation";
 import { prisma } from "@/lib/db";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
+import { ReportAmendmentSection } from "@/components/ReportAmendmentSection";
 
 interface PageProps {
   params: Promise<{
@@ -28,11 +29,28 @@ async function getReport(reportId: string, userId: string) {
         lobbyistId: lobbyist.id,
       },
       include: {
-        lobbyist: {
+        Lobbyist: {
           select: {
             name: true,
             email: true,
           },
+        },
+        LobbyistExpenseReport: {
+          select: {
+            id: true,
+            amendmentReason: true,
+            submittedAt: true,
+            status: true,
+          },
+        },
+        other_LobbyistExpenseReport: {
+          select: {
+            id: true,
+            amendmentReason: true,
+            submittedAt: true,
+            status: true,
+          },
+          take: 1,
         },
       },
     });
@@ -50,7 +68,15 @@ async function getReport(reportId: string, userId: string) {
       },
     });
 
-    return { ...report, lineItems };
+    // Map the relations to the expected names for backwards compatibility
+    return {
+      ...report,
+      lobbyist: report.Lobbyist,
+      originalReport: report.LobbyistExpenseReport,
+      amendments: report.other_LobbyistExpenseReport,
+      lineItems,
+      amendedByReport: report.other_LobbyistExpenseReport[0] || null,
+    };
   } catch (error) {
     console.error("Error fetching lobbyist expense report:", error);
     return null;
@@ -74,11 +100,12 @@ export default async function LobbyistReportDetailPage({ params }: PageProps) {
   const getStatusBadge = (status: string) => {
     const styles: Record<string, string> = {
       DRAFT: "bg-gray-100 text-gray-800",
-      SUBMITTED: "bg-blue-100 text-blue-800",
-      LATE: "bg-red-100 text-red-800",
-      APPROVED: "bg-green-100 text-green-800",
-      REJECTED: "bg-red-100 text-red-800",
+      SUBMITTED: "bg-primary/20 text-primary",
+      LATE: "bg-destructive/20 text-red-800",
+      APPROVED: "bg-success/20 text-success-foreground",
+      REJECTED: "bg-destructive/20 text-red-800",
       NEEDS_CLARIFICATION: "bg-yellow-100 text-yellow-800",
+      AMENDED: "bg-orange-100 text-orange-800",
     };
 
     return (
@@ -118,7 +145,7 @@ export default async function LobbyistReportDetailPage({ params }: PageProps) {
         <div className="mb-6">
           <Link
             href="/reports/lobbyist"
-            className="mb-4 inline-flex items-center text-sm font-medium text-blue-600 hover:text-blue-800"
+            className="mb-4 inline-flex items-center text-sm font-medium text-primary hover:text-primary"
           >
             <ArrowLeft className="mr-2 h-4 w-4" />
             Back to Reports
@@ -135,6 +162,21 @@ export default async function LobbyistReportDetailPage({ params }: PageProps) {
             </div>
             <div>{getStatusBadge(report.status)}</div>
           </div>
+        </div>
+
+        {/* Amendment Section */}
+        <div className="mb-6">
+          <ReportAmendmentSection
+            reportId={report.id}
+            reportType="lobbyist"
+            status={report.status}
+            quarter={report.quarter.toString()}
+            year={report.year}
+            originalReport={report.originalReport}
+            amendedByReport={report.amendedByReport}
+            amendmentReason={report.amendmentReason}
+            canAmend={true}
+          />
         </div>
 
         {/* Summary Cards */}
@@ -249,13 +291,13 @@ export default async function LobbyistReportDetailPage({ params }: PageProps) {
         </div>
 
         {/* Grand Total */}
-        <div className="rounded-lg border border-blue-200 bg-blue-50 p-6 shadow">
+        <div className="rounded-lg border border-blue-200 bg-primary/10 p-6 shadow">
           <div className="flex items-center justify-between">
             <div>
               <h3 className="text-lg font-medium text-blue-900">
                 Total Food & Entertainment Spend
               </h3>
-              <p className="mt-1 text-sm text-blue-700">
+              <p className="mt-1 text-sm text-primary">
                 All itemized expenses over $50
               </p>
             </div>
@@ -267,7 +309,7 @@ export default async function LobbyistReportDetailPage({ params }: PageProps) {
 
         {/* Admin Notes */}
         {report.reviewNotes && (
-          <div className="mt-6 rounded-lg border border-yellow-200 bg-yellow-50 p-6 shadow">
+          <div className="mt-6 rounded-lg border border-yellow-200 bg-primary/10 p-6 shadow">
             <h3 className="mb-2 text-lg font-medium text-yellow-900">
               Admin Review Notes
             </h3>

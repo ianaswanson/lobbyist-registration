@@ -53,7 +53,7 @@ const violationTypeLabels: Record<string, string> = {
 
 const appealStatusColors: Record<string, string> = {
   PENDING: "bg-yellow-100 text-yellow-800",
-  SCHEDULED: "bg-blue-100 text-blue-800",
+  SCHEDULED: "bg-primary/20 text-primary",
   DECIDED: "bg-gray-100 text-gray-800",
 };
 
@@ -255,25 +255,25 @@ export function AppealsClient() {
         <Alert
           className={`mb-6 ${
             message.type === "success"
-              ? "border-green-200 bg-green-50"
-              : "border-red-200 bg-red-50"
+              ? "border-success/30 bg-success/10"
+              : "border-red-200 bg-destructive/10"
           }`}
         >
           <AlertCircle
             className={`h-4 w-4 ${
-              message.type === "success" ? "text-green-600" : "text-red-600"
+              message.type === "success" ? "text-success" : "text-destructive"
             }`}
           />
           <AlertTitle
             className={
-              message.type === "success" ? "text-green-800" : "text-red-800"
+              message.type === "success" ? "text-success-foreground" : "text-red-800"
             }
           >
             {message.type === "success" ? "Success" : "Error"}
           </AlertTitle>
           <AlertDescription
             className={
-              message.type === "success" ? "text-green-700" : "text-red-700"
+              message.type === "success" ? "text-success" : "text-destructive"
             }
           >
             {message.text}
@@ -392,7 +392,7 @@ export function AppealsClient() {
                         return (
                           <TableRow
                             key={appeal.id}
-                            className={isUrgent ? "bg-red-50" : ""}
+                            className={isUrgent ? "bg-destructive/10" : ""}
                           >
                             <TableCell className="text-sm">
                               {new Date(
@@ -432,7 +432,7 @@ export function AppealsClient() {
                                 ).toLocaleDateString()}
                               </div>
                               <div
-                                className={`text-xs ${daysUntilDeadline <= 7 ? "font-semibold text-red-600" : "text-muted-foreground"}`}
+                                className={`text-xs ${daysUntilDeadline <= 7 ? "font-semibold text-destructive" : "text-muted-foreground"}`}
                               >
                                 {daysUntilDeadline > 0
                                   ? `${daysUntilDeadline} days left`
@@ -442,7 +442,7 @@ export function AppealsClient() {
                             <TableCell>
                               <span
                                 className={
-                                  isUrgent ? "font-semibold text-red-600" : ""
+                                  isUrgent ? "font-semibold text-destructive" : ""
                                 }
                               >
                                 {daysPending} days
@@ -592,12 +592,12 @@ export function AppealsClient() {
 
               {/* Hearing Date Display */}
               {selectedAppeal.hearingDate && (
-                <Alert className="border-blue-200 bg-blue-50">
-                  <Calendar className="h-4 w-4 text-blue-600" />
-                  <AlertTitle className="text-blue-800">
+                <Alert className="border-blue-200 bg-primary/10">
+                  <Calendar className="h-4 w-4 text-primary" />
+                  <AlertTitle className="text-primary">
                     Hearing Scheduled
                   </AlertTitle>
-                  <AlertDescription className="text-blue-700">
+                  <AlertDescription className="text-primary">
                     {new Date(selectedAppeal.hearingDate).toLocaleString()}
                   </AlertDescription>
                 </Alert>
@@ -663,12 +663,12 @@ export function AppealsClient() {
                     onClick={() => setDecisionOutcome("UPHELD")}
                     className={`rounded-lg border-2 p-4 text-left transition-colors ${
                       decisionOutcome === "UPHELD"
-                        ? "border-red-500 bg-red-50"
+                        ? "border-destructive bg-destructive/10"
                         : "border-gray-200 hover:border-gray-300"
                     }`}
                   >
                     <div className="mb-2 flex items-center gap-2">
-                      <XCircle className="h-5 w-5 text-red-600" />
+                      <XCircle className="h-5 w-5 text-destructive" />
                       <span className="font-semibold">Uphold Fine</span>
                     </div>
                     <p className="text-muted-foreground text-xs">
@@ -680,12 +680,12 @@ export function AppealsClient() {
                     onClick={() => setDecisionOutcome("OVERTURNED")}
                     className={`rounded-lg border-2 p-4 text-left transition-colors ${
                       decisionOutcome === "OVERTURNED"
-                        ? "border-green-500 bg-green-50"
+                        ? "border-success bg-success/10"
                         : "border-gray-200 hover:border-gray-300"
                     }`}
                   >
                     <div className="mb-2 flex items-center gap-2">
-                      <CheckCircle className="h-5 w-5 text-green-600" />
+                      <CheckCircle className="h-5 w-5 text-success" />
                       <span className="font-semibold">Overturn Fine</span>
                     </div>
                     <p className="text-muted-foreground text-xs">
@@ -731,7 +731,7 @@ export function AppealsClient() {
               className={
                 decisionOutcome === "UPHELD"
                   ? "bg-red-600 hover:bg-red-700"
-                  : "bg-green-600 hover:bg-green-700"
+                  : "bg-success hover:bg-success"
               }
             >
               {submitting

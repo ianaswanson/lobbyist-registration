@@ -31,10 +31,16 @@ export async function GET(
     // 3. Fetch audit log history
     const auditLog = await getUserAuditHistory(id);
 
-    // 4. Return audit history
+    // 4. Map PascalCase relation name to camelCase for frontend compatibility
+    const formattedAuditLog = auditLog.map((entry) => ({
+      ...entry,
+      admin: entry.User_UserAuditLog_adminIdToUser,
+    }));
+
+    // 5. Return audit history
     return NextResponse.json({
-      auditLog,
-      total: auditLog.length,
+      auditLog: formattedAuditLog,
+      total: formattedAuditLog.length,
     });
   } catch (error) {
     console.error("Error fetching audit log:", error);

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import {
   exportLobbyistsToCSV,
   exportEmployersToCSV,
@@ -29,46 +30,24 @@ interface SearchFilters {
   showAdvanced: boolean;
 }
 
-// Mock data for demonstration
-const mockLobbyists = [
-  {
-    id: "1",
-    name: "Jane Smith",
-    email: "jane@example.com",
-    employer: "Tech Industry Association",
-    subjects: "Technology policy, infrastructure",
-    registrationDate: "2025-01-15",
-    totalExpenses: 2450.0,
-  },
-  {
-    id: "2",
-    name: "John Doe",
-    email: "john@consulting.com",
-    employer: "Downtown Business Coalition",
-    subjects: "Economic development, zoning",
-    registrationDate: "2025-02-01",
-    totalExpenses: 1850.0,
-  },
-];
+interface Lobbyist {
+  id: string;
+  name: string;
+  email: string;
+  employer: string;
+  subjects: string;
+  registrationDate: string;
+  totalExpenses: number;
+}
 
-const mockEmployers = [
-  {
-    id: "1",
-    name: "Tech Industry Association",
-    email: "info@techassoc.org",
-    businessDescription: "Trade association representing technology companies",
-    lobbyistCount: 3,
-    totalExpenses: 7500.0,
-  },
-  {
-    id: "2",
-    name: "Downtown Business Coalition",
-    email: "contact@downtownbiz.org",
-    businessDescription: "Business improvement district",
-    lobbyistCount: 2,
-    totalExpenses: 4200.0,
-  },
-];
+interface Employer {
+  id: string;
+  name: string;
+  email: string;
+  businessDescription: string;
+  lobbyistCount: number;
+  totalExpenses: number;
+}
 
 export function SearchClient({ user }: SearchClientProps) {
   const [filters, setFilters] = useState<SearchFilters>({
@@ -82,11 +61,41 @@ export function SearchClient({ user }: SearchClientProps) {
   });
 
   const [hasSearched, setHasSearched] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [lobbyists, setLobbyists] = useState<Lobbyist[]>([]);
+  const [employers, setEmployers] = useState<Employer[]>([]);
 
-  const handleSearch = (e: React.FormEvent) => {
+  const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsLoading(true);
     setHasSearched(true);
-    // TODO: Actual search logic with API call
+
+    try {
+      // Build query parameters
+      const params = new URLSearchParams();
+      if (filters.searchTerm) params.append("searchTerm", filters.searchTerm);
+      if (filters.entityType) params.append("entityType", filters.entityType);
+      if (filters.dateFrom) params.append("dateFrom", filters.dateFrom);
+      if (filters.dateTo) params.append("dateTo", filters.dateTo);
+      if (filters.minAmount) params.append("minAmount", filters.minAmount);
+      if (filters.maxAmount) params.append("maxAmount", filters.maxAmount);
+
+      const response = await fetch(`/api/public/search?${params.toString()}`);
+
+      if (!response.ok) {
+        throw new Error("Search failed");
+      }
+
+      const data = await response.json();
+      setLobbyists(data.lobbyists || []);
+      setEmployers(data.employers || []);
+    } catch (error) {
+      console.error("Search error:", error);
+      setLobbyists([]);
+      setEmployers([]);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleReset = () => {
@@ -100,91 +109,33 @@ export function SearchClient({ user }: SearchClientProps) {
       showAdvanced: false,
     });
     setHasSearched(false);
+    setLobbyists([]);
+    setEmployers([]);
   };
 
   const handleExport = () => {
     const timestamp = new Date().toISOString().split("T")[0];
 
     if (filters.entityType === "lobbyists") {
-      const csv = exportLobbyistsToCSV(filteredLobbyists);
+      const csv = exportLobbyistsToCSV(lobbyists as any);
       downloadCSV(csv, `lobbyists-export-${timestamp}.csv`);
     } else if (filters.entityType === "employers") {
-      const csv = exportEmployersToCSV(filteredEmployers);
+      const csv = exportEmployersToCSV(employers as any);
       downloadCSV(csv, `employers-export-${timestamp}.csv`);
     } else {
       // Export all
-      const csv = exportAllToCSV(filteredLobbyists, filteredEmployers);
+      const csv = exportAllToCSV(lobbyists as any, employers as any);
       downloadCSV(csv, `lobbying-data-export-${timestamp}.csv`);
     }
   };
-
-  // Filter results based on search term and advanced filters
-  const filteredLobbyists = mockLobbyists.filter((lobbyist) => {
-    // Search term filter
-    const matchesSearch = filters.searchTerm
-      ? lobbyist.name
-          .toLowerCase()
-          .includes(filters.searchTerm.toLowerCase()) ||
-        lobbyist.employer
-          .toLowerCase()
-          .includes(filters.searchTerm.toLowerCase()) ||
-        lobbyist.subjects
-          .toLowerCase()
-          .includes(filters.searchTerm.toLowerCase())
-      : true;
-
-    // Date range filter
-    const lobbyistDate = new Date(lobbyist.registrationDate);
-    const matchesDateFrom = filters.dateFrom
-      ? lobbyistDate >= new Date(filters.dateFrom)
-      : true;
-    const matchesDateTo = filters.dateTo
-      ? lobbyistDate <= new Date(filters.dateTo)
-      : true;
-
-    // Expense amount filter
-    const matchesMinAmount = filters.minAmount
-      ? lobbyist.totalExpenses >= parseFloat(filters.minAmount)
-      : true;
-    const matchesMaxAmount = filters.maxAmount
-      ? lobbyist.totalExpenses <= parseFloat(filters.maxAmount)
-      : true;
-
-    return (
-      matchesSearch &&
-      matchesDateFrom &&
-      matchesDateTo &&
-      matchesMinAmount &&
-      matchesMaxAmount
-    );
-  });
-
-  const filteredEmployers = mockEmployers.filter((employer) => {
-    // Search term filter
-    const matchesSearch = filters.searchTerm
-      ? employer.name
-          .toLowerCase()
-          .includes(filters.searchTerm.toLowerCase()) ||
-        employer.businessDescription
-          .toLowerCase()
-          .includes(filters.searchTerm.toLowerCase())
-      : true;
-
-    // Expense amount filter (no date for employers in mock data)
-    const matchesMinAmount = filters.minAmount
-      ? employer.totalExpenses >= parseFloat(filters.minAmount)
-      : true;
-    const matchesMaxAmount = filters.maxAmount
-      ? employer.totalExpenses <= parseFloat(filters.maxAmount)
-      : true;
-
-    return matchesSearch && matchesMinAmount && matchesMaxAmount;
-  });
 
   const showLobbyists =
     filters.entityType === "all" || filters.entityType === "lobbyists";
   const showEmployers =
     filters.entityType === "all" || filters.entityType === "employers";
+
+  const filteredLobbyists = showLobbyists ? lobbyists : [];
+  const filteredEmployers = showEmployers ? employers : [];
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -221,7 +172,7 @@ export function SearchClient({ user }: SearchClientProps) {
                     setFilters({ ...filters, searchTerm: e.target.value })
                   }
                   placeholder="Search by name, employer, or subject..."
-                  className="block w-full rounded-md border border-gray-300 px-4 py-3 focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
+                  className="block w-full rounded-md border border-gray-300 px-4 py-3 focus:border-primary focus:ring-primary focus:outline-none"
                 />
               </div>
 
@@ -241,7 +192,7 @@ export function SearchClient({ user }: SearchClientProps) {
                           entityType: e.target.value as any,
                         })
                       }
-                      className="h-4 w-4 border-gray-300 text-blue-600 focus:ring-blue-500"
+                      className="h-4 w-4 border-gray-300 text-primary focus:ring-primary"
                     />
                     <span className="ml-2 text-sm text-gray-700">
                       All Results
@@ -258,7 +209,7 @@ export function SearchClient({ user }: SearchClientProps) {
                           entityType: e.target.value as any,
                         })
                       }
-                      className="h-4 w-4 border-gray-300 text-blue-600 focus:ring-blue-500"
+                      className="h-4 w-4 border-gray-300 text-primary focus:ring-primary"
                     />
                     <span className="ml-2 text-sm text-gray-700">
                       Lobbyists Only
@@ -275,7 +226,7 @@ export function SearchClient({ user }: SearchClientProps) {
                           entityType: e.target.value as any,
                         })
                       }
-                      className="h-4 w-4 border-gray-300 text-blue-600 focus:ring-blue-500"
+                      className="h-4 w-4 border-gray-300 text-primary focus:ring-primary"
                     />
                     <span className="ml-2 text-sm text-gray-700">
                       Employers Only
@@ -295,7 +246,7 @@ export function SearchClient({ user }: SearchClientProps) {
                     showAdvanced: !filters.showAdvanced,
                   })
                 }
-                className="flex items-center text-sm font-medium text-blue-600 hover:text-blue-700"
+                className="flex items-center text-sm font-medium text-primary hover:text-primary"
               >
                 {filters.showAdvanced ? "Hide" : "Show"} Advanced Filters
                 <svg
@@ -334,7 +285,7 @@ export function SearchClient({ user }: SearchClientProps) {
                       onChange={(e) =>
                         setFilters({ ...filters, dateFrom: e.target.value })
                       }
-                      className="block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
+                      className="block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-primary focus:ring-primary focus:outline-none"
                     />
                   </div>
                   <div>
@@ -351,7 +302,7 @@ export function SearchClient({ user }: SearchClientProps) {
                       onChange={(e) =>
                         setFilters({ ...filters, dateTo: e.target.value })
                       }
-                      className="block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
+                      className="block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-primary focus:ring-primary focus:outline-none"
                     />
                   </div>
                 </div>
@@ -377,7 +328,7 @@ export function SearchClient({ user }: SearchClientProps) {
                         onChange={(e) =>
                           setFilters({ ...filters, minAmount: e.target.value })
                         }
-                        className="block w-full rounded-md border border-gray-300 py-2 pr-3 pl-7 focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
+                        className="block w-full rounded-md border border-gray-300 py-2 pr-3 pl-7 focus:border-primary focus:ring-primary focus:outline-none"
                         placeholder="0.00"
                       />
                     </div>
@@ -402,7 +353,7 @@ export function SearchClient({ user }: SearchClientProps) {
                         onChange={(e) =>
                           setFilters({ ...filters, maxAmount: e.target.value })
                         }
-                        className="block w-full rounded-md border border-gray-300 py-2 pr-3 pl-7 focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
+                        className="block w-full rounded-md border border-gray-300 py-2 pr-3 pl-7 focus:border-primary focus:ring-primary focus:outline-none"
                         placeholder="10000.00"
                       />
                     </div>
@@ -416,15 +367,17 @@ export function SearchClient({ user }: SearchClientProps) {
               <button
                 type="button"
                 onClick={handleReset}
-                className="rounded-md border border-gray-300 bg-white px-6 py-2 text-gray-700 hover:bg-gray-50"
+                disabled={isLoading}
+                className="rounded-md border border-gray-300 bg-white px-6 py-2 text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Reset
               </button>
               <button
                 type="submit"
-                className="rounded-md bg-blue-600 px-6 py-2 text-white hover:bg-blue-700"
+                disabled={isLoading}
+                className="rounded-md bg-primary px-6 py-2 text-white hover:bg-primary disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Search
+                {isLoading ? "Searching..." : "Search"}
               </button>
             </div>
           </div>
@@ -447,7 +400,7 @@ export function SearchClient({ user }: SearchClientProps) {
                 (showEmployers && filteredEmployers.length > 0)) && (
                 <button
                   onClick={handleExport}
-                  className="flex items-center space-x-2 rounded-md bg-green-600 px-4 py-2 text-sm text-white hover:bg-green-700"
+                  className="flex items-center space-x-2 rounded-md bg-success px-4 py-2 text-sm text-white hover:bg-success"
                 >
                   <svg
                     className="h-4 w-4"
@@ -505,13 +458,12 @@ export function SearchClient({ user }: SearchClientProps) {
                             </p>
                           </div>
                         </div>
-                        <button
-                          disabled
-                          className="ml-4 cursor-not-allowed rounded-md bg-gray-300 px-4 py-2 text-sm text-gray-500"
-                          title="Detail view coming soon"
+                        <Link
+                          href={`/lobbyist/${lobbyist.id}`}
+                          className="ml-4 rounded-md bg-primary px-4 py-2 text-sm text-white hover:bg-primary/90"
                         >
                           View Details
-                        </button>
+                        </Link>
                       </div>
                     </div>
                   ))}
@@ -596,16 +548,16 @@ export function SearchClient({ user }: SearchClientProps) {
 
         {/* Information */}
         {!hasSearched && (
-          <div className="mt-8 rounded-lg border border-blue-200 bg-blue-50 p-6">
+          <div className="mt-8 rounded-lg border border-blue-200 bg-primary/10 p-6">
             <h3 className="mb-2 font-semibold text-blue-900">
               About This Database
             </h3>
-            <p className="mb-3 text-sm text-blue-700">
+            <p className="mb-3 text-sm text-primary">
               This public database contains information about registered
               lobbyists, their employers, and lobbying expenditures in Multnomah
               County as required by ordinance.
             </p>
-            <ul className="list-inside list-disc space-y-1 text-sm text-blue-700">
+            <ul className="list-inside list-disc space-y-1 text-sm text-primary">
               <li>Search by lobbyist name, employer, or subject matter</li>
               <li>View expense reports and lobbying activities</li>
               <li>Filter by date range and expense amounts</li>

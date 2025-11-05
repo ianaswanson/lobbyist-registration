@@ -63,7 +63,7 @@ export function ReviewActions({
           </label>
           <textarea
             rows={3}
-            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
+            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-primary focus:ring-primary focus:outline-none"
             placeholder="Explain why this is being rejected..."
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
@@ -100,7 +100,7 @@ export function ReviewActions({
           </label>
           <textarea
             rows={3}
-            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
+            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-primary focus:ring-primary focus:outline-none"
             placeholder="What clarification is needed..."
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
@@ -132,7 +132,7 @@ export function ReviewActions({
     <div className="flex justify-end space-x-3">
       <button
         type="button"
-        className="rounded-md border border-red-300 bg-white px-4 py-2 text-sm font-medium text-red-700 hover:bg-red-50"
+        className="rounded-md border border-red-300 bg-white px-4 py-2 text-sm font-medium text-destructive hover:bg-destructive/10"
         onClick={handleRejectClick}
       >
         Reject
@@ -140,7 +140,7 @@ export function ReviewActions({
       {onRequestClarification && (
         <button
           type="button"
-          className="rounded-md border border-yellow-300 bg-white px-4 py-2 text-sm font-medium text-yellow-700 hover:bg-yellow-50"
+          className="rounded-md border border-yellow-300 bg-white px-4 py-2 text-sm font-medium text-yellow-700 hover:bg-primary/10"
           onClick={handleClarifyClick}
         >
           Request Clarification
@@ -148,7 +148,7 @@ export function ReviewActions({
       )}
       <button
         type="button"
-        className="rounded-md bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700"
+        className="rounded-md bg-success px-4 py-2 text-sm font-medium text-white hover:bg-success"
         onClick={handleApprove}
       >
         Approve

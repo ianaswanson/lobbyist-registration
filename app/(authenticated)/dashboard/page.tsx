@@ -11,14 +11,14 @@ export default async function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-white">
       <SkipLink />
       <main
         id="main-content"
         className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8"
       >
         {/* Welcome Section */}
-        <div className="mb-8">
+        <div className="mb-8 rounded-lg bg-gray-50 p-6">
           <h2 className="text-3xl font-bold text-gray-900">
             Welcome back,{" "}
             {session.user?.name || session.user?.email?.split("@")[0]}
@@ -40,11 +40,11 @@ export default async function DashboardPage() {
         {/* Important Reminders */}
         {(session.user?.role === "LOBBYIST" ||
           session.user?.role === "EMPLOYER") && (
-          <div className="mb-8 rounded-lg border-l-4 border-blue-500 bg-blue-50 p-4">
+          <div className="mb-8 rounded-lg border-2 border-yellow-400 bg-yellow-50 p-6 shadow-sm">
             <div className="flex">
               <div className="flex-shrink-0">
                 <svg
-                  className="h-5 w-5 text-blue-400"
+                  className="h-5 w-5 text-yellow-600"
                   viewBox="0 0 20 20"
                   fill="currentColor"
                   aria-hidden="true"
@@ -57,13 +57,13 @@ export default async function DashboardPage() {
                 </svg>
               </div>
               <div className="ml-3">
-                <h3 className="text-sm font-medium text-blue-800">
+                <h3 className="text-sm font-semibold text-yellow-900">
                   Upcoming Deadlines
                 </h3>
-                <div className="mt-2 text-sm text-blue-700">
+                <div className="mt-2 text-sm text-yellow-800">
                   <p>
                     Quarterly expense reports are due:{" "}
-                    <strong>
+                    <strong className="text-yellow-900">
                       January 15, April 15, July 15, and October 15
                     </strong>
                   </p>
@@ -84,7 +84,7 @@ export default async function DashboardPage() {
                 {FEATURE_FLAGS.HOUR_TRACKING && (
                   <a
                     href="/hours"
-                    className="flex items-center justify-between rounded-lg border border-gray-200 p-4 transition-colors hover:border-blue-500 hover:bg-blue-50 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none"
+                    className="flex items-center justify-between rounded-lg border border-gray-200 p-4 transition-colors hover:border-primary hover:bg-primary/10 focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:outline-none"
                     aria-label="Track lobbying hours"
                   >
                     <div>
@@ -96,7 +96,7 @@ export default async function DashboardPage() {
                       </p>
                     </div>
                     <svg
-                      className="h-6 w-6 text-blue-600"
+                      className="h-6 w-6 text-primary"
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke="currentColor"
@@ -113,7 +113,7 @@ export default async function DashboardPage() {
                 )}
                 <a
                   href="/reports/lobbyist"
-                  className="flex items-center justify-between rounded-lg border border-gray-200 p-4 transition-colors hover:border-purple-500 hover:bg-purple-50 focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:outline-none"
+                  className="flex items-center justify-between rounded-lg border border-gray-200 p-4 transition-colors hover:border-primary hover:bg-primary/10 focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:outline-none"
                   aria-label="View and manage expense reports"
                 >
                   <div>
@@ -125,7 +125,7 @@ export default async function DashboardPage() {
                     </p>
                   </div>
                   <svg
-                    className="h-6 w-6 text-purple-600"
+                    className="h-6 w-6 text-primary"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -141,7 +141,7 @@ export default async function DashboardPage() {
                 </a>
                 <a
                   href="/my-violations"
-                  className="flex items-center justify-between rounded-lg border border-gray-200 p-4 transition-colors hover:border-orange-500 hover:bg-orange-50 focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 focus:outline-none"
+                  className="flex items-center justify-between rounded-lg border border-gray-200 p-4 transition-colors hover:border-primary hover:bg-primary/10 focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:outline-none"
                   aria-label="View violations and appeals"
                 >
                   <div>
@@ -153,7 +153,7 @@ export default async function DashboardPage() {
                     </p>
                   </div>
                   <svg
-                    className="h-6 w-6 text-orange-600"
+                    className="h-6 w-6 text-primary"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -173,7 +173,7 @@ export default async function DashboardPage() {
             {session.user?.role === "EMPLOYER" && (
               <a
                 href="/reports/employer"
-                className="flex items-center justify-between rounded-lg border border-gray-200 p-4 transition-colors hover:border-orange-500 hover:bg-orange-50 focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 focus:outline-none"
+                className="flex items-center justify-between rounded-lg border border-gray-200 p-4 transition-colors hover:border-primary hover:bg-primary/10 focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:outline-none"
                 aria-label="View and manage expense reports"
               >
                 <div>
@@ -185,7 +185,7 @@ export default async function DashboardPage() {
                   </p>
                 </div>
                 <svg
-                  className="h-6 w-6 text-orange-600"
+                  className="h-6 w-6 text-primary"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -205,7 +205,7 @@ export default async function DashboardPage() {
               <>
                 <a
                   href="/board-member/calendar"
-                  className="flex items-center justify-between rounded-lg border border-gray-200 p-4 transition-colors hover:border-indigo-500 hover:bg-indigo-50 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:outline-none"
+                  className="flex items-center justify-between rounded-lg border border-gray-200 p-4 transition-colors hover:border-primary hover:bg-primary/10 focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:outline-none"
                   aria-label="Post calendar and lobbying receipts"
                 >
                   <div>
@@ -217,7 +217,7 @@ export default async function DashboardPage() {
                     </p>
                   </div>
                   <svg
-                    className="h-6 w-6 text-indigo-600"
+                    className="h-6 w-6 text-primary"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -233,7 +233,7 @@ export default async function DashboardPage() {
                 </a>
                 <a
                   href="/reports/board-member"
-                  className="flex items-center justify-between rounded-lg border border-gray-200 p-4 transition-colors hover:border-purple-500 hover:bg-purple-50 focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:outline-none"
+                  className="flex items-center justify-between rounded-lg border border-gray-200 p-4 transition-colors hover:border-primary hover:bg-primary/10 focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:outline-none"
                   aria-label="View submission history"
                 >
                   <div>
@@ -245,7 +245,7 @@ export default async function DashboardPage() {
                     </p>
                   </div>
                   <svg
-                    className="h-6 w-6 text-purple-600"
+                    className="h-6 w-6 text-primary"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -266,7 +266,7 @@ export default async function DashboardPage() {
               <>
                 <a
                   href="/admin/compliance"
-                  className="flex items-center justify-between rounded-lg border border-gray-200 p-4 transition-colors hover:border-red-500 hover:bg-red-50 focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:outline-none"
+                  className="flex items-center justify-between rounded-lg border border-gray-200 p-4 transition-colors hover:border-destructive hover:bg-destructive/10 focus:ring-2 focus:ring-destructive focus:ring-offset-2 focus:outline-none"
                   aria-label="View compliance dashboard"
                 >
                   <div>
@@ -278,7 +278,7 @@ export default async function DashboardPage() {
                     </p>
                   </div>
                   <svg
-                    className="h-6 w-6 text-red-600"
+                    className="h-6 w-6 text-destructive"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -294,7 +294,7 @@ export default async function DashboardPage() {
                 </a>
                 <a
                   href="/admin/violations"
-                  className="flex items-center justify-between rounded-lg border border-gray-200 p-4 transition-colors hover:border-orange-500 hover:bg-orange-50 focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 focus:outline-none"
+                  className="flex items-center justify-between rounded-lg border border-gray-200 p-4 transition-colors hover:border-primary hover:bg-primary/10 focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:outline-none"
                   aria-label="Track violations and issue fines"
                 >
                   <div>
@@ -306,7 +306,7 @@ export default async function DashboardPage() {
                     </p>
                   </div>
                   <svg
-                    className="h-6 w-6 text-orange-600"
+                    className="h-6 w-6 text-primary"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -323,7 +323,7 @@ export default async function DashboardPage() {
                 {FEATURE_FLAGS.EMAIL_NOTIFICATIONS && (
                   <a
                     href="/admin/notifications"
-                    className="flex items-center justify-between rounded-lg border border-gray-200 p-4 transition-colors hover:border-yellow-500 hover:bg-yellow-50 focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 focus:outline-none"
+                    className="flex items-center justify-between rounded-lg border border-gray-200 p-4 transition-colors hover:border-primary hover:bg-primary/10 focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:outline-none"
                     aria-label="Manage email notifications"
                   >
                     <div>
@@ -335,7 +335,7 @@ export default async function DashboardPage() {
                       </p>
                     </div>
                     <svg
-                      className="h-6 w-6 text-yellow-600"
+                      className="h-6 w-6 text-primary"
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke="currentColor"
@@ -356,7 +356,7 @@ export default async function DashboardPage() {
         </div>
 
         {/* Help & Resources */}
-        <div className="rounded-lg border bg-white p-6 shadow-sm">
+        <div className="rounded-lg border bg-gray-50 p-6 shadow-sm">
           <h3 className="mb-4 text-lg font-semibold text-gray-900">
             Help & Resources
           </h3>
@@ -372,7 +372,7 @@ export default async function DashboardPage() {
               <strong className="text-gray-900">Ordinance Reference:</strong>
               <p>
                 View the complete{" "}
-                <a href="/ordinance" className="text-blue-600 hover:underline">
+                <a href="/ordinance" className="text-primary hover:underline">
                   Government Accountability Ordinance
                 </a>{" "}
                 (effective July 1, 2026)
@@ -382,7 +382,7 @@ export default async function DashboardPage() {
               <strong className="text-gray-900">Public Records:</strong>
               <p>
                 All lobbyist registrations and expense reports are{" "}
-                <a href="/search" className="text-blue-600 hover:underline">
+                <a href="/search" className="text-primary hover:underline">
                   publicly searchable
                 </a>{" "}
                 for transparency.

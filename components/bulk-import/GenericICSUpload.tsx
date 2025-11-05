@@ -37,30 +37,30 @@ export function GenericICSUpload<T>({
   const colorClasses = {
     blue: {
       border: "border-blue-300 dark:border-blue-700",
-      bg: "bg-blue-50 dark:bg-blue-900/20",
-      text: "text-blue-700 dark:text-blue-300",
-      button: "bg-blue-600 hover:bg-blue-700",
-      badge: "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200",
+      bg: "bg-primary/10 dark:bg-blue-900/20",
+      text: "text-primary dark:text-blue-300",
+      button: "bg-primary hover:bg-primary",
+      badge: "bg-primary/20 text-primary dark:bg-blue-900 dark:text-blue-200",
     },
     green: {
       border: "border-green-300 dark:border-green-700",
-      bg: "bg-green-50 dark:bg-green-900/20",
-      text: "text-green-700 dark:text-green-300",
-      button: "bg-green-600 hover:bg-green-700",
+      bg: "bg-success/10 dark:bg-green-900/20",
+      text: "text-success dark:text-green-300",
+      button: "bg-success hover:bg-success",
       badge:
-        "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200",
+        "bg-success/20 text-success-foreground dark:bg-green-900 dark:text-green-200",
     },
     purple: {
-      border: "border-purple-300 dark:border-purple-700",
-      bg: "bg-purple-50 dark:bg-purple-900/20",
-      text: "text-purple-700 dark:text-purple-300",
-      button: "bg-purple-600 hover:bg-purple-700",
+      border: "border-primary/30 dark:border-primary/50",
+      bg: "bg-primary/10 dark:bg-primary/20",
+      text: "text-primary/80 dark:text-primary/70",
+      button: "bg-primary hover:bg-primary/90",
       badge:
-        "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200",
+        "bg-primary/20 text-primary dark:bg-primary/30 dark:text-primary/90",
     },
     orange: {
       border: "border-orange-300 dark:border-orange-700",
-      bg: "bg-orange-50 dark:bg-orange-900/20",
+      bg: "bg-primary/10 dark:bg-orange-900/20",
       text: "text-orange-700 dark:text-orange-300",
       button: "bg-orange-600 hover:bg-orange-700",
       badge:
@@ -206,13 +206,13 @@ export function GenericICSUpload<T>({
       {/* Errors */}
       {parseErrors.length > 0 && (
         <div
-          className="rounded-lg border border-red-200 bg-red-50 p-4 dark:border-red-800 dark:bg-red-900/20"
+          className="rounded-lg border border-red-200 bg-destructive/10 p-4 dark:border-red-800 dark:bg-red-900/20"
           role="alert"
         >
           <h3 className="mb-2 font-semibold text-red-800 dark:text-red-200">
             Parsing Issues
           </h3>
-          <ul className="space-y-1 text-sm text-red-700 dark:text-red-300">
+          <ul className="space-y-1 text-sm text-destructive dark:text-red-300">
             {parseErrors.map((error, index) => (
               <li key={index}>• {error}</li>
             ))}

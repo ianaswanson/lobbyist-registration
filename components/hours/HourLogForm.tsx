@@ -70,16 +70,16 @@ export function HourLogForm({ onSuccess }: Props) {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       {error && (
-        <Alert className="border-red-200 bg-red-50">
-          <AlertCircle className="h-4 w-4 text-red-600" />
+        <Alert className="border-red-200 bg-destructive/10">
+          <AlertCircle className="h-4 w-4 text-destructive" />
           <AlertTitle className="text-red-800">Error</AlertTitle>
-          <AlertDescription className="text-red-700">{error}</AlertDescription>
+          <AlertDescription className="text-destructive">{error}</AlertDescription>
         </Alert>
       )}
 
       {thresholdWarning && (
-        <Alert className="border-yellow-200 bg-yellow-50">
-          <AlertTriangle className="h-4 w-4 text-yellow-600" />
+        <Alert className="border-yellow-200 bg-primary/10">
+          <AlertTriangle className="h-4 w-4 text-primary" />
           <AlertTitle className="text-yellow-800">
             Registration Required
           </AlertTitle>
@@ -96,7 +96,7 @@ export function HourLogForm({ onSuccess }: Props) {
             htmlFor="activityDate"
             className="block text-sm font-medium text-gray-700"
           >
-            Activity Date <span className="text-red-600">*</span>
+            Activity Date <span className="text-destructive">*</span>
           </label>
           <input
             type="date"
@@ -105,7 +105,7 @@ export function HourLogForm({ onSuccess }: Props) {
             onChange={(e) => setActivityDate(e.target.value)}
             max={new Date().toISOString().split("T")[0]} // Can't log future dates
             required
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm"
           />
           <p className="mt-1 text-xs text-gray-500">
             When did this lobbying activity occur?
@@ -118,7 +118,7 @@ export function HourLogForm({ onSuccess }: Props) {
             htmlFor="hours"
             className="block text-sm font-medium text-gray-700"
           >
-            Hours <span className="text-red-600">*</span>
+            Hours <span className="text-destructive">*</span>
           </label>
           <input
             type="number"
@@ -129,7 +129,7 @@ export function HourLogForm({ onSuccess }: Props) {
             max="24"
             step="0.25"
             required
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm"
             placeholder="e.g., 2.5"
           />
           <p className="mt-1 text-xs text-gray-500">
@@ -144,7 +144,7 @@ export function HourLogForm({ onSuccess }: Props) {
           htmlFor="description"
           className="block text-sm font-medium text-gray-700"
         >
-          Activity Description <span className="text-red-600">*</span>
+          Activity Description <span className="text-destructive">*</span>
         </label>
         <textarea
           id="description"
@@ -152,7 +152,7 @@ export function HourLogForm({ onSuccess }: Props) {
           onChange={(e) => setDescription(e.target.value)}
           rows={3}
           required
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm"
           placeholder="Describe the lobbying activity (e.g., meeting with county commissioners about transportation policy)"
         />
         <p className="mt-1 text-xs text-gray-500">
@@ -165,7 +165,7 @@ export function HourLogForm({ onSuccess }: Props) {
         <button
           type="submit"
           disabled={loading}
-          className="inline-flex justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+          className="inline-flex justify-center rounded-md border border-transparent bg-primary px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-primary focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
         >
           {loading ? "Adding..." : "Add Hours"}
         </button>

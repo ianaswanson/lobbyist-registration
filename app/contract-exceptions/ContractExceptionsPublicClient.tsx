@@ -95,12 +95,12 @@ export function ContractExceptionsPublicClient() {
       </div>
 
       {/* Info Alert */}
-      <Alert className="mb-6 border-blue-200 bg-blue-50">
-        <Info className="h-4 w-4 text-blue-600" />
-        <AlertTitle className="text-blue-800">
+      <Alert className="mb-6 border-blue-200 bg-primary/10">
+        <Info className="h-4 w-4 text-primary" />
+        <AlertTitle className="text-primary">
           About Contract Exceptions
         </AlertTitle>
-        <AlertDescription className="text-blue-700">
+        <AlertDescription className="text-primary">
           <p className="mb-2">
             Multnomah County ordinance §9.230(C) prohibits the County from
             contracting with former officials who influenced contract
@@ -225,7 +225,7 @@ export function ContractExceptionsPublicClient() {
               at:{" "}
               <a
                 href="mailto:chair@multco.us"
-                className="underline hover:text-blue-600"
+                className="underline hover:text-primary"
               >
                 chair@multco.us
               </a>
@@ -298,10 +298,10 @@ export function ContractExceptionsPublicClient() {
                 </div>
               )}
 
-              <Alert className="border-blue-200 bg-blue-50">
-                <FileCheck className="h-4 w-4 text-blue-600" />
-                <AlertTitle className="text-blue-800">Public Record</AlertTitle>
-                <AlertDescription className="text-blue-700">
+              <Alert className="border-blue-200 bg-primary/10">
+                <FileCheck className="h-4 w-4 text-primary" />
+                <AlertTitle className="text-primary">Public Record</AlertTitle>
+                <AlertDescription className="text-primary">
                   This exception has been publicly posted in compliance with
                   §9.230(C) of the Multnomah County Code.
                 </AlertDescription>

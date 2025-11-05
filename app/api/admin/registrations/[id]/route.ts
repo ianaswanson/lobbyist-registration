@@ -43,7 +43,7 @@ export async function POST(
     const lobbyist = await prisma.lobbyist.findUnique({
       where: { id },
       include: {
-        user: {
+        User: {
           select: {
             name: true,
             email: true,
@@ -149,15 +149,15 @@ export async function GET(
     const lobbyist = await prisma.lobbyist.findUnique({
       where: { id },
       include: {
-        user: {
+        User: {
           select: {
             name: true,
             email: true,
           },
         },
-        employers: {
+        LobbyistEmployer: {
           include: {
-            employer: true,
+            Employer: true,
           },
         },
       },

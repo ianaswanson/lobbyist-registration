@@ -47,6 +47,7 @@ async function clearDatabase() {
   await prisma.auditLog.deleteMany();
   await prisma.appeal.deleteMany();
   await prisma.violation.deleteMany();
+  await prisma.complianceAlert.deleteMany();
   await prisma.contractException.deleteMany();
   await prisma.hourLog.deleteMany();
   await prisma.boardLobbyingReceipt.deleteMany();
@@ -218,7 +219,7 @@ async function createApprovedData(
       phone: "503-555-0101",
       address: "123 Main St, Portland, OR 97201",
       hours: 25.5,
-      regDate: "2025-01-15",
+      regDate: "2023-06-15", // Earlier registration for growth chart
     },
     {
       name: "Jane Smith",
@@ -226,7 +227,7 @@ async function createApprovedData(
       phone: "503-555-0102",
       address: "456 Oak Ave, Portland, OR 97202",
       hours: 18.0,
-      regDate: "2025-02-01",
+      regDate: "2024-03-01", // Staggered registration
     },
     {
       name: "Michael Chen",
@@ -234,7 +235,7 @@ async function createApprovedData(
       phone: "503-555-0103",
       address: "789 Elm St, Portland, OR 97203",
       hours: 22.5,
-      regDate: "2025-02-15",
+      regDate: "2024-11-15", // Most recent registration
     },
   ];
 
@@ -374,287 +375,292 @@ async function createApprovedData(
   const lobbyistReports = [];
 
   // Expense data organized by lobbyist and quarter (storytelling approach)
+  // QUARTERLY LOBBYING CYCLE:
+  // Q1: LOW spending (budget planning season) - $200-400 range
+  // Q2: HIGH spending (peak lobbying for budget approval) - $1,500-2,500 range
+  // Q3: MODERATE spending (implementation monitoring) - $700-1,200 range
   const expenseData = [
     // John Doe (Technology Policy) - meets with Commissioner Williams
     [
-      // Q1
+      // Q1 - LOW: Initial budget discussions
       {
         expenses: [
           {
             date: "2025-01-22",
-            payee: "Jake's Famous Crawfish",
+            payee: "Stumptown Coffee",
             purpose:
-              "Lunch meeting to discuss technology infrastructure budget priorities",
-            amount: 125.5,
+              "Initial conversation about technology infrastructure budget priorities",
+            amount: 45.0,
             official: "Commissioner Williams",
           },
           {
             date: "2025-02-15",
-            payee: "Portland City Grill",
-            purpose:
-              "Dinner meeting re: IT modernization roadmap for county services",
-            amount: 142.75,
+            payee: "Fireside Restaurant",
+            purpose: "Lunch meeting re: IT modernization preliminary planning",
+            amount: 98.0,
             official: "Commissioner Williams",
           },
           {
             date: "2025-03-08",
-            payee: "Starbucks Reserve",
-            purpose: "Coffee meeting about data privacy ordinance amendments",
-            amount: 67.0,
+            payee: "Blue Star Donuts",
+            purpose: "Coffee briefing on data privacy ordinance framework",
+            amount: 52.0,
             official: "Commissioner Williams",
           },
         ],
-        total: 335.25,
+        total: 195.0,
         submitted: "2025-04-10",
       },
-      // Q2
+      // Q2 - HIGH: Peak lobbying for budget approval
       {
         expenses: [
           {
             date: "2025-04-18",
-            payee: "Imperial Restaurant",
+            payee: "Jake's Famous Crawfish",
             purpose:
-              "Lunch discussion on cybersecurity funding for county systems",
-            amount: 138.25,
+              "Major presentation dinner on $12M cybersecurity initiative with county CIO and budget director",
+            amount: 685.0,
             official: "Commissioner Williams",
           },
           {
             date: "2025-05-22",
             payee: "Le Pigeon",
             purpose:
-              "Dinner meeting about cloud migration strategy for public records",
-            amount: 185.0,
+              "Critical dinner meeting with budget committee about cloud migration ($8M request) for public records system",
+            amount: 845.0,
             official: "Commissioner Williams",
           },
           {
             date: "2025-06-10",
-            payee: "Blue Star Donuts",
-            purpose: "Coffee meeting re: open data portal development",
-            amount: 89.25,
+            payee: "Portland City Grill",
+            purpose:
+              "Budget approval celebration dinner with county leadership - IT modernization package secured",
+            amount: 520.0,
             official: "Commissioner Williams",
           },
         ],
-        total: 412.5,
+        total: 2050.0,
         submitted: "2025-07-12",
       },
-      // Q3
+      // Q3 - MODERATE: Implementation monitoring
       {
         expenses: [
           {
             date: "2025-07-19",
             payee: "Screen Door",
             purpose:
-              "Lunch meeting about digital accessibility compliance requirements",
-            amount: 115.5,
+              "Lunch meeting about digital accessibility compliance implementation timeline",
+            amount: 285.0,
             official: "Commissioner Williams",
           },
           {
             date: "2025-08-25",
             payee: "Departure Restaurant",
             purpose:
-              "Dinner discussion on AI ethics policy for government technology",
-            amount: 172.5,
+              "Dinner discussion on AI ethics policy guidance for county technology deployments",
+            amount: 398.0,
             official: "Commissioner Williams",
           },
           {
             date: "2025-09-14",
             payee: "Coava Coffee",
-            purpose:
-              "Coffee meeting re: broadband expansion in underserved areas",
-            amount: 90.0,
+            purpose: "Follow-up meeting on broadband expansion project status",
+            amount: 67.0,
             official: "Commissioner Williams",
           },
         ],
-        total: 378.0,
+        total: 750.0,
         submitted: "2025-10-11",
       },
     ],
     // Jane Smith (Healthcare Policy) - meets with Commissioner Chen
     [
-      // Q1
+      // Q1 - LOW: Budget planning discussions
       {
         expenses: [
           {
             date: "2025-01-28",
-            payee: "Andina Restaurant",
+            payee: "Heart Coffee",
             purpose:
-              "Lunch meeting to discuss Medicaid expansion funding priorities",
-            amount: 152.25,
+              "Introductory coffee about Medicaid expansion priorities for upcoming budget",
+            amount: 58.0,
             official: "Commissioner Chen",
           },
           {
             date: "2025-02-19",
-            payee: "Higgins Restaurant",
-            purpose:
-              "Dinner meeting re: mental health crisis intervention programs",
-            amount: 198.5,
-            official: "Commissioner Chen",
-          },
-          {
-            date: "2025-03-15",
-            payee: "Heart Coffee",
-            purpose:
-              "Coffee meeting about community health worker certification",
-            amount: 78.0,
-            official: "Commissioner Chen",
-          },
-        ],
-        total: 428.75,
-        submitted: "2025-04-13",
-      },
-      // Q2
-      {
-        expenses: [
-          {
-            date: "2025-04-22",
             payee: "Ataula",
             purpose:
-              "Lunch discussion on behavioral health services integration",
+              "Working lunch on mental health crisis intervention program scope",
             amount: 142.0,
             official: "Commissioner Chen",
           },
           {
-            date: "2025-05-18",
-            payee: "Nostrana",
+            date: "2025-03-15",
+            payee: "Stumptown Coffee",
             purpose:
-              "Dinner meeting about healthcare navigator program expansion",
-            amount: 178.0,
+              "Coffee meeting about community health worker certification framework",
+            amount: 48.0,
+            official: "Commissioner Chen",
+          },
+        ],
+        total: 248.0,
+        submitted: "2025-04-13",
+      },
+      // Q2 - HIGH: Major healthcare budget push
+      {
+        expenses: [
+          {
+            date: "2025-04-22",
+            payee: "Andina Restaurant",
+            purpose:
+              "Strategic dinner presenting $15M behavioral health services integration proposal with healthcare director",
+            amount: 795.0,
+            official: "Commissioner Chen",
+          },
+          {
+            date: "2025-05-18",
+            payee: "Higgins Restaurant",
+            purpose:
+              "High-stakes dinner with budget committee on healthcare navigator program expansion ($6M ask)",
+            amount: 920.0,
             official: "Commissioner Chen",
           },
           {
             date: "2025-06-12",
-            payee: "Stumptown Coffee",
-            purpose: "Coffee meeting re: maternal health outcome improvements",
-            amount: 75.0,
+            payee: "Nostrana",
+            purpose:
+              "Final budget negotiations dinner - maternal health initiative and expanded mental health funding secured",
+            amount: 625.0,
             official: "Commissioner Chen",
           },
         ],
-        total: 395.0,
+        total: 2340.0,
         submitted: "2025-07-14",
       },
-      // Q3
+      // Q3 - MODERATE: Program implementation oversight
       {
         expenses: [
           {
             date: "2025-07-25",
             payee: "Canard",
             purpose:
-              "Lunch meeting about substance abuse treatment facility funding",
-            amount: 165.5,
+              "Lunch meeting about substance abuse treatment facility site selection and timeline",
+            amount: 312.0,
             official: "Commissioner Chen",
           },
           {
             date: "2025-08-20",
             payee: "Castagna",
             purpose:
-              "Dinner discussion on health equity initiatives in rural areas",
-            amount: 205.0,
+              "Dinner discussion on health equity initiatives rollout in underserved areas",
+            amount: 288.0,
             official: "Commissioner Chen",
           },
           {
             date: "2025-09-18",
             payee: "Courier Coffee",
-            purpose: "Coffee meeting re: prescription drug assistance programs",
-            amount: 75.0,
+            purpose:
+              "Check-in meeting on prescription drug assistance program enrollment progress",
+            amount: 55.0,
             official: "Commissioner Chen",
           },
         ],
-        total: 445.5,
+        total: 655.0,
         submitted: "2025-10-10",
       },
     ],
     // Michael Chen (Environmental Policy) - meets with Commissioner Garcia
     [
-      // Q1
+      // Q1 - LOW: Initial environmental policy discussions
       {
         expenses: [
           {
             date: "2025-01-30",
-            payee: "Bamboo Sushi",
+            payee: "Barista",
             purpose:
-              "Lunch meeting to discuss renewable energy incentive programs",
-            amount: 128.5,
+              "Coffee meeting to discuss renewable energy incentive program ideas",
+            amount: 62.0,
             official: "Commissioner Garcia",
           },
           {
             date: "2025-02-25",
-            payee: "Beast Restaurant",
+            payee: "Bamboo Sushi",
             purpose:
-              "Dinner meeting re: electric vehicle charging infrastructure",
-            amount: 168.0,
+              "Lunch meeting re: electric vehicle charging infrastructure preliminary plan",
+            amount: 128.0,
             official: "Commissioner Garcia",
           },
           {
             date: "2025-03-20",
-            payee: "Barista",
-            purpose: "Coffee meeting about solar panel permitting streamlining",
-            amount: 66.0,
+            payee: "Water Avenue Coffee",
+            purpose: "Brief coffee on solar panel permitting streamlining proposal",
+            amount: 54.0,
             official: "Commissioner Garcia",
           },
         ],
-        total: 362.5,
+        total: 244.0,
         submitted: "2025-04-14",
       },
-      // Q2
+      // Q2 - HIGH: Climate action budget campaign
       {
         expenses: [
           {
             date: "2025-04-24",
-            payee: "Oven and Shaker",
+            payee: "Beast Restaurant",
             purpose:
-              "Lunch discussion on carbon reduction goals for county operations",
-            amount: 135.25,
+              "Major dinner presentation on $10M climate action package with sustainability office and county engineer",
+            amount: 725.0,
             official: "Commissioner Garcia",
           },
           {
             date: "2025-05-28",
             payee: "Paley's Place",
             purpose:
-              "Dinner meeting about green building standards for new construction",
-            amount: 195.0,
+              "Critical dinner with budget committee on green building standards mandate and EV infrastructure ($7M)",
+            amount: 615.0,
             official: "Commissioner Garcia",
           },
           {
             date: "2025-06-16",
-            payee: "Water Avenue Coffee",
+            payee: "Ox Restaurant",
             purpose:
-              "Coffee meeting re: climate action plan implementation timeline",
-            amount: 88.0,
+              "Budget win dinner - carbon reduction goals and renewable energy funding approved",
+            amount: 485.0,
             official: "Commissioner Garcia",
           },
         ],
-        total: 418.25,
+        total: 1825.0,
         submitted: "2025-07-13",
       },
-      // Q3
+      // Q3 - MODERATE: Climate program implementation
       {
         expenses: [
           {
             date: "2025-07-22",
-            payee: "Ox Restaurant",
+            payee: "Oven and Shaker",
             purpose:
-              "Lunch meeting about urban forestry expansion and tree preservation",
-            amount: 145.0,
+              "Lunch meeting about urban forestry expansion contractor selection process",
+            amount: 345.0,
             official: "Commissioner Garcia",
           },
           {
             date: "2025-08-28",
             payee: "Ned Ludd",
             purpose:
-              "Dinner discussion on composting infrastructure and food waste reduction",
-            amount: 175.0,
+              "Dinner on composting infrastructure site planning and food waste reduction timeline",
+            amount: 425.0,
             official: "Commissioner Garcia",
           },
           {
             date: "2025-09-20",
             payee: "Sterling Coffee",
             purpose:
-              "Coffee meeting re: watershed protection and stormwater management",
-            amount: 65.0,
+              "Progress meeting on watershed protection and stormwater management projects",
+            amount: 72.0,
             official: "Commissioner Garcia",
           },
         ],
-        total: 385.0,
+        total: 842.0,
         submitted: "2025-10-12",
       },
     ],
@@ -799,23 +805,119 @@ async function createApprovedData(
 
   // ──────────────────────────────────────────────────────────────────────
   // 3 BOARD MEMBERS × 3 CALENDAR ENTRIES = 9 CALENDAR ENTRIES
+  // IMPORTANT: These should reflect LOBBYING meetings (§3.001 compliance)
+  // Each entry corresponds to meetings with lobbyists, not generic board meetings
   // ──────────────────────────────────────────────────────────────────────
-  for (const boardMember of boardMembers) {
-    for (let i = 0; i < 3; i++) {
+
+  // Commissioner Williams meets with John Doe (Technology Policy)
+  const williamsCalendar = [
+    {
+      title: "Meeting with TechCorp Industries - Technology Budget Priorities",
+      date: "2025-01-22",
+      time: "12:00 PM - 1:30 PM",
+      participants:
+        "John Doe (TechCorp Industries lobbyist), County CIO, IT Budget Director",
+      quarter: "Q1" as Quarter,
+    },
+    {
+      title: "Dinner Meeting with TechCorp Industries - Cybersecurity Funding Request",
+      date: "2025-05-22",
+      time: "6:00 PM - 8:30 PM",
+      participants:
+        "John Doe (TechCorp Industries lobbyist), Budget Committee Members, County CIO",
+      quarter: "Q2" as Quarter,
+    },
+    {
+      title: "Meeting with TechCorp Industries - AI Policy and Accessibility Standards",
+      date: "2025-08-25",
+      time: "5:30 PM - 7:30 PM",
+      participants:
+        "John Doe (TechCorp Industries lobbyist), Technology Advisory Board",
+      quarter: "Q3" as Quarter,
+    },
+  ];
+
+  // Commissioner Chen meets with Jane Smith (Healthcare Policy)
+  const chenCalendar = [
+    {
+      title: "Meeting with Healthcare Advocates Group - Medicaid Expansion Proposal",
+      date: "2025-02-19",
+      time: "6:00 PM - 8:00 PM",
+      participants:
+        "Jane Smith (Healthcare Advocates Group lobbyist), County Health Director, Mental Health Services Manager",
+      quarter: "Q1" as Quarter,
+    },
+    {
+      title: "Dinner Meeting with Healthcare Advocates Group - Behavioral Health Funding Request",
+      date: "2025-05-18",
+      time: "6:30 PM - 9:00 PM",
+      participants:
+        "Jane Smith (Healthcare Advocates Group lobbyist), Budget Committee, Healthcare Director",
+      quarter: "Q2" as Quarter,
+    },
+    {
+      title: "Meeting with Healthcare Advocates Group - Health Equity Initiative Advocacy",
+      date: "2025-08-20",
+      time: "6:00 PM - 8:00 PM",
+      participants:
+        "Jane Smith (Healthcare Advocates Group lobbyist), Public Health Leadership",
+      quarter: "Q3" as Quarter,
+    },
+  ];
+
+  // Commissioner Garcia meets with Michael Chen (Environmental Policy)
+  const garciaCalendar = [
+    {
+      title: "Meeting with Green Energy Coalition - Renewable Energy Incentives Proposal",
+      date: "2025-02-25",
+      time: "12:30 PM - 2:00 PM",
+      participants:
+        "Michael Chen (Green Energy Coalition lobbyist), County Sustainability Officer, Transportation Planning Director",
+      quarter: "Q1" as Quarter,
+    },
+    {
+      title: "Dinner Meeting with Green Energy Coalition - Climate Action Budget Request",
+      date: "2025-05-28",
+      time: "6:00 PM - 8:30 PM",
+      participants:
+        "Michael Chen (Green Energy Coalition lobbyist), Budget Committee, County Engineer",
+      quarter: "Q2" as Quarter,
+    },
+    {
+      title: "Meeting with Green Energy Coalition - Environmental Programs Advocacy",
+      date: "2025-08-28",
+      time: "5:30 PM - 7:30 PM",
+      participants:
+        "Michael Chen (Green Energy Coalition lobbyist), Environmental Services Director",
+      quarter: "Q3" as Quarter,
+    },
+  ];
+
+  // Create calendar entries for each board member
+  const calendarData = [
+    { member: boardMembers[0], entries: williamsCalendar },
+    { member: boardMembers[1], entries: chenCalendar },
+    { member: boardMembers[2], entries: garciaCalendar },
+  ];
+
+  for (const { member, entries } of calendarData) {
+    for (const entry of entries) {
       await prisma.boardCalendarEntry.create({
         data: {
-          boardMemberId: boardMember.id,
-          eventTitle: `Board Meeting ${i + 1}`,
-          eventDate: new Date(`2025-0${i + 1}-15`),
-          eventTime: `${10 + i}:00 AM - ${12 + i}:00 PM`,
-          participantsList: `County staff, Community members, Stakeholder ${i + 1}`,
-          quarter: quarters[i],
+          boardMemberId: member.id,
+          eventTitle: entry.title,
+          eventDate: new Date(entry.date),
+          eventTime: entry.time,
+          participantsList: entry.participants,
+          quarter: entry.quarter,
           year: 2025,
         },
       });
     }
   }
-  console.log("   ✓ Created 9 board calendar entries (3 members × 3 entries)");
+  console.log(
+    "   ✓ Created 9 board calendar entries (3 members × 3 lobbying meetings)"
+  );
 
   // ──────────────────────────────────────────────────────────────────────
   // 3 BOARD MEMBERS × 3 QUARTERS × 3 RECEIPTS = 27 RECEIPTS
@@ -1003,30 +1105,124 @@ async function createViolationsAndAppeals(
 }
 
 // ============================================================================
-// SECTION 6: CREATE CONTRACT EXCEPTIONS (Rule of 3)
+// SECTION 6: CREATE COMPLIANCE ALERTS (Rule of 3)
+// ============================================================================
+
+async function createComplianceAlerts(
+  approvedData: Awaited<ReturnType<typeof createApprovedData>>
+) {
+  console.log("🚨 Creating compliance alerts (Rule of 3)...");
+
+  // Following Rule of 3: Create 3 alerts for demonstration
+  // These demonstrate the automated compliance monitoring system
+
+  // First, create an OVERDUE report for demonstration purposes
+  // Create a Q4 2024 report that is now overdue (past January 15, 2025 deadline)
+  const overdueReport = await prisma.lobbyistExpenseReport.create({
+    data: {
+      lobbyistId: approvedData.lobbyists[1].id, // Jane Williams
+      quarter: "Q4",
+      year: 2024,
+      status: "OVERDUE",
+      totalFoodEntertainment: 0,
+      submittedAt: null, // Not submitted yet
+      dueDate: new Date("2025-01-15"), // Deadline was January 15
+    },
+  });
+
+  // Alert 1: OVERDUE_REPORT - Jane Williams' Q4 2024 report (HIGH PRIORITY - actionable)
+  const daysOverdue = Math.floor(
+    (new Date().getTime() - new Date("2025-01-15").getTime()) /
+      (1000 * 60 * 60 * 24)
+  );
+  await prisma.complianceAlert.create({
+    data: {
+      type: "OVERDUE_REPORT",
+      severity: "HIGH",
+      message: `${approvedData.lobbyists[1].name}: Q4 2024 quarterly report is ${daysOverdue} days overdue (due January 15, 2025). Violation may be necessary.`,
+      relatedReportId: overdueReport.id,
+      relatedUserId: approvedData.lobbyists[1].userId,
+    },
+  });
+
+  // Alert 2: UNUSUAL_SPENDING - John Smith's Q2 spending spike (HIGH PRIORITY - actionable)
+  await prisma.complianceAlert.create({
+    data: {
+      type: "UNUSUAL_SPENDING",
+      severity: "HIGH",
+      message: `${approvedData.lobbyists[0].name}: Expenses increased 320% ($125.50 → $402.10) from Q1 to Q2 2025. Review for legitimacy.`,
+      relatedReportId: approvedData.lobbyistReports[1].id, // John's Q2 report
+      relatedUserId: approvedData.lobbyists[0].userId,
+    },
+  });
+
+  // Alert 3: DUPLICATE_ENTRY - Jane's Q2 report (MEDIUM - not directly actionable for violation)
+  const janeQ2Report = approvedData.lobbyistReports[4]; // Jane's Q2 report
+  await prisma.complianceAlert.create({
+    data: {
+      type: "DUPLICATE_ENTRY",
+      severity: "MEDIUM",
+      message: `Possible duplicate entries: 2 items with same date (2025-05-18), amount ($178.00), and payee (Nostrana) in ${approvedData.lobbyists[1].name}'s Q2 2025 report.`,
+      relatedReportId: janeQ2Report.id,
+      relatedUserId: approvedData.lobbyists[1].userId,
+    },
+  });
+
+  console.log("   ✓ Created 3 compliance alerts (1 OVERDUE_REPORT, 1 UNUSUAL_SPENDING, 1 DUPLICATE_ENTRY)");
+}
+
+// ============================================================================
+// SECTION 7: CREATE CONTRACT EXCEPTIONS (Rule of 3)
 // ============================================================================
 
 async function createContractExceptions() {
   console.log("📋 Creating contract exceptions (Rule of 3)...");
 
-  for (let i = 1; i <= 3; i++) {
+  const formerOfficials = [
+    {
+      id: "FO-2024-001",
+      name: "Former Commissioner David Martinez",
+      contract:
+        "Technology infrastructure modernization project - Former commissioner now serves as senior consultant at contracted IT firm.",
+      approvedDate: "2024-04-15",
+      postedDate: "2024-04-20",
+    },
+    {
+      id: "FO-2024-002",
+      name: "Former Budget Director Lisa Chen",
+      contract:
+        "Financial systems upgrade and training services - Former budget director now works as VP of Public Sector at software vendor.",
+      approvedDate: "2024-05-15",
+      postedDate: "2024-05-20",
+    },
+    {
+      id: "FO-2024-003",
+      name: "Former Procurement Officer James Thompson",
+      contract:
+        "Facilities management and maintenance contract - Former procurement officer now employed by selected facilities management company.",
+      approvedDate: "2024-06-15",
+      postedDate: "2024-06-20",
+    },
+  ];
+
+  for (const official of formerOfficials) {
     await prisma.contractException.create({
       data: {
-        formerOfficialId: `FO-2024-00${i}`,
-        formerOfficialName: `Former Official ${i}`,
-        contractDescription: `Contract ${i}: Professional services agreement for county project. Former official now works for contracting firm.`,
-        justification: `Written findings per §9.230(C): After review, the Chair finds that the best interests of the County favor this contract because: (1) Specialized expertise, (2) Competitive pricing, (3) Project continuity, (4) No undue influence during authorization.`,
+        formerOfficialId: official.id,
+        formerOfficialName: official.name,
+        contractDescription: official.contract,
+        justification: `Written findings per §9.230(C): After review, the Chair finds that the best interests of the County favor this contract because: (1) Specialized expertise required for project success, (2) Competitive pricing through established procurement process, (3) Project continuity benefits, (4) Independent verification shows no undue influence during contract authorization period.`,
         approvedBy: "County Chair Jessica Vega Pederson",
-        approvedDate: new Date(`2024-0${i + 3}-15`),
-        publiclyPostedDate: new Date(`2024-0${i + 3}-20`),
+        approvedDate: new Date(official.approvedDate),
+        publiclyPostedDate: new Date(official.postedDate),
       },
     });
   }
-  console.log("   ✓ Created 3 contract exceptions");
+  console.log("   ✓ Created 3 contract exceptions with realistic names");
 }
 
 // ============================================================================
-// SECTION 7: CREATE AUDIT LOGS (Rule of 3)
+// SECTION 8: CREATE AUDIT LOGS (Rule of 3)
 // ============================================================================
 
 async function createAuditLogs(
@@ -1068,7 +1264,7 @@ async function createAuditLogs(
 }
 
 // ============================================================================
-// SECTION 8: VALIDATION FUNCTION
+// SECTION 9: VALIDATION FUNCTION
 // ============================================================================
 
 async function validateSeedData() {
@@ -1079,13 +1275,13 @@ async function validateSeedData() {
     approvedLobbyistUsers: await prisma.user.count({
       where: {
         role: UserRole.LOBBYIST,
-        lobbyist: { status: RegistrationStatus.APPROVED },
+        Lobbyist: { status: RegistrationStatus.APPROVED },
       },
     }),
     pendingLobbyistUsers: await prisma.user.count({
       where: {
         role: UserRole.LOBBYIST,
-        lobbyist: { status: RegistrationStatus.PENDING },
+        Lobbyist: { status: RegistrationStatus.PENDING },
       },
     }),
     employerUsers: await prisma.user.count({
@@ -1129,6 +1325,7 @@ async function validateSeedData() {
 
     violations: await prisma.violation.count(),
     appeals: await prisma.appeal.count(),
+    complianceAlerts: await prisma.complianceAlert.count(),
     contractExceptions: await prisma.contractException.count(),
     auditLogs: await prisma.auditLog.count(),
   };
@@ -1160,6 +1357,7 @@ async function validateSeedData() {
 
     violations: 3,
     appeals: 9, // 3 violations × 3 appeals
+    complianceAlerts: 3, // 3 demo alerts
     contractExceptions: 3,
     auditLogs: 9, // 3 users × 3 actions
   };
@@ -1203,6 +1401,7 @@ async function main() {
   const approvedData = await createApprovedData(users);
   const pendingData = await createPendingData(users);
   const violations = await createViolationsAndAppeals(approvedData);
+  await createComplianceAlerts(approvedData);
   await createContractExceptions();
   await createAuditLogs(users, approvedData);
   await validateSeedData();

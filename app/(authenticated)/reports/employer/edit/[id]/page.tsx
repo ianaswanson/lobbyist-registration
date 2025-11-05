@@ -19,9 +19,9 @@ async function getReport(userId: string, reportId: string) {
     const report = await prisma.employerExpenseReport.findUnique({
       where: { id: reportId },
       include: {
-        lobbyistPayments: {
+        EmployerLobbyistPayment: {
           include: {
-            lobbyist: {
+            Lobbyist: {
               select: {
                 name: true,
               },
@@ -46,7 +46,15 @@ async function getReport(userId: string, reportId: string) {
       return null;
     }
 
-    return { ...report, lineItems };
+    // Map the relation to camelCase for backwards compatibility with form component
+    return {
+      ...report,
+      lobbyistPayments: report.EmployerLobbyistPayment.map((payment) => ({
+        ...payment,
+        lobbyist: payment.Lobbyist,
+      })),
+      lineItems,
+    };
   } catch (error) {
     console.error("Error fetching report:", error);
     return null;
@@ -94,6 +102,7 @@ export default async function EditEmployerReportPage({
           userId={session.user.id}
           initialQuarter={report.quarter}
           initialYear={report.year}
+          reportId={id}
         />
       </main>
     </div>

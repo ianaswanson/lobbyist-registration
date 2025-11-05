@@ -82,10 +82,10 @@ export function UserAuditLogModal({
 
   const getActionBadgeColor = (action: string) => {
     const colors: Record<string, string> = {
-      CREATED: "bg-blue-100 text-blue-800",
-      UPDATED: "bg-green-100 text-green-800",
-      DEACTIVATED: "bg-red-100 text-red-800",
-      ACTIVATED: "bg-green-100 text-green-800",
+      CREATED: "bg-primary/20 text-primary",
+      UPDATED: "bg-success/20 text-success-foreground",
+      DEACTIVATED: "bg-destructive/20 text-red-800",
+      ACTIVATED: "bg-success/20 text-success-foreground",
       SUSPENDED: "bg-orange-100 text-orange-800",
       PASSWORD_RESET: "bg-purple-100 text-purple-800",
       ROLE_CHANGED: "bg-yellow-100 text-yellow-800",
@@ -108,7 +108,7 @@ export function UserAuditLogModal({
           )}
 
           {error && (
-            <div className="rounded-md bg-red-50 p-4">
+            <div className="rounded-md bg-destructive/10 p-4">
               <p className="text-sm text-red-800">{error}</p>
             </div>
           )}
@@ -164,11 +164,11 @@ export function UserAuditLogModal({
                                     <span className="font-medium">
                                       {field}:
                                     </span>
-                                    <span className="ml-1 text-red-600">
+                                    <span className="ml-1 text-destructive">
                                       {String(change.old || "null")}
                                     </span>
                                     <span className="mx-1">→</span>
-                                    <span className="text-green-600">
+                                    <span className="text-success">
                                       {String(change.new || "null")}
                                     </span>
                                   </div>

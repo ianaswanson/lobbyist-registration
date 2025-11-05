@@ -54,7 +54,7 @@ export function Step3Documentation({
         </p>
       </div>
 
-      <div className="rounded-md bg-blue-50 p-4">
+      <div className="rounded-md bg-primary/10 p-4">
         <div className="flex">
           <div className="flex-shrink-0">
             <svg
@@ -70,10 +70,10 @@ export function Step3Documentation({
             </svg>
           </div>
           <div className="ml-3">
-            <h3 className="text-sm font-medium text-blue-800">
+            <h3 className="text-sm font-medium text-primary">
               Required Documentation
             </h3>
-            <div className="mt-2 text-sm text-blue-700">
+            <div className="mt-2 text-sm text-primary">
               <p>
                 The authorization document must be signed by an officer of the
                 employer and include:
@@ -94,7 +94,7 @@ export function Step3Documentation({
 
       {/* Error Message */}
       {error && (
-        <div className="rounded-md border border-red-200 bg-red-50 p-4">
+        <div className="rounded-md border border-red-200 bg-destructive/10 p-4">
           <div className="flex">
             <div className="flex-shrink-0">
               <svg
@@ -111,7 +111,7 @@ export function Step3Documentation({
             </div>
             <div className="ml-3">
               <h3 className="text-sm font-medium text-red-800">Error</h3>
-              <div className="mt-1 text-sm text-red-700">
+              <div className="mt-1 text-sm text-destructive">
                 <p>{error}</p>
               </div>
             </div>
@@ -130,7 +130,7 @@ export function Step3Documentation({
         required
       />
 
-      <div className="rounded-md bg-yellow-50 p-4">
+      <div className="rounded-md bg-primary/10 p-4">
         <div className="flex">
           <div className="flex-shrink-0">
             <svg
@@ -165,13 +165,13 @@ export function Step3Documentation({
         <button
           type="button"
           onClick={onBack}
-          className="rounded-md border border-gray-300 bg-white px-6 py-2 text-gray-700 hover:bg-gray-50 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none"
+          className="rounded-md border border-gray-300 bg-white px-6 py-2 text-gray-700 hover:bg-gray-50 focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:outline-none"
         >
           Back
         </button>
         <button
           type="submit"
-          className="rounded-md bg-blue-600 px-6 py-2 text-white hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none"
+          className="rounded-md bg-primary px-6 py-2 text-white hover:bg-primary focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:outline-none"
         >
           Next: Review & Submit
         </button>

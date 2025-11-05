@@ -16,9 +16,9 @@ export async function GET() {
         userId: session.user.id,
       },
       include: {
-        employers: {
+        LobbyistEmployer: {
           include: {
-            employer: true,
+            Employer: true,
           },
         },
       },
@@ -173,7 +173,7 @@ export async function POST(request: NextRequest) {
           thresholdExceededDate,
           registrationDeadline,
           status: "PENDING", // Awaiting admin review
-          employers: {
+          LobbyistEmployer: {
             create: {
               employerId: employer.id,
               subjectsOfInterest,

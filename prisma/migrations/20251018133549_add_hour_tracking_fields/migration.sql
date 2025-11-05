@@ -1,18 +1,18 @@
 -- AlterTable
-ALTER TABLE "Lobbyist" ADD COLUMN "registrationDeadline" DATETIME;
-ALTER TABLE "Lobbyist" ADD COLUMN "thresholdExceededDate" DATETIME;
+ALTER TABLE "Lobbyist" ADD COLUMN "registrationDeadline" TIMESTAMP;
+ALTER TABLE "Lobbyist" ADD COLUMN "thresholdExceededDate" TIMESTAMP;
 
 -- CreateTable
 CREATE TABLE "HourLog" (
     "id" TEXT NOT NULL PRIMARY KEY,
     "lobbyistId" TEXT NOT NULL,
-    "activityDate" DATETIME NOT NULL,
+    "activityDate" TIMESTAMP NOT NULL,
     "hours" REAL NOT NULL,
     "description" TEXT NOT NULL,
     "quarter" TEXT NOT NULL,
     "year" INTEGER NOT NULL,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" DATETIME NOT NULL,
+    "createdAt" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP NOT NULL,
     CONSTRAINT "HourLog_lobbyistId_fkey" FOREIGN KEY ("lobbyistId") REFERENCES "Lobbyist" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 

@@ -40,11 +40,11 @@ export function ExemptionChecker() {
   return (
     <div className="space-y-6">
       {/* Informational Header */}
-      <div className="rounded-lg border-2 border-blue-200 bg-blue-50 p-4">
+      <div className="rounded-lg border-2 border-blue-200 bg-primary/10 p-4">
         <h3 className="mb-2 font-semibold text-blue-900">
           Do I Need to Register as a Lobbyist?
         </h3>
-        <p className="text-sm text-blue-700">
+        <p className="text-sm text-primary">
           Use this tool to determine if you are required to register as a
           lobbyist under Multnomah County ordinance. Answer the questions below
           honestly to see if any exemptions apply to your situation.
@@ -60,7 +60,7 @@ export function ExemptionChecker() {
               className="mb-2 block text-sm font-medium text-gray-700"
             >
               How many hours per quarter do you spend on lobbying activities?
-              <span className="text-red-600">*</span>
+              <span className="text-destructive">*</span>
             </label>
             <p className="mb-3 text-xs text-gray-500">
               Include time spent communicating with public officials to
@@ -80,7 +80,7 @@ export function ExemptionChecker() {
                   hoursPerQuarter: parseFloat(e.target.value) || 0,
                 })
               }
-              className="block w-full max-w-xs rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
+              className="block w-full max-w-xs rounded-md border border-gray-300 px-3 py-2 focus:border-primary focus:ring-primary focus:outline-none"
               placeholder="e.g., 15"
             />
           </div>
@@ -107,7 +107,7 @@ export function ExemptionChecker() {
                 onChange={(e) =>
                   setFormData({ ...formData, isNewsMedia: e.target.checked })
                 }
-                className="mt-1 h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                className="mt-1 h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
               />
               <div>
                 <div className="font-medium text-gray-900">I am news media</div>
@@ -129,7 +129,7 @@ export function ExemptionChecker() {
                     isGovernmentOfficial: e.target.checked,
                   })
                 }
-                className="mt-1 h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                className="mt-1 h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
               />
               <div>
                 <div className="font-medium text-gray-900">
@@ -153,7 +153,7 @@ export function ExemptionChecker() {
                     isPublicTestimonyOnly: e.target.checked,
                   })
                 }
-                className="mt-1 h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                className="mt-1 h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
               />
               <div>
                 <div className="font-medium text-gray-900">
@@ -177,7 +177,7 @@ export function ExemptionChecker() {
                     isRespondingToCountyRequest: e.target.checked,
                   })
                 }
-                className="mt-1 h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                className="mt-1 h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
               />
               <div>
                 <div className="font-medium text-gray-900">
@@ -201,7 +201,7 @@ export function ExemptionChecker() {
                     isAdvisoryCommitteeMember: e.target.checked,
                   })
                 }
-                className="mt-1 h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                className="mt-1 h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
               />
               <div>
                 <div className="font-medium text-gray-900">
@@ -229,7 +229,7 @@ export function ExemptionChecker() {
           )}
           <button
             type="submit"
-            className="rounded-md bg-blue-600 px-6 py-2 text-white hover:bg-blue-700"
+            className="rounded-md bg-primary px-6 py-2 text-white hover:bg-primary"
           >
             Check My Status
           </button>
@@ -241,14 +241,14 @@ export function ExemptionChecker() {
         <div
           className={`rounded-lg border-2 p-6 ${
             result.isExempt
-              ? "border-green-200 bg-green-50"
-              : "border-orange-200 bg-orange-50"
+              ? "border-success/30 bg-success/10"
+              : "border-orange-200 bg-primary/10"
           }`}
         >
           <div className="flex items-start space-x-3">
             <div
               className={`flex-shrink-0 ${
-                result.isExempt ? "text-green-600" : "text-orange-600"
+                result.isExempt ? "text-success" : "text-primary"
               }`}
             >
               {result.isExempt ? (
@@ -289,7 +289,7 @@ export function ExemptionChecker() {
               </h4>
               <p
                 className={`text-sm ${
-                  result.isExempt ? "text-green-700" : "text-orange-700"
+                  result.isExempt ? "text-success" : "text-orange-700"
                 } mb-4`}
               >
                 {result.reason}

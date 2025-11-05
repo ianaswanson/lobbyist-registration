@@ -2,6 +2,7 @@ import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/db";
 import { RegistrationStatus, ReportStatus } from "@prisma/client";
+import { ComplianceDashboardClient } from "@/components/admin/compliance/ComplianceDashboardClient";
 
 async function getComplianceData() {
   try {
@@ -20,15 +21,15 @@ async function getComplianceData() {
         status: RegistrationStatus.PENDING,
       },
       include: {
-        user: {
+        User: {
           select: {
             name: true,
             email: true,
           },
         },
-        employers: {
+        LobbyistEmployer: {
           include: {
-            employer: {
+            Employer: {
               select: {
                 name: true,
               },
@@ -42,25 +43,6 @@ async function getComplianceData() {
       take: 5, // Show up to 5 recent ones
     });
 
-    // Get pending reports (submitted but not yet approved)
-    const pendingLobbyistReports = await prisma.lobbyistExpenseReport.count({
-      where: {
-        status: {
-          in: [ReportStatus.SUBMITTED, ReportStatus.LATE],
-        },
-      },
-    });
-
-    const pendingEmployerReports = await prisma.employerExpenseReport.count({
-      where: {
-        status: {
-          in: [ReportStatus.SUBMITTED, ReportStatus.LATE],
-        },
-      },
-    });
-
-    const totalPendingReports = pendingLobbyistReports + pendingEmployerReports;
-
     // Get overdue reports (reports where today > dueDate and status is not APPROVED)
     const overdueLobbyistReports = await prisma.lobbyistExpenseReport.findMany({
       where: {
@@ -72,7 +54,7 @@ async function getComplianceData() {
         },
       },
       include: {
-        lobbyist: {
+        Lobbyist: {
           select: {
             name: true,
           },
@@ -93,7 +75,7 @@ async function getComplianceData() {
         },
       },
       include: {
-        employer: {
+        Employer: {
           select: {
             name: true,
           },
@@ -108,7 +90,7 @@ async function getComplianceData() {
     const overdueReports = [
       ...overdueLobbyistReports.map((r) => ({
         id: r.id,
-        entity: r.lobbyist.name,
+        entity: r.Lobbyist.name,
         type: "Lobbyist Expense",
         quarter: `Q${r.quarter} ${r.year}`,
         dueDate: r.dueDate.toISOString().split("T")[0],
@@ -118,7 +100,7 @@ async function getComplianceData() {
       })),
       ...overdueEmployerReports.map((r) => ({
         id: r.id,
-        entity: r.employer.name,
+        entity: r.Employer.name,
         type: "Employer Expense",
         quarter: `Q${r.quarter} ${r.year}`,
         dueDate: r.dueDate.toISOString().split("T")[0],
@@ -185,25 +167,49 @@ async function getComplianceData() {
       recentRegistrations: pendingRegistrations.map((reg) => ({
         id: reg.id,
         lobbyistName: reg.name,
-        employer: reg.employers[0]?.employer.name || "N/A",
+        employer: reg.LobbyistEmployer[0]?.Employer.name || "N/A",
         date: reg.createdAt.toISOString().split("T")[0],
         status: reg.status,
       })),
-      pendingReportsCount: totalPendingReports,
       overdueReports,
       upcomingDeadline: {
         type: quarterType,
         date: nextDeadline.toISOString().split("T")[0],
         daysUntil,
       },
-      violations: recentViolations.map((v) => ({
-        id: v.id,
-        entity: v.entityName,
-        type: v.violationType,
-        date: v.issuedDate.toISOString().split("T")[0],
-        fineAmount: v.fineAmount,
-        status: v.status,
-      })),
+      violations: await Promise.all(
+        recentViolations.map(async (v) => {
+          // Get entity name based on type by looking up the entity
+          let entityName = "Unknown";
+
+          if (v.entityType === "LOBBYIST") {
+            const lobbyist = await prisma.lobbyist.findUnique({
+              where: { id: v.entityId },
+              select: { name: true },
+            });
+            if (lobbyist) {
+              entityName = lobbyist.name;
+            }
+          } else if (v.entityType === "EMPLOYER") {
+            const employer = await prisma.employer.findUnique({
+              where: { id: v.entityId },
+              select: { name: true },
+            });
+            if (employer) {
+              entityName = employer.name;
+            }
+          }
+
+          return {
+            id: v.id,
+            entity: entityName,
+            type: v.violationType,
+            date: v.issuedDate ? v.issuedDate.toISOString().split("T")[0] : "N/A",
+            fineAmount: v.fineAmount,
+            status: v.status,
+          };
+        })
+      ),
     };
   } catch (error) {
     console.error("Error fetching compliance data:", error);
@@ -212,7 +218,6 @@ async function getComplianceData() {
       totalEmployers: 0,
       totalBoardMembers: 0,
       recentRegistrations: [],
-      pendingReportsCount: 0,
       overdueReports: [],
       upcomingDeadline: {
         type: "No upcoming deadline",
@@ -236,17 +241,8 @@ export default async function AdminComplianceDashboardPage() {
     ? new Date(complianceData.upcomingDeadline.date)
     : new Date();
 
-  return (
-    <div className="min-h-screen bg-gray-50">
-      <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold tracking-tight text-gray-900">
-            Compliance Dashboard
-          </h1>
-          <p className="mt-2 text-sm text-gray-600">
-            Monitor registrations, deadlines, and compliance status
-          </p>
-        </div>
+  const overviewContent = (
+    <>
 
         {/* Key Metrics */}
         <div className="mb-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
@@ -260,9 +256,9 @@ export default async function AdminComplianceDashboardPage() {
                   {complianceData.totalLobbyists}
                 </p>
               </div>
-              <div className="rounded-full bg-blue-100 p-3">
+              <div className="rounded-full bg-primary/20 p-3">
                 <svg
-                  className="h-6 w-6 text-blue-600"
+                  className="h-6 w-6 text-primary"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -286,9 +282,9 @@ export default async function AdminComplianceDashboardPage() {
                   {complianceData.totalEmployers}
                 </p>
               </div>
-              <div className="rounded-full bg-purple-100 p-3">
+              <div className="rounded-full bg-primary/20 p-3">
                 <svg
-                  className="h-6 w-6 text-purple-600"
+                  className="h-6 w-6 text-primary"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -316,7 +312,7 @@ export default async function AdminComplianceDashboardPage() {
               </div>
               <div className="rounded-full bg-indigo-100 p-3">
                 <svg
-                  className="h-6 w-6 text-indigo-600"
+                  className="h-6 w-6 text-primary"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -340,9 +336,9 @@ export default async function AdminComplianceDashboardPage() {
                   {complianceData.violations.length}
                 </p>
               </div>
-              <div className="rounded-full bg-red-100 p-3">
+              <div className="rounded-full bg-destructive/20 p-3">
                 <svg
-                  className="h-6 w-6 text-red-600"
+                  className="h-6 w-6 text-destructive"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -362,7 +358,7 @@ export default async function AdminComplianceDashboardPage() {
         {/* Alert Cards */}
         <div className="mb-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
           {/* Upcoming Deadline */}
-          <div className="rounded-lg border-2 border-yellow-200 bg-yellow-50 p-6 shadow-sm">
+          <div className="rounded-lg border-2 border-yellow-400 bg-yellow-50 p-6 shadow-sm">
             <div className="flex items-start">
               <div className="flex-shrink-0">
                 <svg
@@ -403,11 +399,11 @@ export default async function AdminComplianceDashboardPage() {
           </div>
 
           {/* Overdue Reports */}
-          <div className="rounded-lg border-2 border-red-200 bg-red-50 p-6 shadow-sm">
+          <div className="rounded-lg border-2 border-red-200 bg-destructive/10 p-6 shadow-sm">
             <div className="flex items-start">
               <div className="flex-shrink-0">
                 <svg
-                  className="h-6 w-6 text-red-600"
+                  className="h-6 w-6 text-destructive"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -424,7 +420,7 @@ export default async function AdminComplianceDashboardPage() {
                 <h3 className="text-sm font-semibold text-red-900">
                   Overdue Reports
                 </h3>
-                <div className="mt-2 text-sm text-red-700">
+                <div className="mt-2 text-sm text-destructive">
                   <p>
                     <strong>{complianceData.overdueReports.length}</strong>{" "}
                     reports overdue
@@ -445,7 +441,7 @@ export default async function AdminComplianceDashboardPage() {
             </h2>
             <a
               href="/admin/review/registrations"
-              className="text-sm font-medium text-blue-600 hover:text-blue-700"
+              className="text-sm font-medium text-primary hover:text-primary"
             >
               View All →
             </a>
@@ -474,45 +470,13 @@ export default async function AdminComplianceDashboardPage() {
                   </span>
                   <a
                     href="/admin/review/registrations"
-                    className="rounded-md bg-blue-600 px-4 py-2 text-sm text-white hover:bg-blue-700"
+                    className="rounded-md bg-primary px-4 py-2 text-sm text-white hover:bg-primary"
                   >
                     Review
                   </a>
                 </div>
               </div>
             ))}
-          </div>
-        </div>
-
-        {/* Pending Reports for Review */}
-        <div className="mb-8 rounded-lg border bg-white shadow-sm">
-          <div className="flex items-center justify-between border-b p-4">
-            <h2 className="text-lg font-semibold text-gray-900">
-              Pending Reports for Review
-            </h2>
-            <a
-              href="/admin/review/reports"
-              className="text-sm font-medium text-blue-600 hover:text-blue-700"
-            >
-              View All →
-            </a>
-          </div>
-          <div className="p-6 text-center text-sm text-gray-600">
-            <p>
-              {complianceData.pendingReportsCount === 0
-                ? "No expense reports awaiting review"
-                : `${complianceData.pendingReportsCount} expense report${
-                    complianceData.pendingReportsCount === 1 ? "" : "s"
-                  } awaiting review`}
-            </p>
-            {complianceData.pendingReportsCount > 0 && (
-              <a
-                href="/admin/review/reports"
-                className="mt-2 inline-block rounded-md bg-blue-600 px-4 py-2 text-sm text-white hover:bg-blue-700"
-              >
-                Review Reports
-              </a>
-            )}
           </div>
         </div>
 
@@ -561,13 +525,13 @@ export default async function AdminComplianceDashboardPage() {
                       {new Date(report.dueDate).toLocaleDateString()}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className="rounded-full bg-red-100 px-2 py-1 text-xs font-medium text-red-800">
+                      <span className="rounded-full bg-destructive/20 px-2 py-1 text-xs font-medium text-red-800">
                         {report.daysOverdue} days
                       </span>
                     </td>
                     <td className="px-6 py-4 text-right text-sm whitespace-nowrap">
                       <button
-                        className="text-blue-600 hover:text-blue-900"
+                        className="text-primary hover:text-blue-900"
                         disabled
                         title="Send reminder workflow coming soon"
                       >
@@ -617,7 +581,8 @@ export default async function AdminComplianceDashboardPage() {
             ))}
           </div>
         </div>
-      </main>
-    </div>
+    </>
   );
+
+  return <ComplianceDashboardClient overviewContent={overviewContent} />;
 }

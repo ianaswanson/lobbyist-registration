@@ -24,7 +24,7 @@ export function DemoGuideButton() {
           href="/index.html"
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center gap-2 rounded-full bg-blue-600 px-4 py-3 text-sm font-medium text-white shadow-lg transition-colors hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none"
+          className="flex items-center gap-2 rounded-full bg-primary px-4 py-3 text-sm font-medium text-primary-foreground shadow-lg transition-colors hover:bg-primary/90 focus:ring-2 focus:ring-primary/25 focus:ring-offset-2 focus:outline-none"
           aria-label="Open documentation hub in new tab"
         >
           <svg

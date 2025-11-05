@@ -12,12 +12,12 @@ interface Registration {
   address: string;
   hoursCurrentQuarter: number;
   status: string;
-  user: {
+  User: {
     name: string;
     email: string;
   };
-  employers: Array<{
-    employer: {
+  LobbyistEmployer: Array<{
+    Employer: {
       name: string;
     };
     subjectsOfInterest: string;
@@ -124,8 +124,8 @@ export function ReviewRegistrationsList({
         <div
           className={`rounded-lg p-4 ${
             message.type === "success"
-              ? "border border-green-200 bg-green-50 text-green-800"
-              : "border border-red-200 bg-red-50 text-red-800"
+              ? "border border-success/30 bg-success/10 text-success-foreground"
+              : "border border-red-200 bg-destructive/10 text-red-800"
           }`}
         >
           <div className="flex items-center justify-between">
@@ -142,7 +142,7 @@ export function ReviewRegistrationsList({
 
       {registrations.map((registration) => {
         const isLoading = loadingId === registration.id;
-        const primaryEmployer = registration.employers[0];
+        const primaryEmployer = registration.LobbyistEmployer[0];
         const submittedDate = new Date(
           registration.createdAt
         ).toLocaleDateString();
@@ -179,7 +179,7 @@ export function ReviewRegistrationsList({
                   Employer
                 </label>
                 <p className="mt-1 text-sm text-gray-900">
-                  {primaryEmployer ? primaryEmployer.employer.name : "N/A"}
+                  {primaryEmployer ? primaryEmployer.Employer.name : "N/A"}
                 </p>
               </div>
               <div>

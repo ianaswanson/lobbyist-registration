@@ -5,8 +5,9 @@ import { usePathname } from "next/navigation";
 import { UserRole } from "@prisma/client";
 import { useState, useEffect, useRef } from "react";
 import { FEATURE_FLAGS } from "@/lib/feature-flags";
+import Image from "next/image";
+import { AlertCountBadge } from "@/components/admin/compliance/AlertCountBadge";
 import {
-  Building2,
   FileText,
   Clock,
   DollarSign,
@@ -30,6 +31,7 @@ import {
   Clipboard,
   Settings,
   Users,
+  User,
 } from "lucide-react";
 
 interface NavigationProps {
@@ -115,10 +117,10 @@ const PUBLIC_DATA_ITEMS: NavItem[] = [
     description: "View board member calendars and receipts",
   },
   {
-    label: "Analytics Dashboard",
-    href: "/analytics",
+    label: "Transparency Dashboard",
+    href: "/transparency",
     icon: TrendingUp,
-    description: "View spending trends",
+    description: "View spending trends and insights",
   },
   {
     label: "Contract Exceptions",
@@ -215,7 +217,7 @@ export function Navigation({ user }: NavigationProps) {
 
   // Filter public data items by feature flags
   const publicDataItems = PUBLIC_DATA_ITEMS.filter((item) => {
-    if (item.href === "/analytics" && !FEATURE_FLAGS.ANALYTICS_DASHBOARD) {
+    if (item.href === "/transparency" && !FEATURE_FLAGS.ANALYTICS_DASHBOARD) {
       return false;
     }
     if (
@@ -271,7 +273,7 @@ export function Navigation({ user }: NavigationProps) {
   return (
     <>
       {/* Main Navigation */}
-      <nav className="sticky top-0 z-50 border-b bg-white shadow-sm">
+      <nav className="sticky top-0 z-50 border-b bg-primary shadow-sm">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex h-16 items-center justify-between">
             {/* Left side - Logo and nav items */}
@@ -279,11 +281,19 @@ export function Navigation({ user }: NavigationProps) {
               {/* Logo */}
               <Link
                 href="/dashboard"
-                className="flex items-center space-x-2 text-xl font-bold transition-colors hover:text-blue-600"
+                className="flex items-center space-x-3 text-xl font-bold text-white transition-colors hover:text-white/90"
               >
-                <Building2 className="h-8 w-8 text-blue-600" />
-                <span className="hidden sm:inline">Lobbyist Registry</span>
-                <span className="sm:hidden">Registry</span>
+                <Image
+                  src="/multco-logo-white.svg"
+                  alt="Multnomah County"
+                  width={120}
+                  height={37}
+                  className="h-9 w-auto"
+                  priority
+                />
+                <span className="hidden lg:inline border-l border-white/30 pl-3">
+                  Accountability Portal
+                </span>
               </Link>
 
               {/* Desktop Navigation - Grouped Dropdowns */}
@@ -297,7 +307,7 @@ export function Navigation({ user }: NavigationProps) {
                         setIsPublicDataOpen(false);
                         setIsAdminOpen(false);
                       }}
-                      className="flex items-center space-x-1 rounded-md px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100"
+                      className="flex items-center space-x-1 rounded-md px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-white/10"
                     >
                       <Clipboard className="h-4 w-4" />
                       <span>My Work</span>
@@ -319,7 +329,7 @@ export function Navigation({ user }: NavigationProps) {
                                 onClick={() => setIsMyWorkOpen(false)}
                                 className={`flex items-center space-x-2 px-4 py-2 text-sm transition-colors ${
                                   isActive(item.href)
-                                    ? "bg-blue-50 text-blue-700"
+                                    ? "bg-primary/10 text-primary"
                                     : "text-gray-700 hover:bg-gray-100"
                                 }`}
                               >
@@ -343,7 +353,7 @@ export function Navigation({ user }: NavigationProps) {
                         setIsMyWorkOpen(false);
                         setIsPublicDataOpen(false);
                       }}
-                      className="flex items-center space-x-1 rounded-md px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100"
+                      className="flex items-center space-x-1 rounded-md px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-white/10"
                     >
                       <Settings className="h-4 w-4" />
                       <span>Admin</span>
@@ -371,14 +381,19 @@ export function Navigation({ user }: NavigationProps) {
                                     key={item.href}
                                     href={item.href}
                                     onClick={() => setIsAdminOpen(false)}
-                                    className={`flex items-center space-x-2 px-4 py-2 text-sm transition-colors ${
+                                    className={`flex items-center justify-between px-4 py-2 text-sm transition-colors ${
                                       isActive(item.href)
-                                        ? "bg-blue-50 text-blue-700"
+                                        ? "bg-primary/10 text-primary"
                                         : "text-gray-700 hover:bg-gray-100"
                                     }`}
                                   >
-                                    <Icon className="h-4 w-4" />
-                                    <span>{item.label}</span>
+                                    <div className="flex items-center space-x-2">
+                                      <Icon className="h-4 w-4" />
+                                      <span>{item.label}</span>
+                                    </div>
+                                    {item.href === "/admin/compliance" && (
+                                      <AlertCountBadge />
+                                    )}
                                   </Link>
                                 );
                               })}
@@ -398,7 +413,7 @@ export function Navigation({ user }: NavigationProps) {
                       setIsMyWorkOpen(false);
                       setIsAdminOpen(false);
                     }}
-                    className="flex items-center space-x-1 rounded-md px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100"
+                    className="flex items-center space-x-1 rounded-md px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-white/10"
                   >
                     <Search className="h-4 w-4" />
                     <span>Public Data</span>
@@ -420,7 +435,7 @@ export function Navigation({ user }: NavigationProps) {
                               onClick={() => setIsPublicDataOpen(false)}
                               className={`flex items-center space-x-2 px-4 py-2 text-sm transition-colors ${
                                 isActive(item.href)
-                                  ? "bg-blue-50 text-blue-700"
+                                  ? "bg-primary/10 text-primary"
                                   : "text-gray-700 hover:bg-gray-100"
                               }`}
                             >
@@ -441,7 +456,7 @@ export function Navigation({ user }: NavigationProps) {
               {/* Mobile menu button */}
               <button
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="rounded-md p-2 text-gray-700 hover:bg-gray-100 md:hidden"
+                className="rounded-md p-2 text-white hover:bg-white/10 md:hidden"
                 aria-label="Toggle mobile menu"
               >
                 {isMobileMenuOpen ? (
@@ -452,7 +467,7 @@ export function Navigation({ user }: NavigationProps) {
               </button>
 
               {/* Role badge */}
-              <span className="hidden rounded-full bg-blue-100 px-3 py-1 text-xs font-medium text-blue-800 sm:inline-flex">
+              <span className="hidden rounded-full bg-white/20 px-3 py-1 text-xs font-medium text-white sm:inline-flex">
                 {getRoleDisplay()}
               </span>
 
@@ -460,7 +475,7 @@ export function Navigation({ user }: NavigationProps) {
               <div ref={userMenuRef} className="relative">
                 <button
                   onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-                  className="flex items-center space-x-2 rounded-md px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100"
+                  className="flex items-center space-x-2 rounded-md px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-white/10"
                   aria-expanded={isUserMenuOpen}
                   aria-haspopup="true"
                 >
@@ -499,6 +514,15 @@ export function Navigation({ user }: NavigationProps) {
                         <span>Dashboard</span>
                       </Link>
 
+                      <Link
+                        href="/profile"
+                        onClick={() => setIsUserMenuOpen(false)}
+                        className="flex items-center space-x-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      >
+                        <User className="h-4 w-4" />
+                        <span>Profile Settings</span>
+                      </Link>
+
                       {/* Update Registration (lobbyists only) */}
                       {user.role === "LOBBYIST" && (
                         <Link
@@ -516,7 +540,7 @@ export function Navigation({ user }: NavigationProps) {
                           onClick={() => {
                             window.location.href = "/auth/signout";
                           }}
-                          className="flex w-full items-center space-x-2 px-4 py-2 text-left text-sm text-red-700 hover:bg-red-50"
+                          className="flex w-full items-center space-x-2 px-4 py-2 text-left text-sm text-destructive hover:bg-destructive/10"
                         >
                           <LogOut className="h-4 w-4" />
                           <span>Sign Out</span>
@@ -544,9 +568,14 @@ export function Navigation({ user }: NavigationProps) {
           <div className="fixed inset-y-0 left-0 w-80 max-w-full overflow-y-auto bg-white shadow-xl">
             <div className="p-4">
               <div className="mb-6 flex items-center justify-between">
-                <div className="flex items-center space-x-2">
-                  <Building2 className="h-8 w-8 text-blue-600" />
-                  <span className="text-lg font-bold">Menu</span>
+                <div className="flex items-center space-x-3">
+                  <Image
+                    src="/multco-logo-white.svg"
+                    alt="Multnomah County"
+                    width={100}
+                    height={31}
+                    className="h-8 w-auto brightness-0"
+                  />
                 </div>
                 <button
                   onClick={() => setIsMobileMenuOpen(false)}
@@ -571,7 +600,7 @@ export function Navigation({ user }: NavigationProps) {
                         onClick={() => setIsMobileMenuOpen(false)}
                         className={`flex items-center space-x-3 rounded-md px-4 py-3 transition-colors ${
                           isActive(item.href)
-                            ? "bg-blue-50 text-blue-700"
+                            ? "bg-primary/10 text-primary"
                             : "text-gray-700 hover:bg-gray-100"
                         }`}
                       >
@@ -597,7 +626,7 @@ export function Navigation({ user }: NavigationProps) {
                       onClick={() => setIsMobileMenuOpen(false)}
                       className={`flex items-center space-x-3 rounded-md px-4 py-3 transition-colors ${
                         isActive(item.href)
-                          ? "bg-blue-50 text-blue-700"
+                          ? "bg-primary/10 text-primary"
                           : "text-gray-700 hover:bg-gray-100"
                       }`}
                     >
@@ -626,14 +655,19 @@ export function Navigation({ user }: NavigationProps) {
                             key={item.href}
                             href={item.href}
                             onClick={() => setIsMobileMenuOpen(false)}
-                            className={`flex items-center space-x-3 rounded-md px-4 py-3 transition-colors ${
+                            className={`flex items-center justify-between rounded-md px-4 py-3 transition-colors ${
                               isActive(item.href)
-                                ? "bg-blue-50 text-blue-700"
+                                ? "bg-primary/10 text-primary"
                                 : "text-gray-700 hover:bg-gray-100"
                             }`}
                           >
-                            <Icon className="h-5 w-5" />
-                            <span>{item.label}</span>
+                            <div className="flex items-center space-x-3">
+                              <Icon className="h-5 w-5" />
+                              <span>{item.label}</span>
+                            </div>
+                            {item.href === "/admin/compliance" && (
+                              <AlertCountBadge />
+                            )}
                           </Link>
                         );
                       })}

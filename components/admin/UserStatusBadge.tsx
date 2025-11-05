@@ -20,7 +20,7 @@ export function UserStatusBadge({ status }: UserStatusBadgeProps) {
   > = {
     ACTIVE: {
       variant: "default",
-      className: "bg-green-100 text-green-800 hover:bg-green-100",
+      className: "bg-success/20 text-success-foreground hover:bg-success/20",
     },
     INACTIVE: {
       variant: "secondary",
@@ -28,7 +28,7 @@ export function UserStatusBadge({ status }: UserStatusBadgeProps) {
     },
     SUSPENDED: {
       variant: "destructive",
-      className: "bg-red-100 text-red-800 hover:bg-red-100",
+      className: "bg-destructive/20 text-red-800 hover:bg-destructive/20",
     },
   };
 

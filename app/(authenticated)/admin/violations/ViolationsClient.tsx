@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -45,8 +46,13 @@ import {
   FileText,
   DollarSign,
   Gavel,
+  Loader2,
+  User,
+  Building2,
+  Landmark,
 } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { EntitySearch } from "@/components/admin/EntitySearch";
 
 const violationTypeLabels = {
   LATE_REGISTRATION: "Late Registration",
@@ -60,15 +66,16 @@ const violationTypeLabels = {
 
 const statusColors = {
   PENDING: "bg-yellow-100 text-yellow-800",
-  ISSUED: "bg-red-100 text-red-800",
+  ISSUED: "bg-destructive/20 text-red-800",
   APPEALED: "bg-purple-100 text-purple-800",
-  UPHELD: "bg-red-100 text-red-800",
-  OVERTURNED: "bg-green-100 text-green-800",
-  PAID: "bg-green-100 text-green-800",
-  WAIVED: "bg-blue-100 text-blue-800",
+  UPHELD: "bg-destructive/20 text-red-800",
+  OVERTURNED: "bg-success/20 text-success-foreground",
+  PAID: "bg-success/20 text-success-foreground",
+  WAIVED: "bg-primary/20 text-primary",
 };
 
 export function ViolationsClient() {
+  const searchParams = useSearchParams();
   const [isIssueDialogOpen, setIsIssueDialogOpen] = useState(false);
   const [selectedViolation, setSelectedViolation] = useState<any>(null);
   const [isDetailsDialogOpen, setIsDetailsDialogOpen] = useState(false);
@@ -80,6 +87,8 @@ export function ViolationsClient() {
     type: "success" | "error";
     text: string;
   } | null>(null);
+  const [relatedReportContext, setRelatedReportContext] = useState<any>(null);
+  const [loadingReportContext, setLoadingReportContext] = useState(false);
 
   // Form state for new violation
   const [newViolation, setNewViolation] = useState({
@@ -89,7 +98,138 @@ export function ViolationsClient() {
     description: "",
     fineAmount: "",
     sendEducationalLetter: false,
+    sourceAlertId: "",
   });
+
+  // Get icon based on entity type
+  const getEntityIcon = (type: string) => {
+    switch (type) {
+      case "LOBBYIST":
+        return <User className="h-4 w-4 text-blue-600" />;
+      case "EMPLOYER":
+        return <Building2 className="h-4 w-4 text-purple-600" />;
+      case "BOARD_MEMBER":
+        return <Landmark className="h-4 w-4 text-green-600" />;
+      case "LOBBYIST_REPORT":
+      case "EMPLOYER_REPORT":
+        return <FileText className="h-4 w-4 text-orange-600" />;
+      default:
+        return <User className="h-4 w-4 text-gray-600" />;
+    }
+  };
+
+  // Get human-readable entity type label
+  const getEntityTypeLabel = (type: string) => {
+    switch (type) {
+      case "LOBBYIST":
+        return "Lobbyist";
+      case "EMPLOYER":
+        return "Employer";
+      case "BOARD_MEMBER":
+        return "Board Member";
+      case "LOBBYIST_REPORT":
+        return "Lobbyist Report";
+      case "EMPLOYER_REPORT":
+        return "Employer Report";
+      default:
+        return type;
+    }
+  };
+
+  // Pre-fill form from URL params (from alert)
+  useEffect(() => {
+    const alertId = searchParams.get("alertId");
+    const alertType = searchParams.get("alertType");
+    const alertMessage = searchParams.get("alertMessage");
+    const reportId = searchParams.get("reportId");
+    const userId = searchParams.get("userId");
+
+    if (alertId && alertType) {
+      // Map alert type to violation type and entity type
+      let violationType = "";
+      let entityType = "";
+      let suggestedFine = "";
+      let description = alertMessage || "";
+
+      if (alertType === "OVERDUE_REPORT") {
+        violationType = "MISSING_REPORT";
+        entityType = reportId ? "LOBBYIST_REPORT" : "LOBBYIST";
+        suggestedFine = "100"; // Typical fine for late reports
+        if (!description.includes("Report")) {
+          description = `Quarterly report not submitted by deadline. ${description}`;
+        }
+      } else if (alertType === "MISSING_FIELDS") {
+        violationType = "LATE_REPORT"; // Incomplete is similar to late
+        entityType = reportId ? "LOBBYIST_REPORT" : "LOBBYIST";
+        suggestedFine = "50"; // Lower fine for incomplete data
+      } else if (alertType === "UNUSUAL_SPENDING") {
+        violationType = "OTHER";
+        entityType = reportId ? "LOBBYIST_REPORT" : "LOBBYIST";
+        suggestedFine = "0"; // Typically starts as review/warning
+        if (!description.includes("Unusual")) {
+          description = `Unusual spending pattern detected. ${description}`;
+        }
+      }
+
+      setNewViolation({
+        entityType,
+        entityId: reportId || userId || "",
+        violationType,
+        description,
+        fineAmount: suggestedFine,
+        sendEducationalLetter: suggestedFine === "0",
+        sourceAlertId: alertId,
+      });
+
+      // Open the dialog automatically
+      setIsIssueDialogOpen(true);
+    }
+  }, [searchParams]);
+
+  // Fetch report context when a report entity is selected
+  useEffect(() => {
+    const isReportEntity =
+      newViolation.entityType === "LOBBYIST_REPORT" ||
+      newViolation.entityType === "EMPLOYER_REPORT";
+
+    if (isReportEntity && newViolation.entityId) {
+      fetchReportContext(newViolation.entityType, newViolation.entityId);
+    } else {
+      setRelatedReportContext(null);
+    }
+  }, [newViolation.entityType, newViolation.entityId]);
+
+  const fetchReportContext = async (entityType: string, reportId: string) => {
+    setLoadingReportContext(true);
+    try {
+      const endpoint =
+        entityType === "LOBBYIST_REPORT"
+          ? `/api/reports/lobbyist/${reportId}`
+          : `/api/reports/employer/${reportId}`;
+
+      const response = await fetch(endpoint);
+      if (response.ok) {
+        const report = await response.json();
+        setRelatedReportContext({
+          quarter: report.quarter,
+          year: report.year,
+          dueDate: new Date(report.dueDate),
+          status: report.status,
+          submittedAt: report.submittedAt
+            ? new Date(report.submittedAt)
+            : null,
+          entityName:
+            entityType === "LOBBYIST_REPORT"
+              ? report.lobbyist?.name
+              : report.employer?.name,
+        });
+      }
+    } catch (error) {
+      console.error("Error fetching report context:", error);
+    } finally {
+      setLoadingReportContext(false);
+    }
+  };
 
   // Fetch violations and summary on mount
   useEffect(() => {
@@ -141,6 +281,7 @@ export function ViolationsClient() {
             ? parseFloat(newViolation.fineAmount)
             : 0,
           sendEducationalLetter: newViolation.sendEducationalLetter,
+          sourceAlertId: newViolation.sourceAlertId || undefined,
         }),
       });
 
@@ -154,10 +295,16 @@ export function ViolationsClient() {
           description: "",
           fineAmount: "",
           sendEducationalLetter: false,
+          sourceAlertId: "",
         });
         // Refresh data
         fetchViolations();
         fetchSummary();
+
+        // Clear URL params and navigate to clean violations page
+        if (newViolation.sourceAlertId) {
+          window.history.replaceState({}, "", "/admin/violations");
+        }
 
         // Clear message after 5 seconds
         setTimeout(() => setMessage(null), 5000);
@@ -216,25 +363,25 @@ export function ViolationsClient() {
         <Alert
           className={`mb-6 ${
             message.type === "success"
-              ? "border-green-200 bg-green-50"
-              : "border-red-200 bg-red-50"
+              ? "border-success/30 bg-success/10"
+              : "border-red-200 bg-destructive/10"
           }`}
         >
           <AlertCircle
             className={`h-4 w-4 ${
-              message.type === "success" ? "text-green-600" : "text-red-600"
+              message.type === "success" ? "text-success" : "text-destructive"
             }`}
           />
           <AlertTitle
             className={
-              message.type === "success" ? "text-green-800" : "text-red-800"
+              message.type === "success" ? "text-success-foreground" : "text-red-800"
             }
           >
             {message.type === "success" ? "Success" : "Error"}
           </AlertTitle>
           <AlertDescription
             className={
-              message.type === "success" ? "text-green-700" : "text-red-700"
+              message.type === "success" ? "text-success" : "text-destructive"
             }
           >
             {message.text}
@@ -260,47 +407,96 @@ export function ViolationsClient() {
             </DialogHeader>
 
             <div className="grid gap-4 py-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="entity-type">Entity Type</Label>
-                  <Select
-                    value={newViolation.entityType}
-                    onValueChange={(value) =>
-                      setNewViolation({ ...newViolation, entityType: value })
-                    }
-                  >
-                    <SelectTrigger id="entity-type">
-                      <SelectValue placeholder="Select entity type" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="LOBBYIST">Lobbyist</SelectItem>
-                      <SelectItem value="EMPLOYER">Employer</SelectItem>
-                      <SelectItem value="LOBBYIST_REPORT">
-                        Lobbyist Report
-                      </SelectItem>
-                      <SelectItem value="EMPLOYER_REPORT">
-                        Employer Report
-                      </SelectItem>
-                      <SelectItem value="BOARD_MEMBER">Board Member</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="entity-id">Entity / Report ID</Label>
-                  <Input
-                    id="entity-id"
-                    value={newViolation.entityId}
-                    onChange={(e) =>
-                      setNewViolation({
-                        ...newViolation,
-                        entityId: e.target.value,
-                      })
-                    }
-                    placeholder="Enter entity ID"
-                  />
-                </div>
+              <div className="space-y-2">
+                <Label htmlFor="entity-search">Who is this violation for?</Label>
+                <EntitySearch
+                  value={
+                    newViolation.entityType && newViolation.entityId
+                      ? {
+                          entityType: newViolation.entityType,
+                          entityId: newViolation.entityId,
+                        }
+                      : undefined
+                  }
+                  onChange={(selected) =>
+                    setNewViolation({
+                      ...newViolation,
+                      entityType: selected.entityType,
+                      entityId: selected.entityId,
+                    })
+                  }
+                  placeholder="Search for a person or report..."
+                />
+                <p className="text-xs text-muted-foreground">
+                  Search by name, email, or report details
+                </p>
               </div>
+
+              {/* Report Context Display */}
+              {loadingReportContext && (
+                <Alert>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  <AlertTitle>Loading Report Details...</AlertTitle>
+                </Alert>
+              )}
+
+              {relatedReportContext && (
+                <Alert>
+                  <FileText className="h-4 w-4" />
+                  <AlertTitle>Report Context</AlertTitle>
+                  <AlertDescription>
+                    <div className="space-y-2 text-sm mt-2">
+                      <div className="grid grid-cols-2 gap-2">
+                        <div>
+                          <strong>Entity:</strong> {relatedReportContext.entityName}
+                        </div>
+                        <div>
+                          <strong>Period:</strong> {relatedReportContext.quarter}{" "}
+                          {relatedReportContext.year}
+                        </div>
+                        <div>
+                          <strong>Due Date:</strong>{" "}
+                          {relatedReportContext.dueDate.toLocaleDateString()}
+                        </div>
+                        <div>
+                          <strong>Status:</strong>{" "}
+                          <Badge variant="outline" className="ml-1">
+                            {relatedReportContext.status}
+                          </Badge>
+                        </div>
+                        {relatedReportContext.submittedAt && (
+                          <div className="col-span-2">
+                            <strong>Submitted:</strong>{" "}
+                            {relatedReportContext.submittedAt.toLocaleDateString()}
+                          </div>
+                        )}
+                        {!relatedReportContext.submittedAt &&
+                          relatedReportContext.status === "OVERDUE" && (
+                            <div className="col-span-2 text-destructive">
+                              <strong>Days Overdue:</strong>{" "}
+                              {Math.floor(
+                                (new Date().getTime() -
+                                  relatedReportContext.dueDate.getTime()) /
+                                  (1000 * 60 * 60 * 24)
+                              )}{" "}
+                              days
+                            </div>
+                          )}
+                      </div>
+                      <div className="mt-2 pt-2 border-t">
+                        <a
+                          href={`/admin/reports/${newViolation.entityId}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-primary hover:underline text-sm flex items-center gap-1"
+                        >
+                          View Full Report <Eye className="h-3 w-3" />
+                        </a>
+                      </div>
+                    </div>
+                  </AlertDescription>
+                </Alert>
+              )}
 
               <div className="space-y-2">
                 <Label htmlFor="violation-type">Violation Type</Label>
@@ -355,6 +551,211 @@ export function ViolationsClient() {
 
               <div className="space-y-2">
                 <Label htmlFor="fine-amount">Fine Amount (up to $500)</Label>
+
+                {/* Quick-select buttons based on violation type */}
+                {newViolation.violationType && (
+                  <div className="flex flex-wrap gap-2 mb-2">
+                    <p className="text-xs text-muted-foreground w-full mb-1">
+                      Suggested amounts for {violationTypeLabels[newViolation.violationType as keyof typeof violationTypeLabels]}:
+                    </p>
+                    {newViolation.violationType === "LATE_REPORT" && (
+                      <>
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant="outline"
+                          onClick={() =>
+                            setNewViolation({ ...newViolation, fineAmount: "50" })
+                          }
+                        >
+                          $50 (Minor delay)
+                        </Button>
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant="outline"
+                          onClick={() =>
+                            setNewViolation({ ...newViolation, fineAmount: "100" })
+                          }
+                        >
+                          $100 (Standard)
+                        </Button>
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant="outline"
+                          onClick={() =>
+                            setNewViolation({ ...newViolation, fineAmount: "200" })
+                          }
+                        >
+                          $200 (Repeated)
+                        </Button>
+                      </>
+                    )}
+                    {newViolation.violationType === "MISSING_REPORT" && (
+                      <>
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant="outline"
+                          onClick={() =>
+                            setNewViolation({ ...newViolation, fineAmount: "100" })
+                          }
+                        >
+                          $100 (First offense)
+                        </Button>
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant="outline"
+                          onClick={() =>
+                            setNewViolation({ ...newViolation, fineAmount: "250" })
+                          }
+                        >
+                          $250 (Repeated)
+                        </Button>
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant="outline"
+                          onClick={() =>
+                            setNewViolation({ ...newViolation, fineAmount: "500" })
+                          }
+                        >
+                          $500 (Maximum)
+                        </Button>
+                      </>
+                    )}
+                    {newViolation.violationType === "LATE_REGISTRATION" && (
+                      <>
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant="outline"
+                          onClick={() =>
+                            setNewViolation({ ...newViolation, fineAmount: "150" })
+                          }
+                        >
+                          $150 (1-5 days late)
+                        </Button>
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant="outline"
+                          onClick={() =>
+                            setNewViolation({ ...newViolation, fineAmount: "300" })
+                          }
+                        >
+                          $300 (6-14 days)
+                        </Button>
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant="outline"
+                          onClick={() =>
+                            setNewViolation({ ...newViolation, fineAmount: "500" })
+                          }
+                        >
+                          $500 (15+ days)
+                        </Button>
+                      </>
+                    )}
+                    {newViolation.violationType === "FALSE_STATEMENT" && (
+                      <>
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant="outline"
+                          onClick={() =>
+                            setNewViolation({ ...newViolation, fineAmount: "250" })
+                          }
+                        >
+                          $250 (Minor error)
+                        </Button>
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant="outline"
+                          onClick={() =>
+                            setNewViolation({ ...newViolation, fineAmount: "500" })
+                          }
+                        >
+                          $500 (Intentional)
+                        </Button>
+                      </>
+                    )}
+                    {(newViolation.violationType === "PROHIBITED_CONDUCT" ||
+                      newViolation.violationType === "MISSING_AUTHORIZATION") && (
+                      <>
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant="outline"
+                          onClick={() =>
+                            setNewViolation({ ...newViolation, fineAmount: "200" })
+                          }
+                        >
+                          $200 (First offense)
+                        </Button>
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant="outline"
+                          onClick={() =>
+                            setNewViolation({ ...newViolation, fineAmount: "350" })
+                          }
+                        >
+                          $350 (Repeated)
+                        </Button>
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant="outline"
+                          onClick={() =>
+                            setNewViolation({ ...newViolation, fineAmount: "500" })
+                          }
+                        >
+                          $500 (Serious)
+                        </Button>
+                      </>
+                    )}
+                    {newViolation.violationType === "OTHER" && (
+                      <>
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant="outline"
+                          onClick={() =>
+                            setNewViolation({ ...newViolation, fineAmount: "0" })
+                          }
+                        >
+                          $0 (Warning only)
+                        </Button>
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant="outline"
+                          onClick={() =>
+                            setNewViolation({ ...newViolation, fineAmount: "100" })
+                          }
+                        >
+                          $100 (Minor)
+                        </Button>
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant="outline"
+                          onClick={() =>
+                            setNewViolation({ ...newViolation, fineAmount: "250" })
+                          }
+                        >
+                          $250 (Moderate)
+                        </Button>
+                      </>
+                    )}
+                  </div>
+                )}
+
                 <div className="relative">
                   <span className="text-muted-foreground absolute top-1/2 left-3 -translate-y-1/2">
                     $
@@ -377,7 +778,7 @@ export function ViolationsClient() {
                   />
                 </div>
                 <p className="text-muted-foreground text-sm">
-                  Leave at $0 to issue warning/educational letter only
+                  Leave at $0 to issue warning/educational letter only. Per §3.808, fines may not exceed $500.
                 </p>
               </div>
 
@@ -547,12 +948,18 @@ export function ViolationsClient() {
                       filterViolationsByStatus(tab).map((violation) => (
                         <TableRow key={violation.id}>
                           <TableCell>
-                            <div>
-                              <div className="font-medium">
-                                {violation.entityType}
-                              </div>
-                              <div className="text-muted-foreground text-sm">
-                                ID: {violation.entityId.substring(0, 8)}...
+                            <div className="flex items-center gap-2">
+                              {getEntityIcon(violation.entityType)}
+                              <div>
+                                <div className="font-medium">
+                                  {violation.entityName || "Unknown Entity"}
+                                </div>
+                                <div className="text-muted-foreground text-xs">
+                                  {getEntityTypeLabel(violation.entityType)}
+                                  {violation.entityEmail && (
+                                    <span> • {violation.entityEmail}</span>
+                                  )}
+                                </div>
                               </div>
                             </div>
                           </TableCell>
@@ -733,7 +1140,7 @@ export function ViolationsClient() {
                         ))}
                         <a
                           href="/admin/appeals"
-                          className="mt-2 inline-block text-sm font-medium text-blue-600 hover:underline"
+                          className="mt-2 inline-block text-sm font-medium text-primary hover:underline"
                         >
                           View in Appeals Dashboard →
                         </a>

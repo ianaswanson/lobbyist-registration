@@ -24,7 +24,7 @@ export const FEATURE_FLAGS = {
    *
    * Set to false to hide from navigation and disable access.
    */
-  ANALYTICS_DASHBOARD: false,
+  ANALYTICS_DASHBOARD: true,
 
   /**
    * Contract Exceptions - Ordinance Requirement (§9.230(C))

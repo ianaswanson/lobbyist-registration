@@ -93,37 +93,37 @@ export default function AdminNotificationsPage() {
             Automated Notification Schedule
           </h2>
           <div className="space-y-4">
-            <div className="border-l-4 border-blue-500 bg-blue-50 p-4">
+            <div className="border-l-4 border-primary bg-primary/10 p-4">
               <h3 className="font-semibold text-blue-900">
                 Deadline Reminders
               </h3>
-              <p className="mt-1 text-sm text-blue-700">
+              <p className="mt-1 text-sm text-primary">
                 Sent automatically 14 days, 7 days, 1 day, and on the day of
                 quarterly report deadlines
               </p>
-              <p className="mt-2 text-xs text-blue-600">
+              <p className="mt-2 text-xs text-primary">
                 Recipients: All active lobbyists and employers
               </p>
             </div>
 
-            <div className="border-l-4 border-red-500 bg-red-50 p-4">
+            <div className="border-l-4 border-destructive bg-destructive/10 p-4">
               <h3 className="font-semibold text-red-900">Overdue Notices</h3>
-              <p className="mt-1 text-sm text-red-700">
+              <p className="mt-1 text-sm text-destructive">
                 Sent daily to lobbyists/employers with overdue reports
               </p>
-              <p className="mt-2 text-xs text-red-600">
+              <p className="mt-2 text-xs text-destructive">
                 Recipients: Those with reports past the quarterly deadline
               </p>
             </div>
 
-            <div className="border-l-4 border-green-500 bg-green-50 p-4">
+            <div className="border-l-4 border-success bg-success/10 p-4">
               <h3 className="font-semibold text-green-900">
                 Registration Approvals
               </h3>
-              <p className="mt-1 text-sm text-green-700">
+              <p className="mt-1 text-sm text-success">
                 Sent immediately when admin approves a lobbyist registration
               </p>
-              <p className="mt-2 text-xs text-green-600">
+              <p className="mt-2 text-xs text-success">
                 Trigger: Manual approval action
               </p>
             </div>
@@ -154,7 +154,7 @@ export default function AdminNotificationsPage() {
                   Due: July 15, 2025
                 </span>
               </div>
-              <span className="rounded-full bg-blue-100 px-3 py-1 text-xs font-medium text-blue-800">
+              <span className="rounded-full bg-primary/20 px-3 py-1 text-xs font-medium text-primary">
                 104 days remaining
               </span>
             </div>
@@ -184,7 +184,7 @@ export default function AdminNotificationsPage() {
                 id="testEmail"
                 value={testEmail}
                 onChange={(e) => setTestEmail(e.target.value)}
-                className="block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
+                className="block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-primary focus:ring-primary focus:outline-none"
                 placeholder="test@example.com"
               />
             </div>
@@ -200,7 +200,7 @@ export default function AdminNotificationsPage() {
                 id="testName"
                 value={testName}
                 onChange={(e) => setTestName(e.target.value)}
-                className="block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
+                className="block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-primary focus:ring-primary focus:outline-none"
                 placeholder="Test User"
               />
             </div>
@@ -210,7 +210,7 @@ export default function AdminNotificationsPage() {
             <button
               onClick={sendTestReminder}
               disabled={sending}
-              className="rounded-md bg-blue-600 px-4 py-3 text-sm font-medium text-white hover:bg-blue-700 disabled:bg-gray-300"
+              className="rounded-md bg-primary px-4 py-3 text-sm font-medium text-white hover:bg-primary disabled:bg-gray-300"
             >
               {sending ? "Sending..." : "Send Test Deadline Reminder"}
             </button>
@@ -224,7 +224,7 @@ export default function AdminNotificationsPage() {
             <button
               onClick={sendTestApproval}
               disabled={sending}
-              className="rounded-md bg-green-600 px-4 py-3 text-sm font-medium text-white hover:bg-green-700 disabled:bg-gray-300"
+              className="rounded-md bg-success px-4 py-3 text-sm font-medium text-white hover:bg-success disabled:bg-gray-300"
             >
               {sending ? "Sending..." : "Send Test Approval"}
             </button>
@@ -234,15 +234,15 @@ export default function AdminNotificationsPage() {
             <div
               className={`mt-6 rounded-md p-4 ${
                 result.startsWith("✅")
-                  ? "bg-green-50 text-green-800"
-                  : "bg-red-50 text-red-800"
+                  ? "bg-success/10 text-success-foreground"
+                  : "bg-destructive/10 text-red-800"
               }`}
             >
               {result}
             </div>
           )}
 
-          <div className="mt-6 rounded-md bg-yellow-50 p-4">
+          <div className="mt-6 rounded-md bg-primary/10 p-4">
             <p className="text-sm text-yellow-800">
               <strong>Note:</strong> In prototype mode, emails are logged to the
               browser console instead of being sent. In production, integrate

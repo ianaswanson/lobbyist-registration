@@ -25,7 +25,7 @@ export default async function BoardCalendarsPage() {
             View quarterly calendars and lobbying receipts for county board
             members
           </p>
-          <div className="mt-4 rounded-md bg-blue-50 p-4">
+          <div className="mt-4 rounded-md bg-primary/10 p-4">
             <p className="text-sm text-blue-900">
               <strong>Ordinance Requirement (§3.001):</strong> Board members
               must post quarterly calendars and report any lobbying expenditures

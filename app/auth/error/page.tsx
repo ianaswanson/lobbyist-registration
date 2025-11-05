@@ -2,7 +2,7 @@ export default function AuthErrorPage() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-50">
       <div className="w-full max-w-md space-y-8 rounded-lg border bg-white p-8 text-center shadow-lg">
-        <div className="text-red-600">
+        <div className="text-destructive">
           <svg
             className="mx-auto h-12 w-12"
             fill="none"
@@ -24,7 +24,7 @@ export default function AuthErrorPage() {
         </p>
         <a
           href="/auth/signin"
-          className="inline-block w-full rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
+          className="inline-block w-full rounded-md bg-primary px-4 py-2 text-white hover:bg-primary"
         >
           Back to Sign In
         </a>
