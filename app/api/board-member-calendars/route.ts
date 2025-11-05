@@ -19,12 +19,12 @@ export async function GET() {
         isActive: true,
       },
       include: {
-        user: {
+        User: {
           select: {
             email: true,
           },
         },
-        calendarEntries: {
+        BoardCalendarEntry: {
           where: {
             // Only include entries from the last year
             eventDate: {
@@ -35,7 +35,7 @@ export async function GET() {
             eventDate: "desc",
           },
         },
-        lobbyingReceipts: {
+        BoardLobbyingReceipt: {
           where: {
             // Only include receipts from the last year
             date: {
@@ -43,7 +43,7 @@ export async function GET() {
             },
           },
           include: {
-            lobbyist: {
+            Lobbyist: {
               select: {
                 name: true,
                 email: true,
@@ -61,13 +61,14 @@ export async function GET() {
     });
 
     // Format the response
+    // Map PascalCase relation names to camelCase for backwards compatibility with frontend
     const formattedData = boardMembers.map((member) => ({
       id: member.id,
       name: member.name,
       district: member.district,
       termStart: member.termStart,
       termEnd: member.termEnd,
-      calendarEntries: member.calendarEntries.map((entry) => ({
+      calendarEntries: member.BoardCalendarEntry.map((entry) => ({
         id: entry.id,
         eventTitle: entry.eventTitle,
         eventDate: entry.eventDate,
@@ -76,10 +77,10 @@ export async function GET() {
         quarter: entry.quarter,
         year: entry.year,
       })),
-      lobbyingReceipts: member.lobbyingReceipts.map((receipt) => ({
+      lobbyingReceipts: member.BoardLobbyingReceipt.map((receipt) => ({
         id: receipt.id,
-        lobbyistName: receipt.lobbyist.name,
-        lobbyistEmail: receipt.lobbyist.email,
+        lobbyistName: receipt.Lobbyist.name,
+        lobbyistEmail: receipt.Lobbyist.email,
         amount: receipt.amount,
         date: receipt.date,
         payee: receipt.payee,
@@ -87,8 +88,8 @@ export async function GET() {
         quarter: receipt.quarter,
         year: receipt.year,
       })),
-      totalReceipts: member.lobbyingReceipts.length,
-      totalReceiptAmount: member.lobbyingReceipts.reduce(
+      totalReceipts: member.BoardLobbyingReceipt.length,
+      totalReceiptAmount: member.BoardLobbyingReceipt.reduce(
         (sum, r) => sum + r.amount,
         0
       ),
@@ -209,11 +210,15 @@ export async function POST(request: NextRequest) {
           // Still create the receipt, but without lobbyist link
         }
 
+        // Only create receipt if we found a valid lobbyist
+        if (!lobbyist) {
+          throw new Error(`Lobbyist not found: ${receipt.lobbyistName}`);
+        }
+
         return prisma.boardLobbyingReceipt.create({
           data: {
             boardMemberId: boardMember.id,
-            lobbyistId: lobbyist?.id || undefined,
-            lobbyistName: receipt.lobbyistName, // Store name even if lobbyist not found
+            lobbyistId: lobbyist.id,
             amount: receipt.amount,
             date: new Date(receipt.date),
             payee: receipt.payee,

@@ -99,12 +99,13 @@ export function EmployerExpenseReportForm({
               setExpenses([]);
             }
 
-            // Transform lobbyist payments
-            if (report.lobbyistPayments && report.lobbyistPayments.length > 0) {
-              const transformedPayments = report.lobbyistPayments.map(
+            // Transform lobbyist payments (handle both PascalCase from Prisma and camelCase from mapping)
+            const payments = report.EmployerLobbyistPayment || report.lobbyistPayments;
+            if (payments && payments.length > 0) {
+              const transformedPayments = payments.map(
                 (payment: any) => ({
                   id: payment.id,
-                  lobbyistName: payment.lobbyist.name,
+                  lobbyistName: payment.Lobbyist?.name || payment.lobbyist?.name,
                   amountPaid: payment.amountPaid,
                 })
               );

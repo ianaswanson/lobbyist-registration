@@ -70,7 +70,7 @@ export async function GET(request: NextRequest) {
     const violations = await prisma.violation.findMany({
       where,
       include: {
-        appeals: true,
+        Appeal: true,
       },
       orderBy: {
         issuedDate: "desc",
@@ -107,18 +107,18 @@ export async function GET(request: NextRequest) {
           } else if (violation.entityType === "LOBBYIST_REPORT") {
             const report = await prisma.lobbyistExpenseReport.findUnique({
               where: { id: violation.entityId },
-              include: { lobbyist: { select: { name: true } } },
+              include: { Lobbyist: { select: { name: true } } },
             });
             entityName = report
-              ? `${report.lobbyist.name} - ${report.quarter} ${report.year}`
+              ? `${report.Lobbyist.name} - ${report.quarter} ${report.year}`
               : null;
           } else if (violation.entityType === "EMPLOYER_REPORT") {
             const report = await prisma.employerExpenseReport.findUnique({
               where: { id: violation.entityId },
-              include: { employer: { select: { name: true } } },
+              include: { Employer: { select: { name: true } } },
             });
             entityName = report
-              ? `${report.employer.name} - ${report.quarter} ${report.year}`
+              ? `${report.Employer.name} - ${report.quarter} ${report.year}`
               : null;
           }
         } catch (error) {
@@ -128,10 +128,12 @@ export async function GET(request: NextRequest) {
           );
         }
 
+        // Map PascalCase relation name to camelCase for frontend compatibility
         return {
           ...violation,
           entityName,
           entityEmail,
+          appeals: violation.Appeal, // Map Appeal to appeals for backwards compatibility
         };
       })
     );

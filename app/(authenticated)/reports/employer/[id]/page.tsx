@@ -80,7 +80,7 @@ async function getReport(reportId: string, userId: string) {
       },
     });
 
-    // Map the relations to the expected names for backwards compatibility
+    // Map the relations to camelCase for backwards compatibility with UI code
     return {
       ...report,
       lobbyistPayments: report.EmployerLobbyistPayment.map((payment) => ({

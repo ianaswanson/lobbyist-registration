@@ -38,9 +38,9 @@ export async function GET(
         id,
       },
       include: {
-        lobbyistPayments: {
+        EmployerLobbyistPayment: {
           include: {
-            lobbyist: {
+            Lobbyist: {
               select: {
                 name: true,
               },

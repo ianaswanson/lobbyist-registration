@@ -46,7 +46,7 @@ export async function getUserAuditHistory(userId: string) {
   return await prisma.userAuditLog.findMany({
     where: { userId },
     include: {
-      admin: {
+      User_UserAuditLog_adminIdToUser: {
         select: {
           id: true,
           name: true,

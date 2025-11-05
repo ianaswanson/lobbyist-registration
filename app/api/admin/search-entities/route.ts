@@ -135,7 +135,7 @@ export async function GET(request: NextRequest) {
           OR: [
             { id: { contains: query } },
             {
-              lobbyist: {
+              Lobbyist: {
                 OR: [
                   { name: { contains: query, mode: "insensitive" } },
                   { email: { contains: query, mode: "insensitive" } },
@@ -145,7 +145,7 @@ export async function GET(request: NextRequest) {
           ],
         },
         include: {
-          lobbyist: {
+          Lobbyist: {
             select: {
               name: true,
               email: true,
@@ -159,8 +159,8 @@ export async function GET(request: NextRequest) {
         ...lobbyistReports.map((r) => ({
           id: r.id,
           type: "LOBBYIST_REPORT" as const,
-          name: `${r.lobbyist.name} - ${r.quarter} ${r.year}`,
-          displayText: `${r.lobbyist.name} - ${r.quarter} ${r.year} Report`,
+          name: `${r.Lobbyist.name} - ${r.quarter} ${r.year}`,
+          displayText: `${r.Lobbyist.name} - ${r.quarter} ${r.year} Report`,
           subtitle: `Lobbyist Report • ${r.status} • Due: ${new Date(r.dueDate).toLocaleDateString()}`,
           relatedEntityId: r.lobbyistId,
           relatedEntityType: "LOBBYIST",
@@ -175,7 +175,7 @@ export async function GET(request: NextRequest) {
           OR: [
             { id: { contains: query } },
             {
-              employer: {
+              Employer: {
                 OR: [
                   { name: { contains: query, mode: "insensitive" } },
                   { email: { contains: query, mode: "insensitive" } },
@@ -185,7 +185,7 @@ export async function GET(request: NextRequest) {
           ],
         },
         include: {
-          employer: {
+          Employer: {
             select: {
               name: true,
               email: true,
@@ -199,8 +199,8 @@ export async function GET(request: NextRequest) {
         ...employerReports.map((r) => ({
           id: r.id,
           type: "EMPLOYER_REPORT" as const,
-          name: `${r.employer.name} - ${r.quarter} ${r.year}`,
-          displayText: `${r.employer.name} - ${r.quarter} ${r.year} Report`,
+          name: `${r.Employer.name} - ${r.quarter} ${r.year}`,
+          displayText: `${r.Employer.name} - ${r.quarter} ${r.year} Report`,
           subtitle: `Employer Report • ${r.status} • Due: ${new Date(r.dueDate).toLocaleDateString()}`,
           relatedEntityId: r.employerId,
           relatedEntityType: "EMPLOYER",

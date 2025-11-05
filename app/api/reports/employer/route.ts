@@ -306,9 +306,9 @@ export async function GET(request: NextRequest) {
     const reports = await prisma.employerExpenseReport.findMany({
       where,
       include: {
-        lobbyistPayments: {
+        EmployerLobbyistPayment: {
           include: {
-            lobbyist: {
+            Lobbyist: {
               select: {
                 name: true,
               },
@@ -329,8 +329,13 @@ export async function GET(request: NextRequest) {
           },
           orderBy: { date: "desc" },
         });
+        // Map PascalCase relation to camelCase for backwards compatibility
         return {
           ...report,
+          lobbyistPayments: report.EmployerLobbyistPayment.map((payment) => ({
+            ...payment,
+            lobbyist: payment.Lobbyist,
+          })),
           lineItems,
         };
       })

@@ -11,15 +11,15 @@ async function getPendingRegistrations() {
         status: RegistrationStatus.PENDING,
       },
       include: {
-        user: {
+        User: {
           select: {
             name: true,
             email: true,
           },
         },
-        employers: {
+        LobbyistEmployer: {
           include: {
-            employer: {
+            Employer: {
               select: {
                 name: true,
               },

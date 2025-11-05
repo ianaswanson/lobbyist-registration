@@ -20,10 +20,10 @@ async function getSubmissions(userId: string): Promise<QuarterlySubmission[]> {
     const boardMember = await prisma.boardMember.findUnique({
       where: { userId },
       include: {
-        calendarEntries: {
+        BoardCalendarEntry: {
           orderBy: [{ year: "desc" }, { quarter: "desc" }],
         },
-        lobbyingReceipts: {
+        BoardLobbyingReceipt: {
           orderBy: [{ year: "desc" }, { quarter: "desc" }],
         },
       },
@@ -37,7 +37,7 @@ async function getSubmissions(userId: string): Promise<QuarterlySubmission[]> {
     const submissionsByQuarter = new Map<string, QuarterlySubmission>();
 
     // Process calendar entries
-    boardMember.calendarEntries.forEach((entry) => {
+    boardMember.BoardCalendarEntry.forEach((entry) => {
       const key = `${entry.year}-Q${entry.quarter}`;
       if (!submissionsByQuarter.has(key)) {
         submissionsByQuarter.set(key, {
@@ -55,7 +55,7 @@ async function getSubmissions(userId: string): Promise<QuarterlySubmission[]> {
     });
 
     // Process lobbying receipts
-    boardMember.lobbyingReceipts.forEach((receipt) => {
+    boardMember.BoardLobbyingReceipt.forEach((receipt) => {
       const key = `${receipt.year}-Q${receipt.quarter}`;
       if (!submissionsByQuarter.has(key)) {
         submissionsByQuarter.set(key, {

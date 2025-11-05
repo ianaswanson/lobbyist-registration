@@ -67,9 +67,9 @@ export async function GET() {
       },
       include: {
         employer: true,
-        lobbyistPayments: {
+        EmployerLobbyistPayment: {
           include: {
-            lobbyist: true,
+            Lobbyist: true,
           },
         },
       },

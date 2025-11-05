@@ -18,7 +18,7 @@ async function getQuarterData(userId: string, year: number, quarter: Quarter) {
     const boardMember = await prisma.boardMember.findUnique({
       where: { userId },
       include: {
-        calendarEntries: {
+        BoardCalendarEntry: {
           where: {
             year,
             quarter,
@@ -27,13 +27,13 @@ async function getQuarterData(userId: string, year: number, quarter: Quarter) {
             eventDate: "desc",
           },
         },
-        lobbyingReceipts: {
+        BoardLobbyingReceipt: {
           where: {
             year,
             quarter,
           },
           include: {
-            lobbyist: {
+            Lobbyist: {
               select: {
                 name: true,
                 email: true,
@@ -80,7 +80,7 @@ export default async function BoardMemberQuarterDetailPage({
 
   if (
     !data ||
-    (data.calendarEntries.length === 0 && data.lobbyingReceipts.length === 0)
+    (data.BoardCalendarEntry.length === 0 && data.BoardLobbyingReceipt.length === 0)
   ) {
     notFound();
   }
@@ -100,7 +100,7 @@ export default async function BoardMemberQuarterDetailPage({
     }).format(amount);
   };
 
-  const totalReceiptAmount = data.lobbyingReceipts.reduce(
+  const totalReceiptAmount = data.BoardLobbyingReceipt.reduce(
     (sum, receipt) => sum + receipt.amount,
     0
   );
@@ -138,7 +138,7 @@ export default async function BoardMemberQuarterDetailPage({
                 Calendar Events
               </dt>
               <dd className="mt-1 text-3xl font-semibold text-gray-900">
-                {data.calendarEntries.length}
+                {data.BoardCalendarEntry.length}
               </dd>
             </div>
           </div>
@@ -148,7 +148,7 @@ export default async function BoardMemberQuarterDetailPage({
                 Lobbying Receipts
               </dt>
               <dd className="mt-1 text-3xl font-semibold text-gray-900">
-                {data.lobbyingReceipts.length}
+                {data.BoardLobbyingReceipt.length}
               </dd>
             </div>
           </div>
@@ -175,7 +175,7 @@ export default async function BoardMemberQuarterDetailPage({
             </p>
           </div>
           <div className="px-4 py-5 sm:p-6">
-            {data.calendarEntries.length === 0 ? (
+            {data.BoardCalendarEntry.length === 0 ? (
               <p className="py-4 text-center text-sm text-gray-500">
                 No calendar events for this quarter
               </p>
@@ -199,7 +199,7 @@ export default async function BoardMemberQuarterDetailPage({
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200 bg-white">
-                    {data.calendarEntries.map((entry) => (
+                    {data.BoardCalendarEntry.map((entry) => (
                       <tr key={entry.id}>
                         <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-900">
                           {formatDate(entry.eventDate)}
@@ -233,7 +233,7 @@ export default async function BoardMemberQuarterDetailPage({
             </p>
           </div>
           <div className="px-4 py-5 sm:p-6">
-            {data.lobbyingReceipts.length === 0 ? (
+            {data.BoardLobbyingReceipt.length === 0 ? (
               <p className="py-4 text-center text-sm text-gray-500">
                 No lobbying receipts for this quarter
               </p>
@@ -260,13 +260,13 @@ export default async function BoardMemberQuarterDetailPage({
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200 bg-white">
-                    {data.lobbyingReceipts.map((receipt) => (
+                    {data.BoardLobbyingReceipt.map((receipt) => (
                       <tr key={receipt.id}>
                         <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-900">
                           {formatDate(receipt.date)}
                         </td>
                         <td className="px-6 py-4 text-sm font-medium whitespace-nowrap text-gray-900">
-                          {receipt.lobbyist?.name || "Unknown"}
+                          {receipt.Lobbyist?.name || "Unknown"}
                         </td>
                         <td className="px-6 py-4 text-sm text-gray-500">
                           {receipt.payee}

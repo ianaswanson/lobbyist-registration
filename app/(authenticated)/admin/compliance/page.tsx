@@ -21,15 +21,15 @@ async function getComplianceData() {
         status: RegistrationStatus.PENDING,
       },
       include: {
-        user: {
+        User: {
           select: {
             name: true,
             email: true,
           },
         },
-        employers: {
+        LobbyistEmployer: {
           include: {
-            employer: {
+            Employer: {
               select: {
                 name: true,
               },
@@ -73,7 +73,7 @@ async function getComplianceData() {
         },
       },
       include: {
-        lobbyist: {
+        Lobbyist: {
           select: {
             name: true,
           },
@@ -94,7 +94,7 @@ async function getComplianceData() {
         },
       },
       include: {
-        employer: {
+        Employer: {
           select: {
             name: true,
           },
@@ -109,7 +109,7 @@ async function getComplianceData() {
     const overdueReports = [
       ...overdueLobbyistReports.map((r) => ({
         id: r.id,
-        entity: r.lobbyist.name,
+        entity: r.Lobbyist.name,
         type: "Lobbyist Expense",
         quarter: `Q${r.quarter} ${r.year}`,
         dueDate: r.dueDate.toISOString().split("T")[0],
@@ -119,7 +119,7 @@ async function getComplianceData() {
       })),
       ...overdueEmployerReports.map((r) => ({
         id: r.id,
-        entity: r.employer.name,
+        entity: r.Employer.name,
         type: "Employer Expense",
         quarter: `Q${r.quarter} ${r.year}`,
         dueDate: r.dueDate.toISOString().split("T")[0],
@@ -186,7 +186,7 @@ async function getComplianceData() {
       recentRegistrations: pendingRegistrations.map((reg) => ({
         id: reg.id,
         lobbyistName: reg.name,
-        employer: reg.employers[0]?.employer.name || "N/A",
+        employer: reg.LobbyistEmployer[0]?.Employer.name || "N/A",
         date: reg.createdAt.toISOString().split("T")[0],
         status: reg.status,
       })),
@@ -199,9 +199,9 @@ async function getComplianceData() {
       },
       violations: recentViolations.map((v) => ({
         id: v.id,
-        entity: v.entityName,
+        entity: `${v.entityType} ${v.entityId}`,
         type: v.violationType,
-        date: v.issuedDate.toISOString().split("T")[0],
+        date: v.issuedDate ? v.issuedDate.toISOString().split("T")[0] : "N/A",
         fineAmount: v.fineAmount,
         status: v.status,
       })),

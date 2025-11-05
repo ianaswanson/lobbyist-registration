@@ -12,12 +12,12 @@ interface Registration {
   address: string;
   hoursCurrentQuarter: number;
   status: string;
-  user: {
+  User: {
     name: string;
     email: string;
   };
-  employers: Array<{
-    employer: {
+  LobbyistEmployer: Array<{
+    Employer: {
       name: string;
     };
     subjectsOfInterest: string;
@@ -142,7 +142,7 @@ export function ReviewRegistrationsList({
 
       {registrations.map((registration) => {
         const isLoading = loadingId === registration.id;
-        const primaryEmployer = registration.employers[0];
+        const primaryEmployer = registration.LobbyistEmployer[0];
         const submittedDate = new Date(
           registration.createdAt
         ).toLocaleDateString();
@@ -179,7 +179,7 @@ export function ReviewRegistrationsList({
                   Employer
                 </label>
                 <p className="mt-1 text-sm text-gray-900">
-                  {primaryEmployer ? primaryEmployer.employer.name : "N/A"}
+                  {primaryEmployer ? primaryEmployer.Employer.name : "N/A"}
                 </p>
               </div>
               <div>

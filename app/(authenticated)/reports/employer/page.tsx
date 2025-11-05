@@ -20,9 +20,9 @@ async function getReports(userId: string) {
         employerId: employer.id,
       },
       include: {
-        lobbyistPayments: {
+        EmployerLobbyistPayment: {
           include: {
-            lobbyist: {
+            Lobbyist: {
               select: {
                 name: true,
               },
