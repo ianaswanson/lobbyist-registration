@@ -39,7 +39,6 @@ export function AlertList() {
     low: 0,
   });
   const [loading, setLoading] = useState(true);
-  const [generating, setGenerating] = useState(false);
   const [severityFilter, setSeverityFilter] = useState<string>("all");
   const [typeFilter, setTypeFilter] = useState<string>("all");
   const [message, setMessage] = useState<{
@@ -74,36 +73,6 @@ export function AlertList() {
       });
     } finally {
       setLoading(false);
-    }
-  };
-
-  const generateAlerts = async () => {
-    setGenerating(true);
-    try {
-      const response = await fetch("/api/admin/alerts/generate", {
-        method: "POST",
-      });
-      const data = await response.json();
-
-      if (response.ok) {
-        setMessage({
-          type: "success",
-          text: data.message,
-        });
-        await fetchAlerts(); // Refresh list
-      } else {
-        setMessage({
-          type: "error",
-          text: data.error || "Failed to generate alerts",
-        });
-      }
-    } catch (error) {
-      setMessage({
-        type: "error",
-        text: "Failed to generate alerts",
-      });
-    } finally {
-      setGenerating(false);
     }
   };
 
@@ -218,21 +187,6 @@ export function AlertList() {
             />
             Refresh
           </Button>
-          <Button
-            onClick={generateAlerts}
-            variant="default"
-            size="sm"
-            disabled={generating}
-          >
-            {generating ? (
-              <>
-                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                Generating...
-              </>
-            ) : (
-              "Run Compliance Check"
-            )}
-          </Button>
         </div>
       </div>
 
@@ -244,7 +198,7 @@ export function AlertList() {
       ) : alerts.length === 0 ? (
         <div className="text-center py-12 bg-white rounded-lg border">
           <p className="text-muted-foreground">
-            No active alerts. Click "Run Compliance Check" to scan for issues.
+            No active alerts found.
           </p>
         </div>
       ) : (

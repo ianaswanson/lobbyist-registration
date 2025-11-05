@@ -1,15 +1,11 @@
 /**
  * GET /api/admin/alerts - List active compliance alerts
- * POST /api/admin/alerts/generate - Generate new alerts by running detection rules
  */
 
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
-import {
-  generateComplianceAlerts,
-  getActiveAlertCounts,
-} from "@/lib/compliance/alert-generator";
+import { getActiveAlertCounts } from "@/lib/compliance/alert-generator";
 
 /**
  * GET /api/admin/alerts
@@ -66,30 +62,3 @@ export async function GET(request: NextRequest) {
   }
 }
 
-/**
- * POST /api/admin/alerts/generate
- * Run alert detection rules and create new alerts (admin only)
- */
-export async function POST(request: NextRequest) {
-  const session = await auth();
-
-  if (!session || session.user.role !== "ADMIN") {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
-  try {
-    const alertsCreated = await generateComplianceAlerts();
-
-    return NextResponse.json({
-      success: true,
-      alertsCreated,
-      message: `Generated ${alertsCreated} new alert(s)`,
-    });
-  } catch (error) {
-    console.error("Error generating alerts:", error);
-    return NextResponse.json(
-      { error: "Failed to generate alerts" },
-      { status: 500 }
-    );
-  }
-}

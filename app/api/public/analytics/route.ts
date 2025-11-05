@@ -222,7 +222,11 @@ export async function GET(request: Request) {
     let lateCount = 0;
 
     combinedReports.forEach((report) => {
-      if (report.status === ReportStatus.LATE) {
+      // Count as LATE if:
+      // 1. Status is explicitly LATE
+      // 2. Status is OVERDUE (not yet submitted)
+      // 3. Submitted after the due date
+      if (report.status === ReportStatus.LATE || report.status === ReportStatus.OVERDUE) {
         lateCount++;
       } else if (
         report.status === ReportStatus.SUBMITTED ||

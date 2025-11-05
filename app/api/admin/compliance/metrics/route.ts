@@ -31,15 +31,19 @@ export async function GET(request: NextRequest) {
             ? "Q3"
             : "Q4";
 
-    // Count reports this quarter
+    // Count reports this quarter - must await each count before adding
     const [
-      totalReportsThisQuarter,
-      lateReports,
-      overdueReports,
-      onTimeReports,
+      lobbyistReportsTotal,
+      employerReportsTotal,
+      lobbyistReportsLate,
+      employerReportsLate,
+      lobbyistReportsOverdue,
+      employerReportsOverdue,
+      lobbyistReportsOnTime,
+      employerReportsOnTime,
       activeViolations,
     ] = await Promise.all([
-      // Total reports submitted this quarter
+      // Total lobbyist reports submitted this quarter
       prisma.lobbyistExpenseReport.count({
         where: {
           quarter: currentQuarter,
@@ -48,50 +52,56 @@ export async function GET(request: NextRequest) {
             in: ["SUBMITTED", "LATE", "APPROVED"],
           },
         },
-      }) +
-        prisma.employerExpenseReport.count({
-          where: {
-            quarter: currentQuarter,
-            year: currentYear,
-            status: {
-              in: ["SUBMITTED", "LATE", "APPROVED"],
-            },
-          },
-        }),
+      }),
 
-      // Late reports this quarter
+      // Total employer reports submitted this quarter
+      prisma.employerExpenseReport.count({
+        where: {
+          quarter: currentQuarter,
+          year: currentYear,
+          status: {
+            in: ["SUBMITTED", "LATE", "APPROVED"],
+          },
+        },
+      }),
+
+      // Late lobbyist reports this quarter
       prisma.lobbyistExpenseReport.count({
         where: {
           quarter: currentQuarter,
           year: currentYear,
           status: "LATE",
         },
-      }) +
-        prisma.employerExpenseReport.count({
-          where: {
-            quarter: currentQuarter,
-            year: currentYear,
-            status: "LATE",
-          },
-        }),
+      }),
 
-      // Overdue reports (not yet submitted, past deadline)
+      // Late employer reports this quarter
+      prisma.employerExpenseReport.count({
+        where: {
+          quarter: currentQuarter,
+          year: currentYear,
+          status: "LATE",
+        },
+      }),
+
+      // Overdue lobbyist reports (not yet submitted, past deadline)
       prisma.lobbyistExpenseReport.count({
         where: {
           quarter: currentQuarter,
           year: currentYear,
           status: "OVERDUE",
         },
-      }) +
-        prisma.employerExpenseReport.count({
-          where: {
-            quarter: currentQuarter,
-            year: currentYear,
-            status: "OVERDUE",
-          },
-        }),
+      }),
 
-      // On-time reports this quarter
+      // Overdue employer reports (not yet submitted, past deadline)
+      prisma.employerExpenseReport.count({
+        where: {
+          quarter: currentQuarter,
+          year: currentYear,
+          status: "OVERDUE",
+        },
+      }),
+
+      // On-time lobbyist reports this quarter
       prisma.lobbyistExpenseReport.count({
         where: {
           quarter: currentQuarter,
@@ -100,16 +110,18 @@ export async function GET(request: NextRequest) {
             in: ["SUBMITTED", "APPROVED"],
           },
         },
-      }) +
-        prisma.employerExpenseReport.count({
-          where: {
-            quarter: currentQuarter,
-            year: currentYear,
-            status: {
-              in: ["SUBMITTED", "APPROVED"],
-            },
+      }),
+
+      // On-time employer reports this quarter
+      prisma.employerExpenseReport.count({
+        where: {
+          quarter: currentQuarter,
+          year: currentYear,
+          status: {
+            in: ["SUBMITTED", "APPROVED"],
           },
-        }),
+        },
+      }),
 
       // Active violations (not resolved)
       prisma.violation.count({
@@ -120,6 +132,12 @@ export async function GET(request: NextRequest) {
         },
       }),
     ]);
+
+    // Sum the counts after awaiting
+    const totalReportsThisQuarter = lobbyistReportsTotal + employerReportsTotal;
+    const lateReports = lobbyistReportsLate + employerReportsLate;
+    const overdueReports = lobbyistReportsOverdue + employerReportsOverdue;
+    const onTimeReports = lobbyistReportsOnTime + employerReportsOnTime;
 
     // Calculate on-time submission rate
     const onTimeSubmissionRate =

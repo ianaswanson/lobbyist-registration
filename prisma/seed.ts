@@ -1178,20 +1178,47 @@ async function createComplianceAlerts(
 async function createContractExceptions() {
   console.log("📋 Creating contract exceptions (Rule of 3)...");
 
-  for (let i = 1; i <= 3; i++) {
+  const formerOfficials = [
+    {
+      id: "FO-2024-001",
+      name: "Former Commissioner David Martinez",
+      contract:
+        "Technology infrastructure modernization project - Former commissioner now serves as senior consultant at contracted IT firm.",
+      approvedDate: "2024-04-15",
+      postedDate: "2024-04-20",
+    },
+    {
+      id: "FO-2024-002",
+      name: "Former Budget Director Lisa Chen",
+      contract:
+        "Financial systems upgrade and training services - Former budget director now works as VP of Public Sector at software vendor.",
+      approvedDate: "2024-05-15",
+      postedDate: "2024-05-20",
+    },
+    {
+      id: "FO-2024-003",
+      name: "Former Procurement Officer James Thompson",
+      contract:
+        "Facilities management and maintenance contract - Former procurement officer now employed by selected facilities management company.",
+      approvedDate: "2024-06-15",
+      postedDate: "2024-06-20",
+    },
+  ];
+
+  for (const official of formerOfficials) {
     await prisma.contractException.create({
       data: {
-        formerOfficialId: `FO-2024-00${i}`,
-        formerOfficialName: `Former Official ${i}`,
-        contractDescription: `Contract ${i}: Professional services agreement for county project. Former official now works for contracting firm.`,
-        justification: `Written findings per §9.230(C): After review, the Chair finds that the best interests of the County favor this contract because: (1) Specialized expertise, (2) Competitive pricing, (3) Project continuity, (4) No undue influence during authorization.`,
+        formerOfficialId: official.id,
+        formerOfficialName: official.name,
+        contractDescription: official.contract,
+        justification: `Written findings per §9.230(C): After review, the Chair finds that the best interests of the County favor this contract because: (1) Specialized expertise required for project success, (2) Competitive pricing through established procurement process, (3) Project continuity benefits, (4) Independent verification shows no undue influence during contract authorization period.`,
         approvedBy: "County Chair Jessica Vega Pederson",
-        approvedDate: new Date(`2024-0${i + 3}-15`),
-        publiclyPostedDate: new Date(`2024-0${i + 3}-20`),
+        approvedDate: new Date(official.approvedDate),
+        publiclyPostedDate: new Date(official.postedDate),
       },
     });
   }
-  console.log("   ✓ Created 3 contract exceptions");
+  console.log("   ✓ Created 3 contract exceptions with realistic names");
 }
 
 // ============================================================================

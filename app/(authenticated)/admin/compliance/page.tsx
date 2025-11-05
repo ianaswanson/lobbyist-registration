@@ -43,25 +43,6 @@ async function getComplianceData() {
       take: 5, // Show up to 5 recent ones
     });
 
-    // Get pending reports (submitted but not yet approved)
-    const pendingLobbyistReports = await prisma.lobbyistExpenseReport.count({
-      where: {
-        status: {
-          in: [ReportStatus.SUBMITTED, ReportStatus.LATE],
-        },
-      },
-    });
-
-    const pendingEmployerReports = await prisma.employerExpenseReport.count({
-      where: {
-        status: {
-          in: [ReportStatus.SUBMITTED, ReportStatus.LATE],
-        },
-      },
-    });
-
-    const totalPendingReports = pendingLobbyistReports + pendingEmployerReports;
-
     // Get overdue reports (reports where today > dueDate and status is not APPROVED)
     const overdueLobbyistReports = await prisma.lobbyistExpenseReport.findMany({
       where: {
@@ -190,21 +171,45 @@ async function getComplianceData() {
         date: reg.createdAt.toISOString().split("T")[0],
         status: reg.status,
       })),
-      pendingReportsCount: totalPendingReports,
       overdueReports,
       upcomingDeadline: {
         type: quarterType,
         date: nextDeadline.toISOString().split("T")[0],
         daysUntil,
       },
-      violations: recentViolations.map((v) => ({
-        id: v.id,
-        entity: `${v.entityType} ${v.entityId}`,
-        type: v.violationType,
-        date: v.issuedDate ? v.issuedDate.toISOString().split("T")[0] : "N/A",
-        fineAmount: v.fineAmount,
-        status: v.status,
-      })),
+      violations: await Promise.all(
+        recentViolations.map(async (v) => {
+          // Get entity name based on type by looking up the entity
+          let entityName = "Unknown";
+
+          if (v.entityType === "LOBBYIST") {
+            const lobbyist = await prisma.lobbyist.findUnique({
+              where: { id: v.entityId },
+              select: { name: true },
+            });
+            if (lobbyist) {
+              entityName = lobbyist.name;
+            }
+          } else if (v.entityType === "EMPLOYER") {
+            const employer = await prisma.employer.findUnique({
+              where: { id: v.entityId },
+              select: { name: true },
+            });
+            if (employer) {
+              entityName = employer.name;
+            }
+          }
+
+          return {
+            id: v.id,
+            entity: entityName,
+            type: v.violationType,
+            date: v.issuedDate ? v.issuedDate.toISOString().split("T")[0] : "N/A",
+            fineAmount: v.fineAmount,
+            status: v.status,
+          };
+        })
+      ),
     };
   } catch (error) {
     console.error("Error fetching compliance data:", error);
@@ -213,7 +218,6 @@ async function getComplianceData() {
       totalEmployers: 0,
       totalBoardMembers: 0,
       recentRegistrations: [],
-      pendingReportsCount: 0,
       overdueReports: [],
       upcomingDeadline: {
         type: "No upcoming deadline",
@@ -473,38 +477,6 @@ export default async function AdminComplianceDashboardPage() {
                 </div>
               </div>
             ))}
-          </div>
-        </div>
-
-        {/* Pending Reports for Review */}
-        <div className="mb-8 rounded-lg border bg-white shadow-sm">
-          <div className="flex items-center justify-between border-b p-4">
-            <h2 className="text-lg font-semibold text-gray-900">
-              Pending Reports for Review
-            </h2>
-            <a
-              href="/admin/review/reports"
-              className="text-sm font-medium text-primary hover:text-primary"
-            >
-              View All →
-            </a>
-          </div>
-          <div className="p-6 text-center text-sm text-gray-600">
-            <p>
-              {complianceData.pendingReportsCount === 0
-                ? "No expense reports awaiting review"
-                : `${complianceData.pendingReportsCount} expense report${
-                    complianceData.pendingReportsCount === 1 ? "" : "s"
-                  } awaiting review`}
-            </p>
-            {complianceData.pendingReportsCount > 0 && (
-              <a
-                href="/admin/review/reports"
-                className="mt-2 inline-block rounded-md bg-primary px-4 py-2 text-sm text-white hover:bg-primary"
-              >
-                Review Reports
-              </a>
-            )}
           </div>
         </div>
 

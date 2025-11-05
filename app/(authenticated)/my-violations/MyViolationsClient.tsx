@@ -84,7 +84,17 @@ export function MyViolationsClient({
       const entityRes = await fetch(entityEndpoint);
 
       if (!entityRes.ok) {
-        console.error("Failed to fetch entity");
+        // If entity not found (404), it means the user hasn't registered yet
+        // This is not an error - just show empty violations list
+        if (entityRes.status === 404) {
+          setViolations([]);
+          return;
+        }
+
+        // For other errors, log and show empty list
+        const errorData = await entityRes.json();
+        console.error("Failed to fetch entity:", errorData);
+        setViolations([]);
         return;
       }
 
@@ -98,9 +108,14 @@ export function MyViolationsClient({
       if (violationsRes.ok) {
         const data = await violationsRes.json();
         setViolations(data);
+      } else {
+        // If violations fetch fails, show empty list
+        setViolations([]);
       }
     } catch (error) {
       console.error("Error fetching violations:", error);
+      // On error, show empty violations list instead of leaving in loading state
+      setViolations([]);
     } finally {
       setLoading(false);
     }

@@ -52,7 +52,7 @@ async function detectUnusualSpending(): Promise<AlertResult[]> {
   const lobbyists = await prisma.lobbyist.findMany({
     where: { status: "APPROVED" },
     include: {
-      expenseReports: {
+      LobbyistExpenseReport: {
         where: { status: { in: ["SUBMITTED", "LATE", "APPROVED"] } },
         orderBy: [{ year: "desc" }, { quarter: "desc" }],
         take: 2,
@@ -61,8 +61,8 @@ async function detectUnusualSpending(): Promise<AlertResult[]> {
   });
 
   for (const lobbyist of lobbyists) {
-    if (lobbyist.expenseReports.length >= 2) {
-      const [current, previous] = lobbyist.expenseReports;
+    if (lobbyist.LobbyistExpenseReport.length >= 2) {
+      const [current, previous] = lobbyist.LobbyistExpenseReport;
       const currentTotal = current.totalFoodEntertainment;
       const previousTotal = previous.totalFoodEntertainment;
 
@@ -84,7 +84,7 @@ async function detectUnusualSpending(): Promise<AlertResult[]> {
   // Check employers too
   const employers = await prisma.employer.findMany({
     include: {
-      expenseReports: {
+      EmployerExpenseReport: {
         where: { status: { in: ["SUBMITTED", "LATE", "APPROVED"] } },
         orderBy: [{ year: "desc" }, { quarter: "desc" }],
         take: 2,
@@ -93,8 +93,8 @@ async function detectUnusualSpending(): Promise<AlertResult[]> {
   });
 
   for (const employer of employers) {
-    if (employer.expenseReports.length >= 2) {
-      const [current, previous] = employer.expenseReports;
+    if (employer.EmployerExpenseReport.length >= 2) {
+      const [current, previous] = employer.EmployerExpenseReport;
       const currentTotal = current.totalLobbyingSpend;
       const previousTotal = previous.totalLobbyingSpend;
 
@@ -318,7 +318,7 @@ async function detectFirstTimeFilers(): Promise<AlertResult[]> {
       status: "APPROVED",
     },
     include: {
-      expenseReports: {
+      LobbyistExpenseReport: {
         where: {
           status: { in: ["SUBMITTED", "LATE", "APPROVED"] },
         },
@@ -327,8 +327,8 @@ async function detectFirstTimeFilers(): Promise<AlertResult[]> {
   });
 
   for (const lobbyist of lobbyists) {
-    if (lobbyist.expenseReports.length === 1) {
-      const report = lobbyist.expenseReports[0];
+    if (lobbyist.LobbyistExpenseReport.length === 1) {
+      const report = lobbyist.LobbyistExpenseReport[0];
       alerts.push({
         type: "FIRST_TIME_FILER",
         severity: "LOW",
