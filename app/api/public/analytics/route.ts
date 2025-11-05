@@ -124,7 +124,7 @@ export async function GET(request: Request) {
         ...(startDate && { submittedAt: { gte: startDate } }),
       },
       include: {
-        employer: {
+        Employer: {
           select: {
             name: true,
           },
@@ -134,7 +134,7 @@ export async function GET(request: Request) {
 
     const employerTotals: Record<string, { name: string; total: number }> = {};
     employerSpending.forEach((report) => {
-      const employerName = report.employer.name;
+      const employerName = report.Employer.name;
       if (!employerTotals[employerName]) {
         employerTotals[employerName] = { name: employerName, total: 0 };
       }

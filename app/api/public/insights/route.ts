@@ -141,7 +141,7 @@ export async function GET(request: Request) {
         ...(dateFilter && { submittedAt: dateFilter }),
       },
       include: {
-        employer: {
+        Employer: {
           select: { name: true },
         },
       },
@@ -149,7 +149,7 @@ export async function GET(request: Request) {
 
     const employerSpending: Record<string, { name: string; total: number }> = {};
     employerReports.forEach((report) => {
-      const name = report.employer.name;
+      const name = report.Employer.name;
       if (!employerSpending[name]) {
         employerSpending[name] = { name, total: 0 };
       }
@@ -167,7 +167,7 @@ export async function GET(request: Request) {
         ...(dateFilter && { submittedAt: dateFilter }),
       },
       include: {
-        lobbyist: {
+        Lobbyist: {
           select: { name: true },
         },
       },
@@ -175,7 +175,7 @@ export async function GET(request: Request) {
 
     const lobbyistSpending: Record<string, { name: string; total: number }> = {};
     lobbyistReports.forEach((report) => {
-      const name = report.lobbyist.name;
+      const name = report.Lobbyist.name;
       if (!lobbyistSpending[name]) {
         lobbyistSpending[name] = { name, total: 0 };
       }

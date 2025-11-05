@@ -230,8 +230,8 @@ export function TransparencyClient({ user }: TransparencyClientProps) {
     document.body.removeChild(link);
   };
 
-  // Show initial loading screen only if both are still loading
-  if ((loadingAnalytics || loadingInsights) && (!analyticsData || !insightsData)) {
+  // Show initial loading screen if data is not yet loaded
+  if (!analyticsData || !insightsData) {
     return (
       <>
         <PublicNavigation user={user} />

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import {
   exportLobbyistsToCSV,
   exportEmployersToCSV,
@@ -29,46 +30,24 @@ interface SearchFilters {
   showAdvanced: boolean;
 }
 
-// Mock data for demonstration
-const mockLobbyists = [
-  {
-    id: "1",
-    name: "Jane Smith",
-    email: "jane@example.com",
-    employer: "Tech Industry Association",
-    subjects: "Technology policy, infrastructure",
-    registrationDate: "2025-01-15",
-    totalExpenses: 2450.0,
-  },
-  {
-    id: "2",
-    name: "John Doe",
-    email: "john@consulting.com",
-    employer: "Downtown Business Coalition",
-    subjects: "Economic development, zoning",
-    registrationDate: "2025-02-01",
-    totalExpenses: 1850.0,
-  },
-];
+interface Lobbyist {
+  id: string;
+  name: string;
+  email: string;
+  employer: string;
+  subjects: string;
+  registrationDate: string;
+  totalExpenses: number;
+}
 
-const mockEmployers = [
-  {
-    id: "1",
-    name: "Tech Industry Association",
-    email: "info@techassoc.org",
-    businessDescription: "Trade association representing technology companies",
-    lobbyistCount: 3,
-    totalExpenses: 7500.0,
-  },
-  {
-    id: "2",
-    name: "Downtown Business Coalition",
-    email: "contact@downtownbiz.org",
-    businessDescription: "Business improvement district",
-    lobbyistCount: 2,
-    totalExpenses: 4200.0,
-  },
-];
+interface Employer {
+  id: string;
+  name: string;
+  email: string;
+  businessDescription: string;
+  lobbyistCount: number;
+  totalExpenses: number;
+}
 
 export function SearchClient({ user }: SearchClientProps) {
   const [filters, setFilters] = useState<SearchFilters>({
@@ -82,11 +61,41 @@ export function SearchClient({ user }: SearchClientProps) {
   });
 
   const [hasSearched, setHasSearched] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [lobbyists, setLobbyists] = useState<Lobbyist[]>([]);
+  const [employers, setEmployers] = useState<Employer[]>([]);
 
-  const handleSearch = (e: React.FormEvent) => {
+  const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsLoading(true);
     setHasSearched(true);
-    // TODO: Actual search logic with API call
+
+    try {
+      // Build query parameters
+      const params = new URLSearchParams();
+      if (filters.searchTerm) params.append("searchTerm", filters.searchTerm);
+      if (filters.entityType) params.append("entityType", filters.entityType);
+      if (filters.dateFrom) params.append("dateFrom", filters.dateFrom);
+      if (filters.dateTo) params.append("dateTo", filters.dateTo);
+      if (filters.minAmount) params.append("minAmount", filters.minAmount);
+      if (filters.maxAmount) params.append("maxAmount", filters.maxAmount);
+
+      const response = await fetch(`/api/public/search?${params.toString()}`);
+
+      if (!response.ok) {
+        throw new Error("Search failed");
+      }
+
+      const data = await response.json();
+      setLobbyists(data.lobbyists || []);
+      setEmployers(data.employers || []);
+    } catch (error) {
+      console.error("Search error:", error);
+      setLobbyists([]);
+      setEmployers([]);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleReset = () => {
@@ -100,91 +109,33 @@ export function SearchClient({ user }: SearchClientProps) {
       showAdvanced: false,
     });
     setHasSearched(false);
+    setLobbyists([]);
+    setEmployers([]);
   };
 
   const handleExport = () => {
     const timestamp = new Date().toISOString().split("T")[0];
 
     if (filters.entityType === "lobbyists") {
-      const csv = exportLobbyistsToCSV(filteredLobbyists);
+      const csv = exportLobbyistsToCSV(lobbyists as any);
       downloadCSV(csv, `lobbyists-export-${timestamp}.csv`);
     } else if (filters.entityType === "employers") {
-      const csv = exportEmployersToCSV(filteredEmployers);
+      const csv = exportEmployersToCSV(employers as any);
       downloadCSV(csv, `employers-export-${timestamp}.csv`);
     } else {
       // Export all
-      const csv = exportAllToCSV(filteredLobbyists, filteredEmployers);
+      const csv = exportAllToCSV(lobbyists as any, employers as any);
       downloadCSV(csv, `lobbying-data-export-${timestamp}.csv`);
     }
   };
-
-  // Filter results based on search term and advanced filters
-  const filteredLobbyists = mockLobbyists.filter((lobbyist) => {
-    // Search term filter
-    const matchesSearch = filters.searchTerm
-      ? lobbyist.name
-          .toLowerCase()
-          .includes(filters.searchTerm.toLowerCase()) ||
-        lobbyist.employer
-          .toLowerCase()
-          .includes(filters.searchTerm.toLowerCase()) ||
-        lobbyist.subjects
-          .toLowerCase()
-          .includes(filters.searchTerm.toLowerCase())
-      : true;
-
-    // Date range filter
-    const lobbyistDate = new Date(lobbyist.registrationDate);
-    const matchesDateFrom = filters.dateFrom
-      ? lobbyistDate >= new Date(filters.dateFrom)
-      : true;
-    const matchesDateTo = filters.dateTo
-      ? lobbyistDate <= new Date(filters.dateTo)
-      : true;
-
-    // Expense amount filter
-    const matchesMinAmount = filters.minAmount
-      ? lobbyist.totalExpenses >= parseFloat(filters.minAmount)
-      : true;
-    const matchesMaxAmount = filters.maxAmount
-      ? lobbyist.totalExpenses <= parseFloat(filters.maxAmount)
-      : true;
-
-    return (
-      matchesSearch &&
-      matchesDateFrom &&
-      matchesDateTo &&
-      matchesMinAmount &&
-      matchesMaxAmount
-    );
-  });
-
-  const filteredEmployers = mockEmployers.filter((employer) => {
-    // Search term filter
-    const matchesSearch = filters.searchTerm
-      ? employer.name
-          .toLowerCase()
-          .includes(filters.searchTerm.toLowerCase()) ||
-        employer.businessDescription
-          .toLowerCase()
-          .includes(filters.searchTerm.toLowerCase())
-      : true;
-
-    // Expense amount filter (no date for employers in mock data)
-    const matchesMinAmount = filters.minAmount
-      ? employer.totalExpenses >= parseFloat(filters.minAmount)
-      : true;
-    const matchesMaxAmount = filters.maxAmount
-      ? employer.totalExpenses <= parseFloat(filters.maxAmount)
-      : true;
-
-    return matchesSearch && matchesMinAmount && matchesMaxAmount;
-  });
 
   const showLobbyists =
     filters.entityType === "all" || filters.entityType === "lobbyists";
   const showEmployers =
     filters.entityType === "all" || filters.entityType === "employers";
+
+  const filteredLobbyists = showLobbyists ? lobbyists : [];
+  const filteredEmployers = showEmployers ? employers : [];
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -416,15 +367,17 @@ export function SearchClient({ user }: SearchClientProps) {
               <button
                 type="button"
                 onClick={handleReset}
-                className="rounded-md border border-gray-300 bg-white px-6 py-2 text-gray-700 hover:bg-gray-50"
+                disabled={isLoading}
+                className="rounded-md border border-gray-300 bg-white px-6 py-2 text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Reset
               </button>
               <button
                 type="submit"
-                className="rounded-md bg-primary px-6 py-2 text-white hover:bg-primary"
+                disabled={isLoading}
+                className="rounded-md bg-primary px-6 py-2 text-white hover:bg-primary disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Search
+                {isLoading ? "Searching..." : "Search"}
               </button>
             </div>
           </div>
@@ -505,13 +458,12 @@ export function SearchClient({ user }: SearchClientProps) {
                             </p>
                           </div>
                         </div>
-                        <button
-                          disabled
-                          className="ml-4 cursor-not-allowed rounded-md bg-gray-300 px-4 py-2 text-sm text-gray-500"
-                          title="Detail view coming soon"
+                        <Link
+                          href={`/lobbyist/${lobbyist.id}`}
+                          className="ml-4 rounded-md bg-primary px-4 py-2 text-sm text-white hover:bg-primary/90"
                         >
                           View Details
-                        </button>
+                        </Link>
                       </div>
                     </div>
                   ))}
