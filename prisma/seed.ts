@@ -1147,13 +1147,13 @@ async function validateSeedData() {
     approvedLobbyistUsers: await prisma.user.count({
       where: {
         role: UserRole.LOBBYIST,
-        lobbyist: { status: RegistrationStatus.APPROVED },
+        Lobbyist: { status: RegistrationStatus.APPROVED },
       },
     }),
     pendingLobbyistUsers: await prisma.user.count({
       where: {
         role: UserRole.LOBBYIST,
-        lobbyist: { status: RegistrationStatus.PENDING },
+        Lobbyist: { status: RegistrationStatus.PENDING },
       },
     }),
     employerUsers: await prisma.user.count({

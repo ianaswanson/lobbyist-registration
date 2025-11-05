@@ -8,7 +8,7 @@ datasource db {
 }
 
 model Appeal {
-  id             String       @id
+  id             String       @id @default(uuid())
   violationId    String
   submittedDate  DateTime     @default(now())
   appealDeadline DateTime
@@ -18,7 +18,7 @@ model Appeal {
   decision       String?
   decidedAt      DateTime?
   createdAt      DateTime     @default(now())
-  updatedAt      DateTime
+  updatedAt      DateTime     @updatedAt
   Violation      Violation    @relation(fields: [violationId], references: [id], onDelete: Cascade)
 
   @@index([hearingDate])
@@ -27,7 +27,7 @@ model Appeal {
 }
 
 model AuditLog {
-  id          String   @id
+  id          String   @id @default(uuid())
   userId      String
   action      String
   entityType  String
@@ -43,7 +43,7 @@ model AuditLog {
 }
 
 model BoardCalendarEntry {
-  id               String      @id
+  id               String      @id @default(uuid())
   boardMemberId    String
   eventTitle       String
   eventDate        DateTime
@@ -52,7 +52,7 @@ model BoardCalendarEntry {
   quarter          Quarter
   year             Int
   createdAt        DateTime    @default(now())
-  updatedAt        DateTime
+  updatedAt        DateTime    @updatedAt
   BoardMember      BoardMember @relation(fields: [boardMemberId], references: [id], onDelete: Cascade)
 
   @@index([boardMemberId])
@@ -61,7 +61,7 @@ model BoardCalendarEntry {
 }
 
 model BoardLobbyingReceipt {
-  id            String      @id
+  id            String      @id @default(uuid())
   boardMemberId String
   lobbyistId    String
   amount        Float
@@ -71,7 +71,7 @@ model BoardLobbyingReceipt {
   quarter       Quarter
   year          Int
   createdAt     DateTime    @default(now())
-  updatedAt     DateTime
+  updatedAt     DateTime    @updatedAt
   BoardMember   BoardMember @relation(fields: [boardMemberId], references: [id], onDelete: Cascade)
   Lobbyist      Lobbyist    @relation(fields: [lobbyistId], references: [id], onDelete: Cascade)
 
@@ -81,7 +81,7 @@ model BoardLobbyingReceipt {
 }
 
 model BoardMember {
-  id                   String                 @id
+  id                   String                 @id @default(uuid())
   userId               String                 @unique
   name                 String
   district             String?
@@ -89,7 +89,7 @@ model BoardMember {
   termEnd              DateTime?
   isActive             Boolean                @default(true)
   createdAt            DateTime               @default(now())
-  updatedAt            DateTime
+  updatedAt            DateTime               @updatedAt
   BoardCalendarEntry   BoardCalendarEntry[]
   BoardLobbyingReceipt BoardLobbyingReceipt[]
   User                 User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -98,7 +98,7 @@ model BoardMember {
 }
 
 model ComplianceAlert {
-  id                   String        @id
+  id                   String        @id @default(uuid())
   type                 AlertType
   severity             AlertSeverity
   message              String
@@ -107,7 +107,7 @@ model ComplianceAlert {
   reviewedAt           DateTime?
   reviewedBy           String?
   createdAt            DateTime      @default(now())
-  updatedAt            DateTime
+  updatedAt            DateTime      @updatedAt
   resultingViolationId String?
 
   @@index([createdAt])
@@ -118,7 +118,7 @@ model ComplianceAlert {
 }
 
 model ContractException {
-  id                  String    @id
+  id                  String    @id @default(uuid())
   formerOfficialId    String
   formerOfficialName  String
   contractDescription String
@@ -127,14 +127,14 @@ model ContractException {
   approvedDate        DateTime
   publiclyPostedDate  DateTime?
   createdAt           DateTime  @default(now())
-  updatedAt           DateTime
+  updatedAt           DateTime  @updatedAt
 
   @@index([approvedDate])
   @@index([formerOfficialId])
 }
 
 model Employer {
-  id                    String                  @id
+  id                    String                  @id @default(uuid())
   userId                String?                 @unique
   name                  String
   email                 String
@@ -142,7 +142,7 @@ model Employer {
   address               String
   businessDescription   String
   createdAt             DateTime                @default(now())
-  updatedAt             DateTime
+  updatedAt             DateTime                @updatedAt
   User                  User?                   @relation(fields: [userId], references: [id])
   EmployerExpenseReport EmployerExpenseReport[]
   LobbyistEmployer      LobbyistEmployer[]
@@ -152,7 +152,7 @@ model Employer {
 }
 
 model EmployerExpenseReport {
-  id                          String                    @id
+  id                          String                    @id @default(uuid())
   employerId                  String
   quarter                     Quarter
   year                        Int
@@ -164,7 +164,7 @@ model EmployerExpenseReport {
   reviewedAt                  DateTime?
   reviewNotes                 String?
   createdAt                   DateTime                  @default(now())
-  updatedAt                   DateTime
+  updatedAt                   DateTime                  @updatedAt
   amendmentReason             String?
   originalReportId            String?
   amendedByReportId           String?
@@ -181,12 +181,12 @@ model EmployerExpenseReport {
 }
 
 model EmployerLobbyistPayment {
-  id                    String                @id
+  id                    String                @id @default(uuid())
   employerReportId      String
   lobbyistId            String
   amountPaid            Float
   createdAt             DateTime              @default(now())
-  updatedAt             DateTime
+  updatedAt             DateTime              @updatedAt
   EmployerExpenseReport EmployerExpenseReport @relation(fields: [employerReportId], references: [id], onDelete: Cascade)
   Lobbyist              Lobbyist              @relation(fields: [lobbyistId], references: [id], onDelete: Cascade)
 
@@ -196,7 +196,7 @@ model EmployerLobbyistPayment {
 }
 
 model ExpenseLineItem {
-  id           String            @id
+  id           String            @id @default(uuid())
   reportId     String
   reportType   ExpenseReportType
   officialName String
@@ -206,7 +206,7 @@ model ExpenseLineItem {
   amount       Float
   isEstimate   Boolean           @default(false)
   createdAt    DateTime          @default(now())
-  updatedAt    DateTime
+  updatedAt    DateTime          @updatedAt
 
   @@index([date])
   @@index([officialName])
@@ -214,7 +214,7 @@ model ExpenseLineItem {
 }
 
 model HourLog {
-  id           String   @id
+  id           String   @id @default(uuid())
   lobbyistId   String
   activityDate DateTime
   hours        Float
@@ -222,7 +222,7 @@ model HourLog {
   quarter      Quarter
   year         Int
   createdAt    DateTime @default(now())
-  updatedAt    DateTime
+  updatedAt    DateTime @updatedAt
   Lobbyist     Lobbyist @relation(fields: [lobbyistId], references: [id], onDelete: Cascade)
 
   @@index([activityDate])
@@ -231,7 +231,7 @@ model HourLog {
 }
 
 model Lobbyist {
-  id                      String                    @id
+  id                      String                    @id @default(uuid())
   userId                  String                    @unique
   name                    String
   email                   String
@@ -246,7 +246,7 @@ model Lobbyist {
   reviewedAt              DateTime?
   rejectionReason         String?
   createdAt               DateTime                  @default(now())
-  updatedAt               DateTime
+  updatedAt               DateTime                  @updatedAt
   BoardLobbyingReceipt    BoardLobbyingReceipt[]
   EmployerLobbyistPayment EmployerLobbyistPayment[]
   HourLog                 HourLog[]
@@ -260,7 +260,7 @@ model Lobbyist {
 }
 
 model LobbyistEmployer {
-  id                       String    @id
+  id                       String    @id @default(uuid())
   lobbyistId               String
   employerId               String
   authorizationDocumentUrl String?
@@ -269,7 +269,7 @@ model LobbyistEmployer {
   endDate                  DateTime?
   subjectsOfInterest       String
   createdAt                DateTime  @default(now())
-  updatedAt                DateTime
+  updatedAt                DateTime  @updatedAt
   Employer                 Employer  @relation(fields: [employerId], references: [id], onDelete: Cascade)
   Lobbyist                 Lobbyist  @relation(fields: [lobbyistId], references: [id], onDelete: Cascade)
 
@@ -279,7 +279,7 @@ model LobbyistEmployer {
 }
 
 model LobbyistExpenseReport {
-  id                          String                  @id
+  id                          String                  @id @default(uuid())
   lobbyistId                  String
   quarter                     Quarter
   year                        Int
@@ -291,7 +291,7 @@ model LobbyistExpenseReport {
   reviewedAt                  DateTime?
   reviewNotes                 String?
   createdAt                   DateTime                @default(now())
-  updatedAt                   DateTime
+  updatedAt                   DateTime                @updatedAt
   amendmentReason             String?
   originalReportId            String?
   amendedByReportId           String?
@@ -307,7 +307,7 @@ model LobbyistExpenseReport {
 }
 
 model User {
-  id                                      String         @id
+  id                                      String         @id @default(uuid())
   email                                   String         @unique
   name                                    String
   role                                    UserRole       @default(PUBLIC)
@@ -316,7 +316,7 @@ model User {
   passwordResetRequired                   Boolean        @default(false)
   lastLoginAt                             DateTime?
   createdAt                               DateTime       @default(now())
-  updatedAt                               DateTime
+  updatedAt                               DateTime       @updatedAt
   AuditLog                                AuditLog[]
   BoardMember                             BoardMember?
   Employer                                Employer?
@@ -330,7 +330,7 @@ model User {
 }
 
 model UserAuditLog {
-  id                              String   @id
+  id                              String   @id @default(uuid())
   userId                          String
   adminId                         String
   action                          String
@@ -346,7 +346,7 @@ model UserAuditLog {
 }
 
 model Violation {
-  id                   String          @id
+  id                   String          @id @default(uuid())
   entityType           EntityType
   entityId             String
   violationType        ViolationType
@@ -358,7 +358,7 @@ model Violation {
   resolutionNotes      String?
   resolutionDate       DateTime?
   createdAt            DateTime        @default(now())
-  updatedAt            DateTime
+  updatedAt            DateTime        @updatedAt
   sourceAlertId        String?
   Appeal               Appeal[]
 
