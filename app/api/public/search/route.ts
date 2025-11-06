@@ -205,8 +205,19 @@ export async function GET(request: NextRequest) {
     });
   } catch (error) {
     console.error("Error searching public data:", error);
+    console.error("Search params:", {
+      searchTerm,
+      entityType,
+      dateFrom,
+      dateTo,
+      minAmount,
+      maxAmount,
+    });
     return NextResponse.json(
-      { error: "Failed to search data" },
+      {
+        error: "Failed to search data",
+        details: error instanceof Error ? error.message : "Unknown error"
+      },
       { status: 500 }
     );
   }

@@ -9,7 +9,7 @@ import {
 
 export function ExemptionChecker() {
   const [formData, setFormData] = useState<ExemptionCheckData>({
-    hoursPerQuarter: 0,
+    hoursPerQuarter: undefined as any, // Start empty for better UX
     isNewsMedia: false,
     isGovernmentOfficial: false,
     isPublicTestimonyOnly: false,
@@ -27,7 +27,7 @@ export function ExemptionChecker() {
 
   const handleReset = () => {
     setFormData({
-      hoursPerQuarter: 0,
+      hoursPerQuarter: undefined as any,
       isNewsMedia: false,
       isGovernmentOfficial: false,
       isPublicTestimonyOnly: false,
@@ -73,11 +73,11 @@ export function ExemptionChecker() {
               required
               min="0"
               step="0.5"
-              value={formData.hoursPerQuarter}
+              value={formData.hoursPerQuarter ?? ""}
               onChange={(e) =>
                 setFormData({
                   ...formData,
-                  hoursPerQuarter: parseFloat(e.target.value) || 0,
+                  hoursPerQuarter: e.target.value === "" ? undefined as any : parseFloat(e.target.value),
                 })
               }
               className="block w-full max-w-xs rounded-md border border-gray-300 px-3 py-2 focus:border-primary focus:ring-primary focus:outline-none"

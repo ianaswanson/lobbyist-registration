@@ -20,7 +20,9 @@
         "subjectsOfInterest": "Technology policy, data privacy, government IT contracts",
         "hoursThisQuarter": "25.5",
         "status": "APPROVED",
-        "registrationDate": "2025-01-15"
+        "registrationDate": "2026-01-15",
+        "expenseDate": "2026-03-15",
+        "expenseYear": "2026"
       }
     },
     {
@@ -190,6 +192,30 @@
         "status": "APPROVED",
         "registrationDate": "2025-02-20"
       }
+    },
+    {
+      "firstName": "Commissioner",
+      "lastName": "Williams",
+      "name": "Commissioner Williams",
+      "email": "commissioner@multnomah.gov",
+      "phone": "503-555-0200",
+      "address": "501 SE Hawthorne Blvd",
+      "city": "Portland",
+      "state": "OR",
+      "zip": "97214",
+      "company": "Multnomah County",
+      "username": "cwilliams",
+      "password": "board123",
+      "custom": {
+        "role": "BOARD_MEMBER",
+        "district": "District 3",
+        "termStart": "2023-01-01",
+        "eventTitle": "Meeting with TechCorp Industries - Technology Budget Priorities",
+        "eventDate": "2026-01-22",
+        "eventTime": "12:00 PM - 1:30 PM",
+        "participants": "John Doe (TechCorp Industries lobbyist), County CIO, IT Budget Director",
+        "quarter": "Q1"
+      }
     }
   ],
   "fieldMappings": {
@@ -319,10 +345,124 @@
       "2025-03-01",
       "2025-02-20"
     ],
+    "expense_date": [
+      "2026-01-15",
+      "2026-02-10",
+      "2026-03-15",
+      "2026-04-20",
+      "2026-05-12",
+      "2026-06-18",
+      "2026-07-22",
+      "2026-08-14",
+      "2026-09-09",
+      "2026-10-16",
+      "2026-11-11",
+      "2026-12-05"
+    ],
     "status": ["APPROVED", "PENDING", "SUSPENDED", "REVOKED"],
     "role": ["ADMIN", "LOBBYIST", "EMPLOYER", "BOARD_MEMBER", "PUBLIC"],
     "district": ["District 1", "District 2", "District 3", "District 4"],
     "meeting_type": ["In-Person", "Virtual", "Phone Call", "Hybrid"],
+    "event_title": [
+      "Meeting with TechCorp Industries - Technology Budget Priorities",
+      "Meeting with Healthcare Advocates Group - Medicaid Expansion Proposal",
+      "Meeting with Green Energy Coalition - Renewable Energy Incentives",
+      "Lunch Meeting - Infrastructure Planning Discussion",
+      "Coffee Meeting - Education Policy Review",
+      "Dinner Meeting - Public Safety Budget Priorities",
+      "Meeting with Transportation Alliance - Transit Funding",
+      "Meeting with Housing First Oregon - Affordable Housing Initiative",
+      "Meeting with Labor Coalition - Worker Rights Advocacy"
+    ],
+    "eventtitle": [
+      "Meeting with TechCorp Industries - Technology Budget Priorities",
+      "Meeting with Healthcare Advocates Group - Medicaid Expansion Proposal",
+      "Meeting with Green Energy Coalition - Renewable Energy Incentives",
+      "Lunch Meeting - Infrastructure Planning Discussion",
+      "Coffee Meeting - Education Policy Review",
+      "Dinner Meeting - Public Safety Budget Priorities",
+      "Meeting with Transportation Alliance - Transit Funding",
+      "Meeting with Housing First Oregon - Affordable Housing Initiative",
+      "Meeting with Labor Coalition - Worker Rights Advocacy"
+    ],
+    "event_date_q1_2026": [
+      "2026-01-15",
+      "2026-01-22",
+      "2026-02-10",
+      "2026-02-19",
+      "2026-02-25",
+      "2026-03-05",
+      "2026-03-15",
+      "2026-03-22",
+      "2026-03-28"
+    ],
+    "eventdate": [
+      "2026-01-15",
+      "2026-01-22",
+      "2026-02-10",
+      "2026-02-19",
+      "2026-02-25",
+      "2026-03-05",
+      "2026-03-15",
+      "2026-03-22",
+      "2026-03-28"
+    ],
+    "date": [
+      "2026-01-15",
+      "2026-01-22",
+      "2026-02-10",
+      "2026-02-19",
+      "2026-02-25",
+      "2026-03-05",
+      "2026-03-15",
+      "2026-03-22",
+      "2026-03-28"
+    ],
+    "event_time": [
+      "09:00",
+      "10:00",
+      "12:00",
+      "13:00",
+      "14:00",
+      "15:00",
+      "17:30",
+      "18:00",
+      "18:30"
+    ],
+    "eventtime": [
+      "09:00",
+      "10:00",
+      "12:00",
+      "13:00",
+      "14:00",
+      "15:00",
+      "17:30",
+      "18:00",
+      "18:30"
+    ],
+    "time": [
+      "09:00",
+      "10:00",
+      "12:00",
+      "13:00",
+      "14:00",
+      "15:00",
+      "17:30",
+      "18:00",
+      "18:30"
+    ],
+    "participants": [
+      "John Doe (TechCorp Industries lobbyist), County CIO, IT Budget Director",
+      "Jane Smith (Healthcare Advocates Group lobbyist), County Health Director, Mental Health Services Manager",
+      "Michael Chen (Green Energy Coalition lobbyist), County Sustainability Officer, Transportation Planning Director",
+      "John Doe (TechCorp Industries lobbyist), Budget Committee Members",
+      "Jane Smith (Healthcare Advocates Group lobbyist), Public Health Leadership",
+      "Michael Chen (Green Energy Coalition lobbyist), Environmental Services Director",
+      "County department heads, policy advisors",
+      "Budget committee members, fiscal analysts",
+      "Community stakeholders, advocacy groups"
+    ],
+    "quarter": ["Q1", "Q2", "Q3", "Q4"],
     "violation_type": [
       "LATE_FILING",
       "INCOMPLETE_REGISTRATION",

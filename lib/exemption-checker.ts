@@ -33,7 +33,7 @@ export function checkExemption(data: ExemptionCheckData): ExemptionResult {
   // Check exemptions in order of specificity
 
   // 1. Hours threshold exemption
-  if (data.hoursPerQuarter <= 10) {
+  if (data.hoursPerQuarter != null && data.hoursPerQuarter <= 10) {
     return {
       isExempt: true,
       exemptionType: "HOURS_THRESHOLD",
