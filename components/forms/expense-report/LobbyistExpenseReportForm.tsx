@@ -283,10 +283,10 @@ export function LobbyistExpenseReportForm({
 
       {/* Unsaved Changes Warning */}
       {hasUnsavedChanges && (
-        <div className="rounded-md border border-yellow-300 bg-primary/10 p-4">
+        <div className="rounded-md border border-yellow-400 bg-yellow-50 p-4">
           <div className="flex items-center">
             <svg
-              className="h-5 w-5 text-primary"
+              className="h-5 w-5 text-yellow-600"
               viewBox="0 0 20 20"
               fill="currentColor"
             >

@@ -1,6 +1,10 @@
 {
   "version": "1.0",
   "description": "Custom test data for Multnomah County Lobbyist Registration System",
+  "config": {
+    "skipCheckboxes": true,
+    "defaultYear": "2026"
+  },
   "personas": [
     {
       "firstName": "John",

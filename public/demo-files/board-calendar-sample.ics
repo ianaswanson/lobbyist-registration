@@ -11,9 +11,9 @@ DTSTART:20250115T100000
 DTEND:20250115T120000
 DTSTAMP:20250101T000000Z
 UID:event1@lobbyist-registration.example.com
-SUMMARY:Board Meeting - Regular Session
-DESCRIPTION:Participants: County staff, TechCorp representatives, Public attendees
-LOCATION:Multnomah County Building
+SUMMARY:Meeting with Tech Forward Coalition - Digital Infrastructure Proposal
+DESCRIPTION:Participants: John Doe (Tech Forward Coalition lobbyist), IT Director, County Technology Officer
+LOCATION:Multnomah County Building, Conference Room B
 STATUS:CONFIRMED
 END:VEVENT
 
@@ -22,20 +22,20 @@ DTSTART:20250220T140000
 DTEND:20250220T160000
 DTSTAMP:20250101T000000Z
 UID:event2@lobbyist-registration.example.com
-SUMMARY:Technology Committee Meeting
-DESCRIPTION:Participants: IT Department heads, TechCorp lobbyist, Cybersecurity consultants
-LOCATION:Conference Room A
+SUMMARY:Lunch Meeting with Healthcare Advocates Group - Behavioral Health Funding Request
+DESCRIPTION:Participants: Jane Smith (Healthcare Advocates Group lobbyist), Budget Committee, Healthcare Director
+LOCATION:County Cafeteria, Private Dining Room
 STATUS:CONFIRMED
 END:VEVENT
 
 BEGIN:VEVENT
-DTSTART:20250310T090000
-DTEND:20250310T110000
+DTSTART:20250310T180000
+DTEND:20250310T200000
 DTSTAMP:20250101T000000Z
 UID:event3@lobbyist-registration.example.com
-SUMMARY:Budget Planning Workshop
-DESCRIPTION:Participants: Finance team, Healthcare Advocates, Community members
-LOCATION:Community Center
+SUMMARY:Dinner Meeting with Green Energy Coalition - Climate Action Budget Request
+DESCRIPTION:Participants: Michael Chen (Green Energy Coalition lobbyist), Budget Committee, County Engineer
+LOCATION:Riverfront Restaurant
 STATUS:CONFIRMED
 END:VEVENT
 

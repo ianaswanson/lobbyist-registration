@@ -93,7 +93,7 @@ export function BoardCalendarsClient() {
 
   if (!data || data.boardMembers.length === 0) {
     return (
-      <div className="rounded-md bg-primary/10 p-4">
+      <div className="rounded-md bg-yellow-50 border border-yellow-200 p-4">
         <p className="text-sm text-yellow-800">
           No board member data available at this time.
         </p>
